@@ -1,2 +1,20 @@
-.venv
+# Python
 __pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+
+# Virtual Environment
+venv/
+.env
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# macOS
+.DS_Store
