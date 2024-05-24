@@ -1,36 +1,36 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+  db:
+    image: postgres:13
     volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+
+  backend:
+    build: ./backend
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://user:password@db/real_estate
+      DATABASE_URL: postgresql+asyncpg://myuser:mypassword@db:5432/mydatabase
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./frontend:/app
+    build: ./frontend
     ports:
       - "3000:3000"
-
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: real_estate
-    volumes:
-      - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata:
