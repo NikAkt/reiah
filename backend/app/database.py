@@ -3,9 +3,14 @@ import logging
 from sqlmodel import SQLModel, create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from app.models import User  # Ensure this import is correct
+from app.models import User
+from dotenv import load_dotenv
+import os
 
-DATABASE_URL = "postgresql+asyncpg://myuser:mypassword@db:5432/mydatabase"
+# Load environment variables from .env file
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = sessionmaker(
