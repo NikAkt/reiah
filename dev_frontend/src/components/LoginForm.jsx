@@ -2,19 +2,18 @@ import logo from "../logo.svg";
 import { createSignal } from "solid-js";
 
 function LoginForm() {
-  // Define form state
   const [formState, setFormState] = createSignal({
     email: "",
     password: "",
   });
 
-  // Handle form input changes
+  const [message, setMessage] = createSignal("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState({ ...formState(), [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = formState();
@@ -22,14 +21,17 @@ function LoginForm() {
       email: "",
       password: "",
     });
-    const formData = new FormData();
-    formData.append("email", data.email);
-    formData.append("password", data.password);
 
     try {
-      const response = await fetch("http://localhost:8000", {
+      const response = await fetch("http://localhost:8000/auth/token", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          username: data.email,
+          password: data.password,
+        }),
       });
 
       if (!response.ok) {
@@ -38,8 +40,11 @@ function LoginForm() {
 
       const result = await response.json();
       console.log("Success:", result);
+      sessionStorage.setItem("token", result.access_token);
+      setMessage("Login successful!");
     } catch (error) {
       console.error("Error:", error);
+      setMessage(`Error: ${error.message}`);
     }
   };
 
@@ -67,9 +72,10 @@ function LoginForm() {
                 name="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
-                oninput={handleChange}
+                onInput={handleChange}
                 value={formState().email}
-              ></input>
+                required
+              />
             </div>
             <div>
               <label
@@ -83,9 +89,10 @@ function LoginForm() {
                 name="password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                oninput={handleChange}
+                onInput={handleChange}
                 value={formState().password}
-              ></input>
+                required
+              />
             </div>
             <div class="flex items-center justify-between">
               <a
@@ -101,6 +108,17 @@ function LoginForm() {
             >
               Sign in
             </button>
+            {message() && (
+              <div
+                class={`mt-4 p-2 rounded-md ${
+                  message().startsWith('Login successful')
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700'
+                }`}
+              >
+                {message()}
+              </div>
+            )}
           </form>
         </div>
       </div>
