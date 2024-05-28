@@ -36,5 +36,10 @@ services:
     ports:
       - "3000:3000"
 
+  dev-frontend:
+    build: ./dev_frontend
+    ports:
+      - "4000:4000"
+
 volumes:
   pgdata:

@@ -10,6 +10,7 @@ build/
 # Virtual Environment
 venv/
 .env
+./backend/.venv/
 
 # Node
 node_modules/

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link href="css/style.css" rel="stylesheet" />
+    <script
+      src="https://unpkg.com/htmx.org@1.9.12"
+      integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .full {
+        height: 100vh;
+      }
+
+      .flex-row {
+        flex-direction: row;
+      }
+
+      .flex-col {
+        flex-direction: column;
+      }
+
+      .usercard {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container full flex-col">
+      <form hx-post="/token">
+        <input type="text" name="username" placeholder="username...." />
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+        />
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+  </body>
+</html>
