@@ -5,6 +5,7 @@ import { Route, Router, useNavigate } from "@solidjs/router";
 import Home from "./routes/Home";
 import Nav from "./components/Navbar";
 import Login from "./routes/Login";
+import Register from "./routes/Register";
 import { createEffect } from "solid-js";
 
 const root = document.getElementById("root");
@@ -48,6 +49,7 @@ render(
     <Router root={Layout}>
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
       <Route path="/app" component={RouteGuard}>
         <Route
           path="/"

@@ -2,10 +2,10 @@
 from datetime import datetime, timezone
 
 # FastAPI Imports
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 # Auth Imports
-from app.crud.users import create_user
+from app.crud.users import create_user, get_all
 from app.utils.authentication import create_password_hash, get_user
 
 # Database Imports
@@ -19,14 +19,17 @@ from app.schemas.users import CreateUser
 router = APIRouter()
 
 
-@router.post("/register", response_model=CreateUser)
+@router.post("/register")
 async def register_user(
     user_create: CreateUser, session: AsyncSession = Depends(get_session)
 ):
-    user_or_error = await get_user(session, user_create.username)
+    user = await get_user(session, user_create.username)
 
-    if isinstance(user_or_error, HTTPException):
-        raise user_or_error
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered",
+        )
 
     new_user = User(
         username=user_create.username,
@@ -42,3 +45,9 @@ async def register_user(
         raise new_user_or_error
     else:
         return user_create
+
+
+@router.get("/")
+async def get_all_users(session: AsyncSession = Depends(get_session)):
+    users = await get_all(session)
+    return users

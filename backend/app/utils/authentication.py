@@ -1,5 +1,5 @@
 # PYTHON IMPORTS
-from typing import Annotated
+from typing import Annotated, Union
 from datetime import datetime, timedelta, timezone
 
 # FAST API IMPORTS
@@ -47,7 +47,7 @@ def create_password_hash(plain_text_password: str) -> str:
     return pwd_context.hash(plain_text_password)
 
 
-def authenticate_user(fake_db, username: str, password: str) -> User | bool:
+def authenticate_user(fake_db, username: str, password: str) -> Union[User, bool]:
     """This function returns True if the username and password match in the database else returns False"""
     user = get_user(fake_db, username)
     if not user:
@@ -57,7 +57,7 @@ def authenticate_user(fake_db, username: str, password: str) -> User | bool:
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     """This will encode the data and return a json web token with the data encoded in it"""
     copied_data = data.copy()
 

@@ -1,33 +1,47 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 from app.models.users import User
 
 
-async def get_user(db_session: AsyncSession, username: str) -> User | HTTPException:
+async def get_user(db_session: AsyncSession, username: str) -> Optional[User]:
     """Gets a user by username from the database if they exist"""
     user = await db_session.get(User, username)
-    if not user:
-        return HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered",
-        )
-    return user
+
+    if user:
+        return user
+
+    return None
+
+
+async def get_all(db_session: AsyncSession):
+    """Gets All the users from the user database"""
+    statement = select(User)
+    users = await db_session.execute(statement)
+    return users.scalars().all()
 
 
 async def create_user(
     db_session: AsyncSession, new_user: User
-) -> Literal[True] | HTTPException:
+) -> Union[User, HTTPException]:
 
-    db_session.add(new_user)
+    print(f"\n\n\n{new_user}\n\n\n")
+
     try:
+        print("\n Adding\n")
+        db_session.add(new_user)
+        print("\n Committing\n")
         await db_session.commit()
+        print("\n refreshing\n")
         await db_session.refresh(new_user)
-        return True
+        print("\n Returning \n")
+        return new_user
     except Exception as e:
         await db_session.rollback()
+        print(f"\n\n\n{e}\n\n\n")
         return HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"User already exists {e}",
+            detail=f"User already exists",
         )
