@@ -1,25 +1,29 @@
-# app/main.py
-import logging
-from contextlib import asynccontextmanager
+# main.py
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.database import create_database_and_tables
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from app.routers import users
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_database_and_tables()
-
-    logger.info("startup: triggered")
-
     yield
-
-    logger.info("shutdown: triggered")
 
 
 app = FastAPI(lifespan=lifespan)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
+app.include_router(users.router, prefix="/users")
 
 
 @app.get("/")
