@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Union
+from typing import Optional, Union
 
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,20 +27,18 @@ async def create_user(
     db_session: AsyncSession, new_user: User
 ) -> Union[User, HTTPException]:
 
-    print(f"\n\n\n{new_user}\n\n\n")
-
     try:
-        print("\n Adding\n")
+
         db_session.add(new_user)
-        print("\n Committing\n")
+
         await db_session.commit()
-        print("\n refreshing\n")
+
         await db_session.refresh(new_user)
-        print("\n Returning \n")
+
         return new_user
     except Exception as e:
         await db_session.rollback()
-        print(f"\n\n\n{e}\n\n\n")
+
         return HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"User already exists",

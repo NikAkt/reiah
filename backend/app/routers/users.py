@@ -9,7 +9,7 @@ from app.crud.users import create_user, get_all
 from app.utils.authentication import create_password_hash, get_user
 
 # Database Imports
-from app.database import get_session
+from app.utils.database_setup import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # Models & Schemas

@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.database import create_database_and_tables
+from app.utils.database_setup import create_database_and_tables
 from app.routers import users
 
 
