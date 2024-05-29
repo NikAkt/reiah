@@ -1,37 +1,42 @@
 import logo from "../logo.svg";
 import { createSignal } from "solid-js";
 
-function LoginForm() {
+function RegisterForm() {
+  // Define form state
   const [formState, setFormState] = createSignal({
+    username: "",
     email: "",
     password: "",
   });
 
-  const [message, setMessage] = createSignal("");
-
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState({ ...formState(), [name]: value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = formState();
     setFormState({
       email: "",
       password: "",
+      username: "",
     });
+    // const formData = new FormData();
+    // formData.append("username", data.username);
+    // formData.append("email", data.email);
+    // formData.append("password", data.password);
 
     try {
-      const response = await fetch("http://localhost:8000/auth/token", {
+      const response = await fetch("http://localhost:8000/users/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: new URLSearchParams({
-          username: data.email,
-          password: data.password,
-        }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -40,11 +45,8 @@ function LoginForm() {
 
       const result = await response.json();
       console.log("Success:", result);
-      sessionStorage.setItem("token", result.access_token);
-      setMessage("Login successful!");
     } catch (error) {
       console.error("Error:", error);
-      setMessage(`Error: ${error.message}`);
     }
   };
 
@@ -65,17 +67,29 @@ function LoginForm() {
           <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
             <div>
               <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Email
+                username
+              </label>
+              <input
+                type="username"
+                name="username"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="name@company.com"
+                oninput={handleChange}
+                value={formState().username}
+              ></input>
+            </div>
+            <div>
+              <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                email
               </label>
               <input
                 type="email"
                 name="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
-                onInput={handleChange}
+                oninput={handleChange}
                 value={formState().email}
-                required
-              />
+              ></input>
             </div>
             <div>
               <label
@@ -89,42 +103,16 @@ function LoginForm() {
                 name="password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onInput={handleChange}
+                oninput={handleChange}
                 value={formState().password}
-                required
-              />
-            </div>
-            <div class="flex items-center justify-between">
-              <a
-                href="#"
-                class="text-sm font-medium text-primary-400 hover:underline dark:text-primary-500"
-              >
-                Forgot password?
-              </a>
-              <a
-                href="/register"
-                class="text-sm font-medium text-primary-400 hover:underline dark:text-primary-500"
-              >
-                Register
-              </a>
+              ></input>
             </div>
             <button
               type="submit"
               class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
-              Sign in
+              Register Account
             </button>
-            {message() && (
-              <div
-                class={`mt-4 p-2 rounded-md ${
-                  message().startsWith('Login successful')
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
-                }`}
-              >
-                {message()}
-              </div>
-            )}
           </form>
         </div>
       </div>
@@ -132,4 +120,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default RegisterForm;
