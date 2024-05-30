@@ -7,6 +7,7 @@ import Nav from "./components/Navbar";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
 import { createEffect } from "solid-js";
+import Settings from "./routes/Settings";
 
 const root = document.getElementById("root");
 
@@ -50,6 +51,7 @@ render(
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/settings" component={Settings} />
       <Route path="/app" component={RouteGuard}>
         <Route
           path="/"
