@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 
 # Auth Imports
-from app.crud.users import create_user, get_all
-from app.utils.authentication import create_password_hash, get_user
+from app.utils.authentication import create_password_hash, get_current_user
+from app.crud.users import create_user, get_all, update_user_profile, get_user
 
 # Database Imports
 from app.utils.database_setup import get_session
@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 # Models & Schemas
 from app.models.users import User
-from app.schemas.users import CreateUser
+from app.schemas.users import CreateUser, UpdateUser
 
 router = APIRouter()
 
@@ -51,3 +51,14 @@ async def register_user(
 async def get_all_users(session: AsyncSession = Depends(get_session)):
     users = await get_all(session)
     return users
+
+
+
+@router.put("/settings")
+async def user_settings(
+    user_update: UpdateUser,
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session)
+):
+    updated_user = await update_user_profile(session, current_user.id, user_update)
+    return updated_user

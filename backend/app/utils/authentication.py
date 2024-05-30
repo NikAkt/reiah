@@ -1,3 +1,5 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
 # PYTHON IMPORTS
 from typing import Annotated, Union
 from datetime import datetime, timedelta, timezone
@@ -11,6 +13,7 @@ from fastapi.templating import Jinja2Templates
 import jwt
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
+from app.utils.password import verify_password, create_password_hash 
 
 # CRUD IMPORTS
 from app.crud.users import get_user
@@ -18,6 +21,10 @@ from app.crud.users import get_user
 # MODELS
 from app.models.users import User
 from app.models.authentication import TokenData
+
+# UTILS IMPORTS
+from app.utils.database_setup import get_session
+
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -37,14 +44,14 @@ templates = Jinja2Templates("templates")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """This will compare a plain text password when hashed with a hash to confirm it is the correct password"""
-    return pwd_context.verify(plain_password, hashed_password)
+# def verify_password(plain_password: str, hashed_password: str) -> bool:
+#     """This will compare a plain text password when hashed with a hash to confirm it is the correct password"""
+#     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_password_hash(plain_text_password: str) -> str:
-    """This function takes a plain text password and returns a hash using the pwd_context"""
-    return pwd_context.hash(plain_text_password)
+# def create_password_hash(plain_text_password: str) -> str:
+#     """This function takes a plain text password and returns a hash using the pwd_context"""
+#     return pwd_context.hash(plain_text_password)
 
 
 def authenticate_user(fake_db, username: str, password: str) -> Union[User, bool]:
@@ -102,6 +109,17 @@ async def decode_user_details_from_token(
 
     return token_data
 
+
+async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSession = Depends(get_session)) -> User:
+    token_data = await decode_user_details_from_token(token)
+    user = await get_user(session, token_data.username)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
 
 # async def get_current_active_user(
 #     current_user: Annotated[User, Depends(get_current_user)]
