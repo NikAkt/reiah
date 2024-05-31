@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 
 # Auth Imports
-from app.utils.authentication import create_password_hash, get_current_user
+from app.utils.authentication import create_password_hash
 from app.crud.users import create_user, get_all, update_user_profile, get_user
 
 # Database Imports
@@ -53,12 +53,25 @@ async def get_all_users(session: AsyncSession = Depends(get_session)):
     return users
 
 
-
-@router.put("/settings")
+@router.patch("/{username}")
 async def user_settings(
-    user_update: UpdateUser,
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session)
+    username: str,
+    update_user: UpdateUser,
+    session: AsyncSession = Depends(get_session),
 ):
-    updated_user = await update_user_profile(session, current_user.id, user_update)
-    return updated_user
+    user = await get_user(session, username)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
+        )
+
+    user.email = update_user.email if update_user.email else user.email
+
+    updated_user = await update_user_profile(session, user.username, user)
+
+    if isinstance(update_user, HTTPException):
+        raise update_user
+    else:
+        return updated_user
+

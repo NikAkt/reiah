@@ -4,8 +4,6 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from app.models.users import User
-from app.schemas.users import UpdateUser
-from app.utils.password import create_password_hash
 
 
 async def get_user(db_session: AsyncSession, username: str) -> Optional[User]:
@@ -30,15 +28,11 @@ async def create_user(
 ) -> Union[User, HTTPException]:
 
     try:
-
         db_session.add(new_user)
-
         await db_session.commit()
-
         await db_session.refresh(new_user)
-
         return new_user
-    except Exception as e:
+    except Exception:
         await db_session.rollback()
 
         return HTTPException(
@@ -48,18 +42,18 @@ async def create_user(
 
 
 async def update_user_profile(
-    session: AsyncSession, user_id: int, user_update: UpdateUser
-) -> User:
-    result = await session.execute(select(User).where(User.id == user_id))
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
+    db_session: AsyncSession, user_id: str, user_update: User
+) -> Union[User, HTTPException]:
+    user_update.updated_at = datetime.now(timezone.utc)
+    try:
+        db_session.add(user_update)
+        await db_session.commit()
+        await db_session.refresh(user_update)
+        return user_update
+    except Exception as e:
+        await db_session.rollback()
+        return HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to update user {user_id}: {e}",
         )
-    user.email = user_update.email
-    user.updated_at = datetime.now(timezone.utc)
-    await session.commit()
-    await session.refresh(user)
-    return user
 
