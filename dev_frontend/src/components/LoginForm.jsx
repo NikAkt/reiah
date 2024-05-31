@@ -7,8 +7,6 @@ function LoginForm() {
     password: "",
   });
 
-  const [message, setMessage] = createSignal("");
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState({ ...formState(), [name]: value });
@@ -26,12 +24,10 @@ function LoginForm() {
       const response = await fetch("http://localhost:8000/auth/token", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: new URLSearchParams({
-          username: data.email,
-          password: data.password,
-        }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -40,11 +36,8 @@ function LoginForm() {
 
       const result = await response.json();
       console.log("Success:", result);
-      sessionStorage.setItem("token", result.access_token);
-      setMessage("Login successful!");
     } catch (error) {
       console.error("Error:", error);
-      setMessage(`Error: ${error.message}`);
     }
   };
 
@@ -114,17 +107,6 @@ function LoginForm() {
             >
               Sign in
             </button>
-            {message() && (
-              <div
-                class={`mt-4 p-2 rounded-md ${
-                  message().startsWith('Login successful')
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
-                }`}
-              >
-                {message()}
-              </div>
-            )}
           </form>
         </div>
       </div>
