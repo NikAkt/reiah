@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 
 # Auth Imports
-from app.utils.authentication import create_password_hash
+from app.utils.password import create_password_hash
 from app.crud.users import create_user, get_all, update_user_profile, get_user
 
 # Database Imports

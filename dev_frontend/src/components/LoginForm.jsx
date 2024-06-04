@@ -3,9 +3,10 @@ import { createSignal } from "solid-js";
 
 function LoginForm() {
   const [formState, setFormState] = createSignal({
-    email: "",
+    username: "",
     password: "",
   });
+  const [message, setMessage] = createSignal("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,7 +17,7 @@ function LoginForm() {
     e.preventDefault();
     const data = formState();
     setFormState({
-      email: "",
+      username: "",
       password: "",
     });
 
@@ -24,10 +25,12 @@ function LoginForm() {
       const response = await fetch("http://localhost:8000/auth/token", {
         method: "POST",
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify(data),
+        body: new URLSearchParams({
+          username: data.username,
+          password: data.password,
+        }),
       });
 
       if (!response.ok) {
@@ -36,8 +39,10 @@ function LoginForm() {
 
       const result = await response.json();
       console.log("Success:", result);
+      setMessage("Login successful!");
     } catch (error) {
       console.error("Error:", error);
+      setMessage("Login failed. Please try again.");
     }
   };
 
@@ -58,15 +63,15 @@ function LoginForm() {
           <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
             <div>
               <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Email
+                Username
               </label>
               <input
-                type="email"
-                name="email"
+                type="text"
+                name="username"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@company.com"
+                placeholder="Your username"
                 onInput={handleChange}
-                value={formState().email}
+                value={formState().username}
                 required
               />
             </div>
@@ -107,6 +112,7 @@ function LoginForm() {
             >
               Sign in
             </button>
+            {message() && <p>{message()}</p>}
           </form>
         </div>
       </div>
