@@ -1,5 +1,7 @@
 import logo from "../logo.svg";
 import { createSignal } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import { setUsername, setToken } from "../store"; // Import global state setters
 
 function LoginForm() {
   const [formState, setFormState] = createSignal({
@@ -7,6 +9,7 @@ function LoginForm() {
     password: "",
   });
   const [message, setMessage] = createSignal("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,10 +19,6 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = formState();
-    setFormState({
-      username: "",
-      password: "",
-    });
 
     try {
       const response = await fetch("http://localhost:8000/auth/token", {
@@ -39,19 +38,26 @@ function LoginForm() {
 
       const result = await response.json();
       console.log("Success:", result);
+      sessionStorage.setItem("token", result.access_token);
+      sessionStorage.setItem("username", data.username);
+      setUsername(data.username); // Update global state
+      setToken(result.access_token); // Update global state
       setMessage("Login successful!");
+      navigate("/settings");
     } catch (error) {
       console.error("Error:", error);
       setMessage("Login failed. Please try again.");
     }
+
+    setFormState({
+      username: "",
+      password: "",
+    });
   };
 
   return (
     <>
-      <a
-        href="#"
-        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-      >
+      <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
         <img class="w-8 h-8 mr-2" alt="logo" src={logo}></img>
         Summer Project
       </a>
@@ -76,10 +82,7 @@ function LoginForm() {
               />
             </div>
             <div>
-              <label
-                for="password"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Password
               </label>
               <input
@@ -93,23 +96,14 @@ function LoginForm() {
               />
             </div>
             <div class="flex items-center justify-between">
-              <a
-                href="#"
-                class="text-sm font-medium text-primary-400 hover:underline dark:text-primary-500"
-              >
+              <a href="#" class="text-sm font-medium text-primary-400 hover:underline dark:text-primary-500">
                 Forgot password?
               </a>
-              <a
-                href="/register"
-                class="text-sm font-medium text-primary-400 hover:underline dark:text-primary-500"
-              >
+              <a href="/register" class="text-sm font-medium text-primary-400 hover:underline dark:text-primary-500">
                 Register
               </a>
             </div>
-            <button
-              type="submit"
-              class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
+            <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
               Sign in
             </button>
             {message() && <p>{message()}</p>}
