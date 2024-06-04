@@ -60,9 +60,8 @@ async def get_all_users(session: AsyncSession = Depends(get_session)):
 @router.patch("/{username}")
 async def user_settings(
     username: str,
-    update_user: UpdateUser,
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
+    user_update: UpdateUser,
+    session: AsyncSession = Depends(get_session)
 ):
     user = await get_user(session, username)
 
@@ -71,16 +70,19 @@ async def user_settings(
             status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
         )
 
-    if current_user.username != username:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Operation not permitted"
-        )
+    if user_update.username:
+        user.username = user_update.username
 
-    user.email = update_user.email if update_user.email else user.email
+    if user_update.password:
+        user.password_hash = create_password_hash(user_update.password)
+
     user.updated_at = datetime.now(timezone.utc)
 
+    session.add(user)
     await session.commit()
     await session.refresh(user)
 
     return user
+
+
 

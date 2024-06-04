@@ -24,44 +24,27 @@ export default function Nav() {
             </div>
             <div class="hidden sm:ml-6 sm:block">
               <div class="flex space-x-4">
-                <a
-                  href="/app"
-                  class={`rounded-md px-3 py-2 text-sm font-medium ${
-                    location.pathname === "/app"
+                <a href="/app" class={`rounded-md px-3 py-2 text-sm font-medium ${location.pathname === "/app"
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                >
+                  }`}>
                   App
                 </a>
-                <a
-                  href="/login"
-                  class={`rounded-md px-3 py-2 text-sm font-medium ${
-                    location.pathname === "/login"
+                <a href="/login" class={`rounded-md px-3 py-2 text-sm font-medium ${location.pathname === "/login"
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                >
+                  }`}>
                   Login
                 </a>
-                <a
-                  href="/register"
-                  class={`rounded-md px-3 py-2 text-sm font-medium ${
-                    location.pathname === "/register"
+                <a href="/register" class={`rounded-md px-3 py-2 text-sm font-medium ${location.pathname === "/register"
                       ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                >
+                      : "text-gray-300 hover:bg-gray-700 hover:text-white"}`}>
                   Register
                 </a>
-                <a
-                  href="/settings"
-                  class={`rounded-md px-3 py-2 text-sm font-medium ${
-                    location.pathname === "/settings"
+                <a href="/settings" class={`rounded-md px-3 py-2 text-sm font-medium ${location.pathname === "/settings"
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  }`}
-                >
+                  }`}>
                   Settings
                 </a>
               </div>
@@ -69,11 +52,8 @@ export default function Nav() {
           </div>
           {username() ? (
             <div class="flex items-center">
-              <span class="text-white mr-4">Welcome, {username()}</span>
-              <button
-                class="text-white bg-red-500 px-3 py-1 rounded"
-                onClick={handleLogout}
-              >
+              <span class="text-white mr-4">Logged in as {username()}</span>
+              <button class="text-white bg-red-500 px-3 py-1 rounded" onClick={handleLogout}>
                 Logout
               </button>
             </div>
@@ -84,29 +64,16 @@ export default function Nav() {
       </div>
       <div class="sm:hidden" id="mobile-menu">
         <div class="space-y-1 px-2 pb-3 pt-2">
-          <a
-            href="#"
-            class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page"
-          >
+          <a href="#" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">
             Dashboard
           </a>
-          <a
-            href="#"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-          >
+          <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">
             Team
           </a>
-          <a
-            href="#"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-          >
+          <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">
             Projects
           </a>
-          <a
-            href="#"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-          >
+          <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">
             Calendar
           </a>
         </div>
