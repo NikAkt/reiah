@@ -1,4 +1,5 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
+import { token } from "../store"; // Import global state (this is initially null)
 
 const input_style =
   "bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
@@ -10,6 +11,26 @@ function Settings() {
     username: "",
     email: "",
   });
+  const [message, setMessage] = createSignal("");
+
+  onMount(async () => {
+    if (token()) {
+      const response = await fetch("http://localhost:8000/auth/users/me", {
+        headers: {
+          Authorization: `Bearer ${token()}`,
+        },
+      });
+      if (response.ok) {
+        const user = await response.json();
+        setFormState({
+          username: user.username,
+          email: user.email,
+        });
+      } else {
+        setMessage("Failed to fetch user details.");
+      }
+    }
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,32 +40,28 @@ function Settings() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = formState();
-    setFormState({
-      username: "",
-      email: "",
-    });
+    setMessage("");
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/users/" + data.username,
-        {
-          method: "PATCH",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
+      const response = await fetch(`http://localhost:8000/users/${data.username}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token()}`,
         },
-      );
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok " + response.statusText);
       }
 
       const result = await response.json();
-      console.log("Sucess:", result);
+      console.log("Success:", result);
+      setMessage("Profile updated successfully!");
     } catch (error) {
       console.error("Error:", error);
+      setMessage("Failed to update profile.");
     }
   };
 
@@ -63,10 +80,11 @@ function Settings() {
             onInput={handleChange}
             value={formState().username}
             required
+            disabled
           ></input>
 
           <label class={label_style} for="email">
-            email
+            Email
           </label>
           <input
             class={input_style}
@@ -88,6 +106,7 @@ function Settings() {
             </button>
           </div>
         </form>
+        {message() && <p>{message()}</p>}
       </section>
     </>
   );
