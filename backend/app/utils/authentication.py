@@ -23,6 +23,7 @@ from app.models.authentication import TokenData
 
 # UTILS IMPORTS
 from app.utils.database_setup import get_session
+from app.utils.password import verify_password
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -42,14 +43,14 @@ templates = Jinja2Templates("templates")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """This will compare a plain text password when hashed with a hash to confirm it is the correct password"""
-    return pwd_context.verify(plain_password, hashed_password)
+# def verify_password(plain_password: str, hashed_password: str) -> bool:
+#     """This will compare a plain text password when hashed with a hash to confirm it is the correct password"""
+#     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_password_hash(plain_text_password: str) -> str:
-    """This function takes a plain text password and returns a hash using the pwd_context"""
-    return pwd_context.hash(plain_text_password)
+# def create_password_hash(plain_text_password: str) -> str:
+#     """This function takes a plain text password and returns a hash using the pwd_context"""
+#     return pwd_context.hash(plain_text_password)
 
 
 async def authenticate_user(session, username: str, password: str) -> bool:
