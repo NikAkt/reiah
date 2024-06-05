@@ -1,15 +1,15 @@
 # # PYTHON IMPORTS
 # from typing import Annotated
 # from datetime import timedelta
-#
+
 # # FAST API IMPORTS
 # from fastapi import Depends, HTTPException, status
 # from fastapi.security import OAuth2PasswordRequestForm
-#
+
 # # MODELS
 # from app.models.authentication import Token
-#
-#
+
+
 # # Similar to writing username: OAuth2PasswordRequestForm, password...., scope: OAuth2PasswordRequestForm
 # @app.post("/token")
 # async def login_for_access_token(
@@ -26,5 +26,5 @@
 #     access_token = create_access_token(
 #         data={"sub": user.username}, expires_delta=access_token_expires
 #     )
-#
+
 #     return Token(access_token=access_token, token_type="Bearer")

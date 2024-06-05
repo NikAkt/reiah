@@ -6,6 +6,7 @@ import Home from "./routes/Home";
 import Nav from "./components/Navbar";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
+import Settings from "./routes/Settings";
 import { createEffect } from "solid-js";
 
 const root = document.getElementById("root");
@@ -46,36 +47,41 @@ const RouteGuard = (props) => {
 
 render(
   () => (
-    <Router root={Layout}>
-      <Route path="/" component={Home} />
-      <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      <Route path="/app" component={RouteGuard}>
+    <Router>
+      <Route path="/" component={Layout}>
+        <Route path="/" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        <Route path="/settings" component={RouteGuard}>
+          <Route path="/" component={Settings} />
+        </Route>
+        <Route path="/app" component={RouteGuard}>
+          <Route
+            path="/"
+            component={() => (
+              <>
+                <h1 class="text-6xl text-white">welcome</h1>
+              </>
+            )}
+          />
+        </Route>
         <Route
-          path="/"
+          path="*404"
           component={() => (
             <>
-              <h1 class="text-6xl text-white">welcome</h1>
+              <div>
+                <h1 class="text-6xl text-white"> 404</h1>
+                <a
+                  href="/"
+                  class="text-base text-white underline hover:text-blue-600"
+                >
+                  Return to Safety
+                </a>
+              </div>
             </>
           )}
         />
       </Route>
-      <Route
-        path="*404"
-        component={() => (
-          <>
-            <div>
-              <h1 class="text-6xl text-white"> 404</h1>
-              <a
-                href="/"
-                class="text-base text-white underline hover:text-blue-600"
-              >
-                Return to Safety
-              </a>
-            </div>
-          </>
-        )}
-      />
     </Router>
   ),
   root,

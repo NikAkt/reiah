@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 
 # Auth Imports
-from app.crud.users import create_user, get_all
-from app.utils.authentication import create_password_hash, get_user
+from app.utils.password import create_password_hash
+from app.crud.users import create_user, get_all, update_user_profile, get_user
 
 # Database Imports
 from app.utils.database_setup import get_session
@@ -14,7 +14,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 # Models & Schemas
 from app.models.users import User
-from app.schemas.users import CreateUser
+from app.schemas.users import CreateUser, UpdateUser
+
+# Utils imports
+
+from app.utils.authentication import get_current_user
 
 router = APIRouter()
 
@@ -51,3 +55,34 @@ async def register_user(
 async def get_all_users(session: AsyncSession = Depends(get_session)):
     users = await get_all(session)
     return users
+
+
+@router.patch("/{username}")
+async def user_settings(
+    username: str,
+    user_update: UpdateUser,
+    session: AsyncSession = Depends(get_session)
+):
+    user = await get_user(session, username)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User does not exist"
+        )
+
+    if user_update.username:
+        user.username = user_update.username
+
+    if user_update.password:
+        user.password_hash = create_password_hash(user_update.password)
+
+    user.updated_at = datetime.now(timezone.utc)
+
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+
+    return user
+
+
+
