@@ -1,0 +1,36 @@
+.login-register-container {
+  position: absolute;
+  width: 100vw;
+  z-index: 100;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  border: 2px solid salmon;
+}
+
+.login-register-button {
+  z-index: 100;
+  position: absolute;
+  font-size: 20px;
+  color: aliceblue;
+  background: #1b212c;
+  width: 109 px;
+  height: 36 px;
+  margin-left: 1000 px;
+  cursor: pointer;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-register-dashboard {
+  z-index: 100;
+  margin: auto;
+  margin-top: 20vh;
+  width: 40vw;
+  height: 50vh;
+  background: aliceblue;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: space-between;
+}
