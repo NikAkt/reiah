@@ -11,14 +11,17 @@ import LoginRegister from "./components/LoginRegister";
 
 export default function App() {
   const [coords, setCoords] = createSignal({ lat: 40.7831, lng: -73.9712 });
+  const [neighborhood, setNeighborhood] = createSignal("");
+
   return (
     <Router
       root={(props) => (
         <>
           {/* <Nav />
           <Suspense>{props.children}</Suspense> */}
-          <Filter />
+          <Filter neighborhood={neighborhood()} />
           <LoginRegister />
+
           <GoogleMap lat={coords().lat} lng={coords().lng} zoom={12} />
         </>
       )}

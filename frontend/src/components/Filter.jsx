@@ -1,5 +1,5 @@
-import { createSignal } from "solid-js";
-import filter_img from "../assets/Filter.png";
+import { createSignal, onCleanup, onMount } from "solid-js";
+import filter_img from "/assets/Filter.png";
 
 const Filter = () => {
   const [dropdownDisplay, setDropdownDisplay] = createSignal(false);
@@ -18,7 +18,7 @@ const Filter = () => {
         <span>Filter</span>
       </button>
       {dropdownDisplay() && (
-        <div class="w-[20vw] bg-white h-[85vh] z-20 rounded-2xl flex flex-col items-center mt-2 delay-[300ms] animate-fade-down">
+        <div class="w-[20vw] border-blue border-dashed border-2 bg-white h-[85vh] z-20 rounded-2xl flex flex-col items-center mt-2 delay-[300ms] animate-fade-down">
           <p>Filter Dropdown</p>
         </div>
       )}
