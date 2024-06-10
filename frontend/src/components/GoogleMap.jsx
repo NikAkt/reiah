@@ -37,35 +37,46 @@ const GoogleMap = (props) => {
         .then((response) => response.json())
         .then((data) => {
           // Add GeoJSON data to the map
-          const manhattan_neighborhood = data.features.filter(
-            (obj) => obj.properties.boro_name === "Manhattan"
-          );
-          data.features = manhattan_neighborhood;
+          // const manhattan_neighborhood = data.features.filter(
+          //   (obj) => obj.properties.boro_name === "Manhattan"
+          // );
+          // data.features = manhattan_neighborhood;
           map.data.addGeoJson(data);
+          map.data.setStyle(function (feature) {
+            const geometryType = feature.getGeometry().getType();
+            if (geometryType === "Point") {
+              return {
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: 8, // Size of the red dot
+                  fillColor: "red",
+                  fillOpacity: 1,
+                  strokeWeight: 0,
+                },
+              };
+            } else if (geometryType === "MultiPolygon") {
+              return {
+                strokeColor: "yellow",
+                strokeWeight: 2,
+                fillOpacity: 0.11,
+              };
+            }
+          });
         })
         .catch((error) => {
           console.error("Error loading GeoJSON data:", error);
         });
 
-      map.data.setStyle(function (feature) {
-        const geometryType = feature.getGeometry().getType();
-        if (geometryType === "Point") {
-          return {
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 8, // Size of the red dot
-              fillColor: "red",
-              fillOpacity: 1,
-              strokeWeight: 0,
-            },
-          };
-        } else if (geometryType === "LineString") {
-          return {
-            strokeColor: "blue",
-            strokeWeight: 2,
-          };
-        }
-      });
+      // fetch("/assets/borough.geojson")
+      //   .then((response) => response.json())
+      //   .then((data) => {
+      //     // Add GeoJSON data to the map
+      //     map.data.addGeoJson(data);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error loading GeoJSON data:", error);
+      //   });
+
       const { AdvancedMarkerElement } = await google.maps.importLibrary(
         "marker"
       );
@@ -113,7 +124,7 @@ const GoogleMap = (props) => {
     });
   });
 
-  return <div ref={mapContainer} class="w-screen h-screen" />;
+  return <div ref={mapContainer} class="w-[100vw] h-screen" />;
 };
 
 export default GoogleMap;

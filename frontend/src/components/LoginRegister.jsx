@@ -3,7 +3,7 @@ import LoginContent from "./LoginContent";
 import SignUpContent from "./SignUpContent";
 
 const LoginRegister = () => {
-  const [loginBoardDisplay, setLoginBoardDisplay] = createSignal(true);
+  const [loginBoardDisplay, setLoginBoardDisplay] = createSignal(false);
   const [action, setAction] = createSignal("Login");
 
   const toggleDropdown = () => {
@@ -39,7 +39,7 @@ const LoginRegister = () => {
             </div>
             {action() === "Login" ? <LoginContent /> : <SignUpContent />}
             <div class="mt-[50px]">
-              <button class="bg-black rounded-2xl cursor-pointer w-32 h-9 text-white flex items-center justify-center gap-1.5 hover:-translate-y-1 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300">
+              <button class="bg-black cursor-pointer rounded-2xl cursor-pointer w-32 h-9 text-white flex items-center justify-center gap-1.5 hover:-translate-y-1 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300">
                 Submit
               </button>
             </div>
