@@ -1,11 +1,12 @@
+from sqlmodel import SQLModel, Field
 from datetime import datetime
-from sqlmodel import Field, SQLModel
 
 class Arrest(SQLModel, table=True):
-    arrest_date: datetime = Field(default=None, sa_column_kwargs={"nullable": True})
-    arrest_boro: str = Field(default=None, sa_column_kwargs={"nullable": True})
-    arrest_precinct: int = Field(default=None, sa_column_kwargs={"nullable": True})
-    x_coord_cd: float = Field(default=None, sa_column_kwargs={"nullable": True})
-    y_coord_cd: float = Field(default=None, sa_column_kwargs={"nullable": True})
-    latitude: float = Field(default=None, sa_column_kwargs={"nullable": True})
-    longitude: float = Field(default=None, sa_column_kwargs={"nullable": True})
+    id: int = Field(default=None, primary_key=True)
+    ARREST_DATE: datetime
+    ARREST_BORO: str
+    ARREST_PRECINCT: int
+    X_COORD_CD: float
+    Y_COORD_CD: float
+    Latitude: float
+    Longitude: float
