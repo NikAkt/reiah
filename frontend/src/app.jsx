@@ -8,22 +8,29 @@ import Nav from "~/components/Nav";
 import "./app.css";
 import Filter from "./components/Filter";
 import LoginRegister from "./components/LoginRegister";
+import MapFilter from "./components/MapFilter";
 
 export default function App() {
-  const [coords, setCoords] = createSignal({ lat: 40.7831, lng: -73.9712 });
+  let mapContainer;
+  const [coords, setCoords] = createSignal({ lat: 40.7128, lng: -74.006 });
   const [neighborhood, setNeighborhood] = createSignal("");
 
   return (
     <Router
       root={(props) => (
-        <>
-          {/* <Nav />
-          <Suspense>{props.children}</Suspense> */}
-          <Filter neighborhood={neighborhood()} />
-          <LoginRegister />
-
-          <GoogleMap lat={coords().lat} lng={coords().lng} zoom={12} />
-        </>
+        <div class="m-0 px-0">
+          <Nav />
+          {/* <Suspense>{props.children}</Suspense> */}
+          {/* <LoginRegister /> */}
+          <GoogleMap
+            ref={mapContainer}
+            lat={coords().lat}
+            lng={coords().lng}
+            zoom={11}
+          />
+          <MapFilter />
+          <Filter />
+        </div>
       )}
     >
       <FileRoutes />

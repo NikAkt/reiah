@@ -1,20 +1,20 @@
-import { onCleanup, onMount } from "solid-js";
+import { createSignal, onCleanup, onMount } from "solid-js";
+import { layerStore, setLayerStore } from "./layerStore";
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
-const GoogleMap = (props) => {
-  let mapContainer;
 
+const GoogleMap = (props) => {
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
     // console.log(night_mapstyle);
-    if (mapContainer) {
-      const map = await new google.maps.Map(mapContainer, {
+
+    if (true) {
+      console.log("initMap function is triggered");
+      const map = await new google.maps.Map(document.getElementById("map"), {
         center: { lat: props.lat, lng: props.lng },
         zoom: props.zoom,
         mapId: "4504f8b37365c3d0",
-        // mapTypeControlOptions: {
-        //   mapTypeIds: ["water"],
-        // },
       });
+      setLayerStore("map", map);
 
       //dynamic map style:
 
@@ -44,21 +44,11 @@ const GoogleMap = (props) => {
           map.data.addGeoJson(data);
           map.data.setStyle(function (feature) {
             const geometryType = feature.getGeometry().getType();
-            if (geometryType === "Point") {
-              return {
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 8, // Size of the red dot
-                  fillColor: "red",
-                  fillOpacity: 1,
-                  strokeWeight: 0,
-                },
-              };
-            } else if (geometryType === "MultiPolygon") {
+            if (geometryType === "MultiPolygon") {
               return {
                 strokeColor: "yellow",
                 strokeWeight: 2,
-                fillOpacity: 0.11,
+                fillOpacity: 0,
               };
             }
           });
@@ -67,37 +57,22 @@ const GoogleMap = (props) => {
           console.error("Error loading GeoJSON data:", error);
         });
 
-      // fetch("/assets/borough.geojson")
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     // Add GeoJSON data to the map
-      //     map.data.addGeoJson(data);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error loading GeoJSON data:", error);
-      //   });
-
       const { AdvancedMarkerElement } = await google.maps.importLibrary(
         "marker"
       );
-      const trafficLayer = new google.maps.TrafficLayer();
 
       const marker = new AdvancedMarkerElement({
         map,
         position: { lat: 40.8636241732, lng: -73.8558279928 },
       });
 
-      trafficLayer.setMap(map);
-
+      const trafficLayer = new google.maps.TrafficLayer();
       const bikeLayer = new google.maps.BicyclingLayer();
-
-      bikeLayer.setMap(map);
-
       const transitLayer = new google.maps.TransitLayer();
 
-      transitLayer.setMap(map);
-    } else {
-      console.error("Map container is not available.");
+      setLayerStore("trafficLayer", trafficLayer);
+      setLayerStore("bikeLayer", bikeLayer);
+      setLayerStore("transitLayer", transitLayer);
     }
   }
 
@@ -124,7 +99,7 @@ const GoogleMap = (props) => {
     });
   });
 
-  return <div ref={mapContainer} class="w-[100vw] h-screen" />;
+  return <div id="map" class="w-[70vw] h-[95vh]" />;
 };
 
 export default GoogleMap;
