@@ -5,6 +5,8 @@ const [layerStore, setLayerStore] = createStore({
   transitLayer: null,
   map: null,
   markerList: null,
+  AdvancedMarkerElement: null,
+  PinElement: null,
 });
 
 export { layerStore, setLayerStore };

@@ -4,6 +4,11 @@ const MapFilter = (props) => {
   const [haveBikeLayer, setBikeLayer] = createSignal(false);
   const [haveTrafficLayer, setTrafficLayer] = createSignal(false);
   const [haveTransitLayer, setTransitLayer] = createSignal(false);
+  const [showdropdown, setShowdropdown] = createSignal(false);
+  const handleClick = () => {
+    setShowdropdown((prev) => !prev);
+    console.log(showdropdown());
+  };
 
   const handleBikeLayer = () => {
     setBikeLayer((prev) => !prev);
@@ -28,11 +33,21 @@ const MapFilter = (props) => {
   };
 
   return (
-    <div class="">
-      <div class="absolute left-[20vw] top-[6vh] w-[8vw] h-[5vh] bg-blue z-20 text-white hover:bg-green cursor-pointer items-center justify-items-center flex">
-        Map Filter
+    <div class="absolute left-[20vw] top-[6.5vh] h-[15vh] w-[8vw]  flex flex-row">
+      <div
+        class="absolute z-20 text-white w-[100%] h-[5vh]
+      bg-blue hover:bg-violet-700 flex flex-col
+      duration-300 active:bg-violet-700 
+      justify-center items-center cursor-pointer"
+        onClick={handleClick}
+      >
+        Map Filter{" "}
       </div>
-      <div class="flex flex-col absolute left-[20vw] top-[11vh] w-[8vw] h-[10vh] bg-blue z-20 border-solid border-2 border-green text-white hover:bg-green cursor-pointer">
+      <div
+        class={`absolute bg-blue z-20 w-[100%] top-[3vh] h-[9vh]
+        text-white cursor-pointer delay-[300ms] animate-fade-down items-center 
+        justify-center ${showdropdown() ? "block" : "hidden"}`}
+      >
         <div>
           <input
             type="checkbox"

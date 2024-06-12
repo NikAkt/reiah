@@ -9,6 +9,7 @@ import "./app.css";
 import Filter from "./components/Filter";
 import LoginRegister from "./components/LoginRegister";
 import MapFilter from "./components/MapFilter";
+import Markers from "./components/Markers";
 
 export default function App() {
   let mapContainer;
@@ -30,6 +31,8 @@ export default function App() {
           />
           <MapFilter />
           <Filter />
+          <LoginRegister />
+          {/* <Markers /> */}
         </div>
       )}
     >
