@@ -9,6 +9,7 @@ const MapFilter = (props) => {
     setShowdropdown((prev) => !prev);
     console.log(showdropdown());
   };
+  const google_maps = layerStore.google_map;
 
   const handleBikeLayer = () => {
     setBikeLayer((prev) => !prev);

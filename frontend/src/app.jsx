@@ -19,7 +19,7 @@ export default function App() {
   return (
     <Router
       root={(props) => (
-        <div class="m-0 px-0">
+        <div class="m-0 px-0 flex flex-col items-center">
           <Nav />
           {/* <Suspense>{props.children}</Suspense> */}
           {/* <LoginRegister /> */}
@@ -32,6 +32,7 @@ export default function App() {
           <MapFilter />
           <Filter />
           <LoginRegister />
+          <Markers />
           {/* <Markers /> */}
         </div>
       )}

@@ -10,7 +10,7 @@ const HomePage = ({ intro, triggerIntro }) => {
   return (
     <div className="homepage">
       {intro ? <Introduction /> : ""}
-      <Filter />
+      {/* <Filter /> */}
       <LoginRegister />
       <GoogleMap API_KEY={API_KEY} />
     </div>

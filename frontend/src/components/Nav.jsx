@@ -16,8 +16,8 @@ export default function Nav(props) {
   };
 
   return (
-    <nav class="bg-blue h-[5vh] flex justify-items-center items-center">
-      <ul class="container flex p-3 text-gray-200 flex flex-row items-center justify-center">
+    <nav class="bg-blue h-[5vh] flex justify-items-center items-center w-screen">
+      <ul class="container flex p-3 text-gray-200 flex flex-row items-center justify-center w-[40%] ml-[5vw]">
         <li
           class={`border-b-2 ${active(
             "/"
@@ -33,14 +33,14 @@ export default function Nav(props) {
         >
           <a href="/induction">Induction</a>
         </li>
-        <li
+        {/* <li
           class={`border-b-2 ${active(
             "/filter"
           )} mx-1.5 sm:mx-6 flex flex-row gap-2 hover:bg-indigo-600 w-[100%] flex flex-row items-center justify-center`}
         >
           <img src={filter_img} alt="filter" />
           <a href="/filter">Filter</a>
-        </li>
+        </li> */}
 
         {/* <li
           class={`border-b-2 ${active(

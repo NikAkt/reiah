@@ -1,4 +1,5 @@
 import { createStore } from "solid-js/store";
+import { createSignal } from "solid-js";
 const [layerStore, setLayerStore] = createStore({
   bikeLayer: null,
   trafficLayer: null,
@@ -8,5 +9,11 @@ const [layerStore, setLayerStore] = createStore({
   AdvancedMarkerElement: null,
   PinElement: null,
 });
+const [isGoogleMapInitialized, setIsGoogleMapInitialized] = createSignal(false);
 
-export { layerStore, setLayerStore };
+export {
+  layerStore,
+  setLayerStore,
+  isGoogleMapInitialized,
+  setIsGoogleMapInitialized,
+};

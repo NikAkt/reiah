@@ -1,11 +1,9 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import { layerStore, setLayerStore } from "./layerStore";
-import Markers from "./Markers";
+import { setLayerStore, setIsGoogleMapInitialized } from "./layerStore";
 import Filter from "./Filter";
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
 
 const GoogleMap = (props) => {
-  const [ad, setAd] = createSignal(null);
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
     // console.log(night_mapstyle);
@@ -17,6 +15,8 @@ const GoogleMap = (props) => {
         mapId: "4504f8b37365c3d0",
       });
       setLayerStore("map", map);
+      setLayerStore("google_map", google.maps);
+      setIsGoogleMapInitialized(true);
       //dynamic map style:
       // map.mapTypes.set("styled_map", styledMapType);
       // map.setMapTypeId("styled_map");
@@ -59,34 +59,6 @@ const GoogleMap = (props) => {
       setLayerStore("trafficLayer", trafficLayer);
       setLayerStore("bikeLayer", bikeLayer);
       setLayerStore("transitLayer", transitLayer);
-
-      // const { AdvancedMarkerElement, PinElement } =
-      //   google.maps.importLibrary("marker");
-      const { AdvancedMarkerElement } = await google.maps.importLibrary(
-        "marker"
-      );
-      fetch("/assets/cleaned_business_data.json")
-        .then((response) => response.json())
-        .then((data) => {
-          // const dataFilter = data.filter(
-          //   (data) => data["business_type"] === "Home Services"
-          // );
-          const dataFilter = data.slice(0, 200);
-          dataFilter.forEach((el) => {
-            //console.log(el["Latitude"]);
-            new AdvancedMarkerElement({
-              map,
-              position: { lat: el["Latitude"], lng: el["Longitude"] },
-            });
-          });
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      // const marker = new AdvancedMarkerElement({
-      //   map,
-      //   position: { lat: 40.8636241732, lng: -73.8558279928 },
-      // });
     }
   }
   onMount(() => {
@@ -111,7 +83,7 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div id="map" class="w-[70vw] h-[95vh]" />
+      <div id="map" class="w-[100vw] h-[95vh]" />
       {/* <Markers AdvancedMarkerElement={ad} /> */}
     </div>
   );
