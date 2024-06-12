@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",
+    "@googlemaps/markerclusterer": "^2.5.3",
     "@solidjs/router": "^0.13.3",
     "@solidjs/start": "^1.0.1",
     "autoprefixer": "^10.4.19",

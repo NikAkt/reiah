@@ -1,5 +1,5 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import filter_img from "/assets/Filter.png";
+import filter_img from "/assets/icon/Filter.png";
 
 const Filter = () => {
   const [filterDisplay, setFilterDisplay] = createSignal(false);
@@ -9,7 +9,7 @@ const Filter = () => {
   };
 
   return (
-    <div class="fixed z-30 w-32 h-[100vh] flex flex-col items-center gap-0.5 w-screen mt-[0.2vh]">
+    <div class="fixed z-20 w-32 h-[100vh] flex flex-col items-center gap-0.5 w-[70vw] mt-[0.2vh]">
       <button
         class="bg-black rounded-2xl ml-[55%]
         cursor-pointer w-32 h-9 text-white flex 
@@ -21,7 +21,7 @@ const Filter = () => {
         <span>Filter</span>
       </button>
       {filterDisplay() && (
-        <div class="absolute m-0 px-0 top-[5vh] left-[70vw] w-[30vw] bg-green h-[95vh] z-20 flex flex-col items-center delay-[300ms] animate-fade-in">
+        <div class="fixed m-0 px-0 top-[5vh] left-[70vw] w-[30vw] bg-green h-[95vh] z-20 flex flex-col items-center delay-[300ms] animate-fade-in">
           <p>Filter</p>
         </div>
       )}

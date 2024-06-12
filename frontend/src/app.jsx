@@ -30,8 +30,8 @@ export default function App() {
             zoom={11}
           />
           <MapFilter />
-          <Filter />
-          <LoginRegister />
+          {/* <Filter />
+          <LoginRegister /> */}
           <Markers />
           {/* <Markers /> */}
         </div>

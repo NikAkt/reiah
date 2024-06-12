@@ -10,7 +10,7 @@ const LoginRegister = () => {
   };
 
   return (
-    <div class="fixed z-20 w-32 h-[100vh] flex flex-col items-center gap-0.5 w-screen mt-[0.2vh]">
+    <div class="fixed z-10 w-32 h-[100vh] flex flex-col items-center gap-0.5 w-screen mt-[0.2vh]">
       <button
         class="bg-black rounded-2xl cursor-pointer ml-[80%]
         w-32 h-9 text-white flex items-center justify-center gap-1.5 

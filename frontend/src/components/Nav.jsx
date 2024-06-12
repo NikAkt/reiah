@@ -1,6 +1,5 @@
 import { useLocation } from "@solidjs/router";
 import { createSignal } from "solid-js";
-import filter_img from "/assets/Filter.png";
 
 export default function Nav(props) {
   const location = useLocation();
