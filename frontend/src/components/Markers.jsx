@@ -126,9 +126,11 @@ function Markers() {
                 // infoWindow.open({ map, anchor: anchor });
                 // console.log("hello");
                 // console.log(infoWindow);
-                document.getElementById(
-                  "infoWindow"
-                ).innerText = `Cluster center: ${cluster.position}, Number of markers: ${cluster.markers.length}`;
+                const infoWindow = document.getElementById("infoWindow");
+                infoWindow.innerText = `Cluster center: ${cluster.position}, Number of markers: ${cluster.markers.length}`;
+                cluster.markers.forEach((marker) => {
+                  infoWindow.innerText += marker.title;
+                });
               },
             });
           })
@@ -145,12 +147,7 @@ function Markers() {
     }
   });
 
-  return (
-    <div
-      class="absolute bg-black left-[80vw] top-[20vh] w-[20vw] h-[30vh] z-30 flex text-white"
-      id="infoWindow"
-    ></div>
-  );
+  return null;
 }
 
 export default Markers;

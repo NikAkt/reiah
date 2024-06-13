@@ -34,18 +34,18 @@ const MapFilter = (props) => {
   };
 
   return (
-    <div class="absolute left-[20vw] top-[6.5vh] h-[15vh] w-[8vw]  flex flex-row">
+    <div class="absolute left-[40vw] top-[1.5vh] h-[15vh] w-[8vw]  flex flex-row border-solid border-2 border-indigo-600">
       <div
         class="absolute z-20 text-white w-[100%] h-[5vh]
-      bg-blue hover:bg-violet-700 flex flex-col
-      duration-300 active:bg-violet-700 
+      bg-green hover:bg-blue flex flex-col
+      duration-300 active:bg-blue 
       justify-center items-center cursor-pointer"
         onClick={handleClick}
       >
         Map Filter{" "}
       </div>
       <div
-        class={`absolute bg-blue z-20 w-[100%] top-[3vh] h-[9vh]
+        class={`absolute bg-green z-20 w-[100%] top-[3vh] h-[9vh]
         text-white cursor-pointer delay-[300ms] animate-fade-down items-center 
         justify-center ${showdropdown() ? "block" : "hidden"}`}
       >

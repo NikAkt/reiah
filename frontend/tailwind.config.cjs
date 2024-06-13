@@ -7,6 +7,7 @@ module.exports = {
         blue: "#0145ac",
         green: "#81c7a5",
         black: "#1b212c",
+        white: "#F3F4F6",
       },
       animation: {
         "fade-down": "fade-down 0.2s ease-out forwards",

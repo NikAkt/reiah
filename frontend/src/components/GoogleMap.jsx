@@ -1,5 +1,7 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { setLayerStore, setIsGoogleMapInitialized } from "./layerStore";
+import MapFilter from "./MapFilter";
+import Markers from "./Markers";
 import Filter from "./Filter";
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
 
@@ -83,8 +85,9 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div id="map" class="w-[100vw] h-[95vh]" />
-      {/* <Markers AdvancedMarkerElement={ad} /> */}
+      <div id="map" class="w-[60vw] h-[90vh] mt-[10vh]" />
+      <Markers />
+      {/* <Filter /> */}
     </div>
   );
 };

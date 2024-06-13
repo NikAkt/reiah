@@ -10,6 +10,7 @@ import Filter from "./components/Filter";
 import LoginRegister from "./components/LoginRegister";
 import MapFilter from "./components/MapFilter";
 import Markers from "./components/Markers";
+import Dashboard from "./components/Dashboard";
 
 export default function App() {
   let mapContainer;
@@ -19,7 +20,7 @@ export default function App() {
   return (
     <Router
       root={(props) => (
-        <div class="m-0 px-0 flex flex-col items-center">
+        <div class="m-0 px-0 flex flex-col">
           <Nav />
           {/* <Suspense>{props.children}</Suspense> */}
           {/* <LoginRegister /> */}
@@ -27,13 +28,10 @@ export default function App() {
             ref={mapContainer}
             lat={coords().lat}
             lng={coords().lng}
-            zoom={11}
+            zoom={10}
           />
-          <MapFilter />
-          {/* <Filter />
-          <LoginRegister /> */}
-          <Markers />
-          {/* <Markers /> */}
+          <Filter />
+          <Dashboard />
         </div>
       )}
     >

@@ -9,9 +9,13 @@ const Filter = () => {
   };
 
   return (
-    <div class="fixed z-20 w-32 h-[100vh] flex flex-col items-center gap-0.5 w-[70vw] mt-[0.2vh]">
+    <div
+      class="absolute z-30 w-32 flex flex-col 
+    items-center gap-0.5 mt-[11vh] ml-[42vw]
+    border-solid border-2 border-indigo-600"
+    >
       <button
-        class="bg-black rounded-2xl ml-[55%]
+        class="bg-black rounded-2xl ml-[55%] z-20
         cursor-pointer w-32 h-9 text-white flex 
         items-center justify-center gap-1.5 hover:scale-110 
         duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
@@ -20,11 +24,11 @@ const Filter = () => {
         <img src={filter_img} alt="filter" />
         <span>Filter</span>
       </button>
-      {filterDisplay() && (
+      {/* {filterDisplay() && (
         <div class="fixed m-0 px-0 top-[5vh] left-[70vw] w-[30vw] bg-green h-[95vh] z-20 flex flex-col items-center delay-[300ms] animate-fade-in">
           <p>Filter</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

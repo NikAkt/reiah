@@ -5,8 +5,8 @@ export default function Nav(props) {
   const location = useLocation();
   const active = (path) =>
     path == location.pathname
-      ? "border-sky-600"
-      : "border-transparent hover:border-sky-600";
+      ? "border-green border-dashed"
+      : "border-transparent hover:border-green";
 
   const [dropdownDisplay, setDropdownDisplay] = createSignal(false);
 
@@ -15,40 +15,66 @@ export default function Nav(props) {
   };
 
   return (
-    <nav class="bg-blue h-[5vh] flex justify-items-center items-center w-screen">
-      <ul class="container flex p-3 text-gray-200 flex flex-row items-center justify-center w-[40%] ml-[5vw]">
+    <nav
+      class="absolute bg-white ml-[0px] h-[10vh] w-screen 
+    flex pl-[2.3vw] font-black gap-x-2"
+    >
+      <div
+        class="mt-[16px] w-[30%] 
+      h-[50px]
+      font-sans text-4xl flex border-solid border-2 border-indigo-600"
+      >
+        REIAH{" "}
+        <span
+          class="flex bg-green rounded-lg w-[30%] 
+          item-center justify-center ml-[3%] h-[90%] text-white"
+        >
+          APP
+        </span>
+      </div>
+
+      <ul
+        class="container 
+      p-3 text-gray-200 flex
+      items-center justify-between w-[70%] 
+      text-2xl gap-2
+      border-solid border-2 border-indigo-600"
+      >
         <li
-          class={`border-b-2 ${active(
-            "/"
-          )} mx-1.5 sm:mx-6 hover:bg-indigo-600 w-[100%] flex flex-col items-center`}
+          class={`border-b-2 ${active("/")} mx-1.5 sm:mx-6 
+          hover:bg-green w-[100%] 
+          flex flex-col text-black`}
         >
           <a href="/">Home</a>
         </li>
 
         <li
-          class={`border-b-2 ${active(
-            "/induction"
-          )} mx-1.5 sm:mx-6 flex flex-row gap-2 hover:bg-indigo-600 w-[100%] flex flex-col items-center`}
+          class={`border-b-2 ${active("/induction")} mx-1.5 sm:mx-6 
+          flex flex-row gap-2 
+          hover:bg-green w-[100%] flex flex-col `}
         >
           <a href="/induction">Induction</a>
         </li>
-        {/* <li
-          class={`border-b-2 ${active(
-            "/filter"
-          )} mx-1.5 sm:mx-6 flex flex-row gap-2 hover:bg-indigo-600 w-[100%] flex flex-row items-center justify-center`}
+        <li
+          class={`border-b-2 ${active("/settings")} mx-1.5 sm:mx-6 
+          hover:bg-green w-[100%] 
+          flex flex-col`}
         >
-          <img src={filter_img} alt="filter" />
-          <a href="/filter">Filter</a>
-        </li> */}
-
-        {/* <li
-          class={`border-b-2 ${active(
-            "/loginregister"
-          )} mx-1.5 sm:mx-6 hover:bg-indigo-600 w-[100%] flex flex-col items-center`}
+          <a href="/">Login / Register</a>
+        </li>
+        <li
+          class={`border-b-2 ${active("/settings")} mx-1.5 sm:mx-6 
+          hover:bg-green w-[100%] 
+          flex flex-col`}
         >
-          <a href="/login" onClick={handleClick}>
-            Login / Register
-          </a>
+          <a href="/">Settings</a>
+        </li>
+        {/* <li
+          class={`border-b-2 ${active("/settings")} mx-1.5 sm:mx-6 
+          hover:bg-green w-[100%] 
+          flex flex-col`}
+        >
+          <a href="/">Dashboard</a>
         </li> */}
       </ul>
     </nav>
