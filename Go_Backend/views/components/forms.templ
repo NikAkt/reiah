@@ -1,0 +1,93 @@
+//This components file is for creating forms
+//TODO: Possible abstraction here. Could create a general input component
+package components
+
+import "strconv"
+
+type formInput func(l, p, n string) templ.Component
+
+templ textField(label, placeholder, name string) {
+	<label class="block mb-4">
+		<span class="text-accent text-sm mb-2">{ label }</span>
+		<input
+			class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline"
+			type="text"
+			placeholder={ placeholder }
+			name={ name }
+		/>
+	</label>
+}
+
+templ passwordField(label, placeholder, name string) {
+	<label class="block mb-4">
+		<span class="text-accent text-sm mb-2">{ label }</span>
+		<input
+			class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline"
+			type="password"
+			placeholder={ placeholder }
+			name={ name }
+		/>
+	</label>
+}
+
+templ emailField(label, placeholder, name string) {
+	<label class="block mb-4">
+		<span class="text-accent text-sm mb-2">{ label }</span>
+		<input
+			class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline"
+			type="email"
+			placeholder={ placeholder }
+			name={ name }
+		/>
+	</label>
+}
+
+templ numberField(label, placeholder, name string) {
+	<label class="block mb-4">
+		<span class="text-accent text-sm mb-2">{ label }</span>
+		<input
+			max="180"
+			min="-180"
+			step="0.0001"
+			class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline"
+			type="number"
+			placeholder={ placeholder }
+			name={ name }
+		/>
+	</label>
+}
+
+templ inputGroup(gs int) {
+	<div class={ "grid gap-2 grid-cols-" + strconv.Itoa(gs) }>
+		{ children... }
+	</div>
+}
+
+templ SettingsForm() {
+	<form>
+		@inputGroup(3) {
+			@emailField("Email", "Email", "email")
+			@textField("Name", "Name", "name")
+			@textField("Surname", "Surname", "suname")
+		}
+		@inputGroup(3) {
+			@passwordField("Password", "Password", "password")
+			@numberField("Field", "Field", "field")
+			@numberField("Field2", "Field2", "field2")
+		}
+		<div class="mt-6 grid grid-cols-3 gap-2">
+			<div class="col-start-3 grid grid-cols-2 gap-2">
+				<button
+					class="w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+				>
+					Save
+				</button>
+				<button
+					class="w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+				>
+					Cancel
+				</button>
+			</div>
+		</div>
+	</form>
+}

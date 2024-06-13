@@ -1,0 +1,15 @@
+package snippets
+
+import "strconv"
+
+// This templ component takes two floats which are used as longitude and latitude values in the gmp-advanced-marker web
+templ Marker(x, y float64) {
+	// Notice the use of the @click attribute which is from alpine js this currently just removes the element from the dom
+	// on click
+	<gmp-advanced-marker
+		@click="console.log($event); $el.remove()"
+		position={ strconv.FormatFloat(x, 'f' , 6, 64) + ", " +
+  strconv.FormatFloat(y, 'f' , 6, 64) }
+		title="Seattle, WA"
+	></gmp-advanced-marker>
+}

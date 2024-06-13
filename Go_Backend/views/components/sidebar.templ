@@ -1,0 +1,55 @@
+package components
+
+// This is the HREF link tyope which we can passed to the sidebar link component
+type HREFLink struct {
+Href string
+Title string
+}
+
+// A template for the navigation links which allows for easily adding more
+templ sidebarLink(link HREFLink) {
+<li class="mb-1 group">
+  <a href={ templ.SafeURL(link.Href) }
+    class="flex items-center py-2 px-4 text-gray-900 hover:bg-gray-950 hover:text-gray-100 rounded-md">
+    <span class="text-lg">{ link.Title }</span>
+  </a>
+</li>
+}
+
+// Create marker form
+templ createMarkerForm() {
+<form hx-post="/create-new-marker" hx-target="#DEMO_MAP_ID" hx-swap="beforeend" class="mt-12">
+  @inputGroup(2) {
+  @numberField("X Coord", "40.2", "x")
+  @numberField("Y Coord", "40.2", "y")
+  }
+  <div class="mt-6">
+    <button
+      class="w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      type="submit">
+      Create
+    </button>
+  </div>
+</form>
+}
+
+// This is the exported sidebar component which will actually be used in the page layouts
+templ Sidebar(links []HREFLink) {
+<!--sidenav -->
+<div class="w-1/5 min-h-screen p-4 z-50 shadow-md">
+  <!-- SIDEBAR TITLE -->
+  <a href="/" class="flex items-center pb-4 border-b border-b-gray-800">
+    <h2 class="font-bold text-2xl">REIAH <span class="bg-teal-500 text-white px-2 rounded-md">APP</span></h2>
+  </a>
+  <!-- END SIDEBAR TITLE -->
+  <!-- SIDEBAR LINKS -->
+  <ul class="mt-4" hx-boost="true">
+    for _, hrefItem := range links {
+    @sidebarLink(hrefItem)
+    }
+  </ul>
+  <!-- END SIDEBAR LINKS -->
+  @createMarkerForm()
+</div>
+<!-- end sidenav -->
+}
