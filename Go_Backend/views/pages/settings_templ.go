@@ -13,7 +13,7 @@ import "bytes"
 import "github.com/denartha10/SummerProjectGOTH/views/layouts"
 import "github.com/denartha10/SummerProjectGOTH/views/components"
 
-// TODO: Will be adding in forms for updating users in the future
+
 func Settings() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
