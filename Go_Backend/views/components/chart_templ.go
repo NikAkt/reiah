@@ -10,7 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-func BarChart() templ.Component {
+func BarChart(id string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -23,7 +23,33 @@ func BarChart() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative w-full h-full\"><canvas id=\"RANDOMUNIQUEIDENTIFIER\"></canvas><script>\n    var ctx = document.getElementById(\"RANDOMUNIQUEIDENTIFIER\")\n\n    new Chart(ctx, {\n      type: 'bar',\n      data: {\n        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],\n        datasets: [{\n          label: '# of Votes',\n          data: [12, 19, 3, 5, 2, 3],\n          borderWidth: 1\n        }]\n      },\n      options: {\n        responsive: true,\n        maintainAspectRatio: false,\n        scales: {\n          y: {\n            beginAtZero: true\n          }\n        }\n      }\n    });\n  </script></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative w-full h-full\"><canvas id=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(id)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/chart.templ`, Line: 5, Col: 17}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></canvas><script data-mapid=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(id)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/chart.templ`, Line: 6, Col: 25}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">\n    var script = document.currentScript\n    var ctx = document.currentScript.dataset.mapid\n\n    new Chart(ctx, {\n      type: 'bar',\n      data: {\n        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],\n        datasets: [{\n          label: '# of Votes',\n          data: [12, 19, 3, 5, 2, 3],\n          borderWidth: 1\n        }]\n      },\n      options: {\n        responsive: true,\n        maintainAspectRatio: false,\n        scales: {\n          y: {\n            beginAtZero: true\n          }\n        }\n      }\n    });\n  </script></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,9 +68,9 @@ func LineChart() templ.Component {
 			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative w-full h-full\"><canvas id=\"RANDOMUNIQUEIDENTIFIER2\"></canvas><script>\n    var ctx = document.getElementById(\"RANDOMUNIQUEIDENTIFIER2\")\n\n    new Chart(ctx, {\n      type: 'line',\n      data: {\n        labels: [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\"],\n        datasets: [{\n          label: 'My First Dataset',\n          data: [65, 59, 80, 81, 56, 55, 40],\n          fill: false,\n          borderColor: 'rgb(75, 192, 192)',\n          tension: 0.1\n        }]\n      },\n      options: {\n        responsive: true,\n        maintainAspectRatio: false,\n      }\n    });\n  </script></div>")

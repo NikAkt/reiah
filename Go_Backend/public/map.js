@@ -3,7 +3,6 @@ function initMap() {
     center: { lat: 40.776676, lng: -73.971321 },
     zoom: 12,
     mapTypeControl: false,
-    disableDefaultUI: true,
   });
   window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
 }

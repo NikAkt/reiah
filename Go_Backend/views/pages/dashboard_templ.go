@@ -12,6 +12,7 @@ import "bytes"
 
 import "github.com/denartha10/SummerProjectGOTH/views/layouts"
 import "github.com/denartha10/SummerProjectGOTH/views/components"
+import "github.com/google/uuid"
 
 // TODO: WILL ADD CARDS AND CHARTS IN FUTURE TO THIS
 func Dashboard() templ.Component {
@@ -37,7 +38,7 @@ func Dashboard() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.BarChart().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.BarChart(uuid.New().String()).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

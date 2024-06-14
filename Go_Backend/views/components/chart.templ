@@ -1,10 +1,11 @@
 package components
 
-templ BarChart() {
+templ BarChart(id string) {
 <div class="relative w-full h-full">
-  <canvas id="RANDOMUNIQUEIDENTIFIER"></canvas>
-  <script>
-    var ctx = document.getElementById("RANDOMUNIQUEIDENTIFIER")
+  <canvas id={ id }></canvas>
+  <script data-mapid={ id }>
+    var script = document.currentScript
+    var ctx = document.currentScript.dataset.mapid
 
     new Chart(ctx, {
       type: 'bar',
@@ -30,11 +31,12 @@ templ BarChart() {
 </div>
 }
 
-templ LineChart() {
+templ LineChart(id string) {
 <div class="relative w-full h-full">
-  <canvas id="RANDOMUNIQUEIDENTIFIER2"></canvas>
-  <script>
-    var ctx = document.getElementById("RANDOMUNIQUEIDENTIFIER2")
+  <canvas id={ id }></canvas>
+  <script data-mapid={ id }>
+    var script = document.currentScript
+    var ctx = document.currentScript.dataset.mapid
 
     new Chart(ctx, {
       type: 'line',
