@@ -32,7 +32,7 @@ func Dashboard() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-sort:item class=\"min-h-80 shadow-md rounded bg-white col-span-2\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white col-span-2\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 col-span-2\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 col-span-2\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

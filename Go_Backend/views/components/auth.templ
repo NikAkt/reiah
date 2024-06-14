@@ -2,7 +2,7 @@ package components
 
 templ LoginForm(invalid bool) {
 	<div class="w-2/3">
-		<div class="mb-8">
+		<div class="mb-8 dark:text-white">
 			<h1 class="text-3xl">Login</h1>
 			<p>Login and get back to work</p>
 		</div>
@@ -11,7 +11,7 @@ templ LoginForm(invalid bool) {
 			@passwordField("Password", "********", "password")
 			<div class="mt-6">
 				<button
-					class="w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+					class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 					type="submit"
 				>
 					Sign In
@@ -19,10 +19,10 @@ templ LoginForm(invalid bool) {
 			</div>
 		</form>
 		if invalid {
-			<div class="mt-6 text-red-400">Failed to login invalid credentials</div>
+			<div class="mt-6 text-red-400 dark:text-red-200">Failed to login invalid credentials</div>
 		}
-		<p class="mt-6">
-			new to summer project? <a class="text-teal-500 hover:text-green-200" hx-boost="true" href="/register">register</a>
+		<p class="mt-6 dark:text-white">
+			New to reiah? <a class="text-teal-500 hover:text-green-200" hx-boost="true" href="/register">Register here</a>
 		</p>
 	</div>
 }
@@ -30,7 +30,7 @@ templ LoginForm(invalid bool) {
 templ RegisterForm(success bool) {
 	if !success {
 		<div class="w-2/3">
-			<div class="mb-8">
+			<div class="mb-8 dark:text-white">
 				<h1 class="text-3xl">Create An Account</h1>
 				<p>sign up and get started</p>
 			</div>
@@ -47,19 +47,19 @@ templ RegisterForm(success bool) {
 				}
 				<div class="mt-6">
 					<button
-						class="w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 						type="submit"
 					>
 						Register
 					</button>
 				</div>
 			</form>
-			<p class="mt-6">
-				already have an account with us? <a
-	class="text-teal-500 hover:text-green-200"
+			<p class="mt-6 dark:text-white">
+				Already have an account with us? <a
+	class="text-teal-500 dark:text-teal-300 hover:text-green-200"
 	hx-boost="true"
 	href="/login"
->login</a>
+>Login here</a>
 			</p>
 		</div>
 	} else {

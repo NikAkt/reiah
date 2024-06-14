@@ -5,16 +5,9 @@ import "github.com/denartha10/SummerProjectGOTH/views/layouts"
 // This map component is wrapped in a MapView layout so it differs from the other dashboards with no padding
 templ Map() {
 @layouts.MapView() {
-<div class="h-screen" >
-  // I have decided to use the google map components so I can just swap in and out markers using html
-  <gmp-map center="40.776676,-73.971321" zoom="12" map-id="DEMO_MAP_ID" id="DEMO_MAP_ID" class="h-full w-full">
-    <gmp-advanced-marker 
-      title="Empire State Building"></gmp-advanced-marker>
-    <gmp-advanced-marker 
-      title="Chrysler Building"></gmp-advanced-marker>
-    <gmp-advanced-marker 
-      title="Rockefeller Center"></gmp-advanced-marker>
-  </gmp-map>
+<div class="h-screen">
+  <div onload="initMap()" id="map" class="h-full w-full"></div>
+  <script>initMap(); window.mapExists = true </script>
 </div>
 }
 }
