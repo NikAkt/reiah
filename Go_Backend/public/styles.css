@@ -562,6 +562,10 @@ video {
   position: fixed;
 }
 
+.relative {
+  position: relative;
+}
+
 .right-4 {
   right: 1rem;
 }
@@ -656,10 +660,6 @@ video {
 
 .min-h-screen {
   min-height: 100vh;
-}
-
-.w-1\/5 {
-  width: 20%;
 }
 
 .w-2\/3 {

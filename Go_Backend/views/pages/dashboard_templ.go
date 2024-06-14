@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import "github.com/denartha10/SummerProjectGOTH/views/layouts"
+import "github.com/denartha10/SummerProjectGOTH/views/components"
 
 // TODO: WILL ADD CARDS AND CHARTS IN FUTURE TO THIS
 func Dashboard() templ.Component {
@@ -32,7 +33,23 @@ func Dashboard() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 col-span-2\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 col-span-2\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 col-span-2 p-4\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.BarChart().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 p-4\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 p-4\"></div><div x-sort:item class=\"min-h-80 shadow-md rounded bg-white dark:bg-slate-800 col-span-2 p-4\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.LineChart().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
