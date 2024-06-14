@@ -4,28 +4,15 @@ import "github.com/denartha10/SummerProjectGOTH/views/layouts"
 
 //TODO: Add cards with charts to this page
 templ Index() {
-	@layouts.Base() {
-		<header>
-			<a
-				href="/dashboard"
-				class="flex items-center py-2 px-4 text-gray-900 hover:bg-gray-950 hover:text-gray-100 rounded-md"
-			>
-				<span class="text-lg">Go To Dashboard</span>
-			</a>
-		</header>
-		<div class="mt-8 text-3xl">
-			<div class="min-h-screen grid grid-cols-10">
-				<div class="col-span-6 p-8">
-					<h1>Landing Page</h1>
-				</div>
-				<div class="col-span-4 p-8">
-					<script type="module" src="https://unpkg.com/@splinetool/viewer@1.6.2/build/spline-viewer.js"></script>
-					<spline-viewer
-						loading-anim-type="spinner-small-dark"
-						url="https://prod.spline.design/dtUY2lB0nTEou4FK/scene.splinecode"
-					></spline-viewer>
-				</div>
-			</div>
-		</div>
-	}
+@layouts.Base() {
+<header>
+  <a href="/dashboard"
+    class="flex items-center py-2 px-4 text-gray-900 hover:bg-gray-950 hover:text-gray-100 rounded-md" hx-boost="true">
+    <span class="text-lg">Go To Dashboard</span>
+  </a>
+</header>
+<div class="mt-8 text-3xl">
+  <h1>Landing Page</h1>
+</div>
+}
 }
