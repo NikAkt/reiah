@@ -23,7 +23,7 @@ func LoginForm(invalid bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-2/3\"><div class=\"mb-8\"><h1 class=\"text-3xl\">Login</h1><p>Login and get back to work</p></div><form hx-boost=\"true\" action=\"/login\" method=\"POST\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-2/3\"><div class=\"mb-8 dark:text-white\"><h1 class=\"text-3xl\">Login</h1><p>Login and get back to work</p></div><form hx-boost=\"true\" action=\"/login\" method=\"POST\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -35,17 +35,17 @@ func LoginForm(invalid bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Sign In</button></div></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Sign In</button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if invalid {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6 text-red-400\">Failed to login invalid credentials</div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6 text-red-400 dark:text-red-200\">Failed to login invalid credentials</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"mt-6\">new to summer project? <a class=\"text-teal-500 hover:text-green-200\" hx-boost=\"true\" href=\"/register\">register</a></p></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"mt-6 dark:text-white\">New to reiah? <a class=\"text-teal-500 hover:text-green-200\" hx-boost=\"true\" href=\"/register\">Register here</a></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +70,7 @@ func RegisterForm(success bool) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if !success {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-2/3\"><div class=\"mb-8\"><h1 class=\"text-3xl\">Create An Account</h1><p>sign up and get started</p></div><form hx-boost=\"true\" action=\"/register\" method=\"POST\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-2/3\"><div class=\"mb-8 dark:text-white\"><h1 class=\"text-3xl\">Create An Account</h1><p>sign up and get started</p></div><form hx-boost=\"true\" action=\"/register\" method=\"POST\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -136,7 +136,7 @@ func RegisterForm(success bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 hover:bg-green-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Register</button></div></form><p class=\"mt-6\">already have an account with us? <a class=\"text-teal-500 hover:text-green-200\" hx-boost=\"true\" href=\"/login\">login</a></p></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Register</button></div></form><p class=\"mt-6 dark:text-white\">Already have an account with us? <a class=\"text-teal-500 dark:text-teal-300 hover:text-green-200\" hx-boost=\"true\" href=\"/login\">Login here</a></p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

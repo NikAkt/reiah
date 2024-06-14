@@ -22,7 +22,6 @@ func main() {
 
 	// MAP PAGE
 	e.GET("/map", handlers.HandleMap, handlers.CustomAuthMiddleware, middleware.Logger())
-	e.POST("/create-new-marker", handlers.HandleCreateMarker, handlers.CustomAuthMiddleware, middleware.Logger())
 
 	// SETTINGS PAGE
 	e.GET("/settings", handlers.HandleSettings, handlers.CustomAuthMiddleware, middleware.Logger())

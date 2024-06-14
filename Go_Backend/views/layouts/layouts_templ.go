@@ -33,7 +33,7 @@ func Base() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>REIAH APP</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/favicon.ico\"><link rel=\"stylesheet\" href=\"/public/styles.css\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://unpkg.com/alpinejs\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.9\"></script><script src=\"https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js\"></script><script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&amp;libraries=maps,marker&amp;v=beta\"></script></head><body class=\"text-gray-800\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" data-mode=\"light\"><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>REIAH APP</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/favicon.ico\"><link rel=\"stylesheet\" href=\"/public/styles.css\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://unpkg.com/alpinejs\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.9\"></script><script defer src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&amp;libraries=maps,marker&amp;v=beta\"></script><script src=\"/public/map.js\"></script></head><body x-data class=\"text-gray-800\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,7 +81,7 @@ func DashboardView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"w-full bg-gray-100 min-h-screen\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"w-full bg-gray-100 dark:bg-gray-900 min-h-screen\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -119,7 +119,7 @@ func DashboardView() templ.Component {
 
 // This is the MapView which just addd a content section that can swap in and out content
 // The difference between this page layout and the dashboard view i sthere is no padding so
-// the map will take up the content view
+// the map will take up the content viewontent section that can swap in and out contentontent section that can swap in
 func MapView() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -147,7 +147,7 @@ func MapView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"w-full bg-gray-100 min-h-screen\"><div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"w-full bg-gray-100 dark:bg-gray-900 min-h-screen\"><div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -196,7 +196,7 @@ func AuthLayout() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen grid grid-cols-2 gap-0 overflow-hidden\"><div class=\"h-full flex justify-center items-center\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen grid grid-cols-2 gap-0 overflow-hidden\"><div class=\"h-full flex justify-center items-center bg-white dark:bg-slate-800\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -204,7 +204,15 @@ func AuthLayout() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"h-full bg-gradient-to-br from-teal-500 to-green-200 p-48\"><h2 class=\"text-white text-center text-3xl\">Join the 2 other investors using REIAH today!!</h2><p class=\"text-white text-center text-md mt-12\">wether you are looking for that next big investment or a place to call your own REIAH is here to guide you in the right direction.</p></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"h-full bg-gradient-to-br from-teal-500 to-green-200 dark:from-teal-300 dark:to-green-950 p-48 flex justify-center items-center flex-col\"><div class=\"fixed right-4 top-4\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.DarkLightMode().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><h2 class=\"text-white  text-center text-3xl\">Join the 2 other investors using REIAH today!!</h2><p class=\"text-white  text-center text-md mt-12\">wether you are looking for that next big investment or a place to call your own REIAH is here to guide you in the right direction.</p></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -33,7 +33,7 @@ func Settings() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"p-8 shadow-md rounded bg-white col-span-3\"><head><h1 class=\"text-2xl\">User Settings</h1></head><main class=\"mt-4\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"p-8 shadow-md rounded bg-white dark:bg-slate-800 col-span-3\"><head><h1 class=\"text-2xl dark:text-white\">User Settings</h1></head><main class=\"mt-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

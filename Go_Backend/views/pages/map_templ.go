@@ -32,7 +32,7 @@ func Map() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen\"><gmp-map center=\"40.776676,-73.971321\" zoom=\"12\" map-id=\"DEMO_MAP_ID\" id=\"DEMO_MAP_ID\" class=\"h-full w-full\"><gmp-advanced-marker title=\"Empire State Building\"></gmp-advanced-marker> <gmp-advanced-marker title=\"Chrysler Building\"></gmp-advanced-marker> <gmp-advanced-marker title=\"Rockefeller Center\"></gmp-advanced-marker></gmp-map></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen\"><div onload=\"initMap()\" id=\"map\" class=\"h-full w-full\"></div><script>initMap(); window.mapExists = true </script></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
