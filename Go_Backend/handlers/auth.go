@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/denartha10/SummerProjectGOTH/db"
@@ -34,9 +35,10 @@ func VerifyPassword(password, hash string) bool {
 // Claims I find is a confusing way of explaining things so I changed the name to Informatoion
 // By adding in the jwt.Standard claims we embed fields jwt standard claim type this is a form of composition
 type UserJWTInformation struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	Surname string `json:"surname"`
+	ID          string `json:"id"`
+	DisplayName string `json:"displayname"`
+	Name        string `json:"name"`
+	Surname     string `json:"surname"`
 	jwt.StandardClaims
 }
 
@@ -44,9 +46,10 @@ type UserJWTInformation struct {
 func GenerateJWTToken(u *db.User) (string, error) {
 	// create a new user clims
 	userInformation := UserJWTInformation{
-		ID:      u.Username,
-		Name:    u.Name,
-		Surname: u.Surname,
+		ID:          u.Id,
+		DisplayName: u.Username,
+		Name:        u.Name,
+		Surname:     u.Surname,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: time.Now().Add(60 * time.Minute).Unix(),
@@ -94,11 +97,12 @@ func CustomAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		var user db.User
-		err = db.DB.Get(&user, "SELECT * FROM users WHERE username=?", userClaims.ID) // Get the first entry if there is any any in the databse matching this query
+		err = db.DB.Get(&user, "SELECT * FROM users WHERE id=?", userClaims.ID) // Get the first entry if there is any any in the databse matching this query
 		if err != nil {
 			return c.Redirect(302, "login")
 		}
 
+		c.Set("userid", user.Id)
 		return next(c)
 	}
 }
@@ -151,7 +155,7 @@ func HandleLoginAttempt(c echo.Context) error {
 
 	c.SetCookie(cookie) // Sets a cookie in the response with the auth
 	c.Response().Header().Set("HX-Location", "/")
-	return c.String(200, "Welcom") //TODO : Investigate if it can be replaced with a client side Redirect using htmx
+	return c.String(200, "Welcome")
 }
 
 // This function will handle the request for the register page
@@ -193,6 +197,7 @@ func HandleRegisterAttempt(c echo.Context) error {
 	if err := db.DB.Get(&user, query, userRegistration.Username, userRegistration.Email); err != nil {
 		if err == sql.ErrNoRows {
 			newUser := db.User{
+				Id:           uuid.New().String(),
 				Username:     userRegistration.Username,
 				Name:         userRegistration.Name,
 				Email:        userRegistration.Email,
@@ -200,10 +205,9 @@ func HandleRegisterAttempt(c echo.Context) error {
 				PasswordHash: hashedPassword,
 				CreatedAt:    time.Now(),
 				UpdatedAt:    time.Now(),
-				Session:      sql.NullString{},
 			}
 
-			_, err := db.DB.NamedExec("INSERT INTO users (username, name, email, surname, password_hash, created_at, updated_at, session) VALUES (:username, :name, :email, :surname, :password_hash, :created_at, :updated_at, :session)", &newUser)
+			_, err := db.DB.NamedExec("INSERT INTO users (id, username, name, email, surname, password_hash, created_at, updated_at) VALUES (:id, :username, :name, :email, :surname, :password_hash, :created_at, :updated_at)", &newUser)
 			if err != nil {
 				fmt.Println("Failed to make the entry:", err)
 				return Render(c, pages.RegisterPage(false))

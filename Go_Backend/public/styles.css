@@ -578,10 +578,6 @@ video {
   grid-column: span 6 / span 6;
 }
 
-.col-span-8 {
-  grid-column: span 8 / span 8;
-}
-
 .col-start-3 {
   grid-column-start: 3;
 }
@@ -624,6 +620,10 @@ video {
 
 .flex {
   display: flex;
+}
+
+.table {
+  display: table;
 }
 
 .grid {
@@ -670,10 +670,6 @@ video {
 
 .grid-cols-10 {
   grid-template-columns: repeat(10, minmax(0, 1fr));
-}
-
-.grid-cols-12 {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
 .grid-cols-2 {
