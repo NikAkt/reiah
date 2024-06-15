@@ -1,5 +1,6 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import filter_img from "/assets/icon/Filter.png";
+import MapFilter from "./MapFilter";
 
 const Filter = () => {
   const [filterDisplay, setFilterDisplay] = createSignal(false);
@@ -13,9 +14,10 @@ const Filter = () => {
       class="absolute z-30 w-32 flex flex-col 
     items-center gap-0.5 mt-[11vh] ml-[42vw]
     border-solid border-2 border-indigo-600"
+      justify-center
     >
       <button
-        class="bg-black rounded-2xl ml-[55%] z-20
+        class="bg-black rounded-2xl  z-20
         cursor-pointer w-32 h-9 text-white flex 
         items-center justify-center gap-1.5 hover:scale-110 
         duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
@@ -24,11 +26,19 @@ const Filter = () => {
         <img src={filter_img} alt="filter" />
         <span>Filter</span>
       </button>
-      {/* {filterDisplay() && (
-        <div class="fixed m-0 px-0 top-[5vh] left-[70vw] w-[30vw] bg-green h-[95vh] z-20 flex flex-col items-center delay-[300ms] animate-fade-in">
+      {filterDisplay() && (
+        <div
+          class="m-0 px-0 mt-[-2vh] left-[70vw] w-[30vw] bg-white h-[80vh] 
+        z-20 flex flex-col items-center delay-[300ms] animate-fade-down overflow-y-auto"
+        >
           <p>Filter</p>
+          <div class="w-[90%] flex flex-col h-[100%] text-white items-center">
+            <p>Map Filter</p>
+            <MapFilter />
+            <p>Price</p>
+          </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

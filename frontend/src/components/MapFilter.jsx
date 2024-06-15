@@ -4,11 +4,11 @@ const MapFilter = (props) => {
   const [haveBikeLayer, setBikeLayer] = createSignal(false);
   const [haveTrafficLayer, setTrafficLayer] = createSignal(false);
   const [haveTransitLayer, setTransitLayer] = createSignal(false);
-  const [showdropdown, setShowdropdown] = createSignal(false);
-  const handleClick = () => {
-    setShowdropdown((prev) => !prev);
-    console.log(showdropdown());
-  };
+  // const [showdropdown, setShowdropdown] = createSignal(true);
+  // const handleClick = () => {
+  //   setShowdropdown((prev) => !prev);
+  //   console.log(showdropdown());
+  // };
   const google_maps = layerStore.google_map;
 
   const handleBikeLayer = () => {
@@ -34,21 +34,13 @@ const MapFilter = (props) => {
   };
 
   return (
-    <div class="absolute left-[40vw] top-[1.5vh] h-[15vh] w-[8vw]  flex flex-row border-solid border-2 border-indigo-600">
+    <div class="h-[15vh] w-[60%] flex flex-col border-solid border-2 border-indigo-600">
       <div
-        class="absolute z-20 text-white w-[100%] h-[5vh]
-      bg-green hover:bg-blue flex flex-col
-      duration-300 active:bg-blue 
-      justify-center items-center cursor-pointer"
-        onClick={handleClick}
+        class={`bg-green z-20 w-[100%]
+        text-white items-center 
+        justify-center border-solid border-2 border-indigo-600`}
       >
-        Map Filter{" "}
-      </div>
-      <div
-        class={`absolute bg-green z-20 w-[100%] top-[3vh] h-[9vh]
-        text-white cursor-pointer delay-[300ms] animate-fade-down items-center 
-        justify-center ${showdropdown() ? "block" : "hidden"}`}
-      >
+        {/* ${showdropdown() ? "block" : "hidden"} */}
         <div>
           <input
             type="checkbox"
