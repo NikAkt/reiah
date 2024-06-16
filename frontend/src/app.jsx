@@ -22,6 +22,7 @@ export default function App() {
       root={(props) => (
         <div class="m-0 px-0 flex flex-col">
           <Nav />
+          <Dashboard />
           {/* <Suspense>{props.children}</Suspense> */}
           {/* <LoginRegister /> */}
           <GoogleMap
@@ -31,7 +32,6 @@ export default function App() {
             zoom={10}
           />
           <Filter />
-          <Dashboard />
         </div>
       )}
     >

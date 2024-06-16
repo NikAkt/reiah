@@ -15,6 +15,9 @@ const Dashboard = () => {
       id="dashboard"
     >
       <span class="text-white">Dashboard</span>
+      <div class="absolute w-[80%] h-[80%] border-2 border-indigo-600">
+        Here's the chart
+      </div>
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import { onMount, createEffect, createSignal } from "solid-js";
 import { layerStore, isGoogleMapInitialized } from "./layerStore";
 import * as mc from "@googlemaps/markerclusterer";
-import cluster from "cluster";
 const { MarkerClusterer, GridAlgorithm } = mc;
+import Chart from "chart.js/auto";
 
 const markers = [];
 
@@ -12,30 +12,19 @@ function Markers() {
   createEffect(async () => {
     if (isGoogleMapInitialized()) {
       const map = layerStore.map;
+
       if (map) {
         console.log("Google Maps instance is available", layerStore.google_map);
-        const { AdvancedMarkerElement, PinElement } =
-          await google.maps.importLibrary("marker");
-        // if (!AdvancedMarker || !Pin) {
+        // const { AdvancedMarkerElement, PinElement } =
+        //   await google.maps.importLibrary("marker");
+        const infoWindow = new google.maps.InfoWindow({
+          content: "",
+          ariaLabel: "Uluru",
+        });
 
-        //   setAdvancedMarker(AdvancedMarkerElement);
-        //   setPin(PinElement);
-        // }
-        // console.log("AdvancedMarker", AdvancedMarker());
-
-        // const marker = new AdvancedMarkerElement({
-        //   map,
-        //   position: { lat: 40.7128, lng: -74.006 },
-        // });
-        // Example: Add a marker
-        // new google.maps.Marker({
-        //   position: { lat: 40.7128, lng: -74.006 },
-        //   map,
-        //   title: "New York",
-        // });
         fetch("/assets/cleaned_housing_data.json")
           .then((response) => response.json())
-          .then((data) => {
+          .then(async (data) => {
             const icon = {
               path: google.maps.SymbolPath.CIRCLE,
               scale: 20,
@@ -43,7 +32,11 @@ function Markers() {
               fillOpacity: 1,
               strokeWeight: 0.4,
             };
-
+            const historic_real_estate_data_promise = await fetch(
+              "/assets/historic_real_estate_prices.json"
+            );
+            const historic_real_estate_data =
+              await historic_real_estate_data_promise.json();
             // const dataFilter = data.filter(
             //   (data) => data["business_type"] === "Home Services"
             // );
@@ -61,7 +54,7 @@ function Markers() {
               //   glyph: el["median_home_value"].toString(),
               // });
 
-              return new google.maps.Marker({
+              const marker = new google.maps.Marker({
                 map,
                 position: {
                   lat: el["lat"],
@@ -78,61 +71,44 @@ function Markers() {
                 clickable: true,
                 icon,
               });
+              marker.addListener("click", ({ domEvent, latLng }) => {
+                const { target } = domEvent;
+
+                // infoWindow.close();
+                // infoWindow.setContent(marker.title);
+                // infoWindow.open(marker.map, marker);
+                const infoWindow = document.getElementById("dashboard");
+
+                infoWindow.innerText = `ZIPCODE: ${marker.title}`;
+                infoWindow.innerHTML += '<canvas id="chart_js"></canvas>';
+                const dataFilter = historic_real_estate_data.filter(
+                  ({ zip_code }) => zip_code == marker.title
+                );
+                // console.log(dataFilter);
+
+                new Chart(document.getElementById("chart_js"), {
+                  type: "bar",
+                  data: {
+                    labels: Object.keys(dataFilter[0]["price"]),
+                    datasets: [
+                      {
+                        label: marker.title,
+                        data: Object.values(dataFilter[0]["price"]),
+                      },
+                    ],
+                  },
+                });
+              });
+              return marker;
             });
 
-            //// change color if this cluster has more markers than the mean cluster
+            let totalAvgPrice = 0;
+            markers.map((marker) => {
+              totalAvgPrice += marker.price;
+            });
+            totalAvgPrice /= markers.length * 1000;
 
-            // create svg url with fill color
-
-            // const renderer = () => {
-            //   const color =
-            //     count > Math.max(10, stats.clusters.markers.mean)
-            //       ? "#0145ac"
-            //       : "#81c7a5";
-
-            //   const svg = window.btoa(`
-            // <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-            // <circle cx="120" cy="120" opacity=".6" r="70" />
-            // <circle cx="120" cy="120" opacity=".3" r="90" />
-            // <circle cx="120" cy="120" opacity=".2" r="110" />
-            // <circle cx="120" cy="120" opacity=".1" r="130" />
-            // </svg>`);
-
-            //   // create marker using svg icon
-            //   return new google.maps.Marker({
-            //     position,
-            //     icon: {
-            //       url: `data:image/svg+xml;base64,${svg}`,
-            //       scaledSize: new google.maps.Size(45, 45),
-            //     },
-            //     label: {
-            //       text: String(count),
-            //       color: "rgba(255,255,255,0.9)",
-            //       fontSize: "12px",
-            //     },
-            //     // adjust zIndex to be above other markers
-            //     zIndex: 1000 + count,
-            //   });
-            // };
-            // const renderer = {
-            //   render: function ({ count, position }) {
-            //     return new google.maps.Marker({
-            //       label: {
-            //         text: count.toString(),
-            //         color: "red",
-            //         fontSize: "50px",
-            //       },
-            //       position,
-            //       icon: {
-            //         url: "/assets/icon/home-service.svg",
-            //         scaledSize: new google.maps.Size(45, 45),
-            //       },
-            //       title: "Zoom in to view resources in this area",
-            //       // adjust zIndex to be above other markers
-            //       zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
-            //     });
-            //   },
-            // };
+            console.log("total avg price: ", totalAvgPrice);
 
             const clusterRenderer = {
               render: (cluster, stats) => {
@@ -145,13 +121,26 @@ function Markers() {
                   avgPrice += marker.price * 1;
                 });
                 avgPrice /= count * 1000;
+                const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
+
+                const svg = window.btoa(`
+            <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+            <circle cx="120" cy="120" opacity=".6" r="70" />
+            <circle cx="120" cy="120" opacity=".3" r="90" />
+            <circle cx="120" cy="120" opacity=".2" r="110" />
+            <circle cx="120" cy="120" opacity=".1" r="130" />
+            </svg>`);
                 return new google.maps.Marker({
+                  icon: {
+                    url: `data:image/svg+xml;base64,${svg}`,
+                    scaledSize: new google.maps.Size(45, 45),
+                  },
+
                   label: {
-                    text: `${Math.ceil(avgPrice)}k`,
+                    text: `$${Math.ceil(avgPrice)}k`,
                     color: "white",
                   },
                   position: position,
-                  icon,
                   map,
                   zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
                 });
