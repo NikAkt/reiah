@@ -32,10 +32,17 @@ const Filter = () => {
         z-20 flex flex-col items-center delay-[300ms] animate-fade-down overflow-y-auto"
         >
           <p>Filter</p>
-          <div class="w-[90%] flex flex-col h-[100%] text-white items-center">
+          <div class="w-[90%] flex flex-col h-[100%] items-center">
             <p>Map Filter</p>
             <MapFilter />
-            <p>Price</p>
+            <p>Home value</p>
+            <div id="price_plot"></div>
+            <p>Median Income</p>
+            <div id="median_income_plot"></div>
+            <p>Borough</p>
+            <p>Neighbourhood</p>
+            <p>Zip Code</p>
+            <p>Amenities</p>
           </div>
         </div>
       )}

@@ -3,6 +3,7 @@ import { layerStore, isGoogleMapInitialized } from "./layerStore";
 import * as mc from "@googlemaps/markerclusterer";
 const { MarkerClusterer, GridAlgorithm } = mc;
 import Chart from "chart.js/auto";
+// import Plotly from "plotly.js-dist-min";
 
 const markers = [];
 
@@ -10,6 +11,8 @@ function Markers() {
   // const [AdvancedMarker, setAdvancedMarker] = createSignal(null);
   // const [infoWindow, setInfoWindow] = createSignal(null);
   createEffect(async () => {
+    let Plotly = null;
+    Plotly = await import("plotly.js-dist-min");
     if (isGoogleMapInitialized()) {
       const map = layerStore.map;
 
@@ -22,7 +25,7 @@ function Markers() {
           ariaLabel: "Uluru",
         });
 
-        fetch("/assets/cleaned_housing_data.json")
+        fetch("/assets/real_estate_price_data.json")
           .then((response) => response.json())
           .then(async (data) => {
             const icon = {
@@ -51,27 +54,27 @@ function Markers() {
             // });
             const markers = data.map((el) => {
               // const pin = new PinElement({
-              //   glyph: el["median_home_value"].toString(),
+              //   glyph: el["avg_home_value"].toString(),
               // });
 
               const marker = new google.maps.Marker({
                 map,
                 position: {
-                  lat: el["lat"],
+                  lat: el["lat"] * 1,
                   lng: el["lng"] * 1,
                 },
                 label: {
-                  text: `${el["median_home_value"] / 1000}k`,
+                  text: `${el["avg_home_value"] / 1000}k`,
                   color: "white",
                 },
-                price: el["median_home_value"],
+                price: el["avg_home_value"],
                 animation: google.maps.Animation.DROP,
                 // gmpClickable: true,
-                title: el["zipcode"],
+                title: el["zipcode"].toString(),
                 clickable: true,
                 icon,
               });
-              marker.addListener("click", ({ domEvent, latLng }) => {
+              marker.addListener("click", async ({ domEvent, latLng }) => {
                 const { target } = domEvent;
 
                 // infoWindow.close();
@@ -81,23 +84,81 @@ function Markers() {
 
                 infoWindow.innerText = `ZIPCODE: ${marker.title}`;
                 infoWindow.innerHTML += '<canvas id="chart_js"></canvas>';
+                infoWindow.innerHTML +=
+                  '<div id="plotly_js" class="w-[80%]"></div>';
                 const dataFilter = historic_real_estate_data.filter(
-                  ({ zip_code }) => zip_code == marker.title
+                  ({ zipcode }) => String(zipcode) === marker.title
                 );
-                // console.log(dataFilter);
+
+                //chart js
 
                 new Chart(document.getElementById("chart_js"), {
                   type: "bar",
                   data: {
-                    labels: Object.keys(dataFilter[0]["price"]),
+                    labels: Object.keys(dataFilter[0]),
                     datasets: [
                       {
                         label: marker.title,
-                        data: Object.values(dataFilter[0]["price"]),
+                        data: Object.values(dataFilter[0]),
                       },
                     ],
                   },
                 });
+
+                //plotly
+
+                const selectorOptions = {
+                  buttons: [
+                    {
+                      step: "month",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "1m",
+                    },
+                    {
+                      step: "month",
+                      stepmode: "backward",
+                      count: 6,
+                      label: "6m",
+                    },
+                    {
+                      step: "year",
+                      stepmode: "todate",
+                      count: 1,
+                      label: "YTD",
+                    },
+                    {
+                      step: "year",
+                      stepmode: "backward",
+                      count: 1,
+                      label: "1y",
+                    },
+                    {
+                      step: "all",
+                    },
+                  ],
+                };
+                const preped_data = [
+                  {
+                    mode: "lines",
+                    x: Object.keys(dataFilter[0]),
+                    y: Object.values(dataFilter[0]),
+                  },
+                ];
+                const layout = {
+                  title: "Time series with range slider and selectors",
+                  xaxis: {
+                    rangeselector: selectorOptions,
+                    rangeslider: {},
+                  },
+                  yaxis: {
+                    fixedrange: true,
+                  },
+                };
+
+                if (Plotly) {
+                  Plotly.newPlot("plotly_js", preped_data, layout);
+                }
               });
               return marker;
             });
@@ -150,7 +211,7 @@ function Markers() {
               markers,
               map,
               renderer: clusterRenderer,
-              onClusterClick: (event, cluster, map) => {
+              onClusterClick: async (event, cluster, map) => {
                 const infoWindow = document.getElementById("dashboard");
                 infoWindow.innerText = `Cluster center: ${cluster.position}, 
                 Number of markers: ${cluster.markers.length}`;

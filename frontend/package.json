@@ -15,6 +15,7 @@
     "chart.js": "^4.4.3",
     "node": "^21.6.1",
     "plotly.js-dist": "^2.33.0",
+    "plotly.js-dist-min": "^2.33.0",
     "postcss": "^8.4.38",
     "solid-js": "^1.8.17",
     "tailwindcss": "^3.4.3",
