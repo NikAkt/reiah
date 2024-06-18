@@ -5,6 +5,8 @@ function initMap() {
     mapTypeControl: false,
   });
   window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
+
+  window.googleMapObject.data.loadGeoJson('/public/NYC_Neighborhood.geojson');
 }
 
 function mapDarkModeHandler() {
