@@ -1,13 +1,15 @@
 import logo from "../logo.svg";
 import { createSignal } from "solid-js";
+import { setUsername, setToken } from "../store"; // Import global state setters
+import { useNavigate } from "@solidjs/router"; // Import useNavigate for navigation
 
 function LoginForm() {
   const [formState, setFormState] = createSignal({
-    email: "",
+    username: "",
     password: "",
   });
-
   const [message, setMessage] = createSignal("");
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +20,7 @@ function LoginForm() {
     e.preventDefault();
     const data = formState();
     setFormState({
-      email: "",
+      username: "",
       password: "",
     });
 
@@ -29,7 +31,7 @@ function LoginForm() {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-          username: data.email,
+          username: data.username,
           password: data.password,
         }),
       });
@@ -40,11 +42,15 @@ function LoginForm() {
 
       const result = await response.json();
       console.log("Success:", result);
-      sessionStorage.setItem("token", result.access_token);
       setMessage("Login successful!");
+      setUsername(data.username); // Set global username state
+      setToken(result.access_token); // Set global token state
+      sessionStorage.setItem("username", data.username); // Store username in sessionStorage
+      sessionStorage.setItem("token", result.access_token); // Store token in sessionStorage
+      navigate("/"); // Redirect to home page
     } catch (error) {
       console.error("Error:", error);
-      setMessage(`Error: ${error.message}`);
+      setMessage("Login failed. Please try again.");
     }
   };
 
@@ -65,15 +71,15 @@ function LoginForm() {
           <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
             <div>
               <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Email
+                Username
               </label>
               <input
-                type="email"
-                name="email"
+                type="text"
+                name="username"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="name@company.com"
+                placeholder="Your username"
                 onInput={handleChange}
-                value={formState().email}
+                value={formState().username}
                 required
               />
             </div>
@@ -114,17 +120,7 @@ function LoginForm() {
             >
               Sign in
             </button>
-            {message() && (
-              <div
-                class={`mt-4 p-2 rounded-md ${
-                  message().startsWith('Login successful')
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
-                }`}
-              >
-                {message()}
-              </div>
-            )}
+            {message() && <p>{message()}</p>}
           </form>
         </div>
       </div>

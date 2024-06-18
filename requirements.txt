@@ -13,6 +13,7 @@ attrs @ file:///home/conda/feedstock_root/build_artifacts/attrs_1704011227531/wo
 autograd==1.6.2
 autograd-gamma==0.5.0
 Babel @ file:///home/conda/feedstock_root/build_artifacts/babel_1702422572539/work
+bcrypt==4.1.3
 beautifulsoup4 @ file:///home/conda/feedstock_root/build_artifacts/beautifulsoup4_1705564648255/work
 bleach @ file:///home/conda/feedstock_root/build_artifacts/bleach_1696630167146/work
 blinker==1.7.0
