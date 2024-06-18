@@ -1,5 +1,5 @@
 # Use a Golang base image
-FROM golang:1.21 AS builder
+FROM golang:1.22.4-alpine
 
 # Set the Current Working Directory inside the container
 WORKDIR /app
@@ -11,26 +11,16 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Install necessary build tools
-RUN apt-get update && apt-get install -y gcc
+RUN apk update && apk add --no-cache build-base
 
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
 # Build the Go app
-RUN go build -o main .
-
-# Start a new stage from scratch
-FROM debian:bookworm-slim
-
-# Set the Current Working Directory inside the container
-WORKDIR /root/
-
-# Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
-COPY --from=builder /app/public ./public
+RUN go build -o bin/app .
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
 
 # Command to run the executable
-CMD ["/root/main"]
+CMD ["./bin/app"]
