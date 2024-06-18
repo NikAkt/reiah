@@ -33,6 +33,12 @@ export default function App() {
     "historic_real_estate_prices.json",
     fetchData
   );
+
+  const [amenitiesData] = createResource(
+    "cleaned_amenities_data2.json",
+    fetchData
+  );
+
   return (
     <Router
       root={(props) => (
@@ -41,7 +47,13 @@ export default function App() {
           {/* <Suspense>{props.children}</Suspense> */}
           <Suspense fallback={<div>Loading...</div>}>
             <Switch>
-              <Match when={realEstateData() && historicalRealEstateData()}>
+              <Match
+                when={
+                  realEstateData() &&
+                  historicalRealEstateData() &&
+                  amenitiesData()
+                }
+              >
                 <>
                   <GoogleMap
                     ref={mapContainer}
@@ -58,6 +70,7 @@ export default function App() {
                     historicalRealEstateData={JSON.stringify(
                       historicalRealEstateData()
                     )}
+                    amenitiesData={JSON.stringify(amenitiesData())}
                   />
                   <Dashboard />
                 </>

@@ -3,7 +3,11 @@ import { createSignal, onCleanup, onMount } from "solid-js";
 import MapFilter from "./MapFilter";
 import Chart from "chart.js/auto";
 
-const Filter = ({ realEstateData, historicalRealEstateData }) => {
+const Filter = ({
+  realEstateData,
+  historicalRealEstateData,
+  amenitiesData,
+}) => {
   const [filterDisplay, setFilterDisplay] = createSignal(false);
   let chartInstance = null;
   let homeValuePlotRef;
@@ -27,6 +31,7 @@ const Filter = ({ realEstateData, historicalRealEstateData }) => {
 
   realEstateData = parseData(realEstateData);
   historicalRealEstateData = parseData(historicalRealEstateData);
+  amenitiesData = parseData(amenitiesData);
 
   realEstateData.map((el) => {
     avg_home_value.push(el["avg_home_value"]);
@@ -35,9 +40,13 @@ const Filter = ({ realEstateData, historicalRealEstateData }) => {
     median_age.push(el["median_age"]);
   });
 
-  // const unique_zipCode = realEstateData
-  //   ? [...new Set(realEstateData.map((item) => item["zipcode"]))]
-  //   : [];
+  const unique_borough = amenitiesData
+    ? [...new Set(amenitiesData.map((item) => item["BOROUGH"]))]
+    : [];
+
+  const unique_amenity_type = amenitiesData
+    ? [...new Set(amenitiesData.map((item) => item["FACILITY_DESC"]))]
+    : [];
 
   const plotHomeValue = () => {
     const ctx = homeValuePlotRef;
@@ -145,7 +154,15 @@ const Filter = ({ realEstateData, historicalRealEstateData }) => {
 
             <p>Median Income</p>
             <div id="median_income_plot"></div>
-            <p>Borough</p>
+            <div>
+              <p>Borough</p>
+              {unique_borough.map((el) => (
+                <input value={el.toString()} type="checkbox">
+                  {el.toString()}
+                </input>
+              ))}
+            </div>
+
             <p>Neighbourhood</p>
             <div>
               <p>Zip Code</p>
@@ -156,8 +173,14 @@ const Filter = ({ realEstateData, historicalRealEstateData }) => {
                 ))}
               </select>
             </div>
-
-            <p>Amenities</p>
+            <div>
+              <p>Amenities</p>
+              <select name="amenities" id="amenities">
+                {unique_amenity_type.map((el) => (
+                  <option value={el.toString()}>{el.toString()}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}

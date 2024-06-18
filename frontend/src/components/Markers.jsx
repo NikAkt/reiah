@@ -8,7 +8,7 @@ import Chart from "chart.js/auto";
 let markers;
 
 const Markers = (props) => {
-  console.log("data in markers", props.realEstateData);
+  // console.log("data in markers", props.realEstateData);
   createEffect(async () => {
     // let Plotly = null;
     // Plotly = await import("plotly.js-dist-min");
