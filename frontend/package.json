@@ -13,6 +13,7 @@
     "@solidjs/start": "^1.0.1",
     "autoprefixer": "^10.4.19",
     "chart.js": "^4.4.3",
+    "chartjs-plugin-zoom": "^2.0.1",
     "node": "^21.6.1",
     "plotly.js-dist": "^2.33.0",
     "plotly.js-dist-min": "^2.33.0",

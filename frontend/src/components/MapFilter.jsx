@@ -58,7 +58,7 @@ const MapFilter = (props) => {
             id="trafficLayer"
             onClick={handleTrafficLayer}
           />
-          <label htmlFor="bikeLayer">Traffic Layer</label>
+          <label htmlFor="trafficLayer">Traffic Layer</label>
         </div>
 
         <div>
@@ -68,7 +68,19 @@ const MapFilter = (props) => {
             id="transitLayer"
             onClick={handleTransitLayer}
           />
-          <label htmlFor="bikeLayer">Transit Layer</label>
+          <label htmlFor="transitLayer">Transit Layer</label>
+        </div>
+
+        <div>
+          <input
+            type="checkbox"
+            name="markerClearer"
+            id="markerClearer"
+            onClick={console.log(
+              "Yeah markers should be cleared out on the map"
+            )}
+          />
+          <label htmlFor="markerLayer">Marker</label>
         </div>
       </div>
     </div>

@@ -1,11 +1,10 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { setLayerStore, setIsGoogleMapInitialized } from "./layerStore";
-import MapFilter from "./MapFilter";
 import Markers from "./Markers";
-import Filter from "./Filter";
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
 
 const GoogleMap = (props) => {
+  console.log("props in googlemap", props);
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
     // console.log(night_mapstyle);
@@ -20,8 +19,6 @@ const GoogleMap = (props) => {
       setLayerStore("google_map", google.maps);
       setIsGoogleMapInitialized(true);
       //dynamic map style:
-      // map.mapTypes.set("styled_map", styledMapType);
-      // map.setMapTypeId("styled_map");
       // let neighbourhood_geojson = JSON.stringify(neighbourhood);
       // neighbourhood_geojson = JSON.parse(neighbourhood_geojson);
       // map.data.loadGeoJson(
@@ -86,8 +83,10 @@ const GoogleMap = (props) => {
   return (
     <div>
       <div id="map" class="w-[60vw] h-[90vh] mt-[10vh]" />
-      <Markers />
-      {/* <Filter /> */}
+      <Markers
+        realEstateData={props.realEstateData}
+        historicalRealEstateData={props.historicalRealEstateData}
+      />
     </div>
   );
 };
