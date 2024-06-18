@@ -41,5 +41,5 @@ func main() {
 
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/public", "public")
-	e.Logger.Fatal(e.Start("127.0.0.1:3000"))
+	e.Logger.Fatal(e.Start("0.0.0.0:8000"))
 }
