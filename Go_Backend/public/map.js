@@ -1,12 +1,16 @@
 function initMap() {
-  window.googleMapObject = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 40.776676, lng: -73.971321 },
-    zoom: 12,
-    mapTypeControl: false,
-  });
-  window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
+  const mapElement = document.getElementById("map")
+console.log("attempting map build")
+  if (mapElement) {
+    window.googleMapObject = new google.maps.Map(mapElement, {
+      center: { lat: 40.75, lng: -73.971321 },
+      zoom: 11,
+      mapTypeControl: false,
+    });
+    window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
 
-  window.googleMapObject.data.loadGeoJson('/public/NYC_Neighborhood.geojson');
+    window.googleMapObject.data.loadGeoJson('/public/NYC_Neighborhood.geojson');
+  }
 }
 
 function mapDarkModeHandler() {

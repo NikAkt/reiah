@@ -9,5 +9,6 @@ import (
 // This page will host the google maps implementation and may rely more on javascript
 // The reason it may require more javascrpt is due to the nature of the google maps API
 func HandleMap(c echo.Context) error {
+	c.Response().Header().Set("HX-Trigger-After-Swap", "updatemap")
 	return Render(c, pages.Map())
 }

@@ -23,11 +23,11 @@ templ Base() {
 			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
 			<script defer src="https://unpkg.com/alpinejs"></script>
 			<script defer src="https://unpkg.com/htmx.org@1.9.9"></script>
-			<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&libraries=maps,marker&v=beta"></script>
 			<script src="/public/map.js"></script>
+			<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&libraries=maps,marker&v=beta&callback=initMap&loading=async"></script>
 			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		</head>
-		<body x-data class="text-gray-800">
+		<body @updateMap="initMap()" x-data class="text-gray-800">
 			{ children... }
 		</body>
 	</html>
