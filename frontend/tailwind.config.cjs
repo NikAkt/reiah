@@ -2,6 +2,7 @@
 module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
   theme: {
+    filter_title: {},
     extend: {
       colors: {
         blue: "#0145ac",

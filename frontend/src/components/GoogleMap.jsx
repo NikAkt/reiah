@@ -13,7 +13,7 @@ const GoogleMap = (props) => {
       const map = await new google.maps.Map(document.getElementById("map"), {
         center: { lat: props.lat, lng: props.lng },
         zoom: props.zoom,
-        mapId: "4504f8b37365c3d0",
+        // mapId: "4504f8b37365c3d0",
       });
       setLayerStore("map", map);
       setLayerStore("google_map", google.maps);
@@ -62,7 +62,6 @@ const GoogleMap = (props) => {
   }
   onMount(() => {
     window.initMap = initMap;
-    const API_KEY = "AIzaSyC7DX18HcyPErM1IXOIrThR5UmU__8pLwk";
     //&language=en
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap&language=en&libraries=marker`;

@@ -34,11 +34,11 @@ const MapFilter = (props) => {
   };
 
   return (
-    <div class="h-[15vh] w-[60%] flex flex-col border-solid border-2 border-indigo-600">
+    <div class="h-[15vh] w-[60%] flex flex-col">
       <div
-        class={`bg-green z-20 w-[100%]
-        text-white items-center 
-        justify-center border-solid border-2 border-indigo-600`}
+        class={`z-20 w-[100%]
+        items-center flex flex-col
+        justify-center`}
       >
         {/* ${showdropdown() ? "block" : "hidden"} */}
         <div>
