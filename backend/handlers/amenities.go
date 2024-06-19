@@ -2,14 +2,24 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
-
-	"github.com/denartha10/SummerProjectGOTH/models"
-	"github.com/labstack/echo/v4"
 )
+
+type Amenity struct {
+	Borough            string  `json:"BOROUGH"`
+	Name               string  `json:"NAME"`
+	FacilityType       string  `json:"FACILITY_TYPE"`
+	FacilityDesc       string  `json:"FACILITY_DESC"`
+	ZipCode            int     `json:"ZIP_CODE"`
+	Longitude          float64 `json:"LNG"`
+	Latitude           float64 `json:"LAT"`
+	Count              int     `json:"COUNT"`
+	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
+}
 
 func ServeAmenitiesData(c echo.Context) error {
 	// Reading the json file
@@ -21,7 +31,7 @@ func ServeAmenitiesData(c echo.Context) error {
 	}
 	defer file.Close()
 
-	var amenities []models.Amenity
+	var amenities []Amenity
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&amenities); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the amenities file")
@@ -36,8 +46,8 @@ func ServeAmenitiesData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredAmenities)
 }
 
-func filterAmenities(amenities []models.Amenity, borough string, zipCode int) []models.Amenity {
-	var filtered []models.Amenity
+func filterAmenities(amenities []Amenity, borough string, zipCode int) []Amenity {
+	var filtered []Amenity
 	for _, amenity := range amenities {
 		if borough != "" && amenity.Borough != borough {
 			continue
