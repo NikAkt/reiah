@@ -1,12 +1,26 @@
-FROM python:3.11-slim
+# Use a Golang base image
+FROM golang:1.22.4-alpine
 
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Copy go mod and sum files
+COPY go.mod go.sum ./
 
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+RUN go mod download
+
+# Install necessary build tools
+RUN apk update && apk add --no-cache build-base
+
+# Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-ENV PYTHONPATH=/app
+# Build the Go app
+RUN go build -o bin/app .
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Expose port 8000 to the outside world
+EXPOSE 8000
+
+# Command to run the executable
+CMD ["./bin/app"]

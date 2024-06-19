@@ -1,4 +1,3 @@
-
 # Real Estate Advisor
 
 An application that provides real estate insights and predictions based on busyness data.
