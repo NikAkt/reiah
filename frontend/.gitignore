@@ -28,4 +28,4 @@ gitignore
 Thumbs.db
 
 #api
-/src/api.js
+frontend/src/api.js
