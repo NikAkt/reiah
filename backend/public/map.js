@@ -8,8 +8,11 @@ function initMap() {
       disableDefaultUI: true
     });
     window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
-
     window.googleMapObject.data.loadGeoJson('/public/NYC_Neighborhood.geojson');
+    window.googleMapObject.data.setStyle({
+      fillColor: document.documentElement.dataset.mode === "light" ? "black" : "white",
+      strokeWeight: 1
+    });
     window.mapExists = true
   }
 }
