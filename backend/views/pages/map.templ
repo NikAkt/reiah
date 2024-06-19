@@ -4,9 +4,10 @@ import "github.com/denartha10/SummerProjectGOTH/views/layouts"
 
 // This map component is wrapped in a MapView layout so it differs from the other dashboards with no padding
 templ Map() {
-	@layouts.MapView() {
-		<div class="h-screen">
-			<div id="map" class="h-full w-full"></div>
-		</div>
-	}
+@layouts.MapView() {
+<div class="h-screen flex" x-data="{'listOpen': false}">
+  <div id="map" class="h-full basis-2/5 grow"></div>
+  <div class="bg-white basis-3/5 hidden" :class="{'hidden': !listOpen}"></div>
+</div>
+}
 }

@@ -27,7 +27,9 @@ templ Base() {
 			<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&libraries=maps,marker&v=beta&callback=initMap&loading=async"></script>
 			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		</head>
-		<body @updateMap="initMap()" x-data class="text-gray-800">
+		//TODO: The reason the sidebar closed when navigating to map is because the callback updateMap is called which resets
+		//The alpine state it seems
+		<body @updateMap="initMap()" x-data="{'sidebarOpen': false}" class="text-gray-800">
 			{ children... }
 		</body>
 	</html>
@@ -37,9 +39,9 @@ templ Base() {
 // Contains some padding so style is consistent accross pages
 templ DashboardView() {
 	@Base() {
-		<div class="flex">
+		<div>
 			@components.Sidebar(links)
-			<main class="w-full bg-gray-100 dark:bg-gray-900 min-h-screen">
+			<main class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen" @mouseover="sidebarOpen = false">
 				@components.Navbar()
 				<!-- content -->
 				<div x-sort class="p-8 grid grid-cols-3 gap-4" id="page-content">
@@ -56,9 +58,9 @@ templ DashboardView() {
 // the map will take up the content viewontent section that can swap in and out contentontent section that can swap in
 templ MapView() {
 	@Base() {
-		<div class="flex">
+		<div>
 			@components.Sidebar(links)
-			<main class="w-full bg-gray-100 dark:bg-gray-900 min-h-screen">
+			<main class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen" @mouseover="sidebarOpen = false">
 				<div>
 					{ children... }
 				</div>
