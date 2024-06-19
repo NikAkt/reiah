@@ -1,6 +1,7 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import { setLayerStore, setIsGoogleMapInitialized } from "./layerStore";
 import Markers from "./Markers";
+import API_KEY from "../api";
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
 
 const GoogleMap = (props) => {
