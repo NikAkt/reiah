@@ -4,9 +4,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ServeAmenitiesData(c echo.Context) error {
-	return c.File("public/assets/cleaned_amenities_data2.json")
-}
+// func ServeAmenitiesData(c echo.Context) error {
+// 	return c.File("public/assets/cleaned_amenities_data2.json")
+// }
 
 func ServeBusinessData(c echo.Context) error {
 	return c.File("public/assets/cleaned_business_data.json")
