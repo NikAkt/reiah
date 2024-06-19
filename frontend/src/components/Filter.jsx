@@ -43,14 +43,12 @@ const Filter = ({
     median_age.push(el["median_age"]);
   });
 
-  console.log("zipcode", zipcode.length);
-
   const unique_borough = amenitiesData
     ? [...new Set(amenitiesData.map((item) => item["BOROUGH"]))]
     : [];
 
   const unique_amenity_type = amenitiesData
-    ? [...new Set(amenitiesData.map((item) => item["FACILITY_DESC"]))]
+    ? [...new Set(amenitiesData.map((item) => item["FACILITY_TYPE"]))]
     : [];
 
   // const plotHomeValue = () => {
@@ -107,14 +105,15 @@ const Filter = ({
     <div
       class="absolute z-30 w-32 flex flex-col 
     items-center gap-0.5 mt-[11vh] ml-[42vw]
-    border-solid border-2 border-indigo-600"
-      justify-center
+    border-solid border-2 border-indigo-600 justify-center
+    text-white"
     >
       <button
         class="bg-black rounded-2xl  z-20
         cursor-pointer w-32 h-9 text-white flex 
         items-center justify-center gap-1.5 hover:scale-110 
-        duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
+        duration-300 active:bg-violet-700 focus:outline-none 
+        focus:ring focus:ring-violet-300"
         onClick={handleToggleFilter}
       >
         {/* <img src={filter_img} alt="filter" /> */}
@@ -123,10 +122,11 @@ const Filter = ({
       {filterDisplay() && (
         <div
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
-          left-[70vw] w-[30vw] bg-white h-[80vh] 
+          left-[70vw] w-[40vw] h-[80vh] 
         z-20 items-center delay-[300ms] 
-        animate-fade-down"
+        animate-fade-down bg-green"
         >
+          {/* /////////// FILTER TITLE ////////////////// */}
           <div
             id="filter-dropdown-title"
             class="items-center justify-center
@@ -135,142 +135,195 @@ const Filter = ({
           >
             <p>Filter for {filterTarget()}</p>
           </div>
+          {/* /////////// FILTER CONTENNT////////////////// */}
           <div
             class="w-[100%] flex flex-col h-[100%] 
             items-center py-[10%] px-[10%] gap-y-2.5 
             overflow-y-auto border-2 border-indigo-600 bg-green"
             id="filter-details-container"
           >
+            {/* /////////// MAP FILTER ////////////////// */}
             <div
               id="map-filter-container"
               class="w-[90%] flex flex-col items-center 
               border-solid border-2 border-indigo-600"
             >
-              <p>Map Filter</p>
+              <p class="font-sans text-2xl font-bold text-black">
+                Edit your map
+              </p>
               <MapFilter />
             </div>
 
+            {/* /////////// PROPERTY FILTER////////////////// */}
             <div
-              class="flex flex-col items-center 
+              id="property-filter-container"
+              class="flex flex-col items-center border-2 border-indigo-600"
+            >
+              <p class="font-sans text-2xl font-bold text-black">
+                Filter the Area
+              </p>
+
+              <div id="property-filter">
+                <div
+                  class="flex flex-col items-center 
               border-solid border-2 border-indigo-600"
-              id="home-value-container"
-            >
-              {/* <canvas
+                  id="home-value-container"
+                >
+                  {/* <canvas
                 ref={(el) => (homeValuePlotRef = el)}
                 id="home_value_plot"
               ></canvas> */}
-              <p class="font-sans text-4xl">Home Value</p>
-              <div>Here should be a chart that looks like airbnb's</div>
-              <div class="flex gap-2 ">
-                <div
-                  class="flex flex-col w-[35%] h-[10%] 
+                  <p class="font-sans text-2xl font-bold text-black">
+                    Average Home Value
+                  </p>
+                  <div>Here should be a chart that looks like airbnb's</div>
+                  <div class="flex gap-2 ">
+                    <div
+                      class="flex flex-col w-[35%] h-[10%] 
                 border-solid border-2 border-indigo-600 rounded-lg"
-                >
-                  <p>Minimum</p>
-                  <input
-                    type="number"
-                    placeholder={`${Math.min(...avg_home_value).toString()}`}
-                  ></input>
+                    >
+                      <p>Minimum</p>
+                      <input
+                        type="number"
+                        placeholder={`${Math.min(
+                          ...avg_home_value
+                        ).toString()}`}
+                      ></input>
+                    </div>
+                    <div>---</div>
+                    <div
+                      class="flex w-[35%] h-[10%] flex-col 
+                    border-solid border-2 border-indigo-600 rounded-lg"
+                    >
+                      <p>Maximum</p>
+                      <input
+                        type="number"
+                        placeholder={`${Math.max(
+                          ...avg_home_value
+                        ).toString()}`}
+                      ></input>
+                    </div>
+                  </div>
                 </div>
-                <div>---</div>
-                <div class="flex w-[35%] h-[10%] flex-col border-solid border-2 border-indigo-600 rounded-lg">
-                  <p>Maximum</p>
-                  <input
-                    type="number"
-                    placeholder={`${Math.max(...avg_home_value).toString()}`}
-                  ></input>
-                </div>
-              </div>
-            </div>
 
-            <div
-              class="flex flex-col items-center border-solid border-2 border-indigo-600"
-              id="median-income-container"
-            >
-              {/* <canvas
+                <div
+                  class="flex flex-col items-center 
+                  border-solid border-2 border-indigo-600"
+                  id="median-income-container"
+                >
+                  {/* <canvas
                 ref={(el) => (homeValuePlotRef = el)}
                 id="home_value_plot"
               ></canvas> */}
-              <p>Median Household Income</p>
-              <div>Here should be a chart that looks like airbnb's</div>
-              <div class="flex gap-2 ">
-                <div
-                  class="flex flex-col w-[35%] h-[10%] 
+                  <p class="font-sans text-2xl font-bold text-black">
+                    Median Household Income
+                  </p>
+                  <div>Here should be a chart that looks like airbnb's</div>
+                  <div class="flex gap-2 ">
+                    <div
+                      class="flex flex-col w-[35%] h-[10%] 
                 border-solid border-2 border-indigo-600 rounded-lg"
-                >
-                  <p>Minimum</p>
-                  <input
-                    type="number"
-                    placeholder={`${Math.min(
-                      ...median_household_income
-                    ).toString()}`}
-                  ></input>
+                    >
+                      <p>Minimum</p>
+                      <input
+                        type="number"
+                        placeholder={`${Math.min(
+                          ...median_household_income
+                        ).toString()}`}
+                      ></input>
+                    </div>
+                    <div>---</div>
+                    <div class="flex w-[35%] h-[10%] flex-col border-solid border-2 border-indigo-600 rounded-lg">
+                      <p>Maximum</p>
+                      <input
+                        type="number"
+                        placeholder={`${Math.max(
+                          ...median_household_income
+                        ).toString()}`}
+                      ></input>
+                    </div>
+                  </div>
                 </div>
-                <div>---</div>
-                <div class="flex w-[35%] h-[10%] flex-col border-solid border-2 border-indigo-600 rounded-lg">
-                  <p>Maximum</p>
-                  <input
-                    type="number"
-                    placeholder={`${Math.max(
-                      ...median_household_income
-                    ).toString()}`}
-                  ></input>
+
+                <div
+                  id="borough-selection-container"
+                  class="border-solid border-2 border-indigo-600"
+                >
+                  <label
+                    htmlFor="borough-selection"
+                    class="font-sans text-2xl font-bold text-black"
+                  >
+                    Borough:
+                  </label>
+                  {unique_borough.map((el) => (
+                    <>
+                      <input
+                        name="borough-selection"
+                        value={el.toString()}
+                        type="checkbox"
+                      />
+                      <label htmlFor="borough-selection">{el.toString()}</label>
+                    </>
+                  ))}
+                </div>
+
+                <div
+                  id="neighborhood-container"
+                  class="border-solid border-2 border-indigo-600"
+                >
+                  <label
+                    htmlFor="neighborhood-selection"
+                    class="font-sans text-2xl font-bold text-black"
+                  >
+                    Neighborhood:
+                  </label>
+                  <select name="neighborhood" id="neighborhood">
+                    {neighborhood.map((el) => (
+                      <option key={el} value={el}>
+                        {el}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div
+                  id="zipcode-selection-container"
+                  class="border-solid border-2 border-indigo-600"
+                >
+                  <label
+                    htmlFor="zipcode-selection"
+                    class="font-sans text-2xl font-bold text-black"
+                  >
+                    ZIPCODE:
+                  </label>
+                  <select name="zipcode" id="zipcode">
+                    {zipcode.map((el) => (
+                      <option value={el.toString()}>{el.toString()}</option>
+                    ))}
+                  </select>
+                </div>
+                <div
+                  id="amenities-container"
+                  class="border-solid border-2 border-indigo-600 
+              flex flex-col items-center
+              justify-center"
+                >
+                  <p class="font-sans text-2xl font-bold text-black">
+                    Amenities
+                  </p>
+                  <div class="grid-cols-2">
+                    {unique_amenity_type.map((el) => (
+                      <button
+                        class="border-solid border-2 
+                    border-indigo-600 rounded-full 
+                    bg-blue text-white hover:bg-indigo-600"
+                      >
+                        {el.toString()}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div
-              id="borough-selection-container"
-              class="border-solid border-2 border-indigo-600"
-            >
-              <label htmlFor="borough-selection">Borough:</label>
-              {unique_borough.map((el) => (
-                <>
-                  <input
-                    name="borough-selection"
-                    value={el.toString()}
-                    type="checkbox"
-                  />
-                  <label htmlFor="borough-selection">{el.toString()}</label>
-                </>
-              ))}
-            </div>
-
-            <div
-              id="neighborhood-container"
-              class="border-solid border-2 border-indigo-600"
-            >
-              <label htmlFor="neighborhood-selection">Neighborhood:</label>
-              <select name="neighborhood" id="neighborhood">
-                {neighborhood.map((el) => (
-                  <option key={el} value={el}>
-                    {el}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div
-              id="zipcode-selection-container"
-              class="border-solid border-2 border-indigo-600"
-            >
-              <label htmlFor="zipcode-selection">ZIPCODE:</label>
-              <select name="zipcode" id="zipcode">
-                {zipcode.map((el) => (
-                  <option value={el.toString()}>{el.toString()}</option>
-                ))}
-              </select>
-            </div>
-            <div
-              id="amenities-container"
-              class="border-solid border-2 border-indigo-600"
-            >
-              <p>Amenities</p>
-              <select name="amenities" id="amenities">
-                {unique_amenity_type.map((el) => (
-                  <option value={el.toString()}>{el.toString()}</option>
-                ))}
-              </select>
             </div>
           </div>
           <div
