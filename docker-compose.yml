@@ -25,9 +25,7 @@ services:
       - pgadmin_data:/var/lib/pgadmin
 
   backend:
-    build:
-      context: .
-      dockerfile: Go_Backend/Dockerfile
+    build: ./backend
     depends_on:
       - db
     environment:
@@ -39,11 +37,6 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
-
-  dev-frontend:
-    build: ./dev_frontend
-    ports:
-      - "4000:4000"
 
 volumes:
   pgdata:
