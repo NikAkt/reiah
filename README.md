@@ -1,3 +1,5 @@
+![example branch parameter](https://github.com/NikAkt/SummerProject/actions/workflows/audit.yml/badge.svg?branch=main)
+
 # Real Estate Advisor
 
 An application that provides real estate insights and predictions based on busyness data.
