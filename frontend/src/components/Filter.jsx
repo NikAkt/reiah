@@ -17,7 +17,6 @@ const Filter = ({
   let median_household_income = [];
   let median_age = [];
   let neighborhood = ["Dumbo", "Harlem"];
-  console.log(neighborhood);
 
   const toggleFilter = () => {
     setFilterDisplay(!filterDisplay());
@@ -50,6 +49,20 @@ const Filter = ({
   const unique_amenity_type = amenitiesData
     ? [...new Set(amenitiesData.map((item) => item["FACILITY_TYPE"]))]
     : [];
+
+  //{recreational facility:['...']}
+  let amenities_type_desc = {};
+  amenitiesData.map((item) => {
+    const { FACILITY_TYPE, FACILITY_DESC } = item;
+    if (!amenities_type_desc[FACILITY_TYPE]) {
+      amenities_type_desc[FACILITY_TYPE] = [];
+    }
+    if (!amenities_type_desc[FACILITY_TYPE].includes(FACILITY_DESC)) {
+      amenities_type_desc[FACILITY_TYPE].push(FACILITY_DESC);
+    }
+  });
+
+  console.log(amenities_type_desc);
 
   // const plotHomeValue = () => {
   //   const ctx = homeValuePlotRef;
@@ -105,7 +118,7 @@ const Filter = ({
     <div
       class="absolute z-30 w-32 flex flex-col 
     items-center gap-0.5 mt-[11vh] ml-[42vw]
-    border-solid border-2 border-indigo-600 justify-center
+     justify-center
     text-white"
     >
       <button
@@ -124,14 +137,14 @@ const Filter = ({
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
           left-[70vw] w-[40vw] h-[80vh] 
         z-20 items-center delay-[300ms] 
-        animate-fade-down bg-green"
+        animate-fade-down bg-gradient-to-b from-green to-cyan-500"
         >
           {/* /////////// FILTER TITLE ////////////////// */}
           <div
             id="filter-dropdown-title"
             class="items-center justify-center
             flex fixed h-[5%] bg-black text-white w-[100%] z-30 
-            border-solid border-2 border-green"
+            "
           >
             <p>Filter for {filterTarget()}</p>
           </div>
@@ -139,7 +152,7 @@ const Filter = ({
           <div
             class="w-[100%] flex flex-col h-[100%] 
             items-center py-[10%] px-[10%] gap-y-2.5 
-            overflow-y-auto border-2 border-indigo-600 bg-green"
+            overflow-y-auto"
             id="filter-details-container"
           >
             {/* /////////// MAP FILTER ////////////////// */}
@@ -313,13 +326,24 @@ const Filter = ({
                   </p>
                   <div class="grid-cols-2">
                     {unique_amenity_type.map((el) => (
-                      <button
-                        class="border-solid border-2 
+                      <div>
+                        <button
+                          class="border-solid border-2 
                     border-indigo-600 rounded-full 
                     bg-blue text-white hover:bg-indigo-600"
-                      >
-                        {el.toString()}
-                      </button>
+                        >
+                          {el.toString()}
+                        </button>
+
+                        <div class="grid grid-cols-2">
+                          {amenities_type_desc[el].map((item) => (
+                            <div>
+                              <input type="checkbox" />
+                              <label htmlFor="">{item}</label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -345,7 +369,8 @@ const Filter = ({
             <button
               class="rounded-2xl  z-20 cursor-pointer
            w-32 h-9 text-white flex items-center justify-center 
-           gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
+           gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 
+           focus:outline-none focus:ring focus:ring-violet-300"
             >
               Apply
             </button>
