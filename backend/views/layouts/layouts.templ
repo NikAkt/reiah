@@ -3,92 +3,97 @@ package layouts
 import "github.com/denartha10/SummerProjectGOTH/views/components"
 
 var links = []components.HREFLink{
-	{Href: "/map", Title: "Map"},
-	{Href: "/settings", Title: "Settings"},
-	{Href: "/dashboard", Title: "Dashboard"},
+{Href: "/map", Title: "Map"},
+{Href: "/settings", Title: "Settings"},
+{Href: "/dashboard", Title: "Dashboard"},
 }
 
 // This is the base template which just contains the body styles and also all the imports in the header thsi will remain
 //the same from page to page
 templ Base() {
-	<!DOCTYPE html>
-	<html lang="en" data-mode="light">
-		<head>
-			<meta charset="UTF-8"/>
-			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>REIAH APP</title>
-			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
-			<link rel="stylesheet" href="/public/styles.css"/>
-			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
-			<script defer src="https://unpkg.com/alpinejs"></script>
-			<script defer src="https://unpkg.com/htmx.org@1.9.9"></script>
-			<script src="/public/map.js"></script>
-			<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&libraries=maps,marker&v=beta&callback=initMap&loading=async"></script>
-			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-		</head>
-		<body @updateMap="initMap()" x-data class="text-gray-800">
-			{ children... }
-		</body>
-	</html>
+<!DOCTYPE html>
+<html lang="en" data-mode="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REIAH APP</title>
+  <link rel="icon" type="image/x-icon" href="/public/favicon.ico" />
+  <link rel="stylesheet" href="/public/styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://unpkg.com/alpinejs"></script>
+  <script defer src="https://unpkg.com/htmx.org@1.9.9"></script>
+  <script src="/public/map.js"></script>
+  <script defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&libraries=maps,marker&v=beta&callback=initMap&loading=async"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+//TODO: The reason the sidebar closed when navigating to map is because the callback updateMap is called which resets
+//The alpine state it seems
+
+<body @updateMap="initMap()" x-data="{'sidebarOpen': false}" class="text-gray-800">
+  { children... }
+</body>
+
+</html>
 }
 
 // This is the DashboardView which just add a content section that can swap in and out content
 // Contains some padding so style is consistent accross pages
 templ DashboardView() {
-	@Base() {
-		<div class="flex">
-			@components.Sidebar(links)
-			<main class="w-full bg-gray-100 dark:bg-gray-900 min-h-screen">
-				@components.Navbar()
-				<!-- content -->
-				<div x-sort class="p-8 grid grid-cols-3 gap-4" id="page-content">
-					{ children... }
-				</div>
-				<!-- end content -->
-			</main>
-		</div>
-	}
+@Base() {
+<div>
+  @components.Sidebar(links)
+  <main class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen" @mouseover="sidebarOpen = false">
+    @components.Navbar()
+    <!-- content -->
+    <div x-sort class="p-8 grid grid-cols-3 gap-4" id="page-content">
+      { children... }
+    </div>
+    <!-- end content -->
+  </main>
+</div>
+}
 }
 
 // This is the MapView which just addd a content section that can swap in and out content
 // The difference between this page layout and the dashboard view i sthere is no padding so
 // the map will take up the content viewontent section that can swap in and out contentontent section that can swap in
 templ MapView() {
-	@Base() {
-		<div class="flex">
-			@components.Sidebar(links)
-			<main class="w-full bg-gray-100 dark:bg-gray-900 min-h-screen">
-				<div>
-					{ children... }
-				</div>
-			</main>
-		</div>
-	}
+@Base() {
+<div>
+  @components.Sidebar(links)
+  <main class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen" @mouseover="sidebarOpen = false">
+    <div>
+      { children... }
+    </div>
+  </main>
+</div>
+}
 }
 
 // Templ AuthLayout is for the login page.
 // Contains a nice simple layout with clear instructions
 templ AuthLayout() {
-	@Base() {
-		<div class="h-screen grid grid-cols-2 gap-0 overflow-hidden">
-			// LEFT HALF START
-			<div class="h-full flex justify-center items-center bg-white dark:bg-slate-800">
-				{ children... }
-			</div>
-			// RIGHT HALF START
-			<div
-				class="h-full bg-gradient-to-br from-teal-500 to-green-200 dark:from-teal-300 dark:to-green-950 p-48 flex justify-center items-center flex-col"
-			>
-				<div class="fixed right-4 top-4">
-					@components.DarkLightMode()
-				</div>
-				<h2 class="text-white  text-center text-3xl">Join the 2 other investors using REIAH today!!</h2>
-				<p class="text-white  text-center text-md mt-12">
-					wether you are looking for that next big investment or a place to call your own REIAH is here to guide you in the
-					right direction.
-				</p>
-			</div>
-		</div>
-	}
+@Base() {
+<div class="h-screen grid grid-cols-2 gap-0 overflow-hidden">
+  // LEFT HALF START
+  <div class="h-full flex justify-center items-center bg-white dark:bg-slate-800">
+    { children... }
+  </div>
+  // RIGHT HALF START
+  <div
+    class="h-full bg-gradient-to-br from-teal-500 to-green-200 dark:from-teal-300 dark:to-green-950 p-48 flex justify-center items-center flex-col">
+    <div class="fixed right-4 top-4">
+      @components.DarkLightMode()
+    </div>
+    <h2 class="text-white  text-center text-3xl">Join the 2 other investors using REIAH today!!</h2>
+    <p class="text-white  text-center text-md mt-12">
+      wether you are looking for that next big investment or a place to call your own REIAH is here to guide you in the
+      right direction.
+    </p>
+  </div>
+</div>
+}
 }
