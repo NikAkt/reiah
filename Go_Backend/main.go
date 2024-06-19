@@ -36,6 +36,14 @@ func main() {
 	e.GET("/register", handlers.HandleRegisterPage, middleware.Logger())
 	e.POST("/register", handlers.HandleRegisterAttempt, middleware.Logger())
 
+	// Routes
+	e.GET("/", handlers.HandleHome, handlers.CustomAuthMiddleware)
+	e.GET("/data/amenities", handlers.ServeAmenitiesData)
+	e.GET("/data/businesses", handlers.ServeBusinessData)
+	e.GET("/data/real_estate_prices", handlers.ServeRealEstatePriceData)
+	e.GET("/data/historic_real_estate_prices", handlers.ServeHistoricRealEstatePrices)
+	e.GET("/data/neighbourhoods", handlers.ServeNeighbourhoods)
+
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/public", "public")
 	e.Logger.Fatal(e.Start("0.0.0.0:8000"))

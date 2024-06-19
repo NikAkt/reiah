@@ -25,7 +25,9 @@ services:
       - pgadmin_data:/var/lib/pgadmin
 
   backend:
-    build: ./Go_Backend
+    build:
+      context: .
+      dockerfile: Go_Backend/Dockerfile
     depends_on:
       - db
     environment:
