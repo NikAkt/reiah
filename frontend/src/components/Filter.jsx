@@ -8,13 +8,15 @@ const Filter = ({
   historicalRealEstateData,
   amenitiesData,
 }) => {
-  const [filterDisplay, setFilterDisplay] = createSignal(false);
-  let chartInstance = null;
-  let homeValuePlotRef;
+  const [filterDisplay, setFilterDisplay] = createSignal(true);
+  // let chartInstance = null;
+  // let homeValuePlotRef;
   let avg_home_value = [];
   let zipcode = [];
   let median_household_income = [];
   let median_age = [];
+  let neighborhood = ["Dumbo", "Harlem"];
+  console.log(neighborhood);
 
   const toggleFilter = () => {
     setFilterDisplay(!filterDisplay());
@@ -40,6 +42,8 @@ const Filter = ({
     median_age.push(el["median_age"]);
   });
 
+  console.log("zipcode", zipcode.length);
+
   const unique_borough = amenitiesData
     ? [...new Set(amenitiesData.map((item) => item["BOROUGH"]))]
     : [];
@@ -48,54 +52,54 @@ const Filter = ({
     ? [...new Set(amenitiesData.map((item) => item["FACILITY_DESC"]))]
     : [];
 
-  const plotHomeValue = () => {
-    const ctx = homeValuePlotRef;
-    if (ctx) {
-      chartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: realEstateData.map((obj) => obj["avg_home_value"]),
-          datasets: [
-            {
-              label: "Average Home Value Plot",
-              data: avg_home_value,
-            },
-          ],
-        },
-      });
-    } else {
-      console.error("Element with ref 'homeValuePlotRef' not found.");
-    }
-  };
+  // const plotHomeValue = () => {
+  //   const ctx = homeValuePlotRef;
+  //   if (ctx) {
+  //     chartInstance = new Chart(ctx, {
+  //       type: "bar",
+  //       data: {
+  //         labels: realEstateData.map((obj) => obj["avg_home_value"]),
+  //         datasets: [
+  //           {
+  //             label: "Average Home Value Plot",
+  //             data: avg_home_value,
+  //           },
+  //         ],
+  //       },
+  //     });
+  //   } else {
+  //     console.error("Element with ref 'homeValuePlotRef' not found.");
+  //   }
+  // };
 
-  onMount(() => {
-    // Plot the chart if the filter is already displayed on mount
-    if (filterDisplay()) {
-      plotHomeValue();
-    }
-  });
+  // onMount(() => {
+  //   // Plot the chart if the filter is already displayed on mount
+  //   if (filterDisplay()) {
+  //     plotHomeValue();
+  //   }
+  // });
 
-  onCleanup(() => {
-    // Clean up the chart instance when the component is unmounted or filter is toggled off
-    if (chartInstance) {
-      chartInstance.destroy();
-      chartInstance = null;
-    }
-  });
+  // onCleanup(() => {
+  //   // Clean up the chart instance when the component is unmounted or filter is toggled off
+  //   if (chartInstance) {
+  //     chartInstance.destroy();
+  //     chartInstance = null;
+  //   }
+  // });
 
   const handleToggleFilter = () => {
-    const wasDisplayed = filterDisplay();
+    // const wasDisplayed = filterDisplay();
     toggleFilter();
     // If the filter was not displayed before, wait for the DOM to update, then plot the chart
-    if (!wasDisplayed) {
-      setTimeout(plotHomeValue, 0); // Using 0 timeout to wait for next tick
-    } else {
-      // If the filter is being hidden, clean up the chart
-      if (chartInstance) {
-        chartInstance.destroy();
-        chartInstance = null;
-      }
-    }
+    // if (!wasDisplayed) {
+    //   setTimeout(plotHomeValue, 0); // Using 0 timeout to wait for next tick
+    // } else {
+    //   // If the filter is being hidden, clean up the chart
+    //   if (chartInstance) {
+    //     chartInstance.destroy();
+    //     chartInstance = null;
+    //   }
+    // }
   };
 
   return (
@@ -118,18 +122,26 @@ const Filter = ({
       {filterDisplay() && (
         <div
           class="m-0 px-0 mt-[-2vh] left-[70vw] w-[30vw] bg-white h-[80vh] 
-        z-20 flex flex-col items-center delay-[300ms] animate-fade-down overflow-y-auto"
+        z-20 grid items-center delay-[300ms] 
+        animate-fade-down overflow-y-auto"
         >
           <p>Filter</p>
           <div class="w-[90%] flex flex-col h-[100%] items-center">
-            <p>Map Filter</p>
-            {/* <MapFilter /> */}
-            <div class="flex flex-col items-center">
-              <p>Home value</p>
-              <canvas
+            <div
+              id="map-filter-container"
+              class="w-[90%] flex flex-col items-center"
+            >
+              <p>Map Filter</p>
+              <MapFilter />
+            </div>
+
+            <div class="flex flex-col items-center" id="home-value-container">
+              {/* <canvas
                 ref={(el) => (homeValuePlotRef = el)}
                 id="home_value_plot"
-              ></canvas>
+              ></canvas> */}
+              <p>Home Value</p>
+              <div>Here should be a chart that looks like airbnb's</div>
               <div class="flex gap-2 ">
                 <div
                   class="flex flex-col w-[35%] h-[10%] 
@@ -155,7 +167,7 @@ const Filter = ({
             <p>Median Income</p>
             <div id="median_income_plot"></div>
             <div>
-              <p>Borough</p>
+              <label htmlFor="borough-selection">Borough:</label>
               {unique_borough.map((el) => (
                 <>
                   <input
@@ -168,7 +180,17 @@ const Filter = ({
               ))}
             </div>
 
-            <p>Neighbourhood</p>
+            <div id="neighborhood-container">
+              <label htmlFor="neighborhood-selection">Neighborhood:</label>
+              <select name="neighborhood" id="neighborhood">
+                {neighborhood.map((el) => (
+                  <option key={el} value={el}>
+                    {el}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div>
               <label htmlFor="zipcode-selection">ZIPCODE:</label>
               <select name="zipcode" id="zipcode">
@@ -185,6 +207,22 @@ const Filter = ({
                 ))}
               </select>
             </div>
+          </div>
+          <div id="button-container" class="flex ">
+            <button
+              class="bg-black rounded-2xl  z-20 cursor-pointer
+           w-32 h-9 text-white flex items-center justify-center 
+           gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
+            >
+              Clear all
+            </button>
+            <button
+              class="bg-black rounded-2xl  z-20 cursor-pointer
+           w-32 h-9 text-white flex items-center justify-center 
+           gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
+            >
+              Apply
+            </button>
           </div>
         </div>
       )}

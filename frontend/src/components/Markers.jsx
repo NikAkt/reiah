@@ -44,7 +44,7 @@ const Markers = (props) => {
               lng: el["lng"] * 1,
             },
             label: {
-              text: `\$ ${(el["avg_home_value"] / 1000).toFixed(2)}k`,
+              text: `\$ ${(el["avg_home_value"] / 1000000).toFixed(1)}m`,
               color: "white",
               fontSize: "12px",
             },
@@ -87,7 +87,7 @@ const Markers = (props) => {
         markers.map((marker) => {
           totalAvgPrice += marker.price;
         });
-        totalAvgPrice /= markers.length * 1000;
+        totalAvgPrice /= markers.length * 1000000;
 
         const clusterRenderer = {
           render: (cluster, stats) => {
@@ -99,7 +99,7 @@ const Markers = (props) => {
             markers.map((marker) => {
               avgPrice += marker.price * 1;
             });
-            avgPrice /= count * 1000;
+            avgPrice /= count * 1000000;
             const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
 
             const svg = window.btoa(`
@@ -116,7 +116,7 @@ const Markers = (props) => {
               },
 
               label: {
-                text: `$${Math.ceil(avgPrice)}k`,
+                text: `$${avgPrice.toFixed(1)}m`,
                 color: "white",
               },
               position: position,
