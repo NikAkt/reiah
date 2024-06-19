@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
+
+	"github.com/labstack/echo/v4"
 )
 
 type Amenity struct {
@@ -12,7 +13,7 @@ type Amenity struct {
 	Name               string  `json:"NAME"`
 	FacilityType       string  `json:"FACILITY_TYPE"`
 	FacilityDesc       string  `json:"FACILITY_DESC"`
-	ZipCode            int     `json:"ZIP_CODE"`
+	Zipcode            int     `json:"ZIP_CODE"`
 	Longitude          float64 `json:"LNG"`
 	Latitude           float64 `json:"LAT"`
 	Count              int     `json:"COUNT"`
@@ -20,17 +21,25 @@ type Amenity struct {
 }
 
 type AmenityFilterParams struct {
-	borough string `query:"borough"`
-	zipcode int    `query:"zipcode"`
+	Borough      string `query:"borough"`
+	Zipcode      int    `query:"zipcode"`
+	FacilityType string `query:"facilitytype"`
+	FacilityDesc string `query:"facilitydesc"`
 }
 
-func filterAmenities(amenities []Amenity, borough string, zipCode int) []Amenity {
-	var filtered []Amenity
-	for _, amenity := range amenities {
-		if borough != "" && amenity.Borough != borough {
+func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
+	var filtered []Amenity //
+	for _, amenity := range a {
+		if f.Borough != "" && amenity.Borough != f.Borough {
 			continue
 		}
-		if zipCode != 0 && amenity.ZipCode != zipCode {
+		if f.Zipcode != 0 && amenity.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
+			continue
+		}
+		if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
 			continue
 		}
 		filtered = append(filtered, amenity)
@@ -42,9 +51,9 @@ func ServeAmenitiesData(c echo.Context) error {
 	var p AmenityFilterParams // Create a variable that is of type AmenityFilterParams
 	c.Bind(&p)                // bind it to the request
 
-	file, err := os.Open("public/assets/cleaned_amenities_data2.json") // open the json file
+	file, err := os.Open("public/cleaned_amenities_data2.json") // open the json file
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the amenities file")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the amenities file: "+err.Error())
 	}
 
 	defer file.Close() // defer its closing to the end of the function scope
@@ -54,22 +63,22 @@ func ServeAmenitiesData(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the amenities file")
 	}
 
-	filteredAmenities := filterAmenities(amenities, p.borough, p.zipcode) // filter the amenities using zipcode and borough
-	return c.JSON(http.StatusOK, filteredAmenities)                       // return the json
+	filteredAmenities := filterAmenities(amenities, &p) // filter the amenities using zipcode and borough
+	return c.JSON(http.StatusOK, filteredAmenities)     // return the json
 }
 
 func ServeBusinessData(c echo.Context) error {
-	return c.File("public/assets/cleaned_business_data.json")
+	return c.File("public/cleaned_business_data.json")
 }
 
 func ServeRealEstatePriceData(c echo.Context) error {
-	return c.File("public/assets/real_estate_price_data.json")
+	return c.File("public/real_estate_price_data.json")
 }
 
 func ServeHistoricRealEstatePrices(c echo.Context) error {
-	return c.File("public/assets/historic_real_estate_prices.json")
+	return c.File("public/historic_real_estate_prices.json")
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-	return c.File("public/assets/NYC_neighbourhood.geojson")
+	return c.File("public/NYC_neighbourhood.geojson")
 }
