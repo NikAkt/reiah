@@ -6,7 +6,11 @@ import Home from "./routes/Home";
 import Nav from "./components/Navbar";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
+<<<<<<< HEAD
+import Induction from "./routes/Induction";
+=======
 import Settings from "./routes/Settings";
+>>>>>>> origin/main
 import { createEffect } from "solid-js";
 
 const root = document.getElementById("root");
@@ -47,6 +51,14 @@ const RouteGuard = (props) => {
 
 render(
   () => (
+<<<<<<< HEAD
+    <Router root={Layout}>
+      <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/induction" component={Induction} />
+      <Route path="/app" component={RouteGuard}>
+=======
     <Router>
       <Route path="/" component={Layout}>
         <Route path="/" component={Home} />
@@ -65,6 +77,7 @@ render(
             )}
           />
         </Route>
+>>>>>>> origin/main
         <Route
           path="*404"
           component={() => (
