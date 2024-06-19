@@ -157,15 +157,19 @@ const Filter = ({
             <div>
               <p>Borough</p>
               {unique_borough.map((el) => (
-                <input value={el.toString()} type="checkbox">
-                  {el.toString()}
-                </input>
+                <>
+                  <input
+                    name="borough-selection"
+                    value={el.toString()}
+                    type="checkbox"
+                  />
+                  <label htmlFor="borough-selection">{el.toString()}</label>
+                </>
               ))}
             </div>
 
             <p>Neighbourhood</p>
             <div>
-              <p>Zip Code</p>
               <label htmlFor="zipcode-selection">ZIPCODE:</label>
               <select name="zipcode" id="zipcode">
                 {zipcode.map((el) => (
