@@ -26,6 +26,7 @@ type AmenityFilterParams struct {
 	Zipcode      int    `query:"zipcode"`
 	FacilityType string `query:"facilitytype"`
 	FacilityDesc string `query:"facilitydesc"`
+	Name         string `query:"name"`
 }
 
 func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
@@ -43,6 +44,9 @@ func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
 		if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
 			continue
 		}
+		if f.Name != "" && amenity.Name != f.Name {
+			continue
+		}
 		filtered = append(filtered, amenity)
 	}
 	return filtered
@@ -50,7 +54,9 @@ func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
 
 func ServeAmenitiesData(c echo.Context) error {
 	var p AmenityFilterParams // Create a variable that is of type AmenityFilterParams
-	c.Bind(&p)                // bind it to the request
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	} // bind it to the request
 
 	file, err := os.Open("public/cleaned_amenities_data2.json") // open the json file
 	if err != nil {
