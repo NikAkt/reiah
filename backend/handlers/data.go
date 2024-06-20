@@ -20,7 +20,6 @@ type Amenity struct {
 	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
 }
 
-// TODO: ADD MORE OPTIONS FOR THE HTTP REQUEST
 type AmenityFilterParams struct {
 	Borough      string `query:"borough"`
 	Zipcode      int    `query:"zipcode"`
@@ -90,7 +89,7 @@ type BusinessesFilterParams struct {
 }
 
 func filterBusinesses(a []Businesses, f *BusinessesFilterParams) []Businesses {
-	var filtered []Businesses //
+	var filtered []Businesses
 	for _, business := range a {
 		if f.TaxiZone != 0 && business.TaxiZone != f.TaxiZone {
 			continue
@@ -128,8 +127,62 @@ func ServeBusinessData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredBusiness)     // return the json
 }
 
+type Prices struct {
+	Zipcode         int     `json:"zipcode"`
+	HomeValue       float64 `json:"avg_home_value"`
+	HouseholdIncome float64 `json:"median_household_income"`
+	MedianAge       float64 `json:"median_age"`
+	Latitude        float64 `json:"lat"`
+	Longitude       float64 `json:"lng"`
+}
+
+type PricesFilterParams struct {
+	Zipcode         int     `query:"zipcode"`
+	HomeValue       float64 `query:"homevalue"`
+	HouseholdIncome float64 `query:"income"`
+	MedianAge       float64 `query:"age"`
+}
+
+func filterPrices(a []Prices, f *PricesFilterParams) []Prices {
+	var filtered []Prices
+	for _, prices := range a {
+		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.HomeValue != 0 && prices.HomeValue != f.HomeValue {
+			continue
+		}
+		if f.HouseholdIncome != 0 && prices.HouseholdIncome != f.HouseholdIncome {
+			continue
+		}
+		if f.MedianAge != 0 && prices.MedianAge != f.MedianAge {
+			continue
+		}
+		filtered = append(filtered, prices)
+	}
+	return filtered
+}
+
 func ServeRealEstatePriceData(c echo.Context) error {
-	return c.File("public/real_estate_price_data.json")
+	var p PricesFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	}
+
+	file, err := os.Open("public/real_estate_price_data.json")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the real_estate_price_data file: "+err.Error())
+	}
+	defer file.Close()
+
+	var prices []Prices
+	if err := json.NewDecoder(file).Decode(&prices); err != nil {
+		c.Logger().Error("Error decoding JSON: ", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file")
+	}
+
+	filteredPrices := filterPrices(prices, &p)
+	return c.JSON(http.StatusOK, filteredPrices)
 }
 
 func ServeHistoricRealEstatePrices(c echo.Context) error {
