@@ -56,7 +56,7 @@ func ServeAmenitiesData(c echo.Context) error {
 	var p AmenityFilterParams // Create a variable that is of type AmenityFilterParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
-	} // bind it to the request
+	} // bind it to the request with proper error message if so
 
 	file, err := os.Open("public/cleaned_amenities_data2.json") // open the json file
 	if err != nil {
@@ -74,8 +74,58 @@ func ServeAmenitiesData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredAmenities)     // return the json
 }
 
+type Businesses struct {
+	TaxiZone     int     `json:"taxi_zone"`
+	BusinessType string  `json:"business_type"`
+	Zipcode      int     `json:"Zip Code"`
+	Longitude    float64 `json:"Longitude"`
+	Latitude     float64 `json:"Latitude"`
+	Counts       int     `json:"Counts"`
+}
+
+type BusinessesFilterParams struct {
+	TaxiZone     int    `query:"taxizone"`
+	BusinessType string `query:"businesstype"`
+	Zipcode      int    `query:"zipcode"`
+}
+
+func filterBusinesses(a []Businesses, f *BusinessesFilterParams) []Businesses {
+	var filtered []Businesses //
+	for _, business := range a {
+		if f.TaxiZone != 0 && business.TaxiZone != f.TaxiZone {
+			continue
+		}
+		if f.Zipcode != 0 && business.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.BusinessType != "" && business.BusinessType != f.BusinessType {
+			continue
+		}
+		filtered = append(filtered, business)
+	}
+	return filtered
+}
+
 func ServeBusinessData(c echo.Context) error {
-	return c.File("public/cleaned_business_data.json")
+	var p BusinessesFilterParams // Create a variable that is of type BusinessesFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	} // bind it to the request with proper error message if so
+
+	file, err := os.Open("public/cleaned_business_data.json") // open the json file
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the business file: "+err.Error())
+	}
+
+	defer file.Close() // defer its closing to the end of the function scope
+
+	var business []Businesses                                       // an array of business
+	if err := json.NewDecoder(file).Decode(&business); err != nil { // Create a decoder from the file and decode the dson into an array of business
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the business file")
+	}
+
+	filteredBusiness := filterBusinesses(business, &p) // filter the business
+	return c.JSON(http.StatusOK, filteredBusiness)     // return the json
 }
 
 func ServeRealEstatePriceData(c echo.Context) error {
