@@ -20,6 +20,7 @@ type Amenity struct {
 	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
 }
 
+// TODO: ADD MORE OPTIONS FOR THE HTTP REQUEST
 type AmenityFilterParams struct {
 	Borough      string `query:"borough"`
 	Zipcode      int    `query:"zipcode"`
