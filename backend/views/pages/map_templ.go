@@ -32,7 +32,7 @@ func Map() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen flex\" x-data=\"{&#39;listOpen&#39;: false}\"><div id=\"map\" class=\"h-full basis-2/5 grow\"></div><div class=\"bg-white basis-3/5 hidden\" :class=\"{&#39;hidden&#39;: !listOpen}\"></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen flex\" x-data=\"{&#39;listOpen&#39;: false}\"><div id=\"map\" class=\"h-full basis-2/5 grow\"></div><div class=\"bg-white dark:bg-gray-900 basis-3/5 hidden\" :class=\"{&#39;hidden&#39;: !listOpen}\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
