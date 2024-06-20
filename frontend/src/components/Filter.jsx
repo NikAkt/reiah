@@ -8,7 +8,7 @@ const Filter = ({
   historicalRealEstateData,
   amenitiesData,
 }) => {
-  const [filterDisplay, setFilterDisplay] = createSignal(true);
+  const [filterDisplay, setFilterDisplay] = createSignal(false);
   const [filterTarget, setFilterTarget] = createSignal("Residential Property");
   // let chartInstance = null;
   // let homeValuePlotRef;
@@ -117,7 +117,7 @@ const Filter = ({
   return (
     <div
       class="absolute z-30 w-32 flex flex-col 
-    items-center gap-0.5 mt-[11vh] ml-[42vw]
+    items-center gap-0.5 mt-[2vh] ml-[42vw]
      justify-center
     text-white"
     >
@@ -309,11 +309,14 @@ const Filter = ({
                   >
                     ZIPCODE:
                   </label>
-                  <select name="zipcode" id="zipcode">
+                  <div class="grid grid-cols-5">
                     {zipcode.map((el) => (
-                      <option value={el.toString()}>{el.toString()}</option>
+                      <div>
+                        <input type="checkbox" />
+                        <label htmlFor="">{el.toString()}</label>
+                      </div>
                     ))}
-                  </select>
+                  </div>
                 </div>
                 <div
                   id="amenities-container"

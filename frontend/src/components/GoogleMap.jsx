@@ -82,7 +82,7 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div id="map" class="w-[60vw] h-[90vh] mt-[10vh]" />
+      <div id="map" class="w-[85vw] h-[100vh] ml-[15vw]" />
       <Markers
         realEstateData={props.realEstateData}
         historicalRealEstateData={props.historicalRealEstateData}

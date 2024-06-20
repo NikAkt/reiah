@@ -16,26 +16,26 @@ export default function Nav(props) {
 
   return (
     <nav
-      class="absolute bg-white ml-[0px] h-[10vh] w-screen 
-    flex pl-[2.3vw] font-black gap-x-2"
+      class="bg-white ml-[0px] h-screen w-[15vw] 
+    flex flex-col pl-[2.3vw] font-black gap-x-2"
     >
       <div
-        class="mt-[16px] w-[30%] 
-      h-[50px]
-      font-sans text-4xl flex border-solid border-2 border-indigo-600"
+        class="mt-[5%] w-[100%] 
+      h-[10%]
+      font-sans text-4xl flex flex-col border-solid border-2 border-indigo-600"
       >
         REIAH{" "}
         <span
-          class="flex bg-green rounded-lg w-[30%] 
+          class="flex bg-green rounded-lg w-[50%] 
           item-center justify-center ml-[3%] h-[90%] text-white"
         >
-          APP
+          HUB
         </span>
       </div>
 
       <ul
         class="container 
-      p-3 text-gray-200 flex
+      p-3 text-gray-200 flex flex-col
       items-center justify-between w-[70%] 
       text-2xl gap-2
       border-solid border-2 border-indigo-600"
