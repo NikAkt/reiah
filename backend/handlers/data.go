@@ -265,6 +265,17 @@ func ServeHistoricRealEstatePrices(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
+type FeatureCollection struct {
+	Type     string    `json:"type"`
+	Features []Feature `json:"features"`
+}
+
+type Feature struct {
+	Type       string     `json:"type"`
+	Properties Properties `json:"properties"`
+	Geometry   Geometry   `json:"geometry"`
+}
+
 type Properties struct {
 	ShapeArea  string `json:"shape_area"`
 	Ntaname    string `json:"ntaname"`
@@ -277,6 +288,11 @@ type Properties struct {
 	Countyfips string `json:"countyfips"`
 	Ntaabbrev  string `json:"ntaabbrev"`
 	Cdta2020   string `json:"cdta2020"`
+}
+
+type Geometry struct {
+	Type        string        `json:"type"`
+	Coordinates []interface{} `json:"coordinates"`
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
