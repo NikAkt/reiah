@@ -101,7 +101,7 @@ func Sidebar(links []HREFLink) templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"fixed top-0 w-5 min-h-screen left-0 bg-transparent z-40\" @mouseenter=\"sidebarOpen = true\"></div><!--sidenav --><div class=\"fixed top-0 left-0 min-h-screen p-4 z-50 shadow-md bg-white dark:bg-slate-800 w-60 -translate-x-60 transition\" :class=\"{&#39;-translate-x-60&#39;: !sidebarOpen}\"><!-- SIDEBAR TITLE --><div class=\"flex items-center justify-between pb-4 border-b border-b-gray-800\"><a href=\"/\" class=\"flex items-center\" hx-boost=\"true\"><h2 class=\"font-bold text-2xl text-black dark:text-white\">REIAH <span class=\"bg-teal-500 dark:bg-teal-300 text-white dark:text-black px-2 rounded-md\">APP</span></h2></a>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"fixed top-0 w-5 min-h-screen left-0 bg-transparent z-40\" @mouseenter=\"sidebarOpen = true\"></div><!--sidenav --><div class=\"fixed top-0 left-0 min-h-screen p-4 z-50 shadow-md bg-white dark:bg-slate-800 w-60 -translate-x-60 transition\" :class=\"{&#39;-translate-x-60&#39;: !sidebarOpen}\"><!-- SIDEBAR TITLE --><div class=\"flex items-center justify-between pb-4 border-b border-b-gray-800\"><a href=\"/\" class=\"flex items-center\" hx-boost=\"true\"><h2 class=\"font-bold text-2xl text-black dark:text-white\">R.E.I.A.H <span class=\"bg-teal-500 dark:bg-teal-300 text-white dark:text-black px-2 rounded-md\">HUB</span></h2></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
