@@ -6,7 +6,7 @@ import {
 } from "./layerStore";
 import Markers from "./Markers";
 import API_KEY from "../api";
-import InfoWindow from "./InfoWindow";
+// import InfoWindow from "./InfoWindow";
 import DataLayer from "./DataLayer";
 
 // import pkg from "@googlemaps/js-api-loader";
