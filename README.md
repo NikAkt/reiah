@@ -3,6 +3,27 @@
 # Real Estate Advisor
 
 An application that provides real estate insights and predictions based on busyness data.
+# Reiah: Real Estate Investment Analyser and Helper
+
+Welcome to **Reiah**, a powerful web application designed to streamline the process of real estate investment. Whether you're a homebuyer looking for the perfect neighborhood or a commercial investor seeking the ideal location for your next venture, Reiah has you covered.
+
+## Features
+
+- **Personalized Recommendations**: Get tailored suggestions for residential areas that match your preferences and lifestyle.
+- **Commercial Property Analysis**: Identify prime locations for commercial investments, such as restaurants, offices, and retail spaces.
+- **Future Property Evaluation**: Access estimates and projections for future property values to make informed investment decisions.
+
+## Technology Stack
+
+- **Backend**: Built with GoLang, ensuring robust performance and scalability.
+- **Frontend**: Developed using Solid.js, providing a seamless and responsive user experience.
+- **API Integration**: FastAPI connects the frontend and backend, enabling efficient and smooth data flow.
+
+## Why Choose Reiah?
+
+Reiah leverages advanced algorithms and data analysis to provide you with the most relevant and accurate information for your real estate investment needs. Our user-friendly interface and comprehensive features make it easier than ever to navigate the complex world of real estate.
+
+Join us on our journey to simplify real estate investment and help you make the best decisions for your future.
 
 ## Table of Contents
 
