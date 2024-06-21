@@ -33,7 +33,7 @@ func Base() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" data-mode=\"light\"><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>REIAH APP</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/favicon.ico\"><link rel=\"stylesheet\" href=\"/public/styles.css\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://unpkg.com/alpinejs\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.9\"></script><script src=\"/public/map.js\"></script><script defer src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&amp;libraries=maps,marker&amp;v=beta&amp;callback=initMap&amp;loading=async\"></script><script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script></head><body @updateMap=\"initMap()\" x-data class=\"text-gray-800\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" data-mode=\"light\"><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>REIAH APP</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/favicon.ico\"><link rel=\"stylesheet\" href=\"/public/styles.css\"><script defer src=\"https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js\"></script><script defer src=\"https://unpkg.com/alpinejs\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.9\"></script><script src=\"/public/map.js\"></script><script defer src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw&amp;libraries=maps,marker&amp;v=beta&amp;callback=initMap&amp;loading=async\"></script><script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script></head><body @updateMap=\"initMap()\" x-data=\"{&#39;sidebarOpen&#39;: false}\" class=\"text-gray-800\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -73,7 +73,7 @@ func DashboardView() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -81,7 +81,7 @@ func DashboardView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"w-full bg-gray-100 dark:bg-gray-900 min-h-screen\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen\" @mouseover=\"sidebarOpen = false\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -139,7 +139,7 @@ func MapView() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -147,7 +147,7 @@ func MapView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"w-full bg-gray-100 dark:bg-gray-900 min-h-screen\"><div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen\" @mouseover=\"sidebarOpen = false\"><div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
