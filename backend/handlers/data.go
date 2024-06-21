@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -185,10 +186,81 @@ func ServeRealEstatePriceData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
-func ServeHistoricRealEstatePrices(c echo.Context) error {
-	return c.File("public/historic_real_estate_prices.json")
+type HistoricPrices struct {
+	Zipcode int                `json:"zipcode"`
+	History map[string]float64 `json:"history"`
 }
 
-func ServeNeighbourhoods(c echo.Context) error {
-	return c.File("public/NYC_neighbourhood.geojson")
+func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
+
+	var rawMap map[string]interface{} //map to hold the raw json
+	if err := json.Unmarshal(data, &rawMap); err != nil {
+		return err
+	} //This here parses the json data to store it in rawMap.
+
+	//Below we are checking if the zipcode is float and converting it to interger.
+	// We also assign it to the HistoricPrices struct in the Zipcode field
+	if zip, ok := rawMap["zipcode"].(float64); ok {
+		p.Zipcode = int(zip)
+	} else {
+		return fmt.Errorf("invalid type for zipcode")
+	}
+
+	p.History = make(map[string]float64) // This is a map to store key value pairs for date: price
+	//Here a loop goes trhough all the pairs in rawMap except zipcode to store in the History map created just above
+	for k, v := range rawMap {
+		if k == "zipcode" {
+			continue
+		}
+		if val, ok := v.(float64); ok {
+			p.History[k] = val
+		}
+	}
+
+	return nil
+}
+
+type HistoricPricesFilterParams struct {
+	Zipcode int    `query:"zipcode"`
+	Date    string `query:"date"`
+}
+
+func filterHistoricPrices(a []HistoricPrices, f *HistoricPricesFilterParams) []HistoricPrices {
+	var filtered []HistoricPrices
+	for _, prices := range a {
+		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.Date != "" {
+			if price, ok := prices.History[f.Date]; ok {
+				prices.History = map[string]float64{f.Date: price}
+				filtered = append(filtered, prices)
+			}
+		} else {
+			filtered = append(filtered, prices)
+		}
+	}
+	return filtered
+}
+
+func ServeHistoricRealEstatePrices(c echo.Context) error {
+	var p HistoricPricesFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	}
+
+	file, err := os.Open("public/historic_real_estate_prices.json")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the historic_real_estate_prices file: "+err.Error())
+	}
+	defer file.Close()
+
+	var prices []HistoricPrices
+	if err := json.NewDecoder(file).Decode(&prices); err != nil { //calls the UnmarshalJSON method using the encoding/json package
+		c.Logger().Error("Error decoding JSON: ", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the historic prices file")
+	}
+
+	filteredPrices := filterHistoricPrices(prices, &p)
+	return c.JSON(http.StatusOK, filteredPrices)
 }
