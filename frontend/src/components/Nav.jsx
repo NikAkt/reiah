@@ -16,17 +16,20 @@ export default function Nav(props) {
 
   return (
     <nav
-      class="bg-white ml-[0px] h-screen w-[15vw] 
-    flex flex-col pl-[2.3vw] font-black gap-x-2"
+      class="bg-white ml-[0px] 
+      h-screen w-[15vw] 
+    px-[1%] font-black gap-x-2 items-center
+    "
     >
       <div
         class="mt-[5%] w-[100%] 
-      h-[10%]
-      font-sans text-4xl flex flex-col border-solid border-2 border-indigo-600"
+      h-[10%] mb-[5%] 
+      font-sans text-4xl flex flex-col 
+      border-solid border-b-2 border-indigo-600"
       >
         REIAH{" "}
         <span
-          class="flex bg-green rounded-lg w-[50%] 
+          class="flex bg-green rounded-lg w-[60%] 
           item-center justify-center ml-[3%] h-[90%] text-white"
         >
           HUB
@@ -38,7 +41,7 @@ export default function Nav(props) {
       p-3 text-gray-200 flex flex-col
       items-center justify-between w-[70%] 
       text-2xl gap-2
-      border-solid border-2 border-indigo-600"
+      "
       >
         <li
           class={`border-b-2 ${active("/")} mx-1.5 sm:mx-6 

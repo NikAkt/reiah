@@ -13,7 +13,7 @@ import GoogleMap from "~/components/GoogleMap";
 
 import Nav from "~/components/Nav";
 import Filter from "~/components/Filter";
-
+import InfoWindow from "~/components/Infowindow";
 import Dashboard from "~/components/Dashboard";
 
 const fetchData = async (json_path) => {
@@ -39,9 +39,12 @@ export default function Home() {
     fetchData
   );
 
+  const [us_zip_codes] = createResource("us_zip_codes.json", fetchData);
+
   return (
-    <div class="m-0 px-0 flex flex-col">
+    <div class="m-0 px-0 flex flex-row">
       <Nav />
+      <InfoWindow />
       {/* <Suspense>{props.children}</Suspense> */}
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>

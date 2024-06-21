@@ -12,8 +12,7 @@ const Markers = (props) => {
   createEffect(async () => {
     // let Plotly = null;
     // Plotly = await import("plotly.js-dist-min");
-    console.log(layerStore.map);
-    if (layerStore.map && !markers) {
+    if (true) {
       const map = layerStore.map;
       const icon = {
         path: google.maps.SymbolPath.CIRCLE,
@@ -24,7 +23,7 @@ const Markers = (props) => {
       };
 
       if (map) {
-        console.log("Google Maps instance is available", layerStore.google_map);
+        console.log("Google Maps instance is available", layerStore.map);
         // const { AdvancedMarkerElement, PinElement } =
         //   await google.maps.importLibrary("marker");
         const infoWindow = new google.maps.InfoWindow({
@@ -54,6 +53,8 @@ const Markers = (props) => {
             clickable: true,
             icon,
           });
+
+          // console.log(marker);
 
           marker.addListener("click", async ({ domEvent, latLng }) => {
             const infoWindow = document.getElementById("dashboard");

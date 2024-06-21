@@ -4,6 +4,7 @@ const MapFilter = (props) => {
   const [haveBikeLayer, setBikeLayer] = createSignal(false);
   const [haveTrafficLayer, setTrafficLayer] = createSignal(false);
   const [haveTransitLayer, setTransitLayer] = createSignal(false);
+  const [haveDataLayer, setDataLayer] = createSignal(true);
   // const [showdropdown, setShowdropdown] = createSignal(true);
   // const handleClick = () => {
   //   setShowdropdown((prev) => !prev);
@@ -31,6 +32,13 @@ const MapFilter = (props) => {
     haveTransitLayer()
       ? layerStore.transitLayer.setMap(layerStore.map)
       : layerStore.transitLayer.setMap(null);
+  };
+
+  const handleDataLayer = () => {
+    setDataLayer((prev) => !prev);
+    !haveDataLayer()
+      ? layerStore.map.data.setStyle({ visible: false })
+      : layerStore.map.data.setStyle({ visible: true });
   };
 
   return (

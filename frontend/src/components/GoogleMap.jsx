@@ -1,14 +1,20 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import { setLayerStore, setIsGoogleMapInitialized } from "./layerStore";
+import {
+  setLayerStore,
+  setIsGoogleMapInitialized,
+  layerStore,
+} from "./layerStore";
 import Markers from "./Markers";
 import API_KEY from "../api";
+import InfoWindow from "./Infowindow";
+// import pkg from "@googlemaps/js-api-loader";
+// const { Loader } = pkg;
+
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
 
 const GoogleMap = (props) => {
-  console.log("props in googlemap", props);
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
-    // console.log(night_mapstyle);
     if (true) {
       console.log("initMap function is triggered");
       const map = await new google.maps.Map(document.getElementById("map"), {
@@ -30,25 +36,15 @@ const GoogleMap = (props) => {
       // map.data.loadGeoJson(neighbourhood);
       //this part should be dynamically changes with the user choosing to see different neighborhood in the filter,
       //not outlining any neighborhood
-      fetch("/assets/NYC_Neighborhood.geojson")
+      fetch("/assets/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           // Add GeoJSON data to the map
           // const manhattan_neighborhood = data.features.filter(
           //   (obj) => obj.properties.boro_name === "Manhattan"
           // );
           // data.features = manhattan_neighborhood;
-          map.data.addGeoJson(data);
-          map.data.setStyle(function (feature) {
-            const geometryType = feature.getGeometry().getType();
-            if (geometryType === "MultiPolygon") {
-              return {
-                strokeColor: "green",
-                strokeWeight: 2,
-                fillOpacity: 0,
-              };
-            }
-          });
         })
         .catch((error) => {
           console.error("Error loading GeoJSON data:", error);
@@ -82,11 +78,26 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div id="map" class="w-[85vw] h-[100vh] ml-[15vw]" />
-      <Markers
-        realEstateData={props.realEstateData}
-        historicalRealEstateData={props.historicalRealEstateData}
-      />
+      <div id="map" class="w-[85vw] h-[100vh]" />
+      <Suspense
+        fallback={
+          <div class="z-30 text-blue w-[80vw] h-[20vh] text-4xl">
+            Still loading the google map...
+          </div>
+        }
+      >
+        <Switch>
+          <Match when={layerStore.map}>
+            <Markers
+              realEstateData={props.realEstateData}
+              historicalRealEstateData={props.historicalRealEstateData}
+            />
+          </Match>
+          <Match>
+            <div>Fail to load markers</div>
+          </Match>
+        </Switch>
+      </Suspense>
     </div>
   );
 };
