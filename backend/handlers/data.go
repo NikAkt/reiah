@@ -296,5 +296,16 @@ type Geometry struct {
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-	return c.File("public/NYC_neighbourhood.geojson")
+	file, err := os.Open("public/NYC_neighbourhood.geojson")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the neighbourhoods file: "+err.Error())
+	}
+	defer file.Close()
+
+	var featureCollection FeatureCollection
+	if err := json.NewDecoder(file).Decode(&featureCollection); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the neighbourhoods file")
+	}
+
+	return c.JSON(http.StatusOK, featureCollection)
 }
