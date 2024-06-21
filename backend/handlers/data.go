@@ -296,7 +296,7 @@ type Geometry struct {
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-	file, err := os.Open("public/NYC_neighbourhood.geojson")
+	file, err := os.Open("public/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the neighbourhoods file: "+err.Error())
 	}
