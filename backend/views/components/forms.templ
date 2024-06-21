@@ -1,4 +1,3 @@
-//This components file is for creating forms
 //TODO: Possible abstraction here. Could create a general input component
 package components
 
@@ -50,8 +49,10 @@ templ inputGroup(gs int) {
 </div>
 }
 
+type ContextKeyType string
+
 templ SettingsForm() {
-<form autocomplete="off" hx-put={ "/settings/" + ctx.Value("userid").(string) }>
+<form autocomplete="off" hx-put={ "/settings/" + ctx.Value(ContextKeyType("userid")).(string) }>
   @inputGroup(3) {
   @textField("Name", "Name", "name")
   @textField("Surname", "Surname", "surname")
