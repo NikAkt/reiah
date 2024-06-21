@@ -1,4 +1,5 @@
-export default DataLayer = async () => {
+const dataLayer = (map, data) => {
+  console.log("trigger dataLayer function");
   map.data.addGeoJson(data);
   map.data.setStyle(function (feature) {
     const geometryType = feature.getGeometry().getType();
@@ -19,12 +20,16 @@ export default DataLayer = async () => {
   map.data.addListener("click", function (event) {
     event.feature.setProperty("isColorful", true);
     console.log(event);
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    // const viewportWidth = window.innerWidth;
+    // const viewportHeight = window.innerHeight;
 
-    const vw = (event["domEvent"].x / viewportWidth) * 100;
-    const vh = (event["domEvent"].y / viewportHeight) * 100;
-    return <InfoWindow x={vw} y={vh} />;
+    // const vw = (event["domEvent"].x / viewportWidth) * 100;
+    // const vh = (event["domEvent"].y / viewportHeight) * 100;
+    document.getElementById(
+      "infowindow"
+    ).innerHTML = `<p>${event["feature"]["Gg"]["boroname"]}:
+    ${event["feature"]["Gg"]["ntaname"]}</p><p>Hello World</p>`;
+    // return <InfoWindow x={vw} y={vh} />;
     // event.feature.setStyle
   });
 
@@ -36,4 +41,7 @@ export default DataLayer = async () => {
   map.data.addListener("mouseout", function (event) {
     map.data.revertStyle();
   });
+
+  return null;
 };
+export default dataLayer;

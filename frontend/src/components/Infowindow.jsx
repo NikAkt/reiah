@@ -1,11 +1,11 @@
 export default function InfoWindow(props) {
   return (
     <div
-      class={`absolute bg-black z-30 hidden
-        w-[${props.x}vw] h-[${props.y}vh] text-white]`}
+      class={`absolute bg-black z-30 bottom-[0]
+        w-[${15}vw] h-[${15}vh] text-white`}
       id="infowindow"
     >
-      Infowindow
+      {props.infoWindowContent}
     </div>
   );
 }

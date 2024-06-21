@@ -7,12 +7,14 @@ import {
 import Markers from "./Markers";
 import API_KEY from "../api";
 import InfoWindow from "./Infowindow";
+import dataLayer from "./dataLayer";
 // import pkg from "@googlemaps/js-api-loader";
 // const { Loader } = pkg;
 
 // import night_mapstyle from "../assets/aubergine_mapstyle.json";
 
 const GoogleMap = (props) => {
+  const [infoWindowContent, setInfoWindowContent] = createSignal("Hello world");
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
     if (true) {
@@ -45,6 +47,7 @@ const GoogleMap = (props) => {
           //   (obj) => obj.properties.boro_name === "Manhattan"
           // );
           // data.features = manhattan_neighborhood;
+          dataLayer(map, data);
         })
         .catch((error) => {
           console.error("Error loading GeoJSON data:", error);
@@ -79,6 +82,7 @@ const GoogleMap = (props) => {
   return (
     <div>
       <div id="map" class="w-[85vw] h-[100vh]" />
+      <InfoWindow infoWindowContent={infoWindowContent()} />
       <Suspense
         fallback={
           <div class="z-30 text-blue w-[80vw] h-[20vh] text-4xl">

@@ -17,7 +17,8 @@ export default function Nav(props) {
   return (
     <nav
       class="bg-white ml-[0px] 
-      h-screen w-[15vw] 
+      h-screen w-[15vw] absolute w-[15%] z-30 focus:hidden block 
+      hover:animation-fade-in
     px-[1%] font-black gap-x-2 items-center
     "
     >
