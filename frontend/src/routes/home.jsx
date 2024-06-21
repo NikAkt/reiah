@@ -49,6 +49,8 @@ export default function Home() {
     fetchData
   );
 
+  console.log(JSON.stringify(amenitiesData()));
+
   return (
     <div class="m-0 px-0 flex flex-row">
       <Nav />
@@ -83,8 +85,8 @@ export default function Home() {
               <Dashboard />
             </>
           </Match>
-          <Match when={realEstateData.error || historicalRealEstateData.error}>
-            <div>{error()}</div>
+          <Match when={realEstateData || historicalRealEstateData}>
+            <div>error loading something..</div>
           </Match>
         </Switch>
       </Suspense>

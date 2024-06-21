@@ -16,17 +16,18 @@ import DataLayer from "./DataLayer";
 
 const GoogleMap = (props) => {
   const [infoWindowContent, setInfoWindowContent] = createSignal("Hello world");
-  const [infoWindowPosition, setInfoWindowPosition] = createSignal([20, 20]);
+  // const [infoWindowPosition, setInfoWindowPosition] = createSignal([20, 20]);
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
     if (true) {
       console.log("initMap function is triggered");
-      const map = await new google.maps.Map(document.getElementById("map"), {
-        center: { lat: props.lat, lng: props.lng },
-        zoom: props.zoom,
-        // mapId: "4504f8b37365c3d0",
-      });
-      setLayerStore("map", map);
+      if (!layerStore.map) {
+        const map = await new google.maps.Map(document.getElementById("map"), {
+          center: { lat: props.lat, lng: props.lng },
+          zoom: props.zoom,
+        });
+        setLayerStore("map", map);
+      }
       setLayerStore("google_map", google.maps);
       setIsGoogleMapInitialized(true);
       //dynamic map style:
@@ -97,6 +98,7 @@ const GoogleMap = (props) => {
               realEstateData={props.realEstateData}
               historicalRealEstateData={props.historicalRealEstateData}
             />
+
             <DataLayer
               data={props.datalayer_geonjson}
               setInfoWindowContent={setInfoWindowContent}
