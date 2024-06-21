@@ -6,7 +6,7 @@ const [layerStore, setLayerStore] = createStore({
   transitLayer: null,
   map: null,
   markerList: null,
-  Plotly: null,
+  dataLayer: false,
 });
 const [isGoogleMapInitialized, setIsGoogleMapInitialized] = createSignal(false);
 

@@ -6,8 +6,9 @@ import {
 } from "./layerStore";
 import Markers from "./Markers";
 import API_KEY from "../api";
-import InfoWindow from "./Infowindow";
-import dataLayer from "./dataLayer";
+import InfoWindow from "./InfoWindow";
+import DataLayer from "./DataLayer";
+
 // import pkg from "@googlemaps/js-api-loader";
 // const { Loader } = pkg;
 
@@ -15,6 +16,7 @@ import dataLayer from "./dataLayer";
 
 const GoogleMap = (props) => {
   const [infoWindowContent, setInfoWindowContent] = createSignal("Hello world");
+  const [infoWindowPosition, setInfoWindowPosition] = createSignal([20, 20]);
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
     if (true) {
@@ -47,7 +49,6 @@ const GoogleMap = (props) => {
           //   (obj) => obj.properties.boro_name === "Manhattan"
           // );
           // data.features = manhattan_neighborhood;
-          dataLayer(map, data);
         })
         .catch((error) => {
           console.error("Error loading GeoJSON data:", error);
@@ -95,6 +96,10 @@ const GoogleMap = (props) => {
             <Markers
               realEstateData={props.realEstateData}
               historicalRealEstateData={props.historicalRealEstateData}
+            />
+            <DataLayer
+              data={props.datalayer_geonjson}
+              setInfoWindowContent={setInfoWindowContent}
             />
           </Match>
           <Match>

@@ -33,7 +33,7 @@ export default function Nav(props) {
           class="flex bg-green rounded-lg w-[60%] 
           item-center justify-center ml-[3%] h-[90%] text-white"
         >
-          HUB
+          APP
         </span>
       </div>
 
