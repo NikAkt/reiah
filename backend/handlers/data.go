@@ -265,6 +265,20 @@ func ServeHistoricRealEstatePrices(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
+type Properties struct {
+	ShapeArea  string `json:"shape_area"`
+	Ntaname    string `json:"ntaname"`
+	Cdtaname   string `json:"cdtaname"`
+	ShapeLeng  string `json:"shape_leng"`
+	Boroname   string `json:"boroname"`
+	Ntatype    string `json:"ntatype"`
+	Nta2020    string `json:"nta2020"`
+	Borocode   string `json:"borocode"`
+	Countyfips string `json:"countyfips"`
+	Ntaabbrev  string `json:"ntaabbrev"`
+	Cdta2020   string `json:"cdta2020"`
+}
+
 func ServeNeighbourhoods(c echo.Context) error {
 	return c.File("public/NYC_neighbourhood.geojson")
 }
