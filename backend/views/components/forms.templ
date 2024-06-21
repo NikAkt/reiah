@@ -2,51 +2,81 @@
 package components
 
 import (
-"strconv"
+	"strconv"
+	"github.com/denartha10/SummerProjectGOTH/db"
 )
 
 type InputAttributes struct {
-Type string
-Label string
-Placeholder string
-Name string
-Disabled bool
+	Type        string
+	Label       string
+	Placeholder string
+	Name        string
+	Disabled    bool
+	Value       string
+}
+
+func (i *InputAttributes) NewInputAttributes() {
+
 }
 
 templ FormInput(a *InputAttributes) {
-<label class="block mb-4">
-  <span class="text-accent text-sm mb-2 dark:text-slate-200">{ a.Label }</span>
-  <input disabled?={ a.Disabled }
-    class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900"
-    type={ a.Type } placeholder={ a.Placeholder } name={ a.Name } />
-</label>
+	<label class="block mb-4">
+		<span class="text-accent text-sm mb-2 dark:text-slate-200">{ a.Label }</span>
+		<input
+			disabled?={ a.Disabled }
+			class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900"
+			type={ a.Type }
+			placeholder={ a.Placeholder }
+			name={ a.Name }
+			value={ a.Value }
+		/>
+	</label>
 }
 
 templ InputGroup(gs int) {
-<div class={ "grid gap-2 grid-cols-" + strconv.Itoa(gs) }>
-  { children... }
-</div>
+	<div class={ "grid gap-2 grid-cols-" + strconv.Itoa(gs) }>
+		{ children... }
+	</div>
 }
 
-type ContextKeyType string
-
-templ SettingsForm() {
-<form disabled autocomplete="off" hx-put={ "/settings/" + ctx.Value(ContextKeyType("userid")).(string) }>
-  @InputGroup(3) {
-  @FormInput(&InputAttributes{"text", "Name", "Name", "name", true})
-  @FormInput(&InputAttributes{"text", "Surname", "Surname", "surname", true})
-  @FormInput(&InputAttributes{"text", "Username", "Username", "username", true})
-  }
-  @InputGroup(3) {
-  @FormInput(&InputAttributes{"email", "Email", "Email", "email", true})
-  }
-  <div class="mt-6 grid grid-cols-3 gap-2">
-    <div class="col-start-3 grid gap-2">
-      <button
-        class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Update
-      </button>
-    </div>
-  </div>
-</form>
+templ SettingsForm(u *db.User, edit bool) {
+	<form disabled autocomplete="off" hx-patch={ "/settings/" + u.Id }>
+		@InputGroup(3) {
+			@FormInput(&InputAttributes{"text", "Name", "Name", "name", !edit, u.Name})
+			@FormInput(&InputAttributes{"text", "Surname", "Surname", "surname", !edit, u.Surname})
+			@FormInput(&InputAttributes{"text", "Username", "Username", "username", !edit, u.Username})
+		}
+		@InputGroup(3) {
+			@FormInput(&InputAttributes{"email", "Email", "Email", "email", !edit, u.Email})
+		}
+		<div class="mt-6 grid grid-cols-3 gap-2">
+			<div class="col-start-3 grid gap-2">
+				if edit {
+					<div class="w-full grid grid-cols-2 gap-2">
+						<button
+							type="submit"
+							class="bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						>
+							Save
+						</button>
+						<a
+							hx-boost
+							href="/settings?edit=false"
+							class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						>
+							Cancel
+						</a>
+					</div>
+				} else {
+					<a
+						hx-boost
+						href="/settings?edit=true"
+						class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+					>
+						Edit
+					</a>
+				}
+			</div>
+		</div>
+	</form>
 }
