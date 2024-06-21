@@ -264,3 +264,7 @@ func ServeHistoricRealEstatePrices(c echo.Context) error {
 	filteredPrices := filterHistoricPrices(prices, &p)
 	return c.JSON(http.StatusOK, filteredPrices)
 }
+
+func ServeNeighbourhoods(c echo.Context) error {
+	return c.File("public/NYC_neighbourhood.geojson")
+}
