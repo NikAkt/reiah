@@ -7,8 +7,8 @@ templ LoginForm(invalid bool) {
 			<p>Login and get back to work</p>
 		</div>
 		<form hx-boost="true" action="/login" method="POST">
-			@textField("Username", "example1234", "username")
-			@passwordField("Password", "********", "password")
+			@FormInput(&InputAttributes{"text", "Username", "example1234", "username", false})
+			@FormInput(&InputAttributes{"password", "Password", "********", "password", false})
 			<div class="mt-6">
 				<button
 					class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -36,15 +36,15 @@ templ RegisterForm(success bool) {
 				<p>sign up and get started</p>
 			</div>
 			<form hx-boost="true" action="/register" method="POST">
-				@textField("Username", "example1234", "username")
-				@inputGroup(2) {
-					@textField("Name", "john", "name")
-					@textField("Surname", "doe", "surname")
+				@FormInput(&InputAttributes{"text", "Username", "example1234", "username", false})
+				@InputGroup(2) {
+					@FormInput(&InputAttributes{"text", "Name", "john", "name", false})
+					@FormInput(&InputAttributes{"text", "Surname", "doe", "surname", false})
 				}
-				@emailField("Email", "johndoe@example.com", "email")
-				@inputGroup(2) {
-					@passwordField("Password", "********", "password")
-					@passwordField("Confirm Password", "********", "confirmpassword")
+				@FormInput(&InputAttributes{"email", "Email", "johndoe@example.com", "email", false})
+				@InputGroup(2) {
+					@FormInput(&InputAttributes{"password", "Password", "********", "password", false})
+					@FormInput(&InputAttributes{"password", "Confirm Password", "********", "confirmpassword", false})
 				}
 				<div class="mt-6">
 					<button
