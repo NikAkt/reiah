@@ -4,7 +4,7 @@ import "github.com/denartha10/SummerProjectGOTH/views/components"
 
 var links = []components.HREFLink{
 	{Href: "/map", Title: "Map"},
-	{Href: "/settings", Title: "Settings"},
+	{Href: "/settings?edit=false", Title: "Settings"},
 	{Href: "/dashboard", Title: "Dashboard"},
 }
 
@@ -17,7 +17,7 @@ templ Base() {
 			<meta charset="UTF-8"/>
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>REIAH APP</title>
+			<title>REIAH HUB</title>
 			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
 			<link rel="stylesheet" href="/public/styles.css"/>
 			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
