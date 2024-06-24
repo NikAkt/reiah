@@ -1,4 +1,4 @@
-import { onMount, createEffect, createSignal } from "solid-js";
+import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
 import { layerStore, isGoogleMapInitialized } from "./layerStore";
 import * as mc from "@googlemaps/markerclusterer";
 const { MarkerClusterer, GridAlgorithm } = mc;
@@ -9,10 +9,22 @@ import Dashboard from "./Dashboard";
 let zipcodes_latlng = {};
 const [cluster_borough, setClusterBorough] = createSignal(true);
 const [cluster_neighbourhood, setClusterNeighbourhood] = createSignal(false);
+let markers = [];
+let markersOnMap = [];
+
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+  for (let i = 0; i < markersOnMap.length; i++) {
+    markersOnMap[i].setMap(map);
+  }
+}
+// Removes the markers from the map, but keeps them in the array.
+function hideMarkers() {
+  setMapOnAll(null);
+}
 
 const Markers = (props) => {
-  // console.log("data in markers", props.realEstateData);
-  createEffect(async () => {
+  onMount(async () => {
     // let Plotly = null;
     // Plotly = await import("plotly.js-dist-min");
     if (true) {
@@ -24,7 +36,6 @@ const Markers = (props) => {
         const { zip_code, latitude, longitude } = obj;
         zipcodes_latlng[zip_code] = { latitude, longitude };
       }
-      let markers = [];
 
       const borough_neighbourhood = JSON.parse(props.borough_neighbourhood);
 
@@ -143,26 +154,20 @@ const Markers = (props) => {
         <circle cx="120" cy="120" opacity=".1" r="130" />
       </svg>`);
 
-        const icon = {
-          url: `data:image/svg+xml;base64,${svg}`,
-          scaledSize: new google.maps.Size(100, 100),
-        };
-        // return new google.maps.Marker({
-        //   icon: {
-        //     url: `data:image/svg+xml;base64,${svg}`,
-        //     scaledSize: new google.maps.Size(45, 45),
-        //   },
+        const initialSize = 50;
+        const finalSize = 100;
+        const sizeDifference = finalSize - initialSize;
 
-        //   label: {
-        //     text: `$${avgPrice.toFixed(1)}m`,
-        //     color: "white",
-        //   },
-        //   position: position,
-        //   map,
-        //   zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
-        // });
-
-        const createCluster = (map, markers, title) => {
+        const createCluster = (map, markers, title, numSplit, rank) => {
+          console.log("numSplit", numSplit);
+          const gap = Math.floor(sizeDifference / numSplit);
+          console.log("gap", gap);
+          const size = initialSize + gap * rank;
+          console.log("size", size);
+          const icon = {
+            url: `data:image/svg+xml;base64,${svg}`,
+            scaledSize: new google.maps.Size(size, size),
+          };
           const bounds = new google.maps.LatLngBounds();
           let totalPriceMarker = 0;
           markers.forEach((marker) => {
@@ -170,14 +175,14 @@ const Markers = (props) => {
             totalPriceMarker += marker.price * 1;
           });
 
-          totalPriceMarker /= markers.length * 1000000;
+          totalPriceMarker /= markers.length * 1000;
 
           const clusterCenter = bounds.getCenter();
           console.log("clusterCenter", clusterCenter);
           const clusterMarker = new google.maps.Marker({
             position: clusterCenter,
             label: {
-              text: `\$ ${totalPriceMarker.toFixed(2)} m`,
+              text: `\$ ${totalPriceMarker.toFixed(2)} k`,
               color: "white",
             },
             map,
@@ -190,21 +195,56 @@ const Markers = (props) => {
             const dashboard = document.getElementById("dashboard");
             dashboard.innerHTML += `<p>${clusterMarker.title}</p>`;
           });
+          markersOnMap.push(clusterMarker);
         };
 
         if (cluster_borough()) {
+          //seperate the markers into borough
           let borough_markers = {};
           markers.forEach((marker) => {
-            // console.log("marker", marker);
             if (!(marker["borough"] in borough_markers)) {
-              borough_markers[marker.borough] = [marker];
+              borough_markers[marker.borough] = { marker: [], avgPrice: 0 };
+              borough_markers[marker.borough]["marker"].push(marker);
+              borough_markers[marker.borough]["avgPrice"] +=
+                marker["price"] * 1;
             } else {
-              borough_markers[marker.borough].push(marker);
+              borough_markers[marker.borough]["marker"].push(marker);
+              borough_markers[marker.borough]["avgPrice"] +=
+                marker["price"] * 1;
             }
           });
-          console.log(borough_markers);
+
+          //generate the ranking of markers according to their avgPrice
+          // and dynamically set the marker size
+
+          //calculate the avgerage price
           for (let key of Object.keys(borough_markers)) {
-            createCluster(map, borough_markers[key], key);
+            borough_markers[key]["avgPrice"] /=
+              borough_markers[key]["marker"].length;
+          }
+
+          //sort the object ascendingly according to avgPrice
+          const boroughsArray = Object.entries(borough_markers);
+          boroughsArray.sort(
+            (obj1, obj2) => obj1[1].avgPrice - obj2[1].avgPrice
+          );
+
+          const sorted_borough_markers = Object.fromEntries(boroughsArray);
+
+          console.log("sorted array like this: ", boroughsArray);
+
+          let rank = 0;
+          for (let key of Object.keys(sorted_borough_markers)) {
+            console.log("sorted borough markers", boroughsArray.length);
+            createCluster(
+              map,
+              borough_markers[key]["marker"],
+              key,
+              boroughsArray.length,
+              rank
+            );
+
+            rank += 1;
           }
         } else if (cluster_neighbourhood()) {
           let neigh_markers = {};
@@ -272,6 +312,12 @@ const Markers = (props) => {
     } else {
       console.log("Google Maps instance is not available yet");
     }
+    onCleanup(() => {
+      if (markers) {
+        hideMarkers();
+        markers = [];
+      }
+    });
   });
 
   return null;
