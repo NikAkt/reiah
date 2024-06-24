@@ -3,7 +3,6 @@ package components
 
 import (
 "strconv"
-"github.com/denartha10/SummerProjectGOTH/db"
 )
 
 type InputAttributes struct {
@@ -11,15 +10,12 @@ Type string
 Label string
 Placeholder string
 Name string
+Error string
 Disabled bool
 Value string
 }
 
-func (i *InputAttributes) NewInputAttributes() {
-
-}
-
-templ FormInput(a *InputAttributes) {
+templ FormInput(a InputAttributes) {
 <label class="block mb-4">
   <span class="text-accent text-sm mb-2 dark:text-slate-200">{ a.Label }</span>
   <input disabled?={ a.Disabled }
@@ -34,31 +30,45 @@ templ InputGroup(gs int) {
 </div>
 }
 
-templ SettingsForm(u *db.User, edit bool) {
-<form disabled autocomplete="off" hx-patch={ "/settings/" + u.Id }>
+type SettingsFormValues struct {
+Name string
+Surname string
+Username string
+Email string
+}
+
+templ SettingsForm(editOn bool, userId string, values SettingsFormValues, errors map[string]string) {
+<form autocomplete="on" hx-patch={ "/settings/edit/" + userId }>
   @InputGroup(3) {
-  @FormInput(&InputAttributes{"text", "Name", "Name", "name", !edit, u.Name})
-  @FormInput(&InputAttributes{"text", "Surname", "Surname", "surname", !edit, u.Surname})
-  @FormInput(&InputAttributes{"text", "Username", "Username", "username", !edit, u.Username})
+  @FormInput(InputAttributes{
+  Type: "text",
+  Label: "Name",
+  Placeholder: "Name",
+  Name: "name",
+  Disabled: !editOn,
+  Value: values.Name,
+  })
+  @FormInput(InputAttributes{"text", "Surname", "Surname", "surname", !editOn, values.Surname})
+  @FormInput(InputAttributes{"text", "Username", "Username", "username", !editOn, values.Username})
   }
   @InputGroup(3) {
-  @FormInput(&InputAttributes{"email", "Email", "Email", "email", !edit, u.Email})
+  @FormInput(InputAttributes{"email", "Email", "Email", "email", !editOn, values.Email})
   }
   <div class="mt-6 grid grid-cols-3 gap-2">
     <div class="col-start-3 grid gap-2">
-      if edit {
+      if editOn {
       <div class="w-full grid grid-cols-2 gap-2">
         <button type="submit"
           class="bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Save
         </button>
-        <a hx-boost="true" href="/settings?edit=false"
+        <a hx-boost="true" href="/settings"
           class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Cancel
         </a>
       </div>
       } else {
-      <a hx-boost="true" href="/settings?edit=true"
+      <a hx-boost="true" href="/settings/edit"
         class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         Edit
       </a>

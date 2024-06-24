@@ -27,11 +27,11 @@ func LoginForm(invalid bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = FormInput(&InputAttributes{"text", "Username", "example1234", "username", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = FormInput(&InputAttributes{"password", "Password", "********", "password", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -74,7 +74,7 @@ func RegisterForm(success bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = FormInput(&InputAttributes{"text", "Username", "example1234", "username", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -84,7 +84,7 @@ func RegisterForm(success bool) templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				templ_7745c5c3_Err = FormInput(&InputAttributes{"text", "Name", "john", "name", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -92,7 +92,7 @@ func RegisterForm(success bool) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = FormInput(&InputAttributes{"text", "Surname", "doe", "surname", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -105,7 +105,7 @@ func RegisterForm(success bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = FormInput(&InputAttributes{"email", "Email", "johndoe@example.com", "email", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -115,7 +115,7 @@ func RegisterForm(success bool) templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				templ_7745c5c3_Err = FormInput(&InputAttributes{"password", "Password", "********", "password", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -123,7 +123,7 @@ func RegisterForm(success bool) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = FormInput(&InputAttributes{"password", "Confirm Password", "********", "confirmpassword", false, ""}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = FormInput().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

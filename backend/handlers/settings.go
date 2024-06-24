@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/denartha10/SummerProjectGOTH/db"
 	"github.com/denartha10/SummerProjectGOTH/views/pages"
@@ -10,20 +9,28 @@ import (
 )
 
 // This is a basic handler which handles the route '/settings'
-// This page will eventually allow the user to update the details of their account
 func HandleSettings(c echo.Context) error {
 	userid := c.Get("userid").(string)
-	edit, err := strconv.ParseBool(c.QueryParam("edit"))
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Failed to get param "+err.Error())
-	}
 
 	var user db.User
 	if err := db.DB.Get(&user, "SELECT * FROM users WHERE id=?", userid); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Failed to find user in database")
 	}
 
-	return Render(c, pages.Settings(&user, edit))
+	return Render(c, pages.Settings(&user, false))
+}
+
+// This is a basic handler which handles the route '/settings/edit get request'
+// This will allow users to edit the form
+func HandleSettingsEdit(c echo.Context) error {
+	userid := c.Get("userid").(string)
+
+	var user db.User
+	if err := db.DB.Get(&user, "SELECT * FROM users WHERE id=?", userid); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Failed to find user in database")
+	}
+
+	return Render(c, pages.Settings(&user, true))
 }
 
 type UpdateUserSettingsForm struct {
@@ -65,6 +72,6 @@ func HandleUpdateUserSettings(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update user settings"+err.Error())
 	}
 
-	c.Response().Header().Set("HX-Location", "/settings?edit=false")
+	c.Response().Header().Set("HX-Location", "/settings")
 	return c.String(200, "Successful Update")
 }
