@@ -51,6 +51,11 @@ export default function Home() {
     fetchData
   );
 
+  const [borough_geojson] = createResource(
+    "http://localhost:3000/assets/borough.geojson",
+    fetchData
+  );
+
   return (
     <div class="m-0 px-0 flex flex-row">
       <Nav />
@@ -79,6 +84,7 @@ export default function Home() {
                 datalayer_geonjson={JSON.stringify(datalayer_geonjson())}
                 borough_neighbourhood={JSON.stringify(borough_neighbourhood())}
                 us_zip_codes={JSON.stringify(us_zip_codes())}
+                borough_geojson={JSON.stringify(borough_geojson())}
               />
               <Filter
                 realEstateData={JSON.stringify(realEstateData())}

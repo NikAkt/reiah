@@ -10,18 +10,24 @@ export default function Nav(props) {
       : "border-transparent hover:border-green";
 
   const [dropdownDisplay, setDropdownDisplay] = createSignal(false);
+  const [action, setAction] = createSignal("Login");
 
   // const toggleDropdown = () => {
   //   setDropdownDisplay(!dropdownDisplay());
   // };
 
+  // const class_ = "shadow-md bg-white ml-[0px] appearance-none
+  //     h-screen w-[15vw] absolute w-[15%] z-30 focus:hidden block
+  //     hover:animation-fade-in
+  //   px-[1%] font-black gap-x-2 items-center
+  //   ";
+
   return (
     <nav
-      class="bg-white ml-[0px] 
-      h-screen w-[15vw] absolute w-[15%] z-30 focus:hidden block 
-      hover:animation-fade-in
-    px-[1%] font-black gap-x-2 items-center
-    "
+      class="shadow-md appearance-none 
+    rounded w-full p-3 text-accent leading-tight 
+    focus:outline-none focus:shadow-outline 
+    dark:bg-slate-800 dark:text-slate-200"
     >
       <div
         class="mt-[5%] w-[100%] 
@@ -69,7 +75,7 @@ export default function Nav(props) {
           hover:bg-green w-[100%] 
           flex flex-col`}
         >
-          <a href="/">Login / Register</a>
+          <a href="/">{action()}</a>
         </li>
         <li
           class={`border-b-2 ${active("/settings")} mx-1.5 sm:mx-6 

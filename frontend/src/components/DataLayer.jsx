@@ -5,6 +5,7 @@ const DataLayer = (props) => {
   const viewportHeight = window.innerHeight;
   const map = layerStore.map;
   const borough_neighbourhood = JSON.parse(props.borough_neighbourhood);
+  const borough_geojson = JSON.parse(props.borough_geojson);
   const cdta = [];
   let data = JSON.parse(props.data);
   // console.log("borough_neighbourhood", borough_neighbourhood);
@@ -16,8 +17,6 @@ const DataLayer = (props) => {
     }
   }
 
-  console.log(cdta);
-
   const all_neighborhood = data.features.filter((obj) =>
     cdta.includes(obj.properties["cdta2020"])
   );
@@ -25,7 +24,7 @@ const DataLayer = (props) => {
 
   try {
     if (!layerStore.dataLayer) {
-      map.data.addGeoJson(data);
+      map.data.addGeoJson(borough_geojson);
       map.data.setStyle(function (feature) {
         const geometryType = feature.getGeometry().getType();
         let color = "#81c7a5";

@@ -87,7 +87,7 @@ const GoogleMap = (props) => {
       <InfoWindow infoWindowContent={infoWindowContent()} />
       <Suspense
         fallback={
-          <div class="z-30 text-blue w-[80vw] h-[20vh] text-4xl">
+          <div class="z-30 text-blue w-[55vw] h-[20vh] text-4xl">
             Still loading the google map...
           </div>
         }
@@ -105,6 +105,7 @@ const GoogleMap = (props) => {
               data={props.datalayer_geonjson}
               setInfoWindowContent={setInfoWindowContent}
               borough_neighbourhood={props.borough_neighbourhood}
+              borough_geojson={props.borough_geojson}
             />
           </Match>
           <Match>
