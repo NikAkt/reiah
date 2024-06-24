@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { Show, createSignal, onCleanup, onMount } from "solid-js";
 import {
   setLayerStore,
   setIsGoogleMapInitialized,
@@ -83,7 +83,7 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div ref={props.ref} id="map" class="w-[85vw] h-[100vh]" />
+      <div ref={props.ref} id="map" class="top-0 left-0 w-screen h-[100vh]" />
       <InfoWindow infoWindowContent={infoWindowContent()} />
       <Suspense
         fallback={
@@ -99,6 +99,7 @@ const GoogleMap = (props) => {
               historicalRealEstateData={props.historicalRealEstateData}
               us_zip_codes={props.us_zip_codes}
               borough_neighbourhood={props.borough_neighbourhood}
+              setInfoCardData={props.setInfoCardData}
             />
 
             <DataLayer

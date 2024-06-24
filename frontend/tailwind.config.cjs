@@ -20,6 +20,10 @@ module.exports = {
           "100%": { opacity: "1", transform: "translateY(2vh)" },
         },
         "fade-in": {
+          "0%": { opacity: "0", transform: "translateX(-2vw)" },
+          "100%": { opacity: "1", transform: "translateX(0vw)" },
+        },
+        "fade-out": {
           "0%": { opacity: "0", transform: "translateX(2vw)" },
           "100%": { opacity: "1", transform: "translateX(0vw)" },
         },

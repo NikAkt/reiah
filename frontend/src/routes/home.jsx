@@ -18,10 +18,13 @@ const fetchData = async (json_path) => {
   return await response.json();
 };
 
+const [infoCardData, setInfoCardData] = createSignal([]);
+
 export default function Home() {
   let mapContainer;
   const [coords, setCoords] = createSignal({ lat: 40.7128, lng: -74.006 });
   const [neighborhood, setNeighborhood] = createSignal("");
+  const [showNav, setShowNav] = createSignal("inline-block");
   const [realEstateData] = createResource(
     "http://localhost:3000/assets/real_estate_price_data.json",
     fetchData
@@ -58,7 +61,7 @@ export default function Home() {
 
   return (
     <div class="m-0 px-0 flex flex-row">
-      <Nav />
+      <Nav showNav={showNav} setShowNav={setShowNav} />
       <InfoWindow />
       {/* <Suspense>{props.children}</Suspense> */}
       <Suspense fallback={<div>Loading...</div>}>
@@ -68,7 +71,8 @@ export default function Home() {
               realEstateData() &&
               historicalRealEstateData() &&
               amenitiesData() &&
-              borough_neighbourhood()
+              borough_neighbourhood() &&
+              borough_geojson()
             }
           >
             <>
@@ -76,7 +80,7 @@ export default function Home() {
                 ref={(el) => (mapContainer = el)}
                 lat={coords().lat}
                 lng={coords().lng}
-                zoom={10}
+                zoom={11}
                 realEstateData={JSON.stringify(realEstateData())}
                 historicalRealEstateData={JSON.stringify(
                   historicalRealEstateData()
@@ -85,6 +89,8 @@ export default function Home() {
                 borough_neighbourhood={JSON.stringify(borough_neighbourhood())}
                 us_zip_codes={JSON.stringify(us_zip_codes())}
                 borough_geojson={JSON.stringify(borough_geojson())}
+                showNav={showNav}
+                setInfoCardData={setInfoCardData}
               />
               <Filter
                 realEstateData={JSON.stringify(realEstateData())}
@@ -93,11 +99,23 @@ export default function Home() {
                 )}
                 amenitiesData={JSON.stringify(amenitiesData())}
               />
-              <Dashboard dataToShow={JSON.stringify(borough_neighbourhood())} />
+              <Dashboard
+                infoCardData={infoCardData}
+                setInfoCardData={setInfoCardData}
+              />
             </>
           </Match>
-          <Match when={realEstateData.error || historicalRealEstateData.error}>
-            <div>error loading something..</div>
+          <Match when={realEstateData.error}>
+            <div>error loading real estate data..</div>
+          </Match>
+          <Match when={historicalRealEstateData.error}>
+            <div>error loading historic real estate data..</div>
+          </Match>
+          <Match when={amenitiesData.error}>
+            <div>error loading amenities data..</div>
+          </Match>
+          <Match when={datalayer_geonjson.error}>
+            <div>error loading datalayer geojson data..</div>
           </Match>
         </Switch>
       </Suspense>

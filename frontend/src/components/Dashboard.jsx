@@ -1,5 +1,6 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 // import spinning_circles from "127.0.0.1:3000/assets/loading_svg/spinning_circles.svg";
+import InfoCard from "./InfoCard";
 
 const Dashboard = (props) => {
   const [dashboardDisplay, setDashboardDisplay] = createSignal(false);
@@ -17,13 +18,16 @@ const Dashboard = (props) => {
       id="dashboard"
     >
       <span class="">Dashboard</span>
-      <div class="w-[80%] h-[80%] border-2 border-indigo-600">
-        Temporially this will show the data. Here's the chart.
+      <div
+        class="w-[80%] h-[80%] border-2 border-indigo-600 
+      flex flex-col items-center  gap-2 overflow-y-auto"
+      >
+        <Show when={props.infoCardData()} fallback={""} keyed>
+          <For each={props.infoCardData()} fallback={""}>
+            {(item, index) => <InfoCard data={item} />}
+          </For>
+        </Show>
       </div>
-      <img
-        src="./assets/loading_svg/spinning-circles.svg"
-        alt="spinning circles svg"
-      />
     </div>
   );
 };

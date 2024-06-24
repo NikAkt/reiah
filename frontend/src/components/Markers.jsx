@@ -1,9 +1,10 @@
 import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
 import { layerStore, isGoogleMapInitialized } from "./layerStore";
 import * as mc from "@googlemaps/markerclusterer";
-const { MarkerClusterer, GridAlgorithm } = mc;
+// const { MarkerClusterer, GridAlgorithm } = mc;
 import Chart from "chart.js/auto";
-import Dashboard from "./Dashboard";
+// import Dashboard from "./Dashboard";
+import InfoCard from "./InfoCard";
 // import Plotly from "plotly.js-dist-min";
 
 let zipcodes_latlng = {};
@@ -21,6 +22,10 @@ function setMapOnAll(map) {
 // Removes the markers from the map, but keeps them in the array.
 function hideMarkers() {
   setMapOnAll(null);
+}
+
+async function processData() {
+  console.log("processing the data");
 }
 
 const Markers = (props) => {
@@ -159,26 +164,26 @@ const Markers = (props) => {
         const sizeDifference = finalSize - initialSize;
 
         const createCluster = (map, markers, title, numSplit, rank) => {
-          console.log("numSplit", numSplit);
           const gap = Math.floor(sizeDifference / numSplit);
-          console.log("gap", gap);
+
           const size = initialSize + gap * rank;
-          console.log("size", size);
+
           const icon = {
             url: `data:image/svg+xml;base64,${svg}`,
             scaledSize: new google.maps.Size(size, size),
           };
           const bounds = new google.maps.LatLngBounds();
           let totalPriceMarker = 0;
+          let markersInclude = [];
           markers.forEach((marker) => {
             bounds.extend(marker.getPosition());
             totalPriceMarker += marker.price * 1;
+            markersInclude.push(marker.title);
           });
 
           totalPriceMarker /= markers.length * 1000;
 
           const clusterCenter = bounds.getCenter();
-          console.log("clusterCenter", clusterCenter);
           const clusterMarker = new google.maps.Marker({
             position: clusterCenter,
             label: {
@@ -187,13 +192,17 @@ const Markers = (props) => {
             },
             map,
             title,
+            markersInclude,
             icon,
             animation: google.maps.Animation.DROP,
           });
-          console.log(clusterMarker);
+
           clusterMarker.addListener("click", async ({ domEvent, latLng }) => {
-            const dashboard = document.getElementById("dashboard");
-            dashboard.innerHTML += `<p>${clusterMarker.title}</p>`;
+            const dataToPut = {
+              title: clusterMarker.title,
+              markersInclude: clusterMarker.markersInclude,
+            };
+            props.setInfoCardData((prev) => [...prev, dataToPut]);
           });
           markersOnMap.push(clusterMarker);
         };
@@ -230,8 +239,6 @@ const Markers = (props) => {
           );
 
           const sorted_borough_markers = Object.fromEntries(boroughsArray);
-
-          console.log("sorted array like this: ", boroughsArray);
 
           let rank = 0;
           for (let key of Object.keys(sorted_borough_markers)) {
