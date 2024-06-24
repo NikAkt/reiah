@@ -28,7 +28,7 @@ const DataLayer = (props) => {
       map.data.addGeoJson(data);
       map.data.setStyle(function (feature) {
         const geometryType = feature.getGeometry().getType();
-        let color = "green";
+        let color = "#81c7a5";
         if (feature.getProperty("isColorful")) {
           color = feature.getProperty("color");
         }

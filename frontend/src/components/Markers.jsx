@@ -133,21 +133,57 @@ const Markers = (props) => {
 
         totalAvgPrice /= count * 1000000;
 
+        // const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
+
+        const svg = window.btoa(`
+        <svg fill="${"#0145ac"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" opacity=".6" r="70" />
+        <circle cx="120" cy="120" opacity=".3" r="90" />
+        <circle cx="120" cy="120" opacity=".2" r="110" />
+        <circle cx="120" cy="120" opacity=".1" r="130" />
+      </svg>`);
+
+        const icon = {
+          url: `data:image/svg+xml;base64,${svg}`,
+          scaledSize: new google.maps.Size(100, 100),
+        };
+        // return new google.maps.Marker({
+        //   icon: {
+        //     url: `data:image/svg+xml;base64,${svg}`,
+        //     scaledSize: new google.maps.Size(45, 45),
+        //   },
+
+        //   label: {
+        //     text: `$${avgPrice.toFixed(1)}m`,
+        //     color: "white",
+        //   },
+        //   position: position,
+        //   map,
+        //   zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+        // });
+
         const createCluster = (map, markers, title) => {
-          console.log(markers);
           const bounds = new google.maps.LatLngBounds();
+          let totalPriceMarker = 0;
           markers.forEach((marker) => {
-            console.log("marker position", marker.getPosition());
             bounds.extend(marker.getPosition());
+            totalPriceMarker += marker.price * 1;
           });
+
+          totalPriceMarker /= markers.length * 1000000;
 
           const clusterCenter = bounds.getCenter();
           console.log("clusterCenter", clusterCenter);
           const clusterMarker = new google.maps.Marker({
             position: clusterCenter,
-            label: markers.length.toString(),
+            label: {
+              text: `\$ ${totalPriceMarker.toFixed(2)} m`,
+              color: "white",
+            },
             map,
             title,
+            icon,
+            animation: google.maps.Animation.DROP,
           });
           console.log(clusterMarker);
           clusterMarker.addListener("click", async ({ domEvent, latLng }) => {
