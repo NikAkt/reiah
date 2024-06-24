@@ -4,10 +4,28 @@ const DataLayer = (props) => {
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
   const map = layerStore.map;
+  const borough_neighbourhood = JSON.parse(props.borough_neighbourhood);
+  const cdta = [];
+  let data = JSON.parse(props.data);
+  // console.log("borough_neighbourhood", borough_neighbourhood);
+  for (const borough in borough_neighbourhood) {
+    for (const neighbourhood in borough_neighbourhood[borough]) {
+      for (const cdtaCode in borough_neighbourhood[borough][neighbourhood]) {
+        cdta.push(cdtaCode);
+      }
+    }
+  }
+
+  console.log(cdta);
+
+  const all_neighborhood = data.features.filter((obj) =>
+    cdta.includes(obj.properties["cdta2020"])
+  );
+  data.features = all_neighborhood;
 
   try {
     if (!layerStore.dataLayer) {
-      map.data.addGeoJson(JSON.parse(props.data));
+      map.data.addGeoJson(data);
       map.data.setStyle(function (feature) {
         const geometryType = feature.getGeometry().getType();
         let color = "green";
@@ -43,7 +61,7 @@ const DataLayer = (props) => {
       // console.log(event);
       const vw = (event["domEvent"].x / viewportWidth) * 100;
       const vh = (event["domEvent"].y / viewportHeight) * 100;
-      props.setInfoWindowContent(`${event["feature"]["Gg"]["boroname"]}:
+      props.setInfoWindowContent(`${event["feature"]["Gg"]["boroname"]}(${event["feature"]["Gg"]["cdta2020"]}):
   ${event["feature"]["Gg"]["ntaname"]}.`);
     });
 

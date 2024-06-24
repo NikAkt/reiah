@@ -1,6 +1,3 @@
-import { A } from "@solidjs/router";
-import { Router } from "@solidjs/router";
-import { FileRoutes } from "@solidjs/start/router";
 import {
   createSignal,
   createResource,
@@ -13,8 +10,8 @@ import GoogleMap from "~/components/GoogleMap";
 
 import Nav from "~/components/Nav";
 import Filter from "~/components/Filter";
-import InfoWindow from "~/components/InfoWindow";
 import Dashboard from "~/components/Dashboard";
+import InfoWindow from "~/components/Infowindow";
 
 const fetchData = async (json_path) => {
   const response = await fetch(json_path);
@@ -45,11 +42,14 @@ export default function Home() {
   );
 
   const [datalayer_geonjson] = createResource(
-    "http://localhost:3000/assets/2020_Neighborhood_Tabulation_Areas(NTAs).geojson",
+    "http://localhost:8000/api/neighbourhoods",
     fetchData
   );
 
-  console.log(JSON.stringify(amenitiesData()));
+  const [borough_neighbourhood] = createResource(
+    "http://localhost:3000/assets/borough_neighbourhood.json",
+    fetchData
+  );
 
   return (
     <div class="m-0 px-0 flex flex-row">
@@ -60,12 +60,15 @@ export default function Home() {
         <Switch>
           <Match
             when={
-              realEstateData() && historicalRealEstateData() && amenitiesData()
+              realEstateData() &&
+              historicalRealEstateData() &&
+              amenitiesData() &&
+              borough_neighbourhood()
             }
           >
             <>
               <GoogleMap
-                ref={mapContainer}
+                ref={(el) => (mapContainer = el)}
                 lat={coords().lat}
                 lng={coords().lng}
                 zoom={10}
@@ -74,6 +77,8 @@ export default function Home() {
                   historicalRealEstateData()
                 )}
                 datalayer_geonjson={JSON.stringify(datalayer_geonjson())}
+                borough_neighbourhood={JSON.stringify(borough_neighbourhood())}
+                us_zip_codes={JSON.stringify(us_zip_codes())}
               />
               <Filter
                 realEstateData={JSON.stringify(realEstateData())}
@@ -82,10 +87,10 @@ export default function Home() {
                 )}
                 amenitiesData={JSON.stringify(amenitiesData())}
               />
-              <Dashboard />
+              <Dashboard dataToShow={JSON.stringify(borough_neighbourhood())} />
             </>
           </Match>
-          <Match when={realEstateData || historicalRealEstateData}>
+          <Match when={realEstateData.error || historicalRealEstateData.error}>
             <div>error loading something..</div>
           </Match>
         </Switch>

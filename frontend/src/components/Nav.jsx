@@ -1,5 +1,6 @@
 import { useLocation } from "@solidjs/router";
 import { createSignal } from "solid-js";
+import { A } from "@solidjs/router";
 
 export default function Nav(props) {
   const location = useLocation();
@@ -10,9 +11,9 @@ export default function Nav(props) {
 
   const [dropdownDisplay, setDropdownDisplay] = createSignal(false);
 
-  const toggleDropdown = () => {
-    setDropdownDisplay(!dropdownDisplay());
-  };
+  // const toggleDropdown = () => {
+  //   setDropdownDisplay(!dropdownDisplay());
+  // };
 
   return (
     <nav
@@ -26,15 +27,19 @@ export default function Nav(props) {
         class="mt-[5%] w-[100%] 
       h-[10%] mb-[5%] 
       font-sans text-4xl flex flex-col 
-      border-solid border-b-2 border-indigo-600"
+      "
       >
-        REIAH{" "}
+        <span>REIAH </span>
         <span
           class="flex bg-green rounded-lg w-[60%] 
-          item-center justify-center ml-[3%] h-[90%] text-white"
+          item-center justify-center h-[90%] text-white"
         >
           APP
         </span>
+        <div
+          class="w-[100%] h-[2px] mt-[2%]
+        border-solid border-b-2 border-indigo-600"
+        ></div>
       </div>
 
       <ul
@@ -49,7 +54,7 @@ export default function Nav(props) {
           hover:bg-green w-[100%] 
           flex flex-col text-black`}
         >
-          <a href="/">Home</a>
+          <A href="/">Home</A>
         </li>
 
         <li
@@ -57,7 +62,7 @@ export default function Nav(props) {
           flex flex-row gap-2 
           hover:bg-green w-[100%] flex flex-col `}
         >
-          <a href="/induction">Induction</a>
+          <A href="/about">Induction</A>
         </li>
         <li
           class={`border-b-2 ${active("/settings")} mx-1.5 sm:mx-6 

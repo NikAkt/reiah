@@ -6,7 +6,7 @@ import {
 } from "./layerStore";
 import Markers from "./Markers";
 import API_KEY from "../api";
-// import InfoWindow from "./InfoWindow";
+import InfoWindow from "./Infowindow";
 import DataLayer from "./DataLayer";
 
 // import pkg from "@googlemaps/js-api-loader";
@@ -83,7 +83,7 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div id="map" class="w-[85vw] h-[100vh]" />
+      <div ref={props.ref} id="map" class="w-[85vw] h-[100vh]" />
       <InfoWindow infoWindowContent={infoWindowContent()} />
       <Suspense
         fallback={
@@ -97,11 +97,14 @@ const GoogleMap = (props) => {
             <Markers
               realEstateData={props.realEstateData}
               historicalRealEstateData={props.historicalRealEstateData}
+              us_zip_codes={props.us_zip_codes}
+              borough_neighbourhood={props.borough_neighbourhood}
             />
 
             <DataLayer
               data={props.datalayer_geonjson}
               setInfoWindowContent={setInfoWindowContent}
+              borough_neighbourhood={props.borough_neighbourhood}
             />
           </Match>
           <Match>
