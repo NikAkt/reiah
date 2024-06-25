@@ -4,7 +4,6 @@ import {
   Switch,
   Match,
   Suspense,
-  createEffect,
 } from "solid-js";
 import GoogleMap from "~/components/GoogleMap";
 
@@ -14,16 +13,25 @@ import Dashboard from "~/components/Dashboard";
 import InfoWindow from "~/components/Infowindow";
 
 const fetchData = async (json_path) => {
-  const response = await fetch(json_path);
+  const response = await fetch(json_path, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Network response was not ok " + response.statusText);
+    return null;
+  }
   return await response.json();
 };
 
 const [infoCardData, setInfoCardData] = createSignal([]);
+const [mapZoom, setMapZoom] = createSignal(10);
 
 export default function Home() {
   let mapContainer;
   const [coords, setCoords] = createSignal({ lat: 40.7128, lng: -74.006 });
-  const [neighborhood, setNeighborhood] = createSignal("");
   const [showNav, setShowNav] = createSignal("inline-block");
   const [realEstateData] = createResource(
     "http://localhost:3000/assets/real_estate_price_data.json",
@@ -68,7 +76,6 @@ export default function Home() {
     <div class="m-0 px-0 flex flex-row">
       <Nav showNav={showNav} setShowNav={setShowNav} />
       <InfoWindow />
-      {/* <Suspense>{props.children}</Suspense> */}
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Match
