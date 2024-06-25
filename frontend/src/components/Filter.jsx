@@ -117,7 +117,7 @@ const Filter = ({
   return (
     <div
       class="absolute z-30 w-32 flex flex-col 
-    items-center gap-0.5 mt-[2vh] ml-[42vw]
+    items-center gap-0.5 top-[2vh] left-[55vw]
      justify-center
     text-white"
     >

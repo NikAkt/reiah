@@ -24,9 +24,9 @@ export default function Nav(props) {
   return (
     <>
       <div
-        class="absolute shadow-md appearance-none left-[0] top-[0]
-    rounded w-[15vw] h-screen text-accent leading-tight 
-    z-10 border-2 border-dashed border-blue
+        class="absolute appearance-none left-[0] top-[0]
+    rounded w-[15vw] h-screen text-accent leading-tight
+    z-30 
     "
         onMouseOver={() => {
           props.setShowNav("inline-block");
@@ -35,7 +35,7 @@ export default function Nav(props) {
       <nav
         class={`shadow-md appearance-none z-30
           rounded w-[15vw] h-screen p-3 text-accent leading-tight 
-          focus:outline-none focus:shadow-outline 
+          focus:outline-none focus:shadow-outline bg-white 
           dark:bg-slate-800 dark:text-slate-200 ${
             props.showNav() === "inline-block"
               ? "animate-fade-in"

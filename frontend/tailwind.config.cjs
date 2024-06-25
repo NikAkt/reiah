@@ -9,6 +9,7 @@ module.exports = {
         green: "#81c7a5",
         black: "#1b212c",
         white: "#F3F4F6",
+        grey: "#2F2F2F",
         corvu: {
           bg: "#f3f1fe",
           100: "#e6e2fd",
@@ -21,6 +22,7 @@ module.exports = {
       animation: {
         "fade-down": "fade-down 0.2s ease-out forwards",
         "fade-in": "fade-in 0.2s ease-out forwards",
+        "fade-out": "fade-out 0.2s ease-out backwards",
         expand: "expand 250ms cubic-bezier(0.32,0.72,0,0.75)",
         collapse: "collapse 250ms cubic-bezier(0.32,0.72,0,0.75)",
       },
@@ -34,8 +36,8 @@ module.exports = {
           "100%": { opacity: "1", transform: "translateX(0vw)" },
         },
         "fade-out": {
-          "0%": { opacity: "0", transform: "translateX(2vw)" },
-          "100%": { opacity: "1", transform: "translateX(0vw)" },
+          "0%": { opacity: "1", transform: "translateX(0vw)" },
+          "100%": { opacity: "0", transform: "translateX(2vw)" },
         },
         expand: {
           "0%": {

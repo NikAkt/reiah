@@ -27,6 +27,9 @@ const GoogleMap = (props) => {
           zoom: props.zoom,
         });
         setLayerStore("map", map);
+        map.addListener("zoom_changed", () => {
+          props.setMapZoom(map.zoom);
+        });
       }
       setLayerStore("google_map", google.maps);
       setIsGoogleMapInitialized(true);
@@ -39,8 +42,7 @@ const GoogleMap = (props) => {
       //NYC_Neighbourhood.geojson
       //https://data.cityofnewyork.us/api/geospatial/gchv-z24g?method=export&format=GeoJSON
       // map.data.loadGeoJson(neighbourhood);
-      //this part should be dynamically changes with the user choosing to see different neighborhood in the filter,
-      //not outlining any neighborhood
+
       fetch("/assets/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
         .then((response) => response.json())
         .then((data) => {
@@ -86,7 +88,7 @@ const GoogleMap = (props) => {
       <div
         ref={props.ref}
         id="map"
-        class="top-0 left-0 w-[85vw] h-[100vh] transition-width"
+        class="absolute top-0 left-0 w-[100vw] h-[100vh] transition-width"
       />
       <InfoWindow infoWindowContent={infoWindowContent()} />
       <Suspense
@@ -104,6 +106,7 @@ const GoogleMap = (props) => {
               us_zip_codes={props.us_zip_codes}
               borough_neighbourhood={props.borough_neighbourhood}
               setInfoCardData={props.setInfoCardData}
+              mapZoom={mapZoom()}
             />
 
             <DataLayer
@@ -111,6 +114,7 @@ const GoogleMap = (props) => {
               setInfoWindowContent={setInfoWindowContent}
               borough_neighbourhood={props.borough_neighbourhood}
               borough_geojson={props.borough_geojson}
+              mapZoom={props.mapZoom}
             />
           </Match>
           <Match>

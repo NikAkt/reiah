@@ -11,6 +11,7 @@ import Nav from "~/components/Nav";
 import Filter from "~/components/Filter";
 import Dashboard from "~/components/Dashboard";
 import InfoWindow from "~/components/Infowindow";
+import PropertySwitchBtn from "~/components/PropertySwitchBtn";
 
 const fetchData = async (json_path) => {
   const response = await fetch(json_path, {
@@ -76,6 +77,7 @@ export default function Home() {
     <div class="m-0 px-0 flex flex-row">
       <Nav showNav={showNav} setShowNav={setShowNav} />
       <InfoWindow />
+      <PropertySwitchBtn class="fixed top-[2vh] left-[20vw]" />
       <Suspense fallback={<div>Loading...</div>}>
         <Switch>
           <Match
@@ -93,7 +95,7 @@ export default function Home() {
                 ref={(el) => (mapContainer = el)}
                 lat={coords().lat}
                 lng={coords().lng}
-                zoom={11}
+                zoom={10}
                 realEstateData={JSON.stringify(realEstateData())}
                 historicalRealEstateData={JSON.stringify(
                   historicalRealEstateData()
@@ -104,6 +106,8 @@ export default function Home() {
                 borough_geojson={JSON.stringify(borough_geojson())}
                 showNav={showNav}
                 setInfoCardData={setInfoCardData}
+                setMapZoom={setMapZoom}
+                mapZoom={mapZoom}
               />
               <Filter
                 realEstateData={JSON.stringify(realEstateData())}

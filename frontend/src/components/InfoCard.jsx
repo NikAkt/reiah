@@ -30,11 +30,17 @@ const InfoCard = (props) => {
 
   return (
     <div
-      class="my-auto w-full max-w-[80%]
-     overflow-hidden rounded-lg @xl:max-w-[400px] border-dashed border-2 border-blue"
+      class="my-auto w-full max-w-[80%] h-[40%]
+     overflow-hidden rounded-lg @xl:max-w-[400px] 
+     border-dashed border-2 border-blue bg-green"
       id={`infocard-${data.title}`}
     >
-      <h2>{data.title}</h2>
+      <div
+        class="bg-blue text-white
+      "
+      >
+        {data.title}
+      </div>
       <Show when={props.area === "borough"}>
         <div>
           <p>Neighbourhood</p>

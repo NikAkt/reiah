@@ -1,11 +1,8 @@
 import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
-import { layerStore, isGoogleMapInitialized } from "./layerStore";
+import { layerStore } from "./layerStore";
 import * as mc from "@googlemaps/markerclusterer";
 // const { MarkerClusterer, GridAlgorithm } = mc;
 import Chart from "chart.js/auto";
-// import Dashboard from "./Dashboard";
-import InfoCard from "./InfoCard";
-// import Plotly from "plotly.js-dist-min";
 
 let zipcodes_latlng = {};
 const [cluster_borough, setClusterBorough] = createSignal(true);
