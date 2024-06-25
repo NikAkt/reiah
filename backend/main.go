@@ -24,9 +24,9 @@ func main() {
 	e.GET("/map", handlers.HandleMap, handlers.CustomAuthMiddleware, middleware.Logger())
 
 	// SETTINGS PAGE
-	e.GET("/settings", handlers.HandleSettings, handlers.CustomAuthMiddleware, middleware.Logger())
-	e.GET("/settings/edit", handlers.HandleSettingsEdit, handlers.CustomAuthMiddleware, middleware.Logger())
-	e.PATCH("/settings/edit/:userid", handlers.HandleUpdateUserSettings, handlers.CustomAuthMiddleware, middleware.Logger())
+	e.GET("/settings", handlers.HandleSettingsGet, handlers.CustomAuthMiddleware, middleware.Logger())
+	e.GET("/settings/edit", handlers.HandleSettingsEditGet, handlers.CustomAuthMiddleware, middleware.Logger())
+	e.PATCH("/settings/edit/:userid", handlers.HandleSettingsEditPatch, handlers.CustomAuthMiddleware, middleware.Logger())
 
 	// DASHBOARD PAGE
 	e.GET("/dashboard", handlers.HandleDashboard, handlers.CustomAuthMiddleware, middleware.Logger())

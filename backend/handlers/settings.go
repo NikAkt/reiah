@@ -10,7 +10,7 @@ import (
 )
 
 // This is a basic handler which handles the route '/settings'
-func HandleSettings(c echo.Context) error {
+func HandleSettingsGet(c echo.Context) error {
 	userid := c.Get("userid").(string)
 
 	var user db.User
@@ -29,7 +29,7 @@ func HandleSettings(c echo.Context) error {
 
 // This is a basic handler which handles the route '/settings/edit get request'
 // This will allow users to edit the form
-func HandleSettingsEdit(c echo.Context) error {
+func HandleSettingsEditGet(c echo.Context) error {
 	userid := c.Get("userid").(string)
 
 	var user db.User
@@ -46,6 +46,7 @@ func HandleSettingsEdit(c echo.Context) error {
 	return Render(c, pages.Settings(true, userid, userValues, map[string]string{}))
 }
 
+// Parse the form values submitted and validate them
 func parseUpdateSettingsFormAndValidate(c echo.Context) (components.SettingsFormValues, map[string]string) {
 	var userUpdate components.SettingsFormValues
 	if err := c.Bind(&userUpdate); err != nil {
@@ -54,7 +55,7 @@ func parseUpdateSettingsFormAndValidate(c echo.Context) (components.SettingsForm
 	return userUpdate, userUpdate.Validate()
 }
 
-func HandleUpdateUserSettings(c echo.Context) error {
+func HandleSettingsEditPatch(c echo.Context) error {
 	// get the user id fromt the request
 	userid := c.Param("userid")
 

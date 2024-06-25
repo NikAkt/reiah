@@ -1,5 +1,21 @@
 package components
 
+type LoginFormValues struct {
+	Username string `form:"username"`
+	Password string `form:"password"`
+}
+
+func (values *LoginFormValues) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(values.Username) < 1 {
+		errors["name"] = "name must be greater than one character"
+	}
+	if len(values.Password) < 1 {
+		errors["surname"] = "surname must be greater than 1 character"
+	}
+	return errors
+}
+
 templ LoginForm(invalid bool) {
 	<div class="w-2/3">
 		<div class="mb-8 dark:text-white">
@@ -26,6 +42,22 @@ templ LoginForm(invalid bool) {
 			New to reiah? <a class="text-teal-500 hover:text-green-200" hx-boost="true" href="/register">Register here</a>
 		</p>
 	</div>
+}
+
+type RegisterFormValues struct {
+	Username string `form:"username"`
+	Password string `form:"password"`
+}
+
+func (values *RegisterFormValues) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(values.Username) < 1 {
+		errors["name"] = "name must be greater than one character"
+	}
+	if len(values.Password) < 1 {
+		errors["surname"] = "surname must be greater than 1 character"
+	}
+	return errors
 }
 
 templ RegisterForm(success bool) {

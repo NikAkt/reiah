@@ -10,6 +10,22 @@ import "context"
 import "io"
 import "bytes"
 
+type LoginFormValues struct {
+	Username string `form:"username"`
+	Password string `form:"password"`
+}
+
+func (values *LoginFormValues) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(values.Username) < 1 {
+		errors["name"] = "name must be greater than one character"
+	}
+	if len(values.Password) < 1 {
+		errors["surname"] = "surname must be greater than 1 character"
+	}
+	return errors
+}
+
 func LoginForm(invalid bool) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -54,6 +70,22 @@ func LoginForm(invalid bool) templ.Component {
 		}
 		return templ_7745c5c3_Err
 	})
+}
+
+type RegisterFormValues struct {
+	Username string `form:"username"`
+	Password string `form:"password"`
+}
+
+func (values *RegisterFormValues) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(values.Username) < 1 {
+		errors["name"] = "name must be greater than one character"
+	}
+	if len(values.Password) < 1 {
+		errors["surname"] = "surname must be greater than 1 character"
+	}
+	return errors
 }
 
 func RegisterForm(success bool) templ.Component {

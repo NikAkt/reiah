@@ -37,7 +37,7 @@ func (values *SettingsFormValues) Validate() map[string]string {
 	if len(values.Username) < 1 {
 		errors["username"] = "username must be greater than 1 character"
 	}
-	if isValidEmail(values.Email) {
+	if !isValidEmail(values.Email) {
 		errors["email"] = "please enter a valid email address"
 	}
 	return errors
