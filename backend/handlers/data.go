@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -221,21 +222,28 @@ func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
 }
 
 type HistoricPricesFilterParams struct {
-	Zipcode int    `query:"zipcode"`
-	Date    string `query:"date"`
+	Zipcodes []int  `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
+	Date     string `query:"date"`
 }
 
 func filterHistoricPrices(a []HistoricPrices, f *HistoricPricesFilterParams) []HistoricPrices {
 	var filtered []HistoricPrices
+	zipcodeSet := make(map[int]struct{}) // Map for storing and lookingup the zipcodes
+	for _, z := range f.Zipcodes {
+		zipcodeSet[z] = struct{}{} // This loop populates the map with all the zipcodes in the query params
+	}
+
 	for _, prices := range a {
-		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
-			continue
+		if len(zipcodeSet) > 0 {
+			if _, ok := zipcodeSet[prices.Zipcode]; !ok {
+				continue // This loop cheks if the map (query) contains actual zipcodes in the json (prices.Zipcode)
+			}
 		}
 		if f.Date != "" {
 			if price, ok := prices.History[f.Date]; ok {
 				prices.History = map[string]float64{f.Date: price}
 				filtered = append(filtered, prices)
-			}
+			} // This loop checks for the date from the query if there is one and filters the History map to include only corresponding prices
 		} else {
 			filtered = append(filtered, prices)
 		}
@@ -245,8 +253,20 @@ func filterHistoricPrices(a []HistoricPrices, f *HistoricPricesFilterParams) []H
 
 func ServeHistoricRealEstatePrices(c echo.Context) error {
 	var p HistoricPricesFilterParams
+
+	// Here we bind zipcodes / date params
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	}
+
+	// For multiple zipcodes
+	zipcodes := c.QueryParams()["zipcode"] // This fetches all the different values for "zipcode" in the query
+	for _, z := range zipcodes {
+		zipcode, err := strconv.Atoi(z) // loop that converts each zipcode to interger
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
+		}
+		p.Zipcodes = append(p.Zipcodes, zipcode) //adds the zipcodes to the slice one by one
 	}
 
 	file, err := os.Open("public/historic_real_estate_prices.json")
