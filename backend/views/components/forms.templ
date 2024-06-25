@@ -2,78 +2,42 @@
 package components
 
 import (
-"strconv"
+	"strconv"
 )
 
 type InputAttributes struct {
-Type string
-Label string
-Placeholder string
-Name string
-Error string
-Disabled bool
-Value string
+	Type        string
+	Label       string
+	Placeholder string
+	Name        string
+	Error       string
+	Disabled    bool
+	Value       string
 }
 
 templ FormInput(a InputAttributes) {
-<label class="block mb-4">
-  <span class="text-accent text-sm mb-2 dark:text-slate-200">{ a.Label }</span>
-  <input disabled?={ a.Disabled }
-    class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900"
-    type={ a.Type } placeholder={ a.Placeholder } name={ a.Name } value={ a.Value } />
-</label>
+	<label class="block mb-4">
+		<span class="text-accent text-sm mb-2 dark:text-slate-200">{ a.Label }</span>
+		<input
+			disabled?={ a.Disabled }
+			if len(a.Error) > 0 {
+				class="shadow appearance-none border border-red-500 rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900"
+			} else {
+				class="shadow appearance-none border rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900"
+			}
+			type={ a.Type }
+			placeholder={ a.Placeholder }
+			name={ a.Name }
+			value={ a.Value }
+		/>
+		if len(a.Error) > 0 {
+			<p class="text-red-500 text-xs italic">{ a.Error }</p>
+		}
+	</label>
 }
 
 templ InputGroup(gs int) {
-<div class={ "grid gap-2 grid-cols-" + strconv.Itoa(gs) }>
-  { children... }
-</div>
-}
-
-type SettingsFormValues struct {
-Name string
-Surname string
-Username string
-Email string
-}
-
-templ SettingsForm(editOn bool, userId string, values SettingsFormValues, errors map[string]string) {
-<form autocomplete="on" hx-patch={ "/settings/edit/" + userId }>
-  @InputGroup(3) {
-  @FormInput(InputAttributes{
-  Type: "text",
-  Label: "Name",
-  Placeholder: "Name",
-  Name: "name",
-  Disabled: !editOn,
-  Value: values.Name,
-  })
-  @FormInput(InputAttributes{"text", "Surname", "Surname", "surname", !editOn, values.Surname})
-  @FormInput(InputAttributes{"text", "Username", "Username", "username", !editOn, values.Username})
-  }
-  @InputGroup(3) {
-  @FormInput(InputAttributes{"email", "Email", "Email", "email", !editOn, values.Email})
-  }
-  <div class="mt-6 grid grid-cols-3 gap-2">
-    <div class="col-start-3 grid gap-2">
-      if editOn {
-      <div class="w-full grid grid-cols-2 gap-2">
-        <button type="submit"
-          class="bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          Save
-        </button>
-        <a hx-boost="true" href="/settings"
-          class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          Cancel
-        </a>
-      </div>
-      } else {
-      <a hx-boost="true" href="/settings/edit"
-        class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Edit
-      </a>
-      }
-    </div>
-  </div>
-</form>
+	<div class={ "grid gap-2 grid-cols-" + strconv.Itoa(gs) }>
+		{ children... }
+	</div>
 }

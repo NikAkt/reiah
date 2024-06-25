@@ -12,10 +12,9 @@ import "bytes"
 
 import "github.com/denartha10/SummerProjectGOTH/views/layouts"
 import "github.com/denartha10/SummerProjectGOTH/views/components"
-import "github.com/denartha10/SummerProjectGOTH/db"
 
 // TODO: Will be adding in forms for updating users in the future
-func Settings(u *db.User, edit bool) templ.Component {
+func Settings(editOn bool, userId string, values components.SettingsFormValues, errors map[string]string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -38,7 +37,7 @@ func Settings(u *db.User, edit bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SettingsForm(u, edit).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SettingsForm(editOn, userId, values, errors).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,3 +60,7 @@ func Settings(u *db.User, edit bool) templ.Component {
 		return templ_7745c5c3_Err
 	})
 }
+
+//--We can create a values and an empty map
+// Page
+//   Form

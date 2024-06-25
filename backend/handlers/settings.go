@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/denartha10/SummerProjectGOTH/db"
+	"github.com/denartha10/SummerProjectGOTH/views/components"
 	"github.com/denartha10/SummerProjectGOTH/views/pages"
 	"github.com/labstack/echo/v4"
 )
@@ -17,7 +18,13 @@ func HandleSettings(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Failed to find user in database")
 	}
 
-	return Render(c, pages.Settings(&user, false))
+	userValues := components.SettingsFormValues{
+		Username: user.Username,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
+	}
+	return Render(c, pages.Settings(false, userid, userValues, map[string]string{}))
 }
 
 // This is a basic handler which handles the route '/settings/edit get request'
@@ -30,25 +37,31 @@ func HandleSettingsEdit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Failed to find user in database")
 	}
 
-	return Render(c, pages.Settings(&user, true))
+	userValues := components.SettingsFormValues{
+		Username: user.Username,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
+	}
+	return Render(c, pages.Settings(true, userid, userValues, map[string]string{}))
 }
 
-type UpdateUserSettingsForm struct {
-	Username string `form:"username"`
-	Email    string `form:"email"`
-	Password string `form:"password"`
-	Name     string `form:"name"`
-	Surname  string `form:"surname"`
+func parseUpdateSettingsFormAndValidate(c echo.Context) (components.SettingsFormValues, map[string]string) {
+	var userUpdate components.SettingsFormValues
+	if err := c.Bind(&userUpdate); err != nil {
+		panic(err)
+	}
+	return userUpdate, userUpdate.Validate()
 }
 
 func HandleUpdateUserSettings(c echo.Context) error {
-	var userUpdate UpdateUserSettingsForm
-	if err := c.Bind(&userUpdate); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "failed to parse form values"+err.Error())
-	}
-
 	// get the user id fromt the request
 	userid := c.Param("userid")
+
+	values, errors := parseUpdateSettingsFormAndValidate(c)
+	if len(errors) > 0 {
+		return Render(c, pages.Settings(true, userid, values, errors))
+	}
 
 	// get the user from the database using the id
 	var user db.User
@@ -58,10 +71,10 @@ func HandleUpdateUserSettings(c echo.Context) error {
 
 	newUser := db.User{
 		Id:           user.Id,
-		Username:     userUpdate.Username,
-		Name:         userUpdate.Name,
-		Email:        userUpdate.Email,
-		Surname:      userUpdate.Surname,
+		Username:     values.Username,
+		Name:         values.Name,
+		Email:        values.Email,
+		Surname:      values.Surname,
 		PasswordHash: user.PasswordHash,
 		CreatedAt:    user.CreatedAt,
 		UpdatedAt:    user.UpdatedAt,
