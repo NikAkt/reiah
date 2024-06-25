@@ -21,6 +21,8 @@ module.exports = {
       animation: {
         "fade-down": "fade-down 0.2s ease-out forwards",
         "fade-in": "fade-in 0.2s ease-out forwards",
+        expand: "expand 250ms cubic-bezier(0.32,0.72,0,0.75)",
+        collapse: "collapse 250ms cubic-bezier(0.32,0.72,0,0.75)",
       },
       keyframes: {
         "fade-down": {
@@ -34,6 +36,22 @@ module.exports = {
         "fade-out": {
           "0%": { opacity: "0", transform: "translateX(2vw)" },
           "100%": { opacity: "1", transform: "translateX(0vw)" },
+        },
+        expand: {
+          "0%": {
+            height: "0px",
+          },
+          "100%": {
+            height: "var(--corvu-disclosure-content-height)",
+          },
+        },
+        collapse: {
+          "0%": {
+            height: "var(--corvu-disclosure-content-height)",
+          },
+          "100%": {
+            height: "0px",
+          },
         },
       },
     },

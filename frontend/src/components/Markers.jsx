@@ -198,11 +198,32 @@ const Markers = (props) => {
           });
 
           clusterMarker.addListener("click", async ({ domEvent, latLng }) => {
+            console.log("clusterMarker", clusterMarker);
             const dataToPut = {
               title: clusterMarker.title,
               markersInclude: clusterMarker.markersInclude,
+              avgPrice: clusterMarker.label.text,
             };
             props.setInfoCardData((prev) => [...prev, dataToPut]);
+            // 10454
+            const dataFilter = historic_real_estate_data.filter(
+              ({ zipcode }) => String(zipcode) === "10454"
+            );
+
+            //chart js
+
+            new Chart(document.getElementById("chart_js"), {
+              type: "bar",
+              data: {
+                labels: Object.keys(dataFilter[0]["history"]),
+                datasets: [
+                  {
+                    label: "10454",
+                    data: Object.values(dataFilter[0]["history"]),
+                  },
+                ],
+              },
+            });
           });
           markersOnMap.push(clusterMarker);
         };

@@ -59,6 +59,11 @@ export default function Home() {
     fetchData
   );
 
+  const [demographic_info] = createResource(
+    "http://localhost:3000/assets/demographic_data_by_zipcode.json",
+    fetchData
+  );
+
   return (
     <div class="m-0 px-0 flex flex-row">
       <Nav showNav={showNav} setShowNav={setShowNav} />
@@ -72,7 +77,8 @@ export default function Home() {
               historicalRealEstateData() &&
               amenitiesData() &&
               borough_neighbourhood() &&
-              borough_geojson()
+              borough_geojson() &&
+              demographic_info()
             }
           >
             <>
@@ -99,9 +105,12 @@ export default function Home() {
                 )}
                 amenitiesData={JSON.stringify(amenitiesData())}
               />
+
               <Dashboard
                 infoCardData={infoCardData}
                 setInfoCardData={setInfoCardData}
+                demographic_info={demographic_info()}
+                amenitiesData={amenitiesData()}
               />
             </>
           </Match>

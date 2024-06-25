@@ -28,16 +28,21 @@ export default function Nav(props) {
     rounded w-[15vw] h-screen text-accent leading-tight 
     z-10 border-2 border-dashed border-blue
     "
-        onmouseover={() => {
+        onMouseOver={() => {
           props.setShowNav("inline-block");
         }}
       ></div>
       <nav
         class={`shadow-md appearance-none z-30
-    rounded w-[15vw] h-screen p-3 text-accent leading-tight 
-    focus:outline-none focus:shadow-outline animate-fade-in duration-300
-    dark:bg-slate-800 dark:text-slate-200 ${props.showNav()}`}
-        onmouseout={() => {
+          rounded w-[15vw] h-screen p-3 text-accent leading-tight 
+          focus:outline-none focus:shadow-outline 
+          dark:bg-slate-800 dark:text-slate-200 ${
+            props.showNav() === "inline-block"
+              ? "animate-fade-in"
+              : "animate-fade-out"
+          } duration-300
+          ${props.showNav()}`}
+        onMouseLeave={() => {
           props.setShowNav("hidden");
         }}
       >

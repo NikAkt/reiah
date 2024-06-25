@@ -1,54 +1,71 @@
-import Resizable from "@corvu/resizable"; // 'corvu/resizable'
+import { For, Show, onMount } from "solid-js";
 
 const InfoCard = (props) => {
   const data = props.data;
+  //   const fetchAmenities = async (borough) => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://localhost:8000/api/amenities?borough=${borough}`,
+  //         {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           credentials: "include", // Include credentials if needed (like cookies)
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+
+  //       const data = await response.json();
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error("There was a problem with the fetch operation:", error);
+  //     }
+  //   };
+
+  //   fetchAmenities("Bronx");
+
   return (
-    <>
-      <div class="relative inline-block w-[90%] h-[30%] bg-green flex flex-col ">
-        {/* <p class="w-[100%] h-[20%]">BOROUGH: {data.title}</p>
-        <div class="w-[80%] h-[80%]">
-          <p>ZIPCODE INCLUDED</p>
-          <ul class="flex flex-row gap-2">
-            {data.markersInclude.map((el) => (
-              <li>{el}</li>
-            ))}
+    <div
+      class="my-auto w-full max-w-[80%]
+     overflow-hidden rounded-lg @xl:max-w-[400px] border-dashed border-2 border-blue"
+      id={`infocard-${data.title}`}
+    >
+      <h2>{data.title}</h2>
+      <Show when={props.area === "borough"}>
+        <div>
+          <p>Neighbourhood</p>
+          <ul></ul>
+        </div>
+      </Show>
+      <Show when={props.area === "borough" || props.area === "neighbourhood"}>
+        <div class="relative w-[100%] h-[22%] overflow-y-scroll">
+          <p>{data.markersInclude.length} zip code included are:</p>
+          <ul>
+            <For
+              each={data.markersInclude}
+              fallback={<div>Loading all zip codes...</div>}
+            >
+              {(item, index) => <li>{item}</li>}
+            </For>
           </ul>
-        </div> */}
-        <Resizable class="size-full">
-          <Resizable.Panel
-            initialSize={0.3}
-            minSize={0.2}
-            class="rounded-lg bg-corvu-100"
-          />
-          <Resizable.Handle
-            aria-label="Resize Handle"
-            class="group basis-3 px-[3px]"
-          >
-            <div class="size-full rounded transition-colors corvu-group-active:bg-corvu-300 corvu-group-dragging:bg-corvu-100" />
-          </Resizable.Handle>
-          <Resizable.Panel initialSize={0.7} minSize={0.2}>
-            <Resizable orientation="vertical" class="size-full">
-              <Resizable.Panel
-                initialSize={0.5}
-                minSize={0.2}
-                class="rounded-lg bg-corvu-100"
-              />
-              <Resizable.Handle
-                aria-label="Resize Handle"
-                class="group basis-3 py-[3px]"
-              >
-                <div class="size-full rounded transition-colors corvu-group-active:bg-corvu-300 corvu-group-dragging:bg-corvu-100" />
-              </Resizable.Handle>
-              <Resizable.Panel
-                initialSize={0.5}
-                minSize={0.2}
-                class="rounded-lg bg-corvu-100"
-              />
-            </Resizable>
-          </Resizable.Panel>
-        </Resizable>
+        </div>
+      </Show>
+      <div>
+        <p>Average Home Value: {data.avgPrice}</p>
       </div>
-    </>
+
+      <div>
+        <p>Amenities</p>
+      </div>
+
+      <div>
+        <p>Demographic</p>
+      </div>
+    </div>
   );
 };
 

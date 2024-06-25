@@ -83,7 +83,11 @@ const GoogleMap = (props) => {
 
   return (
     <div>
-      <div ref={props.ref} id="map" class="top-0 left-0 w-screen h-[100vh]" />
+      <div
+        ref={props.ref}
+        id="map"
+        class="top-0 left-0 w-[85vw] h-[100vh] transition-width"
+      />
       <InfoWindow infoWindowContent={infoWindowContent()} />
       <Suspense
         fallback={
