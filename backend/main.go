@@ -16,6 +16,10 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
 
 	// HOME PAGE
 	e.GET("/", handlers.HandleHome, handlers.CustomAuthMiddleware, middleware.Logger())
@@ -48,6 +52,6 @@ func main() {
 	e.GET("/api/neighbourhoods", handlers.ServeNeighbourhoods)
 
 	// Mount the public folder at the publci address for accessing css and static files
-	e.Static("/public", "public")
+	e.Static("/", "public")
 	e.Logger.Fatal(e.Start("0.0.0.0:8000"))
 }

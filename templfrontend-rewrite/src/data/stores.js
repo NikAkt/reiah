@@ -3,6 +3,7 @@ import { createStore } from "solid-js/store";
 export const [store, setStore] = createStore({
   sidebarOpen: false,
   darkModeOn: false,
+  geoJSONData: [],
   mapOptions: {
     center: { lat: 40.75, lng: -73.971321 },
     zoom: 11,

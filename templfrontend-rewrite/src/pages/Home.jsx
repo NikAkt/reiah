@@ -1,5 +1,4 @@
 import { BaseLayout } from "../layouts/Layout";
-import { A } from "@solidjs/router";
 
 export const Home = () => {
   return (

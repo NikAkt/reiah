@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 
@@ -190,5 +191,12 @@ func ServeHistoricRealEstatePrices(c echo.Context) error {
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-	return c.File("public/NYC_neighbourhood.geojson")
+	file, err := os.Open("public/NYC_Neighborhood.geojson")
+	if err == nil {
+		log.Println("MANAGED TO OPEN THE FILE")
+	} else {
+		log.Println(err.Error())
+	}
+	defer file.Close()
+	return c.File("public/NYC_Neighborhood.geojson")
 }
