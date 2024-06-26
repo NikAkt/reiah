@@ -1,9 +1,9 @@
 package components
 
 templ BarChart(id string) {
-<div class="relative w-full h-full">
-  <canvas id={ id }></canvas>
-  <script data-mapid={ id }>
+	<div class="relative w-full h-full">
+		<canvas id={ id }></canvas>
+		<script data-mapid={ id }>
     var script = document.currentScript
     var ctx = document.currentScript.dataset.mapid
 
@@ -28,13 +28,13 @@ templ BarChart(id string) {
       }
     });
   </script>
-</div>
+	</div>
 }
 
 templ LineChart(id string) {
-<div class="relative w-full h-full">
-  <canvas id={ id }></canvas>
-  <script data-mapid={ id }>
+	<div class="relative w-full h-full">
+		<canvas id={ id }></canvas>
+		<script data-mapid={ id }>
     var script = document.currentScript
     var ctx = document.currentScript.dataset.mapid
 
@@ -56,5 +56,5 @@ templ LineChart(id string) {
       }
     });
   </script>
-</div>
+	</div>
 }

@@ -1,0 +1,84 @@
+package components
+
+import (
+	"net/mail"
+)
+
+func isValidEmail(e string) bool {
+	_, err := mail.ParseAddress(e)
+	return err == nil
+}
+
+type SettingsFormValues struct {
+	Username string `form:"username"`
+	Email    string `form:"email"`
+	Name     string `form:"name"`
+	Surname  string `form:"surname"`
+}
+
+func (values *SettingsFormValues) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(values.Name) < 1 {
+		errors["name"] = "name must be greater than one character"
+	}
+	if len(values.Surname) < 1 {
+		errors["surname"] = "surname must be greater than 1 character"
+	}
+	if len(values.Username) < 1 {
+		errors["username"] = "username must be greater than 1 character"
+	}
+	if !isValidEmail(values.Email) {
+		errors["email"] = "please enter a valid email address"
+	}
+	return errors
+}
+
+templ SettingsForm(editOn bool, userId string, values SettingsFormValues, errors map[string]string) {
+	<form autocomplete="on" hx-patch={ "/settings/edit/" + userId } hx-target="body" hx-swap="innerHTML">
+		@InputGroup(3) {
+			@FormInput(InputAttributes{
+				Type:        "text",
+				Label:       "Name",
+				Placeholder: "Name",
+				Name:        "name",
+				Error:       errors["name"],
+				Disabled:    !editOn,
+				Value:       values.Name,
+			})
+			@FormInput(InputAttributes{"text", "Surname", "Surname", "surname", errors["surname"], !editOn, values.Surname})
+			@FormInput(InputAttributes{"text", "Username", "Username", "username", errors["username"], !editOn, values.Username})
+		}
+		@InputGroup(3) {
+			@FormInput(InputAttributes{"email", "Email", "Email", "email", errors["email"], !editOn, values.Email})
+		}
+		<div class="mt-6 grid grid-cols-3 gap-2">
+			<div class="col-start-3 grid gap-2">
+				if editOn {
+					<div class="w-full grid grid-cols-2 gap-2">
+						<button
+							type="submit"
+							class="bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						>
+							Save
+						</button>
+						<a
+							hx-boost="true"
+							href="/settings"
+							class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						>
+							Cancel
+						</a>
+					</div>
+				} else {
+					<a
+						hx-boost="true"
+						href="/settings/edit"
+						class="text-center bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white dark:text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+					>
+						Edit
+					</a>
+				}
+			</div>
+		</div>
+	</form>
+}
