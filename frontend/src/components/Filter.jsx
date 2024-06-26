@@ -2,6 +2,7 @@ import { createSignal, onCleanup, onMount } from "solid-js";
 // import filter_img from "/assets/icon/Filter.png";
 import MapFilter from "./MapFilter";
 import Chart from "chart.js/auto";
+// import ScrollBar from "./ScrollBar";
 
 const Filter = ({
   realEstateData,
@@ -192,6 +193,7 @@ const Filter = ({
                     Average Home Value
                   </p>
                   <div>Here should be a chart that looks like airbnb's</div>
+                  {/* <ScrollBar /> */}
                   <div class="flex gap-2 ">
                     <div
                       class="flex flex-col w-[35%] h-[10%] 

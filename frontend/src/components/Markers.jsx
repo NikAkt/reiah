@@ -12,6 +12,19 @@ let zipcode_markers = [];
 let borough_markers = [];
 let neighbourhood_markers = [];
 let markersOnMap = [];
+const svg = window.btoa(`
+  <svg fill="${"#0145ac"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <circle cx="120" cy="120" opacity=".6" r="70" />
+  <circle cx="120" cy="120" opacity=".3" r="90" />
+  <circle cx="120" cy="120" opacity=".2" r="110" />
+  <circle cx="120" cy="120" opacity=".1" r="130" />
+</svg>`);
+// const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
+
+//marker size range
+const initialSize = 50;
+const finalSize = 100;
+const sizeDifference = finalSize - initialSize;
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
@@ -25,7 +38,7 @@ function hideMarkers() {
 }
 
 //generate the historic time series data
-async function generateHistoricTSData() {
+async function extractHistoricTSData() {
   console.log("processing the data");
 }
 
@@ -66,6 +79,16 @@ async function findBoroughNeighbourhood(zipcode, borough_neighbourhood) {
 }
 
 //create markers
+/**
+ * position:{lat,lng}
+ * labelText:String
+ * price:String
+ * title: String
+ * borough: String
+ * neighbourhood:String
+ * cdta:String
+ * tsData: {datetime:number}
+ */
 async function createMarker(
   position,
   labelText,
@@ -73,51 +96,152 @@ async function createMarker(
   title,
   borough,
   neighbourhood,
-  cdta
+  cdta,
+  tsData,
+  level
 ) {
   const marker = new google.maps.Marker({
-    position: {
-      lat: zipcodes_latlng[el["zipcode"]]["latitude"] * 1,
-      lng: zipcodes_latlng[el["zipcode"]]["longitude"] * 1,
-    },
+    position,
     label: {
-      text: `\$ ${(el["avg_home_value"] / 1000000).toFixed(1)}m`,
+      text: labelText,
       color: "white",
       fontSize: "12px",
     },
-    price: el["avg_home_value"],
+    price,
     animation: google.maps.Animation.DROP,
-    title: el["zipcode"].toString(),
+    title,
     clickable: true,
     borough,
     neighbourhood,
     cdta,
+    level,
   });
   marker.addListener("click", async ({ domEvent, latLng }) => {
+    //get the historical home value chart
     const infoWindow = document.getElementById("dashboard");
-
     infoWindow.innerText = `ZIPCODE: ${marker.title}`;
     infoWindow.innerHTML += '<canvas id="chart_js"></canvas>';
     infoWindow.innerHTML += '<div id="plotly_js" class="w-[80%]"></div>';
-    const dataFilter = historic_real_estate_data.filter(
-      ({ zipcode }) => String(zipcode) === marker.title
-    );
+
+    //update the infocard signal and generate a new infocard in the dashboard
+    const dataToPut = {
+      title: marker.title,
+      level: marker.level,
+      // markersInclude: marker.level != "zipcode" ?marker.markersInclude:marker.level,
+      avgPrice: marker.label.text,
+    };
+    props.setInfoCardData((prev) => [...prev, dataToPut]);
 
     //chart js
+    //dataFilter[0]["history"]
     new Chart(document.getElementById("chart_js"), {
       type: "bar",
       data: {
-        labels: Object.keys(dataFilter[0]["history"]),
+        labels: Object.keys(tsData),
         datasets: [
           {
             label: marker.title,
-            data: Object.values(dataFilter[0]["history"]),
+            data: Object.values(tsData),
           },
         ],
       },
     });
   });
   return marker;
+}
+
+/**
+ *
+ * @param {object} markers_obj {borough:{marker,avgPrice}}
+ */
+async function sortMarkersObj(markers_obj) {
+  //sort the markers ascendingly by home value or other value
+  const markersArray = Object.entries(markers_obj);
+  markersArray.sort((m1, m2) => m1.price - m2.price);
+  const sorted_separated_obj = Object.fromEntries(markersArray);
+  return sorted_separated_obj;
+}
+
+async function createBoroughMarker(zipcode_markers) {
+  //zipcode markers:
+  // const marker = new google.maps.Marker({
+  //   position,
+  //   label: {
+  //     text: labelText,
+  //     color: "white",
+  //     fontSize: "12px",
+  //   },
+  //   price,
+  //   animation: google.maps.Animation.DROP,
+  //   title,
+  //   clickable: true,
+  //   borough,
+  //   neighbourhood,
+  //   cdta,
+  // });
+
+  //seperate the markers according to borough
+  //borough_separated_obj = {"Bronx":{marker:[markersArray],avgPrice:number}}
+  let borough_separated_obj = {};
+  zipcode_markers.forEach((marker) => {
+    if (!(marker["borough"] in borough_separated_obj)) {
+      borough_separated_obj[marker.borough] = { marker: [], avgPrice: 0 };
+      borough_separated_obj[marker.borough]["marker"].push(marker);
+      borough_separated_obj[marker.borough]["avgPrice"] += marker["price"] * 1;
+    } else {
+      borough_separated_obj[marker.borough]["marker"].push(marker);
+      borough_separated_obj[marker.borough]["avgPrice"] += marker["price"] * 1;
+    }
+  });
+
+  //calculate the avgerage price
+  for (let key of Object.keys(borough_separated_obj)) {
+    borough_separated_obj[key]["avgPrice"] /=
+      borough_separated_obj[key]["marker"].length;
+  }
+
+  //sort the object ascendingly according to avgPrice
+  borough_separated_obj = sortMarkersObj(borough_separated_obj);
+
+  //calculate the size of the icon
+  const gap = Math.floor(sizeDifference / borough_separated_obj.marker.length);
+
+  let rank = 0;
+  //create the marker
+  for (key in Object.keys(borough_separated_obj)) {
+    const obj = borough_separated_obj[key];
+    const size = initialSize + gap * rank;
+    const icon = {
+      url: `data:image/svg+xml;base64,${svg}`,
+      scaledSize: new google.maps.Size(size, size),
+    };
+
+    //calculate the center point of all of the markers included
+    const bounds = new google.maps.LatLngBounds();
+    obj.marker.forEach((marker) => {
+      bounds.extend(marker.getPosition());
+    });
+    const position = bounds.getCenter();
+    rank += 1
+
+    const title = obj.avgPrice;
+    const borough = key.toString();
+    const neighbourhood = [...obj.marker.neighborhood];
+    const 
+
+
+  }
+
+  //create the marker
+  // position,
+  // labelText,
+  // price,
+  // title,
+  // borough,
+  // neighbourhood,
+  // cdta,
+  // tsData,
+  // level
 }
 
 const Markers = (props) => {
@@ -161,6 +285,8 @@ const Markers = (props) => {
             const labelText = `\$ ${(el["avg_home_value"] / 1000000).toFixed(
               1
             )}m`;
+            const price = el["avg_home_value"];
+            const title = el["zipcode"].toString();
 
             const marker = createMarker(
               position,
@@ -169,7 +295,8 @@ const Markers = (props) => {
               title,
               borough,
               neighbourhood,
-              cdta
+              cdta,
+              "zipcode"
             );
             zipcode_markers.push(marker);
           }
@@ -179,139 +306,18 @@ const Markers = (props) => {
       });
 
       //calculate the average price of all zipcode
-
       const totalAvgPrice = calculateAvgPrice() / 1000000;
 
-      // const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
+      //marker icon svg
 
-      const svg = window.btoa(`
-        <svg fill="${"#0145ac"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-        <circle cx="120" cy="120" opacity=".6" r="70" />
-        <circle cx="120" cy="120" opacity=".3" r="90" />
-        <circle cx="120" cy="120" opacity=".2" r="110" />
-        <circle cx="120" cy="120" opacity=".1" r="130" />
-      </svg>`);
-
-      const initialSize = 50;
-      const finalSize = 100;
-      const sizeDifference = finalSize - initialSize;
-
-      const createCluster = (map, markers, title, numSplit, rank) => {
-        const gap = Math.floor(sizeDifference / numSplit);
-
-        const size = initialSize + gap * rank;
-
-        const icon = {
-          url: `data:image/svg+xml;base64,${svg}`,
-          scaledSize: new google.maps.Size(size, size),
-        };
-        const bounds = new google.maps.LatLngBounds();
-        let totalPriceMarker = 0;
-        let markersInclude = [];
-        markers.forEach((marker) => {
-          bounds.extend(marker.getPosition());
-          totalPriceMarker += marker.price * 1;
-          markersInclude.push(marker.title);
-        });
-
-        totalPriceMarker /= markers.length * 1000;
-
-        const clusterCenter = bounds.getCenter();
-        const clusterMarker = new google.maps.Marker({
-          position: clusterCenter,
-          label: {
-            text: `\$ ${totalPriceMarker.toFixed(0)} k`,
-            color: "white",
-          },
-          map,
-          title,
-          markersInclude,
-          icon,
-          animation: google.maps.Animation.DROP,
-        });
-
-        clusterMarker.addListener("click", async ({ domEvent, latLng }) => {
-          console.log("clusterMarker", clusterMarker);
-          const dataToPut = {
-            title: clusterMarker.title,
-            markersInclude: clusterMarker.markersInclude,
-            avgPrice: clusterMarker.label.text,
-          };
-          props.setInfoCardData((prev) => [...prev, dataToPut]);
-          // 10454
-          const dataFilter = historic_real_estate_data.filter(
-            ({ zipcode }) => String(zipcode) === "10454"
-          );
-
-          //chart js
-
-          new Chart(document.getElementById("chart_js"), {
-            type: "bar",
-            data: {
-              labels: Object.keys(dataFilter[0]["history"]),
-              datasets: [
-                {
-                  label: "10454",
-                  data: Object.values(dataFilter[0]["history"]),
-                },
-              ],
-            },
-          });
-        });
-        markersOnMap.push(clusterMarker);
-      };
+      //create cluster
 
       if (cluster_borough()) {
-        //seperate the markers into borough
-        let borough_markers = {};
-        zipcode_markers.forEach((marker) => {
-          if (!(marker["borough"] in borough_markers)) {
-            borough_markers[marker.borough] = { marker: [], avgPrice: 0 };
-            borough_markers[marker.borough]["marker"].push(marker);
-            borough_markers[marker.borough]["avgPrice"] += marker["price"] * 1;
-          } else {
-            borough_markers[marker.borough]["marker"].push(marker);
-            borough_markers[marker.borough]["avgPrice"] += marker["price"] * 1;
-          }
-        });
-
-        //generate the ranking of markers according to their avgPrice
-        // and dynamically set the marker size
-
-        //calculate the avgerage price
-        for (let key of Object.keys(borough_markers)) {
-          borough_markers[key]["avgPrice"] /=
-            borough_markers[key]["marker"].length;
-        }
-
-        //sort the object ascendingly according to avgPrice
-        const boroughsArray = Object.entries(borough_markers);
-        boroughsArray.sort((obj1, obj2) => obj1[1].avgPrice - obj2[1].avgPrice);
-
-        const sorted_borough_markers = Object.fromEntries(boroughsArray);
-
-        let rank = 0;
-        for (let key of Object.keys(sorted_borough_markers)) {
-          console.log("sorted borough markers", boroughsArray.length);
-          createCluster(
-            map,
-            borough_markers[key]["marker"],
-            key,
-            boroughsArray.length,
-            rank
-          );
-
-          rank += 1;
-        }
+        //set the borough markers to the map and clear out the other types of markers
       } else if (cluster_neighbourhood()) {
-        let neigh_markers = {};
-        markers.forEach((marker) => {
-          if (!(marker.neighbourhood in Object.keys(neigh_markers))) {
-            neigh_markers[marker.neighbourhood] = [];
-          } else {
-            neigh_markers[marker.neighbourhood].push(marker);
-          }
-        });
+        //set the neighbourhood markers to the map and clear out the other types of markers
+      } else {
+        //set the zipcode markers
       }
 
       // const clusterRenderer = {
@@ -319,13 +325,6 @@ const Markers = (props) => {
       //     // Access to the cluster's attributes, check all available in the doc
       //     const { markers, position, count } = cluster;
       //     // Access to the stats' attributes if you need it
-
-      //     let avgPrice = 0;
-      //     markers.map((marker) => {
-      //       avgPrice += marker.price * 1;
-      //     });
-      //     avgPrice /= count * 1000000;
-      //     const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
 
       //     const svg = window.btoa(`
       //     <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">

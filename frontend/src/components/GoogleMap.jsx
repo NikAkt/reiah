@@ -4,7 +4,7 @@ import {
   setIsGoogleMapInitialized,
   layerStore,
 } from "./layerStore";
-import Markers from "./Markers";
+// import Markers from "./Markers";
 import API_KEY from "../api";
 import InfoWindow from "./Infowindow";
 import DataLayer from "./DataLayer";
@@ -35,19 +35,6 @@ const GoogleMap = (props) => {
       }
       setIsGoogleMapInitialized(true);
 
-      fetch("/assets/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          // Add GeoJSON data to the map
-          // const manhattan_neighborhood = data.features.filter(
-          //   (obj) => obj.properties.boro_name === "Manhattan"
-          // );
-          // data.features = manhattan_neighborhood;
-        })
-        .catch((error) => {
-          console.error("Error loading GeoJSON data:", error);
-        });
       const trafficLayer = new google.maps.TrafficLayer();
       const bikeLayer = new google.maps.BicyclingLayer();
       const transitLayer = new google.maps.TransitLayer();
@@ -92,14 +79,14 @@ const GoogleMap = (props) => {
       >
         <Switch>
           <Match when={layerStore.map}>
-            <Markers
+            {/* <Markers
               realEstateData={props.realEstateData}
               historicalRealEstateData={props.historicalRealEstateData}
               us_zip_codes={props.us_zip_codes}
               borough_neighbourhood={props.borough_neighbourhood}
               setInfoCardData={props.setInfoCardData}
               mapZoom={props.mapZoom}
-            />
+            /> */}
 
             <DataLayer
               data={props.datalayer_geonjson}

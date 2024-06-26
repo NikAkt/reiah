@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+
 func main() {
 
 	// INTEND ON REPLACING THIS LATER ON WITH THE POSTGRES DB

@@ -1,7 +1,7 @@
 import { setLayerStore, layerStore } from "./layerStore";
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, createResource } from "solid-js";
 
-const insertDataLayer = (cdtaArray, data, map) => {
+const insertDataLayer = (data, map) => {
   //filter the data layer geojson
   // const all_neighborhood = data.features.filter((obj) =>
   //   cdtaArray.includes(obj.properties["cdta2020"])
@@ -39,7 +39,7 @@ const insertDataLayer = (cdtaArray, data, map) => {
       map.data.revertStyle();
     });
   } catch (error) {
-    console.log(error);
+    console.log("error in loading data layer", error);
   }
 };
 
@@ -50,12 +50,40 @@ const clearDataLayer = (map) => {
 };
 
 const DataLayer = (props) => {
+  //test fetching data from backend side
+  const fetchData = async (json_path) => {
+    const response = await fetch(json_path, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      console.log("Network response was not ok " + response.statusText);
+    }
+    return await response.json();
+  };
+
+  const [historicalRealEstateData] = createResource(
+    "http://localhost:8000/api/historic-prices",
+    fetchData
+  );
+  const fetch_from_backend_content = historicalRealEstateData()
+    ? "succeed in fetching from backend"
+    : "fail to fetch from backend";
+  document.getElementById(
+    "dashboard"
+  ).innerHTML = `<p>${fetch_from_backend_content}</p>`;
+  // console.log(
+  //   "fetch data from client side at datalayer",
+  //   historicalRealEstateData()
+  // );
   //initialise the data needed
   const map = layerStore.map;
-  const borough_neighbourhood = JSON.parse(props.borough_neighbourhood);
+  // const borough_neighbourhood = JSON.parse(props.borough_neighbourhood);
   const borough_geojson = JSON.parse(props.borough_geojson);
   const cdta = [];
-  const data = JSON.parse(props.data);
+  const data = props.data;
 
   //data processing
   // for (const borough in borough_neighbourhood) {

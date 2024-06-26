@@ -21,7 +21,7 @@ const fetchData = async (json_path) => {
     },
   });
   if (!response.ok) {
-    throw new Error("Network response was not ok " + response.statusText);
+    console.log("Network response was not ok " + response.statusText);
   }
   return await response.json();
 };
