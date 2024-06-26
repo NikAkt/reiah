@@ -19,7 +19,7 @@ const GoogleMap = (props) => {
   // const [infoWindowPosition, setInfoWindowPosition] = createSignal([20, 20]);
   // const styledMapType = new google.maps.StyledMapType(night_mapstyle);
   async function initMap() {
-    if (true) {
+    if (!layerStore.map) {
       console.log("initMap function is triggered");
       if (!layerStore.map) {
         const map = await new google.maps.Map(document.getElementById("map"), {
@@ -30,18 +30,10 @@ const GoogleMap = (props) => {
         map.addListener("zoom_changed", () => {
           props.setMapZoom(map.zoom);
         });
+      } else {
+        console.log("Should find a way bring back the map store in layerstore");
       }
-      setLayerStore("google_map", google.maps);
       setIsGoogleMapInitialized(true);
-      //dynamic map style:
-      // let neighbourhood_geojson = JSON.stringify(neighbourhood);
-      // neighbourhood_geojson = JSON.parse(neighbourhood_geojson);
-      // map.data.loadGeoJson(
-      //   "https://data.cityofnewyork.us/api/geospatial/gchv-z24g?method=export&format=GeoJSON"
-      // );
-      //NYC_Neighbourhood.geojson
-      //https://data.cityofnewyork.us/api/geospatial/gchv-z24g?method=export&format=GeoJSON
-      // map.data.loadGeoJson(neighbourhood);
 
       fetch("/assets/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
         .then((response) => response.json())
@@ -106,7 +98,7 @@ const GoogleMap = (props) => {
               us_zip_codes={props.us_zip_codes}
               borough_neighbourhood={props.borough_neighbourhood}
               setInfoCardData={props.setInfoCardData}
-              mapZoom={mapZoom()}
+              mapZoom={props.mapZoom}
             />
 
             <DataLayer

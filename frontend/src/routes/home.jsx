@@ -22,7 +22,6 @@ const fetchData = async (json_path) => {
   });
   if (!response.ok) {
     throw new Error("Network response was not ok " + response.statusText);
-    return null;
   }
   return await response.json();
 };
@@ -78,7 +77,14 @@ export default function Home() {
       <Nav showNav={showNav} setShowNav={setShowNav} />
       <InfoWindow />
       <PropertySwitchBtn class="fixed top-[2vh] left-[20vw]" />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div>
+            Loading...
+            <img src="/assets/loading_svg/spinning-circles.svg" />
+          </div>
+        }
+      >
         <Switch>
           <Match
             when={

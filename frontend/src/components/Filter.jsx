@@ -119,7 +119,7 @@ const Filter = ({
       class="absolute z-30 w-32 flex flex-col 
     items-center gap-0.5 top-[2vh] left-[55vw]
      justify-center
-    text-white"
+    text-black"
     >
       <button
         class="bg-black rounded-2xl  z-20
@@ -132,12 +132,14 @@ const Filter = ({
         {/* <img src={filter_img} alt="filter" /> */}
         <span>Filter</span>
       </button>
+      {/* bg-gradient-to-b from-green to-cyan-500 */}
       {filterDisplay() && (
         <div
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
           left-[70vw] w-[40vw] h-[80vh] 
-        z-20 items-center delay-[300ms] 
-        animate-fade-down bg-gradient-to-b from-green to-cyan-500"
+        z-20 items-center delay-[300ms] bg-white 
+        border-solid border-2 border-grey
+        animate-fade-down"
         >
           {/* /////////// FILTER TITLE ////////////////// */}
           <div
@@ -333,7 +335,7 @@ const Filter = ({
                         <button
                           class="border-solid border-2 
                     border-indigo-600 rounded-full 
-                    bg-blue text-white hover:bg-indigo-600"
+                    bg-blue text-black hover:bg-indigo-600"
                         >
                           {el.toString()}
                         </button>
@@ -357,7 +359,7 @@ const Filter = ({
             id="button-container"
             class="items-center 
           justify-center flex gap-4 bottom-[0]
-          fixed bg-black text-white w-[100%] z-30 
+          fixed bg-black text-black w-[100%] z-30 
           border-solid border-2 border-indigo-600"
           >
             <button
