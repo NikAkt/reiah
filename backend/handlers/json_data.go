@@ -2,11 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-<<<<<<< HEAD:backend/handlers/data.go
 	"fmt"
-=======
 	"log"
->>>>>>> origin/frontend-refactor:backend/handlers/json_data.go
 	"net/http"
 	"os"
 	"strconv"
@@ -320,20 +317,6 @@ type Geometry struct {
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-<<<<<<< HEAD:backend/handlers/data.go
-	file, err := os.Open("public/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the neighbourhoods file: "+err.Error())
-	}
-	defer file.Close()
-
-	var featureCollection FeatureCollection
-	if err := json.NewDecoder(file).Decode(&featureCollection); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the neighbourhoods file")
-	}
-
-	return c.JSON(http.StatusOK, featureCollection)
-=======
 	file, err := os.Open("public/NYC_Neighborhood.geojson")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
@@ -342,5 +325,4 @@ func ServeNeighbourhoods(c echo.Context) error {
 	}
 	defer file.Close()
 	return c.File("public/NYC_Neighborhood.geojson")
->>>>>>> origin/frontend-refactor:backend/handlers/json_data.go
 }
