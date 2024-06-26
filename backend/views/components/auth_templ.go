@@ -51,7 +51,7 @@ func LoginForm(invalid bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Sign In <span><img class=\"htmx-indicator\" src=\"/public/oval.svg\"></span></button></div></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Sign In <span><img class=\"htmx-indicator\" src=\"/oval.svg\"></span></button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -168,7 +168,7 @@ func RegisterForm(success bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Register <span><img class=\"htmx-indicator\" src=\"/public/oval.svg\"></span></button></div></form><p class=\"mt-6 dark:text-white\">Already have an account with us? <a class=\"text-teal-500 dark:text-teal-300 hover:text-green-200\" hx-boost=\"true\" href=\"/login\">Login here</a></p></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-6\"><button class=\"w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline\" type=\"submit\">Register <span><img class=\"htmx-indicator\" src=\"/oval.svg\"></span></button></div></form><p class=\"mt-6 dark:text-white\">Already have an account with us? <a class=\"text-teal-500 dark:text-teal-300 hover:text-green-200\" hx-boost=\"true\" href=\"/login\">Login here</a></p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

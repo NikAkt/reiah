@@ -33,10 +33,17 @@ services:
     ports:
       - "8000:8000"
 
+<<<<<<< HEAD
   # frontend:
   #   build: ./frontend
   #   ports:
   #     - "3000:3000"
+=======
+  frontend:
+    build: ./templfrontend-rewrite
+    ports:
+      - "3000:3000"
+>>>>>>> origin/frontend-refactor
 
 volumes:
   pgdata:
