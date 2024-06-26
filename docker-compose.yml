@@ -34,7 +34,7 @@ services:
       - "8000:8000"
 
   frontend:
-    build: ./frontend
+    build: ./templfrontend-rewrite
     ports:
       - "3000:3000"
 

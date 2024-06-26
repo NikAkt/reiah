@@ -12,9 +12,30 @@ export default defineConfig({
     solidPlugin(),
   ],
   server: {
+    host: "0.0.0.0",
+    hmr: {
+      clientPort: 3000
+    },
     port: 3000,
+    watch: {
+      usePolling: true
+    }
   },
   build: {
     target: 'esnext',
   },
 });
+// export default (conf: any) => {
+//   return defineConfig({
+//     server: {
+//       host: "0.0.0.0",
+//       hmr: {
+//         clientPort: ENV_VARIABLES.OUTER_PORT_FRONTEND,
+//       },
+//       port: ENV_VARIABLES.INNER_PORT_FRONTEND_DEV, 
+//       watch: {
+//         usePolling: true,
+//       },
+//     },
+//   });
+// };
