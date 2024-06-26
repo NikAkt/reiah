@@ -7,6 +7,7 @@ const insertDataLayer = (data, map) => {
   //   cdtaArray.includes(obj.properties["cdta2020"])
   // );
   // data.features = all_neighborhood;
+  console.log(data);
   try {
     map.data.addGeoJson(data);
     map.data.setStyle(function (feature) {
@@ -82,8 +83,7 @@ const DataLayer = (props) => {
   const map = layerStore.map;
   // const borough_neighbourhood = JSON.parse(props.borough_neighbourhood);
   const borough_geojson = JSON.parse(props.borough_geojson);
-  const cdta = [];
-  const data = props.data;
+  const data = JSON.parse(props.data);
 
   //data processing
   // for (const borough in borough_neighbourhood) {
@@ -109,7 +109,7 @@ const DataLayer = (props) => {
         }
         //if not duplicated, insert the borough data layer
         if (!borough()) {
-          insertDataLayer(cdta, borough_geojson, map);
+          insertDataLayer(borough_geojson, map);
           setBorough(true);
         }
       } else {
@@ -120,7 +120,7 @@ const DataLayer = (props) => {
         }
         //if not duplicated, insert the borough data layer
         if (!neighbourhood()) {
-          insertDataLayer(cdta, data, map);
+          insertDataLayer(data, map);
           setNeighbourhood(true);
         }
       }
