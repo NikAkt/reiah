@@ -9,7 +9,7 @@ import {
 import GoogleMap from "../components/GoogleMap";
 import Nav from "../components/Nav";
 import Filter from "../components/Filter";
-import Dashboard from "../components/Dashboard";
+import Dashboard from "../components/Dashboard_Map";
 import InfoWindow from "../components/Infowindow";
 import PropertySwitchBtn from "../components/PropertySwitchBtn";
 
