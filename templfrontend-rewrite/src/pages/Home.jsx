@@ -17,19 +17,19 @@ export const Home = () => {
           </a>
           <ul class="flex gap-10">
             <a
-              class="font-poppins text-xl hover:text-gray-500 transition-colors duration-300"
+              class="font-poppins-regular-regular text-xl hover:text-gray-500 transition-colors duration-300"
               href="/dashboard"
             >
               Dashboard
             </a>
             <a
-              class="font-poppins text-xl hover:text-gray-500 transition-colors duration-300"
+              class="font-poppins-regular text-xl hover:text-gray-500 transition-colors duration-300"
               href="/map"
             >
               Map
             </a>
             <a
-              class="font-poppins text-xl hover:text-gray-500 transition-colors duration-300"
+              class="font-poppins-regular text-xl hover:text-gray-500 transition-colors duration-300"
               href="/settings"
             >
               Settings
@@ -38,31 +38,31 @@ export const Home = () => {
         </header>
         <div class="grid grid-cols-2 gap-4 p-16">
           <div class="text-left max-w-md">
-            <h1 class="font-poppins text-4xl font-bold text-teal-500">
+            <h1 class="font-poppins-regular text-4xl font-bold text-teal-500">
               Accelerate your real estate journey
             </h1>
-            <span class="font-poppins text-teal-500 italic text-lg">
+            <span class="font-poppins-regular text-teal-500 italic text-lg">
               Pronounced "ray-ah"
             </span>
-            <p class="font-poppins mt-4 text-gray-700 text-2xl">
+            <p class="font-poppins-regular mt-4 text-gray-700 text-2xl">
               Reiah helps you discover the perfect ZIP code to invest in.
               Whether it's for residential or commercial purposes, our platform
               provides the insights and tools you need to accelerate your
               investment journey.
             </p>
-            <p class="font-poppins mt-4 text-gray-700 text-2xl">
+            <p class="font-poppins-regular mt-4 text-gray-700 text-2xl">
               Unlock the potential of your next real estate venture with Reiah!
             </p>
             <div class="mt-6 flex space-x-4">
               <a
                 href="/login"
-                class="font-poppins inline-block bg-teal-500 text-white text-2xl py-2 px-4 rounded-md hover:bg-teal-600 transition duration-300 ease-in-out transform hover:scale-105"
+                class="font-poppins-regular inline-block bg-teal-500 text-white text-2xl py-2 px-4 rounded-md hover:bg-teal-600 transition duration-300 ease-in-out transform hover:scale-105"
               >
                 Log In
               </a>
               <a
                 href="/signup"
-                class="font-poppins inline-block bg-teal-500 text-white text-2xl py-2 px-4 rounded-md hover:bg-teal-600 transition duration-300 ease-in-out transform hover:scale-105"
+                class="font-poppins-regular inline-block bg-teal-500 text-white text-2xl py-2 px-4 rounded-md hover:bg-teal-600 transition duration-300 ease-in-out transform hover:scale-105"
               >
                 Sign Up
               </a>
