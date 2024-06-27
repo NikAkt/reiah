@@ -1,16 +1,80 @@
-function DualRangeSlider({ data }) {
+/**reference from: https://codepen.io/predragdavidovic/pen/mdpMoWo */
+import { createSignal, createEffect } from "solid-js";
+
+function getParsed(currentFrom, currentTo) {
+  const from = parseInt(currentFrom.value);
+  const to = parseInt(currentTo.value);
+  return [from, to];
+}
+
+function controlFromInput(fromSlider, fromInput, toInput, setFrom, gap) {
+  const [from, to] = getParsed(fromInput, toInput);
+  if (from > to) {
+    fromSlider.value = to;
+    fromInput = to;
+  } else if (from <= to) {
+    fromSlider.value = from;
+  }
+  setFrom(Math.floor(fromSlider.value / gap));
+}
+
+function controlToInput(toSlider, fromInput, toInput, setTo, gap) {
+  const [from, to] = getParsed(fromInput, toInput);
+  if (from <= to) {
+    toSlider.value = to;
+    toInput.value = to;
+  } else {
+    toInput.value = from;
+  }
+  setTo(Math.floor(toSlider.value / gap));
+}
+
+function controlFromSlider(fromSlider, toSlider, fromInput, setFrom, gap) {
+  const [from, to] = getParsed(fromSlider, toSlider);
+  if (from > to) {
+    fromSlider.value = to;
+    fromInput.value = to;
+  } else {
+    fromInput.value = from;
+  }
+  setFrom(Math.floor(fromSlider.value / gap));
+}
+
+function controlToSlider(fromSlider, toSlider, toInput, setTo, gap) {
+  const [from, to] = getParsed(fromSlider, toSlider);
+  if (from <= to) {
+    toSlider.value = to;
+    toInput.value = to;
+  } else {
+    toInput.value = from;
+  }
+  setTo(Math.floor(toSlider.value / gap));
+}
+
+function DualRangeSlider({ data, setTo, setFrom, gap }) {
   const minVal = Math.min(...data);
   const maxVal = Math.max(...data);
+
+  let toSlider;
+  let fromSlider;
+  let toInput;
+  let fromInput;
+
   return (
     <div class="flex flex-col w-full my-2" id="slider_container">
       <div id="sliders_control" class="relative min-h-[50px] w-[100%]">
         <div class="w-[100%] h-[1px] bg-[#C6C6C6]"></div>
         <input
           type="range"
-          id="fromSlider"
+          ref={(el) => {
+            fromSlider = el;
+          }}
           value={minVal}
           min={minVal}
           max={maxVal}
+          onInput={() =>
+            controlFromSlider(fromSlider, toSlider, fromInput, setFrom, gap)
+          }
           class="
               absolute w-full appearance-none bg-gray-400 pointer-events-none
               h-0 z-10
@@ -36,10 +100,15 @@ function DualRangeSlider({ data }) {
         />
         <input
           type="range"
-          id="toSlider"
+          ref={(el) => {
+            toSlider = el;
+          }}
           value={maxVal}
           min={minVal}
           max={maxVal}
+          onInput={() =>
+            controlToSlider(fromSlider, toSlider, toInput, setTo, gap)
+          }
           class="
               absolute w-full appearance-none bg-gray-400 pointer-events-none
               h-0 z-10
@@ -69,7 +138,13 @@ function DualRangeSlider({ data }) {
           </label>
           <input
             type="number"
+            ref={(el) => {
+              fromInput = el;
+            }}
             placeholder={`${minVal}`}
+            onInput={() =>
+              controlFromInput(fromSlider, fromInput, toInput, setFrom, gap)
+            }
             class="text-[#8a8383] w-12 h-8 text-xl border-none"
           />
         </div>
@@ -79,7 +154,13 @@ function DualRangeSlider({ data }) {
           </label>
           <input
             type="number"
+            ref={(el) => {
+              toInput = el;
+            }}
             placeholder={`${maxVal}`}
+            onInput={() =>
+              controlToInput(toSlider, fromInput, toInput, setTo, gap)
+            }
             class="text-[#8a8383] w-12 h-8 text-xl border-none"
           />
         </div>
