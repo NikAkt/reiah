@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'home-screen': "url('./src/assets/side-wave_background.svg')",
+        "home-screen": "url('./src/assets/side-wave_background.svg')",
       },
       colors: {
         "text-color": "#090e0c",
@@ -29,7 +29,10 @@ module.exports = {
           "100%": { transform: "translateX(0)" },
         },
       },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+      },
     },
+    plugins: [],
   },
-  plugins: [],
 };
