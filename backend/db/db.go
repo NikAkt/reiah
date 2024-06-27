@@ -4,16 +4,16 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 var DB *sqlx.DB
 
 // INitialise the database by opening it and assigning it to the exported variable DB which will represent the database throughout the application
-func InitDB(host, port_or_file string) error {
+func InitDB(dataSourceName string) error {
 	var err error
-	DB, err = sqlx.Open(host, port_or_file)
 
+	DB, err = sqlx.Open("postgres", dataSourceName)
 	if err != nil {
 		return err
 	}
