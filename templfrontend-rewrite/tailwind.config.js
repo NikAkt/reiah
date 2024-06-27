@@ -4,6 +4,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        'home-screen': "url('./src/assets/side-wave_background.svg')",
+      },
       colors: {
         "text-color": "#090e0c",
         "background-color": "#f9fbfa",

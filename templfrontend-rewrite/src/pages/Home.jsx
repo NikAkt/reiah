@@ -1,34 +1,30 @@
-import { BaseLayout } from "../layouts/Layout";
-import { A } from "@solidjs/router";
+import { HomeScreenLayout } from "../layouts/Layout";
 import magnGlass from "../assets/magn_glass_transp.png";
+import houseSVG from "../assets/house-svgrepo-com.svg"
 import appLogo from "../assets/logo_v_small.png";
-import sideWaveBackground from "../assets/side-wave_background.png";
 
+// url(${sideWaveBackground})
+// USE GRID FOR PAGE LAYOUT AND FLEX FOR DIV LAYOUT
 export const Home = () => {
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        backgroundImage: `url(${sideWaveBackground})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <BaseLayout>
-        <header class="flex justify-between items-center py-4 px-8 text-white">
-          <div class="flex items-center space-x-2">
-            <a href="/">
-              <img
-                src={appLogo}
-                alt="App Logo"
-                style={{ width: "200px", height: "auto" }}
-              />
-            </a>
-          </div>
+    <>
+      <HomeScreenLayout>
+        <header class="flex justify-between items-center px-16 py-8 text-white">
+          <a href="/">
+            <img
+              src={appLogo}
+              alt="App Logo"
+              class="w-48 h-auto"
+            />
+          </a>
+          <ul class="flex gap-4">
+            <a class="text-lg" href="/dashboard">Dashboard</a>
+            <a class="text-lg" href="/dashboard">Dashboard</a>
+            <a class="text-lg" href="/dashboard">Dashboard</a>
+            <a class="text-lg" href="/dashboard">Dashboard</a>
+          </ul>
         </header>
-        <div class="flex flex-col md:flex-row items-center justify-between mt-8 mx-4 md:mx-16">
+        <div class="grid grid-cols-2 gap-4 p-16">
           <div class="text-left max-w-md">
             <h1 class="text-4xl font-bold text-teal-500">
               Accelerate your real estate journey
@@ -56,16 +52,15 @@ export const Home = () => {
               </a>
             </div>
           </div>
-          <div class="mt-8 md:mt-0">
+          <div class="flex justify-center items-center">
             <img
-              src={magnGlass}
-              alt="magnifying glass"
-              class="w-full md:w-3/4 lg:w-1/2"
-              style={{ width: "500px", height: "auto" }}
+              src={houseSVG}
+              alt="house svg yay!"
+              class="h-72"
             />
           </div>
         </div>
-      </BaseLayout>
-    </div>
+      </HomeScreenLayout>
+    </>
   );
 };

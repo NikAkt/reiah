@@ -10,15 +10,27 @@ const links = [
   { Href: "/dashboard", Title: "Dashboard" },
 ];
 
-const BaseLayout = ({ children }) => {
+const BaseLayout = (props) => {
   return (
     <div
-      class="min-h-screen bg-gray-200"
-      style={{ backgroundColor: "#F3F4F6" }}
+      class="min-h-screen bg-transparent"
     >
-      {children}
+      {props.children}
     </div>
   );
+};
+
+
+const HomeScreenLayout = (props) => {
+  return (
+    <BaseLayout>
+      <div
+        class="min-h-screen bg-home-screen bg-cover bg-no-repeat"
+      >
+        {props.children}
+      </div>
+    </BaseLayout>
+  )
 };
 
 const DashboardView = (props) => {
@@ -81,4 +93,4 @@ const AuthLayout = (props) => {
   );
 };
 
-export { AuthLayout, MapView, DashboardView, BaseLayout };
+export { HomeScreenLayout, AuthLayout, MapView, DashboardView, BaseLayout };
