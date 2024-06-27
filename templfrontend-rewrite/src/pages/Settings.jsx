@@ -1,11 +1,12 @@
+import { ColChart } from "../components/ColChart";
 import { SettingsForm } from "../components/SettingsForm";
 import { DashboardView } from "../layouts/Layout";
 
 const initialValues = {
-  Username: 'john_doe',
-  Email: 'john@example.com',
-  Name: 'John',
-  Surname: 'Doe'
+  Username: "john_doe",
+  Email: "john@example.com",
+  Name: "John",
+  Surname: "Doe",
 };
 
 export const Settings = () => {
@@ -23,7 +24,8 @@ export const Settings = () => {
             errors={{}}
           />
         </main>
+        <ColChart />
       </div>
     </DashboardView>
-  )
-}
+  );
+};

@@ -7,6 +7,7 @@ import { Settings } from "./pages/Settings";
 import { Map } from "./pages/Map";
 import "./index.css";
 import { store, setStore } from "./data/stores";
+import { ColChart } from "./components/ColChart";
 
 const root = document.getElementById("root");
 
@@ -44,6 +45,7 @@ render(
       <Route path="/settings" component={Settings} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/map" component={Map} />
+      <Route path="/colchart" component={ColChart} />
     </Router>
   ),
   root
