@@ -5,6 +5,7 @@ import { Dashboard } from "./pages/Dashboard"
 import { Home } from "./pages/Home"
 import { Settings } from "./pages/Settings"
 import { Map } from "./pages/Map"
+import { RegisterPage, LoginPage } from "./pages/Auth";
 import './index.css';
 import { store, setStore } from "./data/stores";
 
@@ -48,6 +49,8 @@ render(
       <Route path="/settings" component={Settings} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/map" component={Map} />
+      <Route path="/register" component={RegisterPage} />
+      <Route path="/login" component={LoginPage} />
     </Router>
   ),
   root,

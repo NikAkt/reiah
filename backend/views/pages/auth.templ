@@ -5,14 +5,14 @@ import "github.com/denartha10/SummerProjectGOTH/views/components"
 
 //Login Page with form
 templ LoginPage(invalid bool) {
-@layouts.AuthLayout() {
-@components.LoginForm(invalid)
-}
+	@layouts.AuthLayout() {
+		@components.LoginForm(invalid)
+	}
 }
 
 //Register Page with form
 templ RegisterPage(success bool) {
-@layouts.AuthLayout() {
-@components.RegisterForm(success)
-}
+	@layouts.AuthLayout() {
+		@components.RegisterForm(success)
+	}
 }
