@@ -326,3 +326,25 @@ func ServeNeighbourhoods(c echo.Context) error {
 	defer file.Close()
 	return c.File("public/NYC_Neighborhood.geojson")
 }
+
+func ServeBoroughs(c echo.Context) error {
+	file, err := os.Open("public/borough.geojson")
+	if err == nil {
+		log.Println("MANAGED TO OPEN THE FILE")
+	} else {
+		log.Println(err.Error())
+	}
+	defer file.Close()
+	return c.File("public/borough.geojson")
+}
+
+func ServeZipCodes(c echo.Context) error {
+	file, err := os.Open("public/us_zip_codes.json")
+	if err == nil {
+		log.Println("MANAGED TO OPEN THE FILE")
+	} else {
+		log.Println(err.Error())
+	}
+	defer file.Close()
+	return c.File("public/us_zip_codes.json")
+}
