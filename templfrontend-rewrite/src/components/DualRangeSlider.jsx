@@ -62,7 +62,7 @@ function DualRangeSlider({ data, setTo, setFrom, gap }) {
 
   return (
     <div class="flex flex-col w-full my-2" id="slider_container">
-      <div id="sliders_control" class="relative min-h-[50px] w-[100%]">
+      <div id="sliders_control" class="relative min-h-[50px] ml-[-5%] w-[110%]">
         <div class="w-[100%] h-[1px] bg-[#C6C6C6]"></div>
         <input
           type="range"
