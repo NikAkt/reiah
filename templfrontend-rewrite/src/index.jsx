@@ -2,7 +2,7 @@
 import { render } from "solid-js/web";
 import { Route, Router } from "@solidjs/router";
 import { Dashboard } from "./pages/Dashboard";
-import { Home } from "./pages/Home";
+import { Home } from "./pages/HomePage";
 import { Settings } from "./pages/Settings";
 import { Map } from "./pages/Map";
 import "./index.css";
