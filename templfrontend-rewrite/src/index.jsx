@@ -2,7 +2,7 @@
 import { render } from "solid-js/web";
 import { Route, Router } from "@solidjs/router";
 import { Dashboard } from "./pages/Dashboard";
-import { Home } from "./pages/HomePage";
+import { HomePage } from "./pages/HomePage";
 import { Settings } from "./pages/Settings";
 import { Map } from "./pages/Map";
 import "./index.css";
@@ -41,7 +41,7 @@ function App(props) {
 render(
   () => (
     <Router root={App}>
-      <Route path="/" component={Home} />
+      <Route path="/" component={HomePage} />
       <Route path="/settings" component={Settings} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/map" component={Map} />
