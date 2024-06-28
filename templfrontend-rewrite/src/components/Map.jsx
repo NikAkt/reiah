@@ -18,6 +18,8 @@ export const MapComponent = () => {
       .then(({ Map }) => {
         setMapObject(new Map(ref, mapOptions))
         mapObject().data.addGeoJson(store.geoJSONData)
+        mapObject().data.addListener("mouseover", (event) => console.log(event.feature));
+        mapObject().data.addListener("click", (event) => mapObject().data.overrideStyle(event.feature, { fillColor: 'red' }));
       })
       .catch((e) => {
         console.error(e)
