@@ -3,7 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -293,36 +295,12 @@ type Geometry struct {
 	Coordinates []interface{} `json:"coordinates"`
 }
 
-type NeighbourhoodFilterParams struct {
-	Zipcodes []string `query:"zipcode"`
-}
-
 func ServeNeighbourhoods(c echo.Context) error {
-	var params NeighbourhoodFilterParams
-	if err := c.Bind(&params); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	file, err := os.Open("public/NYC_Neighborhood.geojson")
+	if err != nil {
+		log.Println("Error opening file:", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the neighbourhoods file: "+err.Error())
 	}
-
-	zipcodes := c.QueryParams()["zipcode"]
-	query := "SELECT * FROM neighbourhoods"
-	var args []interface{}
-
-	if len(zipcodes) > 0 {
-		query += " WHERE borocode IN (?" + strings.Repeat(", ?", len(zipcodes)-1) + ")"
-		for _, z := range zipcodes {
-			args = append(args, z)
-		}
-	}
-
-	var features []Feature
-	if err := db.DB.Select(&features, query, args...); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Error querying the database: %v", err))
-	}
-
-	featureCollection := FeatureCollection{
-		Type:     "FeatureCollection",
-		Features: features,
-	}
-
-	return c.JSON(http.StatusOK, featureCollection)
+	defer file.Close()
+	return c.File("public/NYC_Neighborhood.geojson")
 }
