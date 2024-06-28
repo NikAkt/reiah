@@ -1,20 +1,19 @@
 package main
 
 import (
-	"log"
-
 	"github.com/denartha10/SummerProjectGOTH/db"
 	"github.com/denartha10/SummerProjectGOTH/handlers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
+
 func main() {
 
-	dataSourceName := "user=username dbname=yourdb sslmode=disable password=yourpassword host=yourhost port=yourport"
-	err := db.InitDB(dataSourceName)
+	// INTEND ON REPLACING THIS LATER ON WITH THE POSTGRES DB
+	err := db.InitDB("sqlite3", "db/application.db")
 	if err != nil {
-		log.Fatalf("Failed to start application database: %v", err)
+		panic("Failed to start application database, " + err.Error())
 	}
 
 	e := echo.New()
