@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-
 func main() {
 
 	// INTEND ON REPLACING THIS LATER ON WITH THE POSTGRES DB
@@ -59,6 +58,7 @@ func main() {
 	e.GET("/api/prices", handlers.ServeRealEstatePriceData)
 	e.GET("/api/historic-prices", handlers.ServeHistoricRealEstatePrices)
 	e.GET("/api/neighbourhoods", handlers.ServeNeighbourhoods)
+	e.GET("/api/borough", handlers.ServeBoroughs)
 
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/", "public")
