@@ -59,6 +59,7 @@ func main() {
 	e.GET("/api/historic-prices", handlers.ServeHistoricRealEstatePrices)
 	e.GET("/api/neighbourhoods", handlers.ServeNeighbourhoods)
 	e.GET("/api/borough", handlers.ServeBoroughs)
+	e.GET("/api/zipcodes", handlers.ServeZipCodes)
 
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/", "public")
