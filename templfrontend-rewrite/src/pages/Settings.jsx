@@ -1,4 +1,3 @@
-import { ColChart } from "../components/ColChart";
 import { SettingsForm } from "../components/SettingsForm";
 import { DashboardView } from "../layouts/Layout";
 
@@ -24,7 +23,6 @@ export const Settings = () => {
             errors={{}}
           />
         </main>
-        <ColChart />
       </div>
     </DashboardView>
   );
