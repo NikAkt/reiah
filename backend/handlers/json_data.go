@@ -7,22 +7,20 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
-	"github.com/denartha10/SummerProjectGOTH/db"
 	"github.com/labstack/echo/v4"
 )
 
 type Amenity struct {
-	Borough            string  `db:"borough"`
-	Name               string  `db:"name"`
-	FacilityType       string  `db:"facility_type"`
-	FacilityDesc       string  `db:"facility_desc"`
-	Zipcode            int     `db:"zip_code"`
-	Longitude          float64 `db:"lng"`
-	Latitude           float64 `db:"lat"`
-	Count              int     `db:"count"`
-	DistanceToFacility float64 `db:"distance_to_facility"`
+	Borough            string  `json:"BOROUGH"`
+	Name               string  `json:"NAME"`
+	FacilityType       string  `json:"FACILITY_TYPE"`
+	FacilityDesc       string  `json:"FACILITY_DESC"`
+	Zipcode            int     `json:"ZIP_CODE"`
+	Longitude          float64 `json:"LNG"`
+	Latitude           float64 `json:"LAT"`
+	Count              int     `json:"COUNT"`
+	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
 }
 
 type AmenityFilterParams struct {
@@ -33,49 +31,58 @@ type AmenityFilterParams struct {
 	Name         string `query:"name"`
 }
 
-func filterAmenities(c echo.Context) ([]Amenity, error) {
-	var params AmenityFilterParams
-	if err := c.Bind(&params); err != nil {
-		return nil, fmt.Errorf("invalid filter parameters")
+func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
+	var filtered []Amenity //
+	for _, amenity := range a {
+		if f.Borough != "" && amenity.Borough != f.Borough {
+			continue
+		}
+		if f.Zipcode != 0 && amenity.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
+			continue
+		}
+		if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
+			continue
+		}
+		if f.Name != "" && amenity.Name != f.Name {
+			continue
+		}
+		filtered = append(filtered, amenity)
 	}
-
-	query := "SELECT * FROM cleaned_amenities WHERE 1=1"
-	if params.Borough != "" {
-		query += " AND borough = '" + params.Borough + "'"
-	}
-	if params.Zipcode != 0 {
-		query += " AND zip_code = " + strconv.Itoa(params.Zipcode)
-	}
-	if params.FacilityType != "" {
-		query += " AND facility_type = '" + params.FacilityType + "'"
-	}
-	if params.FacilityDesc != "" {
-		query += " AND facility_desc = '" + params.FacilityDesc + "'"
-	}
-	if params.Name != "" {
-		query += " AND name = '" + params.Name + "'"
-	}
-
-	var amenities []Amenity
-	err := db.DB.Select(&amenities, query)
-	return amenities, err
+	return filtered
 }
 
 func ServeAmenitiesData(c echo.Context) error {
-	amenities, err := filterAmenities(c)
+	var p AmenityFilterParams // Create a variable that is of type AmenityFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	} // bind it to the request with proper error message if so
+
+	file, err := os.Open("public/cleaned_amenities_data2.json") // open the json file
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Error querying the database: "+err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the amenities file: "+err.Error())
 	}
-	return c.JSON(http.StatusOK, amenities)
+
+	defer file.Close() // defer its closing to the end of the function scope
+
+	var amenities []Amenity                                          // an array of amenitys
+	if err := json.NewDecoder(file).Decode(&amenities); err != nil { // Create a decoder from the file and decode the dson into an array of amenities
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the amenities file")
+	}
+
+	filteredAmenities := filterAmenities(amenities, &p) // filter the amenities using zipcode and borough
+	return c.JSON(http.StatusOK, filteredAmenities)     // return the json
 }
 
 type Businesses struct {
-	TaxiZone     int     `db:"taxi_zone"`
-	BusinessType string  `db:"business_type"`
-	Zipcode      int     `db:"zip_code"`
-	Longitude    float64 `db:"longitude"`
-	Latitude     float64 `db:"latitude"`
-	Counts       int     `db:"counts"`
+	TaxiZone     int     `json:"taxi_zone"`
+	BusinessType string  `json:"business_type"`
+	Zipcode      int     `json:"Zip Code"`
+	Longitude    float64 `json:"Longitude"`
+	Latitude     float64 `json:"Latitude"`
+	Counts       int     `json:"Counts"`
 }
 
 type BusinessesFilterParams struct {
@@ -84,43 +91,52 @@ type BusinessesFilterParams struct {
 	Zipcode      int    `query:"zipcode"`
 }
 
-func filterBusinesses(c echo.Context) ([]Businesses, error) {
-	var params BusinessesFilterParams
-	if err := c.Bind(&params); err != nil {
-		return nil, fmt.Errorf("invalid filter parameters")
+func filterBusinesses(a []Businesses, f *BusinessesFilterParams) []Businesses {
+	var filtered []Businesses
+	for _, business := range a {
+		if f.TaxiZone != 0 && business.TaxiZone != f.TaxiZone {
+			continue
+		}
+		if f.Zipcode != 0 && business.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.BusinessType != "" && business.BusinessType != f.BusinessType {
+			continue
+		}
+		filtered = append(filtered, business)
 	}
-
-	query := "SELECT * FROM cleaned_business_data WHERE 1=1"
-	if params.TaxiZone != 0 {
-		query += " AND taxi_zone = " + strconv.Itoa(params.TaxiZone)
-	}
-	if params.Zipcode != 0 {
-		query += " AND zip_code = " + strconv.Itoa(params.Zipcode)
-	}
-	if params.BusinessType != "" {
-		query += " AND business_type = '" + params.BusinessType + "'"
-	}
-
-	var businesses []Businesses
-	err := db.DB.Select(&businesses, query)
-	return businesses, err
+	return filtered
 }
 
 func ServeBusinessData(c echo.Context) error {
-	businesses, err := filterBusinesses(c)
+	var p BusinessesFilterParams // Create a variable that is of type BusinessesFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	} // bind it to the request with proper error message if so
+
+	file, err := os.Open("public/cleaned_business_data.json") // open the json file
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Error querying the database: "+err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the business file: "+err.Error())
 	}
-	return c.JSON(http.StatusOK, businesses)
+
+	defer file.Close() // defer its closing to the end of the function scope
+
+	var business []Businesses                                       // an array of business
+	if err := json.NewDecoder(file).Decode(&business); err != nil { // Create a decoder from the file and decode the dson into an array of business
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the business file")
+	}
+
+	filteredBusiness := filterBusinesses(business, &p) // filter the business
+	return c.JSON(http.StatusOK, filteredBusiness)     // return the json
 }
 
 type Prices struct {
-	Zipcode         int     `db:"zipcode"`
-	HomeValue       float64 `db:"avg_home_value"`
-	HouseholdIncome float64 `db:"median_household_income"`
-	MedianAge       float64 `db:"median_age"`
-	Latitude        float64 `db:"lat"`
-	Longitude       float64 `db:"lng"`
+	Zipcode         int     `json:"zipcode"`
+	HomeValue       float64 `json:"avg_home_value"`
+	HouseholdIncome float64 `json:"median_household_income"`
+	MedianAge       float64 `json:"median_age"`
+	Latitude        float64 `json:"lat"`
+	Longitude       float64 `json:"lng"`
 }
 
 type PricesFilterParams struct {
@@ -130,57 +146,70 @@ type PricesFilterParams struct {
 	MedianAge       float64 `query:"age"`
 }
 
-func filterPrices(c echo.Context) ([]Prices, error) {
-	var params PricesFilterParams
-	if err := c.Bind(&params); err != nil {
-		return nil, fmt.Errorf("invalid filter parameters")
+func filterPrices(a []Prices, f *PricesFilterParams) []Prices {
+	var filtered []Prices
+	for _, prices := range a {
+		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.HomeValue != 0 && prices.HomeValue != f.HomeValue {
+			continue
+		}
+		if f.HouseholdIncome != 0 && prices.HouseholdIncome != f.HouseholdIncome {
+			continue
+		}
+		if f.MedianAge != 0 && prices.MedianAge != f.MedianAge {
+			continue
+		}
+		filtered = append(filtered, prices)
 	}
-
-	query := "SELECT * FROM real_estate_price WHERE 1=1"
-	if params.Zipcode != 0 {
-		query += " AND zipcode = " + strconv.Itoa(params.Zipcode)
-	}
-	if params.HomeValue != 0 {
-		query += " AND avg_home_value = " + strconv.FormatFloat(params.HomeValue, 'f', -1, 64)
-	}
-	if params.HouseholdIncome != 0 {
-		query += " AND median_household_income = " + strconv.FormatFloat(params.HouseholdIncome, 'f', -1, 64)
-	}
-	if params.MedianAge != 0 {
-		query += " AND median_age = " + strconv.FormatFloat(params.MedianAge, 'f', -1, 64)
-	}
-
-	var prices []Prices
-	err := db.DB.Select(&prices, query)
-	return prices, err
+	return filtered
 }
 
 func ServeRealEstatePriceData(c echo.Context) error {
-	prices, err := filterPrices(c)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Error querying the database: "+err.Error())
+	var p PricesFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
-	return c.JSON(http.StatusOK, prices)
+
+	file, err := os.Open("public/real_estate_price_data.json")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the real_estate_price_data file: "+err.Error())
+	}
+	defer file.Close()
+
+	var prices []Prices
+	if err := json.NewDecoder(file).Decode(&prices); err != nil {
+		c.Logger().Error("Error decoding JSON: ", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file")
+	}
+
+	filteredPrices := filterPrices(prices, &p)
+	return c.JSON(http.StatusOK, filteredPrices)
 }
 
 type HistoricPrices struct {
-	Zipcode int                `db:"zipcode"`
-	History map[string]float64 `db:"-"`
+	Zipcode int                `json:"zipcode"`
+	History map[string]float64 `json:"history"`
 }
 
 func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
-	var rawMap map[string]interface{}
+
+	var rawMap map[string]interface{} //map to hold the raw json
 	if err := json.Unmarshal(data, &rawMap); err != nil {
 		return err
-	}
+	} //This here parses the json data to store it in rawMap.
 
+	//Below we are checking if the zipcode is float and converting it to interger.
+	// We also assign it to the HistoricPrices struct in the Zipcode field
 	if zip, ok := rawMap["zipcode"].(float64); ok {
 		p.Zipcode = int(zip)
 	} else {
 		return fmt.Errorf("invalid type for zipcode")
 	}
 
-	p.History = make(map[string]float64)
+	p.History = make(map[string]float64) // This is a map to store key value pairs for date: price
+	//Here a loop goes trhough all the pairs in rawMap except zipcode to store in the History map created just above
 	for k, v := range rawMap {
 		if k == "zipcode" {
 			continue
@@ -194,75 +223,67 @@ func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
 }
 
 type HistoricPricesFilterParams struct {
-	Zipcodes []int  `query:"zipcode"`
+	Zipcodes []int  `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
 	Date     string `query:"date"`
 }
 
-func filterHistoricPrices(c echo.Context) ([]HistoricPrices, error) {
-	var params HistoricPricesFilterParams
-	if err := c.Bind(&params); err != nil {
-		return nil, fmt.Errorf("invalid filter parameters")
+func filterHistoricPrices(a []HistoricPrices, f *HistoricPricesFilterParams) []HistoricPrices {
+	var filtered []HistoricPrices
+	zipcodeSet := make(map[int]struct{}) // Map for storing and lookingup the zipcodes
+	for _, z := range f.Zipcodes {
+		zipcodeSet[z] = struct{}{} // This loop populates the map with all the zipcodes in the query params
 	}
 
-	zipcodes := c.QueryParams()["zipcode"]
-	for _, z := range zipcodes {
-		zipcode, err := strconv.Atoi(z)
-		if err != nil {
-			return nil, fmt.Errorf("invalid zipcode format")
-		}
-		params.Zipcodes = append(params.Zipcodes, zipcode)
-	}
-
-	query := "SELECT * FROM historic_real_estate WHERE 1=1"
-	if len(params.Zipcodes) > 0 {
-		query += " AND zipcode IN (" + strings.Trim(strings.Join(strings.Fields(fmt.Sprint(params.Zipcodes)), ","), "[]") + ")"
-	}
-
-	var historicPrices []HistoricPrices
-	rows, err := db.DB.Queryx(query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var p HistoricPrices
-		rawMap := make(map[string]interface{})
-		if err := rows.MapScan(rawMap); err != nil {
-			return nil, err
-		}
-
-		p.Zipcode = int(rawMap["zipcode"].(int64))
-		p.History = make(map[string]float64)
-		for k, v := range rawMap {
-			if k == "zipcode" {
-				continue
-			}
-			if val, ok := v.(float64); ok {
-				p.History[k] = val
+	for _, prices := range a {
+		if len(zipcodeSet) > 0 {
+			if _, ok := zipcodeSet[prices.Zipcode]; !ok {
+				continue // This loop cheks if the map (query) contains actual zipcodes in the json (prices.Zipcode)
 			}
 		}
-
-		if params.Date != "" {
-			if price, ok := p.History[params.Date]; ok {
-				p.History = map[string]float64{params.Date: price}
-			} else {
-				continue
-			}
+		if f.Date != "" {
+			if price, ok := prices.History[f.Date]; ok {
+				prices.History = map[string]float64{f.Date: price}
+				filtered = append(filtered, prices)
+			} // This loop checks for the date from the query if there is one and filters the History map to include only corresponding prices
+		} else {
+			filtered = append(filtered, prices)
 		}
-
-		historicPrices = append(historicPrices, p)
 	}
-
-	return historicPrices, nil
+	return filtered
 }
 
 func ServeHistoricRealEstatePrices(c echo.Context) error {
-	historicPrices, err := filterHistoricPrices(c)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Error querying the database: "+err.Error())
+	var p HistoricPricesFilterParams
+
+	// Here we bind zipcodes / date params
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
-	return c.JSON(http.StatusOK, historicPrices)
+
+	// For multiple zipcodes
+	zipcodes := c.QueryParams()["zipcode"] // This fetches all the different values for "zipcode" in the query
+	for _, z := range zipcodes {
+		zipcode, err := strconv.Atoi(z) // loop that converts each zipcode to interger
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
+		}
+		p.Zipcodes = append(p.Zipcodes, zipcode) //adds the zipcodes to the slice one by one
+	}
+
+	file, err := os.Open("public/historic_real_estate_prices.json")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the historic_real_estate_prices file: "+err.Error())
+	}
+	defer file.Close()
+
+	var prices []HistoricPrices
+	if err := json.NewDecoder(file).Decode(&prices); err != nil { //calls the UnmarshalJSON method using the encoding/json package
+		c.Logger().Error("Error decoding JSON: ", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the historic prices file")
+	}
+
+	filteredPrices := filterHistoricPrices(prices, &p)
+	return c.JSON(http.StatusOK, filteredPrices)
 }
 
 type FeatureCollection struct {
@@ -297,9 +318,10 @@ type Geometry struct {
 
 func ServeNeighbourhoods(c echo.Context) error {
 	file, err := os.Open("public/NYC_Neighborhood.geojson")
-	if err != nil {
-		log.Println("Error opening file:", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the neighbourhoods file: "+err.Error())
+	if err == nil {
+		log.Println("MANAGED TO OPEN THE FILE")
+	} else {
+		log.Println(err.Error())
 	}
 	defer file.Close()
 	return c.File("public/NYC_Neighborhood.geojson")
