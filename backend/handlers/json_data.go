@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -170,7 +172,7 @@ func ServeRealEstatePriceData(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
 
-	file, err := os.Open("public/real_estate_price_data.json")
+	file, err := os.Open("public/historic_real_estate_prices.json")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the real_estate_price_data file: "+err.Error())
 	}
@@ -178,25 +180,101 @@ func ServeRealEstatePriceData(c echo.Context) error {
 
 	var prices []Prices
 	if err := json.NewDecoder(file).Decode(&prices); err != nil {
-		c.Logger().Error("Error decoding JSON: ", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file "+err.Error())
 	}
 
 	filteredPrices := filterPrices(prices, &p)
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
+// Data struct with fixed and dynamic fields
+type HistoricRealEstatePriceData struct {
+	Zipcode int                `json:"zipcode"`
+	Dates   map[string]float64 `json:"historicprices"`
+}
+
+// Alias to help with unmarshalling
+type RawHistoricRealEstatePriceData struct {
+	Zipcode int `json:"zipcode"`
+}
+
+type HistoricFilterParams struct {
+	Zipcode int `query:"zipcode"`
+}
+
+func filterHistoricPrices(a []HistoricRealEstatePriceData, f *HistoricFilterParams) []HistoricRealEstatePriceData {
+	var filtered []HistoricRealEstatePriceData
+	for _, prices := range a {
+		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
+			continue
+		}
+		filtered = append(filtered, prices)
+	}
+	return filtered
+}
+
 func ServeHistoricRealEstatePrices(c echo.Context) error {
-	return c.File("public/historic_real_estate_prices.json")
+	var p HistoricFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	}
+
+	file, err := os.Open("public/historic_real_estate_prices.json")
+	if err != nil {
+		log.Fatalf("Error opening file: %v", err)
+	}
+	defer file.Close()
+
+	fileContents, err := io.ReadAll(file)
+	if err != nil {
+		log.Fatalf("Error reading file: %v", err)
+	}
+
+	var RawHistoricRealEstatePriceDataList []map[string]interface{}
+	if err := json.Unmarshal(fileContents, &RawHistoricRealEstatePriceDataList); err != nil {
+		log.Fatalf("Error unmarshalling JSON to slice: %v", err)
+	}
+
+	var dataList []HistoricRealEstatePriceData
+	for _, RawHistoricRealEstatePriceDataMap := range RawHistoricRealEstatePriceDataList {
+		var rd RawHistoricRealEstatePriceData
+		if zipcode, ok := RawHistoricRealEstatePriceDataMap["zipcode"].(string); ok {
+			rd.Zipcode, err = strconv.Atoi(zipcode)
+		}
+
+		data := HistoricRealEstatePriceData{
+			Zipcode: rd.Zipcode,
+			Dates:   make(map[string]float64),
+		}
+
+		for key, value := range RawHistoricRealEstatePriceDataMap {
+			if key == "zipcode" {
+				continue
+			}
+
+			if value != nil {
+				floatValue, err := strconv.ParseFloat(value.(string), 64)
+				if err != nil {
+					log.Fatalf("COULD NOT CONVERT FLOAT AT "+key+"IN ZIPCODE :", data.Zipcode)
+				}
+				data.Dates[key] = floatValue
+			}
+		}
+
+		dataList = append(dataList, data)
+	}
+
+	filteredPrices := filterHistoricPrices(dataList, &p)
+	return c.JSON(http.StatusOK, filteredPrices)
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-	file, err := os.Open("public/NYC_Neighborhood.geojson")
+	file, err := os.Open("public/nyc_zipcode_areas.geojson")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
 	} else {
 		log.Println(err.Error())
 	}
 	defer file.Close()
-	return c.File("public/NYC_Neighborhood.geojson")
+	return c.File("public/nyc_zipcode_areas.geojson")
 }
