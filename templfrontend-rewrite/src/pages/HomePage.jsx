@@ -1,66 +1,4 @@
 import { BaseLayout } from "../layouts/Layout";
-import {
-  createSignal,
-  createResource,
-  Switch,
-  Match,
-  Suspense,
-} from "solid-js";
-import GoogleMap from "../components/GoogleMap";
-import Nav from "../components/Nav";
-import Filter from "../components/Filter";
-import Dashboard from "../components/Dashboard_Map";
-import InfoWindow from "../components/Infowindow";
-import PropertySwitchBtn from "../components/PropertySwitchBtn";
-
-// const fetchData = async (json_path) => {
-//   const response = await fetch(json_path, {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   });
-//   if (!response.ok) {
-//     console.log("Network response was not ok " + response.statusText);
-//   }
-//   return await response.json();
-// };
-
-// const [realEstateData] = createResource(
-//   "../assets/real_estate_price_data.json",
-//   fetchData
-// );
-
-// const [historicalRealEstateData] = createResource(
-//   "http://localhost:8000/api/historic-prices",
-//   fetchData
-// );
-
-// const [amenitiesData] = createResource(
-//   "http://localhost:8000/api/amenities",
-//   fetchData
-// );
-
-// const [us_zip_codes] = createResource("../assets/us_zip_codes.json", fetchData);
-
-// const [datalayer_geonjson] = createResource(
-//   "http://localhost:8000/api/neighbourhoods",
-//   fetchData
-// );
-
-// // const [borough_neighbourhood] = createResource(
-// //   "../assets/borough_neighbourhood.json",
-// //   fetchData
-// // );
-
-// // const [borough_geojson] = createResource(
-// //   "../assets/borough.geojson",
-// //   fetchData
-// // );
-
-// // const [demographic_info] = createResource(
-// //   "../assets/demographic_data_by_zipcode.json",
-// //   fetchData
 // const HomePage = () => {
 //   const [infoCardData, setInfoCardData] = createSignal([]);
 //   const [mapZoom, setMapZoom] = createSignal(10);
@@ -137,7 +75,8 @@ import PropertySwitchBtn from "../components/PropertySwitchBtn";
 //   );
 //   // <BaseLayout />;
 // };
-function HomePage() {
+
+function HomePage(props) {
   return (
     <BaseLayout>
       <header>

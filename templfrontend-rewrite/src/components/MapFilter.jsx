@@ -1,45 +1,44 @@
 import { createSignal } from "solid-js";
-import { layerStore } from "./layerStore";
+import { store } from "../data/stores";
 const MapFilter = (props) => {
-  const [haveBikeLayer, setBikeLayer] = createSignal(false);
-  const [haveTrafficLayer, setTrafficLayer] = createSignal(false);
-  const [haveTransitLayer, setTransitLayer] = createSignal(false);
-  const [haveDataLayer, setDataLayer] = createSignal(true);
+  // const [haveBikeLayer, setBikeLayer] = createSignal(false);
+  // const [haveTrafficLayer, setTrafficLayer] = createSignal(false);
+  // const [haveTransitLayer, setTransitLayer] = createSignal(false);
+  // const [haveDataLayer, setDataLayer] = createSignal(true);
   // const [showdropdown, setShowdropdown] = createSignal(true);
   // const handleClick = () => {
   //   setShowdropdown((prev) => !prev);
   //   console.log(showdropdown());
   // };
-  const google_maps = layerStore.google_map;
 
-  const handleBikeLayer = () => {
-    setBikeLayer((prev) => !prev);
-    haveBikeLayer()
-      ? layerStore.bikeLayer.setMap(layerStore.map)
-      : layerStore.bikeLayer.setMap(null);
-    console.log(haveBikeLayer);
-  };
+  // const handleBikeLayer = () => {
+  //   setBikeLayer((prev) => !prev);
+  //   haveBikeLayer()
+  //     ? layerStore.bikeLayer.setMap(layerStore.map)
+  //     : layerStore.bikeLayer.setMap(null);
+  //   console.log(haveBikeLayer);
+  // };
 
-  const handleTrafficLayer = () => {
-    setTrafficLayer((prev) => !prev);
-    haveTrafficLayer()
-      ? layerStore.trafficLayer.setMap(layerStore.map)
-      : layerStore.trafficLayer.setMap(null);
-  };
+  // const handleTrafficLayer = () => {
+  //   setTrafficLayer((prev) => !prev);
+  //   haveTrafficLayer()
+  //     ? layerStore.trafficLayer.setMap(layerStore.map)
+  //     : layerStore.trafficLayer.setMap(null);
+  // };
 
-  const handleTransitLayer = () => {
-    setTransitLayer((prev) => !prev);
-    haveTransitLayer()
-      ? layerStore.transitLayer.setMap(layerStore.map)
-      : layerStore.transitLayer.setMap(null);
-  };
+  // const handleTransitLayer = () => {
+  //   setTransitLayer((prev) => !prev);
+  //   haveTransitLayer()
+  //     ? layerStore.transitLayer.setMap(layerStore.map)
+  //     : layerStore.transitLayer.setMap(null);
+  // };
 
-  const handleDataLayer = () => {
-    setDataLayer((prev) => !prev);
-    !haveDataLayer()
-      ? layerStore.map.data.setStyle({ visible: false })
-      : layerStore.map.data.setStyle({ visible: true });
-  };
+  // const handleDataLayer = () => {
+  //   setDataLayer((prev) => !prev);
+  //   !haveDataLayer()
+  //     ? layerStore.map.data.setStyle({ visible: false })
+  //     : layerStore.map.data.setStyle({ visible: true });
+  // };
 
   return (
     <div class="h-[15vh] w-[60%] flex flex-col">
@@ -49,7 +48,7 @@ const MapFilter = (props) => {
         justify-center`}
       >
         {/* ${showdropdown() ? "block" : "hidden"} */}
-        <div>
+        {/* <div>
           <input
             type="checkbox"
             name="bikeLayer"
@@ -77,7 +76,7 @@ const MapFilter = (props) => {
             onClick={handleTransitLayer}
           />
           <label htmlFor="transitLayer">Transit Layer</label>
-        </div>
+        </div> */}
 
         <div>
           <input

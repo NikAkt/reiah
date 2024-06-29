@@ -1,9 +1,15 @@
 import { createStore } from "solid-js/store";
 
-export const [store, setStore] = createStore({
+const [store, setStore] = createStore({
   sidebarOpen: false,
   darkModeOn: false,
-  geoJSONData: [],
+  borough_geojson: "",
+  neighbourhood_geojson: "",
+  realEstateData: "",
+  historicalRealEstateData: "",
+  businessData: "",
+  us_zipcodes: "",
+  amenitiesData: "",
   mapOptions: {
     center: { lat: 40.75, lng: -73.971321 },
     zoom: 11,
@@ -371,4 +377,7 @@ export const [store, setStore] = createStore({
       },
     ],
   },
+  map: null,
 });
+
+export { store, setStore };
