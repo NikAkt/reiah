@@ -1,5 +1,4 @@
-import { FormInput } from "./Forms";
-import { A } from "@solidjs/router";
+import { FormInput, InputGroup } from "./Forms";
 
 /**
  * @typedef {Object} LoginFormValues
@@ -59,7 +58,6 @@ function LoginForm({ invalid }) {
             type="submit"
           >
             Sign In
-            <span><img class="htmx-indicator" src="/public/oval.svg" /></span>
           </button>
         </div>
       </form>
@@ -100,8 +98,8 @@ function validateRegisterFormValues(values) {
  * @param {Object} props
  * @param {boolean} props.success - Indicates whether the registration was successful.
  */
-function RegisterForm({ success }) {
-  return !success ? (
+function RegisterForm() {
+  return (
     <div class="w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Create An Account</h1>
@@ -172,7 +170,6 @@ function RegisterForm({ success }) {
             type="submit"
           >
             Register
-            <span><img class="htmx-indicator" src="/public/oval.svg" /></span>
           </button>
         </div>
       </form>
@@ -180,13 +177,7 @@ function RegisterForm({ success }) {
         Already have an account with us? <a class="text-teal-500 dark:text-teal-300 hover:text-green-200" hx-boost="true" href="/login">Login here</a>
       </p>
     </div>
-  ) : (
-    <div>
-      <h1>
-        Congrats you're all set now login <a class="text-teal-500 hover:text-green-200" hx-boost="true" href="/login">here</a>
-      </h1>
-    </div>
-  );
+  )
 }
 
 export {

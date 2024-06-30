@@ -11,7 +11,26 @@ const links = [
 ];
 
 const BaseLayout = (props) => {
-  return <div class="text-gray-800">{props.children}</div>;
+  return (
+    <div
+      class="min-h-screen bg-transparent"
+    >
+      {props.children}
+    </div>
+  );
+};
+
+
+const HomeScreenLayout = (props) => {
+  return (
+    <BaseLayout>
+      <div
+        class="min-h-screen bg-home-screen bg-cover bg-no-repeat"
+      >
+        {props.children}
+      </div>
+    </BaseLayout>
+  )
 };
 
 const DashboardView = (props) => {
@@ -74,4 +93,4 @@ const AuthLayout = (props) => {
   );
 };
 
-export { AuthLayout, MapView, DashboardView, BaseLayout };
+export { HomeScreenLayout, AuthLayout, MapView, DashboardView, BaseLayout };

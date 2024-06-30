@@ -2,11 +2,12 @@
 import { render } from "solid-js/web";
 import { Show, Suspense, createResource } from "solid-js";
 import { Route, Router } from "@solidjs/router";
-import { Dashboard } from "./pages/Dashboard";
-import { HomePage } from "./pages/HomePage";
-import { Settings } from "./pages/Settings";
-import { Map } from "./pages/Map";
-import "./index.css";
+import { Dashboard } from "./pages/Dashboard"
+import { Home } from "./pages/Home"
+import { Settings } from "./pages/Settings"
+import { Map } from "./pages/Map"
+import { RegisterPage, LoginPage } from "./pages/Auth";
+import './index.css';
 import { store, setStore } from "./data/stores";
 import Markers from "./components/Markers";
 
@@ -104,14 +105,9 @@ render(
       />
       <Route path="/settings" component={Settings} />
       <Route path="/dashboard" component={Dashboard} />
-      <Route
-        path="/map"
-        component={() => <Map dataResources={dataResources} />}
-      />
-      <Route
-        path="/develop"
-        component={() => <Markers dataResources={dataResources} />}
-      />
+      <Route path="/map" component={Map} />
+      <Route path="/register" component={RegisterPage} />
+      <Route path="/login" component={LoginPage} />
     </Router>
   ),
   root

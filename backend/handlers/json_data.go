@@ -2,15 +2,17 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
+// ---------------------------------------
 type Amenity struct {
 	Borough            string  `json:"BOROUGH"`
 	Name               string  `json:"NAME"`
@@ -76,6 +78,7 @@ func ServeAmenitiesData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredAmenities)     // return the json
 }
 
+// ---------------------------------------
 type Businesses struct {
 	TaxiZone     int     `json:"taxi_zone"`
 	BusinessType string  `json:"business_type"`
@@ -130,6 +133,8 @@ func ServeBusinessData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredBusiness)     // return the json
 }
 
+// ---------------------------------------
+// REAL ESTATE
 type Prices struct {
 	Zipcode         int     `json:"zipcode"`
 	HomeValue       float64 `json:"avg_home_value"`
@@ -172,7 +177,7 @@ func ServeRealEstatePriceData(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
 
-	file, err := os.Open("public/real_estate_price_data.json")
+	file, err := os.Open("public/historic_real_estate_prices.json")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the real_estate_price_data file: "+err.Error())
 	}
@@ -180,8 +185,7 @@ func ServeRealEstatePriceData(c echo.Context) error {
 
 	var prices []Prices
 	if err := json.NewDecoder(file).Decode(&prices); err != nil {
-		c.Logger().Error("Error decoding JSON: ", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file "+err.Error())
 	}
 
 	filteredPrices := filterPrices(prices, &p)
@@ -317,14 +321,14 @@ type Geometry struct {
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
-	file, err := os.Open("public/NYC_Neighborhood.geojson")
+	file, err := os.Open("public/nyc_zipcode_areas.geojson")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
 	} else {
 		log.Println(err.Error())
 	}
 	defer file.Close()
-	return c.File("public/NYC_Neighborhood.geojson")
+	return c.File("public/nyc_zipcode_areas.geojson")
 }
 
 func ServeBoroughs(c echo.Context) error {
