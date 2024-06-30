@@ -45,12 +45,14 @@ export const MapComponent = (props) => {
 
           mapObject().data.overrideStyle(event.feature, { "fillColor": "red" })
         });
+
         mapObject().data.forEach(function(feature) {
           mapObject().data.overrideStyle(feature, { fillColor: store.darkModeOn ? "white" : "black", strokeWeight: 1 })
         })
         mapObject().controls[google.maps.ControlPosition.TOP_RIGHT].push(createCenterControl());
         mapObject().data.addListener("click", (event) => {
-          console.log(event.feature.getProperty("ZIPCODE"))
+          const zipcode = event.feature.getProperty("ZIPCODE")
+          props.zipcodeSetter(zipcode)
         });
       })
       .catch((e) => {

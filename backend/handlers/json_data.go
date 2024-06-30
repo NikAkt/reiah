@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
+// ---------------------------------------
 type Amenity struct {
 	Borough            string  `json:"BOROUGH"`
 	Name               string  `json:"NAME"`
@@ -76,6 +78,7 @@ func ServeAmenitiesData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredAmenities)     // return the json
 }
 
+// ---------------------------------------
 type Businesses struct {
 	TaxiZone     int     `json:"taxi_zone"`
 	BusinessType string  `json:"business_type"`
@@ -130,6 +133,8 @@ func ServeBusinessData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredBusiness)     // return the json
 }
 
+// ---------------------------------------
+// REAL ESTATE
 type Prices struct {
 	Zipcode         int     `json:"zipcode"`
 	HomeValue       float64 `json:"avg_home_value"`
@@ -187,19 +192,20 @@ func ServeRealEstatePriceData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
-// Data struct with fixed and dynamic fields
+// ---------------------------------------
+// HISTORIC REAL ESTATE
 type HistoricRealEstatePriceData struct {
 	Zipcode int                `json:"zipcode"`
 	Dates   map[string]float64 `json:"historicprices"`
 }
 
-// Alias to help with unmarshalling
 type RawHistoricRealEstatePriceData struct {
 	Zipcode int `json:"zipcode"`
 }
 
 type HistoricFilterParams struct {
-	Zipcode int `query:"zipcode"`
+	Zipcode    int    `query:"zipcode"`
+	AggreateBy string `query:"aggregateBy"`
 }
 
 func filterHistoricPrices(a []HistoricRealEstatePriceData, f *HistoricFilterParams) []HistoricRealEstatePriceData {
@@ -211,6 +217,51 @@ func filterHistoricPrices(a []HistoricRealEstatePriceData, f *HistoricFilterPara
 		filtered = append(filtered, prices)
 	}
 	return filtered
+}
+
+func average(f []float64) float64 {
+	var sum float64 = 0
+	for _, num := range f {
+		sum += num
+	}
+	return sum / float64(len(f))
+}
+
+func aggregateToYear(data map[string]float64) map[string]float64 {
+	newData := make(map[int][]float64)
+	for dateString, value := range data {
+		date, err := time.Parse("2006-01-02", dateString)
+		if err != nil {
+			continue
+		}
+
+		_, ok := newData[date.Year()]
+		if ok {
+			newData[date.Year()] = append(newData[date.Year()], value)
+		} else {
+			newData[date.Year()] = []float64{value}
+		}
+	}
+
+	returnData := make(map[string]float64)
+	for year, priceList := range newData {
+		returnData[strconv.Itoa(year)] = average(priceList)
+	}
+
+	return returnData
+}
+
+func aggregateHistoricPrices(historic []HistoricRealEstatePriceData, f *HistoricFilterParams) []HistoricRealEstatePriceData {
+	var aggregatedPrices []HistoricRealEstatePriceData
+	if f.AggreateBy == "year" {
+		for _, price := range historic {
+			aggregatedPrices = append(aggregatedPrices, HistoricRealEstatePriceData{
+				Zipcode: price.Zipcode,
+				Dates:   aggregateToYear(price.Dates),
+			})
+		}
+	}
+	return aggregatedPrices
 }
 
 func ServeHistoricRealEstatePrices(c echo.Context) error {
@@ -265,7 +316,8 @@ func ServeHistoricRealEstatePrices(c echo.Context) error {
 	}
 
 	filteredPrices := filterHistoricPrices(dataList, &p)
-	return c.JSON(http.StatusOK, filteredPrices)
+	aggregatedPrices := aggregateHistoricPrices(filteredPrices, &p)
+	return c.JSON(http.StatusOK, aggregatedPrices)
 }
 
 func ServeNeighbourhoods(c echo.Context) error {
