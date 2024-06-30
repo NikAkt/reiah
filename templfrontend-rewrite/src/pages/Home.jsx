@@ -61,10 +61,10 @@ export const Home = () => {
                 Log In
               </a>
               <a
-                href="/signup"
+                href="/register"
                 class="font-poppins-regular inline-block bg-teal-500 text-white text-2xl py-2 px-4 rounded-md hover:bg-teal-600 transition duration-300 ease-in-out transform hover:scale-105"
               >
-                Sign Up
+                Register
               </a>
             </div>
           </div>
