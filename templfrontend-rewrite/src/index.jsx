@@ -64,7 +64,7 @@ const [amenitiesData] = createResource(
   fetchData
 );
 
-const [us_zipcodes] = createResource(
+const [zipcodes] = createResource(
   ["http://localhost:8000/api/zipcodes", "us_zipcodes"],
   fetchData
 );
@@ -82,7 +82,7 @@ const [neighbourhood_geojson] = createResource(
 const dataResources = {
   historicalRealEstateData,
   amenitiesData,
-  us_zipcodes,
+  zipcodes,
   borough_geojson,
   neighbourhood_geojson,
 };

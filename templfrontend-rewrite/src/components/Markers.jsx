@@ -1,4 +1,11 @@
-import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
+import {
+  onMount,
+  createEffect,
+  createSignal,
+  onCleanup,
+  Suspense,
+  Show,
+} from "solid-js";
 import { store } from "../data/stores";
 import { Loader } from "@googlemaps/js-api-loader";
 import { realEstateData } from "../data/dataToBeSent";
@@ -78,7 +85,21 @@ const loader = new Loader({
   version: "weekly",
 });
 
-const Markers = (props) => {
+async function fetchZipcodes() {
+  let zipcode = null;
+  try {
+    const response = await fetch("http://localhost:8000/api/zipcodes");
+    const data = await response.json();
+    zipcode = data;
+  } catch (error) {
+    console.error("Error fetching zipcodes:", error);
+  }
+  return zipcode;
+}
+
+fetchZipcodes();
+
+const Markers = async (props) => {
   // Load the maps library
   // loader
   //   .importLibrary("core")
@@ -106,7 +127,52 @@ const Markers = (props) => {
   //   .catch((error) => {
   //     console.error("Error loading the maps library:", error);
   //   });
-  console.log(realEstateData);
+  loader.importLibrary("marker").then(async (markerLibrary) => {
+    const { Marker } = markerLibrary;
+    console.log("Marker", Marker);
+    // Destructure the LatLngBounds class from the loaded map library
+    const zipcode_latlng = await fetchZipcodes();
+
+    console.log("realestatedata", realEstateData);
+
+    const ny_zipcodes = [10458, 10467, 10468];
+
+    ny_zipcodes.forEach((zipcode) => {
+      //position, labelText, title, cdta, level
+      const zipcode_obj = zipcode_latlng.filter(
+        (obj) => obj["zip_code"] === zipcode.toString()
+      );
+
+      const position = {
+        lat: zipcode_obj[0]["latitude"] * 1,
+        lng: zipcode_obj[0]["longitude"] * 1,
+      };
+
+      const level = "zipcode";
+      const title = zipcode.toString();
+      const cdta = "";
+
+      const price_obj = realEstateData.filter(
+        (obj) => obj.zipcode === zipcode
+      )[0];
+
+      const labelText = price_obj["avg_home_value"].toString();
+      const marker = new Marker({
+        position,
+        label: {
+          text: labelText,
+          color: "white",
+          fontSize: "12px",
+        },
+        // animation: google.maps.Animation.DROP,
+        title,
+        clickable: true,
+        cdta,
+        level,
+      });
+      console.log(marker);
+    });
+  });
 };
 
 //   onMount(async () => {
@@ -252,23 +318,6 @@ export default Markers;
  * cdta:String
  * level: String
  */
-async function createMarker(position, labelText, price, title, cdta, level) {
-  const marker = new google.maps.Marker({
-    position,
-    label: {
-      text: labelText,
-      color: "white",
-      fontSize: "12px",
-    },
-    // price,
-    // animation: google.maps.Animation.DROP,
-    title,
-    clickable: true,
-    cdta,
-    level,
-  });
-  return marker;
-}
 
 /**
  *

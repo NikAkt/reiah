@@ -8,45 +8,45 @@ const loader = new Loader({
   version: "weekly",
 });
 
-async function extractHistoricTSData(level, title) {
-  let tsData = null;
-  if (level === "zipcode") {
-    try {
-      fetch(`http://localhost:8000/api/historic-prices?zipcode=${title}`)
-        .then((response) => response.json())
-        .then((data) => (tsData = data["history"]));
-    } catch (error) {
-      console.log(
-        `${level}-${title} may have no data for historical prices:${error}`
-      );
-    }
-  } else if (level === "borough") {
-    try {
-      fetch(`http://localhost:8000/api/historic-prices?borough=${title}`)
-        .then((response) => response.json())
-        .then((data) => {
-          tsData = {};
-          data.forEach((obj) => {
-            const historicalPrices = obj["history"];
-            for (let key of Object.keys(historicalPrices)) {
-              if (!tsData.hasOwnProperty(key)) {
-                tsData[key] = 0;
-              }
+// async function extractHistoricTSData(level, title) {
+//   let tsData = null;
+//   if (level === "zipcode") {
+//     try {
+//       fetch(`http://localhost:8000/api/historic-prices?zipcode=${title}`)
+//         .then((response) => response.json())
+//         .then((data) => (tsData = data["history"]));
+//     } catch (error) {
+//       console.log(
+//         `${level}-${title} may have no data for historical prices:${error}`
+//       );
+//     }
+//   } else if (level === "borough") {
+//     try {
+//       fetch(`http://localhost:8000/api/historic-prices?borough=${title}`)
+//         .then((response) => response.json())
+//         .then((data) => {
+//           tsData = {};
+//           data.forEach((obj) => {
+//             const historicalPrices = obj["history"];
+//             for (let key of Object.keys(historicalPrices)) {
+//               if (!tsData.hasOwnProperty(key)) {
+//                 tsData[key] = 0;
+//               }
 
-              tsData[key] += historicalPrices[key] * 1;
-            }
-          });
-          for (let key of Object.keys(tsData)) {
-            tsData[key] = (tsData[key] / data.length).toFixed(2);
-          }
-        });
-    } catch (error) {
-      console.log(
-        `${level}-${title} may have no data for historical prices:${error}`
-      );
-    }
-  } else if (level === "neighbourhood") return tsData;
-}
+//               tsData[key] += historicalPrices[key] * 1;
+//             }
+//           });
+//           for (let key of Object.keys(tsData)) {
+//             tsData[key] = (tsData[key] / data.length).toFixed(2);
+//           }
+//         });
+//     } catch (error) {
+//       console.log(
+//         `${level}-${title} may have no data for historical prices:${error}`
+//       );
+//     }
+//   } else if (level === "neighbourhood") return tsData;
+// }
 
 const insertDataLayer = (data, map) => {
   try {
