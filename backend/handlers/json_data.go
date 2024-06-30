@@ -364,11 +364,20 @@ type Neighbourhood struct {
 
 func ServeBoroughNeighbourhood(c echo.Context) error {
 	file, err := os.Open("public/borough_neighbourhood.json")
-	if err == nil {
-		log.Println("MANAGED TO OPEN THE FILE")
-	} else {
-		log.Println(err.Error())
+	if err != nil {
+		log.Println("Error opening file:", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the JSON file: "+err.Error())
 	}
 	defer file.Close()
-	return c.File("public/borough_neighbourhood.json")
+
+	var data NeighbourhoodData
+	if err := json.NewDecoder(file).Decode(&data); err != nil {
+		log.Println("Error decoding JSON:", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the JSON file: "+err.Error())
+	}
+
+	filteredData := filterBoroughNeighbourhood(c, data)
+	return c.JSON(http.StatusOK, filteredData)
 }
+
+filterBoroughNeighbourhood (){}
