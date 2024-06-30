@@ -349,6 +349,19 @@ func ServeZipCodes(c echo.Context) error {
 	return c.File("public/us_zip_codes.json")
 }
 
+type NeighbourhoodData struct {
+	Boroughs map[string]Borough `json:"boroughs"`
+}
+
+type Borough struct {
+	Neighbourhoods map[string]Neighbourhood `json:"neighbourhoods"`
+}
+
+type Neighbourhood struct {
+	Cdta     string `json:"cdta"`
+	Zipcodes []int  `json:"zipcodes"`
+}
+
 func ServeBoroughNeighbourhood(c echo.Context) error {
 	file, err := os.Open("public/borough_neighbourhood.json")
 	if err == nil {
