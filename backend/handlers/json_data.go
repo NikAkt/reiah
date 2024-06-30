@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -349,35 +350,104 @@ func ServeZipCodes(c echo.Context) error {
 	return c.File("public/us_zip_codes.json")
 }
 
-type NeighbourhoodData struct {
-	Boroughs map[string]Borough `json:"boroughs"`
+type NeighbourhoodData map[string]map[string]map[string][]int
+
+type NeighbourhoodFilterParams struct {
+	Borough       string `query:"borough"`
+	Neighbourhood string `query:"neighbourhood"`
+	Cdta          string `query:"cdta"`
+	Zipcode       int    `query:"zipcode"`
 }
 
-type Borough struct {
-	Neighbourhoods map[string]Neighbourhood `json:"neighbourhoods"`
-}
+func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcode int) NeighbourhoodData {
+	result := make(NeighbourhoodData)
 
-type Neighbourhood struct {
-	Cdta     string `json:"cdta"`
-	Zipcodes []int  `json:"zipcodes"`
+	for bName, nData := range data {
+		if borough != "" && borough != bName {
+			continue
+		}
+		bResult := make(map[string]map[string][]int)
+		for nName, cData := range nData {
+			if neighbourhood != "" && neighbourhood != nName {
+				continue
+			}
+			nResult := make(map[string][]int)
+			for cName, zipcodes := range cData {
+				if cdta != "" && cdta != cName {
+					continue
+				}
+				if zipcode != 0 {
+					zipFound := false
+					for _, z := range zipcodes {
+						if z == zipcode {
+							zipFound = true
+							break
+						}
+					}
+					if !zipFound {
+						continue
+					}
+				}
+				nResult[cName] = zipcodes
+			}
+			if len(nResult) > 0 {
+				bResult[nName] = nResult
+			}
+		}
+		if len(bResult) > 0 {
+			result[bName] = bResult
+		}
+	}
+
+	return result
 }
 
 func ServeBoroughNeighbourhood(c echo.Context) error {
-	file, err := os.Open("public/borough_neighbourhood.json")
+	var p NeighbourhoodFilterParams
+	if err := c.Bind(&p); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	}
+
+	// Parse zipcode query parameter
+	if zipcodeParam := c.QueryParam("zipcode"); zipcodeParam != "" {
+		zipcode, err := strconv.Atoi(zipcodeParam)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
+		}
+		p.Zipcode = zipcode
+	}
+
+	log.Println("Filter Parameters:", p)
+
+	// Open and decode the JSON file within the handler
+	filePath := "public/borough_neighbourhood.json"
+	log.Println("Opening file:", filePath)
+	file, err := os.Open(filePath)
 	if err != nil {
 		log.Println("Error opening file:", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the JSON file: "+err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the file: "+err.Error())
 	}
 	defer file.Close()
 
-	var data NeighbourhoodData
-	if err := json.NewDecoder(file).Decode(&data); err != nil {
-		log.Println("Error decoding JSON:", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the JSON file: "+err.Error())
+	// Read the raw JSON content
+	rawContent, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Println("Error reading file:", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to read the file: "+err.Error())
 	}
 
-	filteredData := filterBoroughNeighbourhood(c, data)
-	return c.JSON(http.StatusOK, filteredData)
-}
+	log.Println("Raw JSON Content:", string(rawContent))
 
-filterBoroughNeighbourhood (){}
+	// Decode the JSON content
+	var data NeighbourhoodData
+	if err := json.Unmarshal(rawContent, &data); err != nil {
+		log.Println("Error decoding JSON:", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the file: "+err.Error())
+	}
+
+	log.Println("Loaded Data:", data)
+
+	result := filterNeighbourhoods(data, p.Borough, p.Neighbourhood, p.Cdta, p.Zipcode)
+	log.Println("Filter Result:", result)
+	return c.JSON(http.StatusOK, result)
+}
