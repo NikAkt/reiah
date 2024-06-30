@@ -8,6 +8,7 @@ import { Settings } from "./pages/Settings";
 import { Map } from "./pages/Map";
 import "./index.css";
 import { store, setStore } from "./data/stores";
+import Markers from "./components/Markers";
 
 const root = document.getElementById("root");
 
@@ -106,6 +107,10 @@ render(
       <Route
         path="/map"
         component={() => <Map dataResources={dataResources} />}
+      />
+      <Route
+        path="/develop"
+        component={() => <Markers dataResources={dataResources} />}
       />
     </Router>
   ),

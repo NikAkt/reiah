@@ -1,27 +1,68 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store, setStore } from "../data/stores";
 import { createEffect, createSignal, onMount } from "solid-js";
+import Chart from "chart.js/auto";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
   version: "weekly",
 });
 
+async function extractHistoricTSData(level, title) {
+  let tsData = null;
+  if (level === "zipcode") {
+    try {
+      fetch(`http://localhost:8000/api/historic-prices?zipcode=${title}`)
+        .then((response) => response.json())
+        .then((data) => (tsData = data["history"]));
+    } catch (error) {
+      console.log(
+        `${level}-${title} may have no data for historical prices:${error}`
+      );
+    }
+  } else if (level === "borough") {
+    try {
+      fetch(`http://localhost:8000/api/historic-prices?borough=${title}`)
+        .then((response) => response.json())
+        .then((data) => {
+          tsData = {};
+          data.forEach((obj) => {
+            const historicalPrices = obj["history"];
+            for (let key of Object.keys(historicalPrices)) {
+              if (!tsData.hasOwnProperty(key)) {
+                tsData[key] = 0;
+              }
+
+              tsData[key] += historicalPrices[key] * 1;
+            }
+          });
+          for (let key of Object.keys(tsData)) {
+            tsData[key] = (tsData[key] / data.length).toFixed(2);
+          }
+        });
+    } catch (error) {
+      console.log(
+        `${level}-${title} may have no data for historical prices:${error}`
+      );
+    }
+  } else if (level === "neighbourhood") return tsData;
+}
+
 const insertDataLayer = (data, map) => {
   try {
     map.data.addGeoJson(data);
     map.data.setStyle(function (feature) {
       const geometryType = feature.getGeometry().getType();
-      let color = "#81c";
+      let color = "#10b981";
       if (feature.getProperty("isColorful")) {
         color = feature.getProperty("color");
       }
       if (geometryType === "MultiPolygon") {
         return {
-          strokeColor: "green",
+          strokeColor: "#10b981",
           fillColor: color,
           strokeWeight: 2,
-          fillOpacity: 0.3,
+          fillOpacity: 0.1,
           clickable: true,
         };
       }
