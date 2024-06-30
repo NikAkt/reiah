@@ -1,6 +1,8 @@
 import Chart from 'chart.js/auto';
 import { createEffect, onMount, Show } from 'solid-js';
 
+
+
 const transformData = (historicpricesObject) => {
   if (historicpricesObject == undefined) {
     return []
@@ -14,7 +16,7 @@ const transformData = (historicpricesObject) => {
   return chartDataList
 }
 
-const ChartLoading = () => {
+const ChartLoadingIndicator = () => {
   return (
     <div class='w-full h-full flex justify-center items-center'>
       <h1 class='text-black'>Loading ...</h1>
@@ -22,40 +24,60 @@ const ChartLoading = () => {
   )
 }
 
-const BarChart = () => {
+
+
+const createBarChart = (ctx, data, label) => {
+  if (ctx === undefined) {
+    return
+  }
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: label,
+        data: data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+const BarChart = (props) => {
   let ref
 
   onMount(() => {
-    new Chart(ref, {
-      type: 'bar',
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
+    createBarChart(ref)
+  })
+
+  createEffect(() => {
+    if (!props.asyncData.loading) {
+      let newData = props.asyncData()?.[0]
+      let transformedData = transformData(newData?.historicprices)
+      createBarChart(ref, transformedData, newData.zipcode)
+    }
   })
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      <div class="relative w-full h-full">
-        <canvas ref={ref}></canvas>
-      </div>
+      <Show when={!props.asyncData.loading} fallback={<ChartLoadingIndicator />}>
+        <div class="relative w-full h-full">
+          <canvas ref={ref}></canvas>
+        </div>
+      </Show>
     </div>
   )
 }
+
+
 
 const createLineChart = (ctx, data, label) => {
   if (ctx === undefined) {
@@ -96,7 +118,7 @@ const LineChart = (props) => {
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      <Show when={!props.asyncData.loading} fallback={<ChartLoading />}>
+      <Show when={!props.asyncData.loading} fallback={<ChartLoadingIndicator />}>
         <div class="relative w-full h-full">
           <canvas ref={ref}></canvas>
         </div>

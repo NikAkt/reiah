@@ -1,8 +1,7 @@
 import { MapView } from "../layouts/Layout";
 import { MapComponent } from "../components/Map";
-import { MapAreaCard, MapAreaCardSkeletonLoader } from "../components/MapAreaCard";
 import { BarChart, LineChart } from "../components/Charts";
-import { createEffect, createResource, createSignal } from "solid-js";
+import { createResource, createSignal } from "solid-js";
 
 export const Map = () => {
   async function fetchHistoricPrices(zip) {
@@ -25,7 +24,7 @@ export const Map = () => {
       <div class="h-screen flex">
         <MapComponent zipcodeSetter={setSelectedZip} isLoading={false}>
           <LineChart asyncData={historicPrices}></LineChart>
-          <BarChart ></BarChart>
+          <BarChart asyncData={historicPrices} ></BarChart>
         </MapComponent>
       </div >
     </MapView>
