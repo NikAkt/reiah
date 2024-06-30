@@ -356,11 +356,15 @@ type NeighbourhoodFilterParams struct {
 	Borough       string `query:"borough"`
 	Neighbourhood string `query:"neighbourhood"`
 	Cdta          string `query:"cdta"`
-	Zipcode       int    `query:"zipcode"`
+	Zipcodes      []int  `query:"zipcode"`
 }
 
-func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcode int) NeighbourhoodData {
+func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcodes []int) NeighbourhoodData {
 	result := make(NeighbourhoodData)
+	zipSet := make(map[int]struct{})
+	for _, zip := range zipcodes {
+		zipSet[zip] = struct{}{}
+	}
 
 	for bName, nData := range data {
 		if borough != "" && borough != bName {
@@ -372,23 +376,23 @@ func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta s
 				continue
 			}
 			nResult := make(map[string][]int)
-			for cName, zipcodes := range cData {
+			for cName, zips := range cData {
 				if cdta != "" && cdta != cName {
 					continue
 				}
-				if zipcode != 0 {
-					zipFound := false
-					for _, z := range zipcodes {
-						if z == zipcode {
-							zipFound = true
+				if len(zipSet) > 0 {
+					match := false
+					for _, z := range zips {
+						if _, found := zipSet[z]; found {
+							match = true
 							break
 						}
 					}
-					if !zipFound {
+					if !match {
 						continue
 					}
 				}
-				nResult[cName] = zipcodes
+				nResult[cName] = zips
 			}
 			if len(nResult) > 0 {
 				bResult[nName] = nResult
@@ -408,13 +412,14 @@ func ServeBoroughNeighbourhood(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
 
-	// Parse zipcode query parameter
-	if zipcodeParam := c.QueryParam("zipcode"); zipcodeParam != "" {
-		zipcode, err := strconv.Atoi(zipcodeParam)
+	// Parse multiple zipcode query parameters
+	zipcodes := c.QueryParams()["zipcode"]
+	for _, z := range zipcodes {
+		zipcode, err := strconv.Atoi(z)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
 		}
-		p.Zipcode = zipcode
+		p.Zipcodes = append(p.Zipcodes, zipcode)
 	}
 
 	log.Println("Filter Parameters:", p)
@@ -447,7 +452,7 @@ func ServeBoroughNeighbourhood(c echo.Context) error {
 
 	log.Println("Loaded Data:", data)
 
-	result := filterNeighbourhoods(data, p.Borough, p.Neighbourhood, p.Cdta, p.Zipcode)
+	result := filterNeighbourhoods(data, p.Borough, p.Neighbourhood, p.Cdta, p.Zipcodes)
 	log.Println("Filter Result:", result)
 	return c.JSON(http.StatusOK, result)
 }
