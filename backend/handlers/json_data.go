@@ -353,17 +353,23 @@ func ServeZipCodes(c echo.Context) error {
 type NeighbourhoodData map[string]map[string]map[string][]int
 
 type NeighbourhoodFilterParams struct {
-	Borough       string `query:"borough"`
-	Neighbourhood string `query:"neighbourhood"`
-	Cdta          string `query:"cdta"`
-	Zipcodes      []int  `query:"zipcode"`
+	Borough       string   `query:"borough"`
+	Neighbourhood string   `query:"neighbourhood"`
+	Cdta          string   `query:"cdta"`
+	Zipcodes      []string `query:"zipcode"`
 }
 
-func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcodes []int) NeighbourhoodData {
+func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcodes []string) NeighbourhoodData {
 	result := make(NeighbourhoodData)
+
 	zipSet := make(map[int]struct{})
-	for _, zip := range zipcodes {
-		zipSet[zip] = struct{}{}
+	if len(zipcodes) > 0 && zipcodes[0] != "all" {
+		for _, zip := range zipcodes {
+			zipcode, err := strconv.Atoi(zip)
+			if err == nil {
+				zipSet[zipcode] = struct{}{}
+			}
+		}
 	}
 
 	for bName, nData := range data {
@@ -372,7 +378,7 @@ func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta s
 		}
 		bResult := make(map[string]map[string][]int)
 		for nName, cData := range nData {
-			if neighbourhood != "" && neighbourhood != nName {
+			if neighbourhood != "" && neighbourhood != "all" && neighbourhood != nName {
 				continue
 			}
 			nResult := make(map[string][]int)
@@ -410,16 +416,6 @@ func ServeBoroughNeighbourhood(c echo.Context) error {
 	var p NeighbourhoodFilterParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
-	}
-
-	// Parse multiple zipcode query parameters
-	zipcodes := c.QueryParams()["zipcode"]
-	for _, z := range zipcodes {
-		zipcode, err := strconv.Atoi(z)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
-		}
-		p.Zipcodes = append(p.Zipcodes, zipcode)
 	}
 
 	log.Println("Filter Parameters:", p)
