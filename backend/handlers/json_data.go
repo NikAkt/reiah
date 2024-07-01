@@ -194,7 +194,7 @@ func GetRealEstatePriceData(c echo.Context) error {
 }
 
 type HistoricPrices struct {
-	Zipcode int                `json:"zipcode"`
+	Zipcode string             `json:"zipcode"`
 	History map[string]float64 `json:"history"`
 }
 
@@ -205,10 +205,10 @@ func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
 		return err
 	} //This here parses the json data to store it in rawMap.
 
-	//Below we are checking if the zipcode is float and converting it to interger.
+	//Below we are checking if the zipcode is string and converting it to string.
 	// We also assign it to the HistoricPrices struct in the Zipcode field
-	if zip, ok := rawMap["zipcode"].(float64); ok {
-		p.Zipcode = int(zip)
+	if zip, ok := rawMap["zipcode"].(string); ok {
+		p.Zipcode = zip
 	} else {
 		return fmt.Errorf("invalid type for zipcode")
 	}
@@ -219,8 +219,12 @@ func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
 		if k == "zipcode" {
 			continue
 		}
-		if val, ok := v.(float64); ok {
-			p.History[k] = val
+		if val, ok := v.(string); ok {
+			parsedVal, err := strconv.ParseFloat(val, 64)
+			if err != nil {
+				return err
+			}
+			p.History[k] = parsedVal
 		}
 	}
 
@@ -228,13 +232,13 @@ func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
 }
 
 type GetHistoricPricesQueryParam struct {
-	Zipcodes []int  `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
-	Date     string `query:"date"`
+	Zipcodes []string `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
+	Date     string   `query:"date"`
 }
 
 func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQueryParam) []HistoricPrices {
 	var filtered []HistoricPrices
-	zipcodeSet := make(map[int]struct{}) // Map for storing and lookingup the zipcodes
+	zipcodeSet := make(map[string]struct{}) // Map for storing and lookingup the zipcodes
 	for _, z := range f.Zipcodes {
 		zipcodeSet[z] = struct{}{} // This loop populates the map with all the zipcodes in the query params
 	}
@@ -266,14 +270,8 @@ func GetHistoricRealEstatePriceData(c echo.Context) error {
 	}
 
 	// For multiple zipcodes
-	zipcodes := c.QueryParams()["zipcode"] // This fetches all the different values for "zipcode" in the query
-	for _, z := range zipcodes {
-		zipcode, err := strconv.Atoi(z) // loop that converts each zipcode to interger
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
-		}
-		p.Zipcodes = append(p.Zipcodes, zipcode) //adds the zipcodes to the slice one by one
-	}
+	zipcodes := c.QueryParams()["zipcode"]       // This fetches all the different values for "zipcode" in the query
+	p.Zipcodes = append(p.Zipcodes, zipcodes...) // I simplified this by removing the unecessary loop
 
 	file, err := os.Open("public/historic_real_estate_prices.json")
 	if err != nil {
