@@ -58,7 +58,7 @@ const MapView = (props) => {
       >
         <div>{props.children}</div>
         <Filter />
-        <PropertySwitchBtn />
+        {/* <PropertySwitchBtn /> */}
       </main>
     </BaseLayout>
   );

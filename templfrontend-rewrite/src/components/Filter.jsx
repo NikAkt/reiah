@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { DualRangeSlider } from "./DualRangeSlider";
 
 const Filter = ({
   realEstateData,
@@ -73,11 +74,8 @@ const Filter = ({
     text-black"
     >
       <button
-        class="bg-black rounded-2xl  z-20
-        cursor-pointer w-32 h-9 text-white flex 
-        items-center justify-center gap-1.5 hover:scale-110 
-        duration-300 active:bg-violet-700 focus:outline-none 
-        focus:ring focus:ring-violet-300"
+        class="rounded shadow-md color-zinc-900 cursor-pointer 
+        bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center"
         onClick={handleToggleFilter}
       >
         {/* <img src={filter_img} alt="filter" /> */}
@@ -87,24 +85,32 @@ const Filter = ({
       {filterDisplay() && (
         <div
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
-          left-[70vw] w-[40vw] h-[80vh] 
+          left-[70vw] w-[40vw] h-[80vh] shadow-md
         z-20 items-center delay-[300ms] bg-white 
-        border-solid border-2 border-red-600
-        animate-fade-down"
+        animate-fade-down rounded-lg"
         >
           {/* /////////// FILTER TITLE ////////////////// */}
           <div
             id="filter-dropdown-title"
             class="items-center justify-center relative
-            flex h-[5%] bg-black text-white w-[100%] z-30 
+            flex h-[8%] bg-black text-white w-[100%] 
+            z-30 flex-row rounded-t-lg
             "
           >
-            <p>Filter for {filterTarget()}</p>
+            <div
+              class="absolute rounded-full w-[20px] h-[20px] 
+              left-[2%] hover:bg-white
+            text-white items-center flex hover:text-black
+            justify-center cursor-pointer"
+            >
+              X
+            </div>
+            <p>Filters for {filterTarget()}</p>
           </div>
           {/* /////////// FILTER CONTENNT////////////////// */}
           <div
-            class="w-[100%] flex flex-col h-[100%]  relative
-            items-center py-[10%] px-[10%] gap-y-2.5 bg-white
+            class="w-[100%] flex flex-col h-[84%] relative
+            items-center py-4 px-[10%] gap-y-2.5 bg-white
             overflow-y-auto"
             id="filter-details-container"
           >
@@ -115,28 +121,30 @@ const Filter = ({
               id="property-filter-container"
               class="flex flex-col items-center border-2 border-indigo-600"
             >
-              <p class="font-sans text-2xl font-bold text-black">
-                Filter the Area
-              </p>
-
               <div id="property-filter">
                 <div
-                  class="flex flex-col items-center 
+                  class="flex flex-col items-center justify-center
               border-solid border-2 border-indigo-600"
                   id="home-value-container"
                 >
                   <p class="font-sans text-2xl font-bold text-black">
                     Average Home Value
                   </p>
-                  <div>Here should be a chart that looks like airbnb's</div>
-                  {/* <ScrollBar /> */}
-                  <div class="flex gap-2 ">
+                  <div
+                    class="relative w-[90%] h-[100%] 
+                  border-2 border-dashed border-indigo-600 items-center"
+                  >
+                    Hello World
+                  </div>
+                  <div class="flex gap-2 items-center justify-center">
                     <div
                       class="flex flex-col w-[35%] h-[10%] 
-                border-solid border-2 border-indigo-600 rounded-lg"
+                border-solid border-2 border-[#dddddd] rounded-lg
+                items-center"
                     >
                       <p>Minimum</p>
                       <input
+                        class="relative w-[80%] text-center"
                         type="number"
                         placeholder={`${Math.min(
                           ...avg_home_value
@@ -146,10 +154,11 @@ const Filter = ({
                     <div>---</div>
                     <div
                       class="flex w-[35%] h-[10%] flex-col 
-                    border-solid border-2 border-indigo-600 rounded-lg"
+                    border-solid border-2 border-[border-[#dddddd]] rounded-lg items-center"
                     >
                       <p>Maximum</p>
                       <input
+                        class="relative w-[80%] text-center"
                         type="number"
                         placeholder={`${Math.max(
                           ...avg_home_value
@@ -296,9 +305,9 @@ const Filter = ({
           <div
             id="button-container"
             class="items-center 
-          justify-center flex gap-4 bottom-[0]
+          justify-center flex gap-4 bottom-[0] h-[8%]
           relative bg-black text-black w-[100%] z-30 
-          border-solid border-2 border-indigo-600"
+          border-solid border-2 border-indigo-600 rounded-b-lg"
           >
             <button
               class="rounded-2xl  z-20 cursor-pointer

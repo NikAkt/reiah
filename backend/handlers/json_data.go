@@ -323,14 +323,14 @@ type Geometry struct {
 }
 
 func GetNeighbourhoods(c echo.Context) error {
-	file, err := os.Open("public/NYC_Neighborhood.geojson")
+	file, err := os.Open("public/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
 	} else {
 		log.Println(err.Error())
 	}
 	defer file.Close()
-	return c.File("public/nyc_zipcode_areas.geojson")
+	return c.File("public/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
 }
 
 func GetBoroughs(c echo.Context) error {

@@ -7,6 +7,8 @@ const loader = new Loader({
   version: "weekly",
 });
 
+const DataLayer = () => {};
+
 export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
@@ -34,6 +36,12 @@ export const MapComponent = (props) => {
     return centerControlDiv;
   }
 
+  function handleDataLayerClick(info) {
+    const infoWindow = document.getElementById("infoWindow");
+    infoWindow.innerText = JSON.stringify(info["Fg"]);
+    console.log(info);
+  }
+
   const insertDataLayer = (data, map) => {
     try {
       map.data.addGeoJson(data);
@@ -55,6 +63,7 @@ export const MapComponent = (props) => {
       });
       map.data.addListener("click", function (event) {
         event.feature.setProperty("isColorful", true);
+        handleDataLayerClick(event.feature);
       });
       map.data.addListener("mouseover", function (event) {
         map.data.revertStyle();
@@ -72,10 +81,11 @@ export const MapComponent = (props) => {
   };
 
   const clearDataLayer = (map) => {
-    console.log("trigger clear data layer");
-    map.data.forEach(function (feature) {
-      map.data.remove(feature);
-    });
+    if (map) {
+      map.data.forEach(function (feature) {
+        map.data.remove(feature);
+      });
+    }
   };
 
   onMount(() => {
@@ -185,6 +195,10 @@ export const MapComponent = (props) => {
           <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
         </Show>
       </Suspense>
+      <div
+        class="left-[0] top-[10vh] bg-black text-white w-[20vw] h-[20vh] overflow-x-auto"
+        id="infoWindow"
+      ></div>
 
       <div
         class={`bg-white dark:bg-gray-900 basis-3/5 drop-shadow overflow-scroll p-6 ${
