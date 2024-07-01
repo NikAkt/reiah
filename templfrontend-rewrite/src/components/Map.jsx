@@ -39,7 +39,7 @@ export const MapComponent = (props) => {
   function handleDataLayerClick(info) {
     const infoWindow = document.getElementById("infoWindow");
     infoWindow.innerText = JSON.stringify(info["Fg"]);
-    console.log(info);
+    fetch(`http:localhost:8000//api/his`);
   }
 
   const insertDataLayer = (data, map) => {
@@ -90,11 +90,8 @@ export const MapComponent = (props) => {
 
   onMount(() => {
     loader.importLibrary("maps").then(({ Map }) => {
-      if (!props.mapObject()) {
-        props.setMapObject(new Map(ref, mapOptions));
-        console.log("loading map object signal...");
-      }
-      console.log("start inserting data layer");
+      props.setMapObject(new Map(ref, mapOptions));
+
       insertDataLayer(neighbourhood_geojson, props.mapObject());
       // setNeighbourhood(true);
       // props.mapObject().data.addListener("mouseover", (event) => {
