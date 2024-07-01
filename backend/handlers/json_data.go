@@ -140,8 +140,45 @@ type Prices struct {
 	HomeValue       float64 `json:"avg_home_value"`
 	HouseholdIncome float64 `json:"median_household_income"`
 	MedianAge       float64 `json:"median_age"`
-	Latitude        float64 `json:"lat"`
-	Longitude       float64 `json:"lng"`
+}
+
+func (p *Prices) UnmarshalJSON(data []byte) error {
+	var rawMap map[string]interface{}
+	if err := json.Unmarshal(data, &rawMap); err != nil {
+		return err
+	}
+
+	if zip, ok := rawMap["zipcode"].(string); ok {
+		parsedZip, err := strconv.Atoi(zip)
+		if err != nil {
+			return fmt.Errorf("invalid zipcode format")
+		}
+		p.Zipcode = parsedZip
+	} else if zip, ok := rawMap["zipcode"].(float64); ok {
+		p.Zipcode = int(zip)
+	} else {
+		return fmt.Errorf("invalid type for zipcode")
+	}
+
+	if homeValue, ok := rawMap["avg_home_value"].(float64); ok {
+		p.HomeValue = homeValue
+	} else {
+		return fmt.Errorf("invalid type for avg_home_value")
+	}
+
+	if householdIncome, ok := rawMap["median_household_income"].(float64); ok {
+		p.HouseholdIncome = householdIncome
+	} else {
+		return fmt.Errorf("invalid type for median_household_income")
+	}
+
+	if medianAge, ok := rawMap["median_age"].(float64); ok {
+		p.MedianAge = medianAge
+	} else {
+		return fmt.Errorf("invalid type for median_age")
+	}
+
+	return nil
 }
 
 type GetPricesQueryParams struct {
@@ -177,7 +214,7 @@ func GetRealEstatePriceData(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
 
-	file, err := os.Open("public/historic_real_estate_prices.json")
+	file, err := os.Open("public/real_estate_price_data.json")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the real_estate_price_data file: "+err.Error())
 	}
