@@ -1,7 +1,4 @@
 import { createSignal } from "solid-js";
-// import filter_img from "/assets/icon/Filter.png";
-
-// import ScrollBar from "./ScrollBar";
 
 const Filter = ({
   realEstateData,
@@ -64,54 +61,8 @@ const Filter = ({
 
   console.log(amenities_type_desc);
 
-  // const plotHomeValue = () => {
-  //   const ctx = homeValuePlotRef;
-  //   if (ctx) {
-  //     chartInstance = new Chart(ctx, {
-  //       type: "bar",
-  //       data: {
-  //         labels: realEstateData.map((obj) => obj["avg_home_value"]),
-  //         datasets: [
-  //           {
-  //             label: "Average Home Value Plot",
-  //             data: avg_home_value,
-  //           },
-  //         ],
-  //       },
-  //     });
-  //   } else {
-  //     console.error("Element with ref 'homeValuePlotRef' not found.");
-  //   }
-  // };
-
-  // onMount(() => {
-  //   // Plot the chart if the filter is already displayed on mount
-  //   if (filterDisplay()) {
-  //     plotHomeValue();
-  //   }
-  // });
-
-  // onCleanup(() => {
-  //   // Clean up the chart instance when the component is unmounted or filter is toggled off
-  //   if (chartInstance) {
-  //     chartInstance.destroy();
-  //     chartInstance = null;
-  //   }
-  // });
-
   const handleToggleFilter = () => {
-    // const wasDisplayed = filterDisplay();
     toggleFilter();
-    // If the filter was not displayed before, wait for the DOM to update, then plot the chart
-    // if (!wasDisplayed) {
-    //   setTimeout(plotHomeValue, 0); // Using 0 timeout to wait for next tick
-    // } else {
-    //   // If the filter is being hidden, clean up the chart
-    //   if (chartInstance) {
-    //     chartInstance.destroy();
-    //     chartInstance = null;
-    //   }
-    // }
   };
 
   return (
@@ -138,35 +89,26 @@ const Filter = ({
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
           left-[70vw] w-[40vw] h-[80vh] 
         z-20 items-center delay-[300ms] bg-white 
-        border-solid border-2 border-grey
+        border-solid border-2 border-red-600
         animate-fade-down"
         >
           {/* /////////// FILTER TITLE ////////////////// */}
           <div
             id="filter-dropdown-title"
-            class="items-center justify-center
-            flex fixed h-[5%] bg-black text-white w-[100%] z-30 
+            class="items-center justify-center relative
+            flex h-[5%] bg-black text-white w-[100%] z-30 
             "
           >
             <p>Filter for {filterTarget()}</p>
           </div>
           {/* /////////// FILTER CONTENNT////////////////// */}
           <div
-            class="w-[100%] flex flex-col h-[100%] 
-            items-center py-[10%] px-[10%] gap-y-2.5 
+            class="w-[100%] flex flex-col h-[100%]  relative
+            items-center py-[10%] px-[10%] gap-y-2.5 bg-white
             overflow-y-auto"
             id="filter-details-container"
           >
             {/* /////////// MAP FILTER ////////////////// */}
-            <div
-              id="map-filter-container"
-              class="w-[90%] flex flex-col items-center 
-              border-solid border-2 border-indigo-600"
-            >
-              <p class="font-sans text-2xl font-bold text-black">
-                Edit your map
-              </p>
-            </div>
 
             {/* /////////// PROPERTY FILTER////////////////// */}
             <div
@@ -183,10 +125,6 @@ const Filter = ({
               border-solid border-2 border-indigo-600"
                   id="home-value-container"
                 >
-                  {/* <canvas
-                ref={(el) => (homeValuePlotRef = el)}
-                id="home_value_plot"
-              ></canvas> */}
                   <p class="font-sans text-2xl font-bold text-black">
                     Average Home Value
                   </p>
@@ -359,7 +297,7 @@ const Filter = ({
             id="button-container"
             class="items-center 
           justify-center flex gap-4 bottom-[0]
-          fixed bg-black text-black w-[100%] z-30 
+          relative bg-black text-black w-[100%] z-30 
           border-solid border-2 border-indigo-600"
           >
             <button

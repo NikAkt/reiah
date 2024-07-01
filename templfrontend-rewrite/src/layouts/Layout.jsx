@@ -3,6 +3,8 @@ import { SortableGroup } from "../components/SortableWrapper";
 import { Navbar } from "../components/Navbar";
 import { setStore, store } from "../data/stores";
 import { Show } from "solid-js";
+import Filter from "../components/Filter";
+import PropertySwitchBtn from "../components/PropertySwitchBtn";
 
 const links = [
   { Href: "/map", Title: "Map" },
@@ -11,26 +13,17 @@ const links = [
 ];
 
 const BaseLayout = (props) => {
-  return (
-    <div
-      class="min-h-screen bg-transparent"
-    >
-      {props.children}
-    </div>
-  );
+  return <div class="min-h-screen bg-transparent">{props.children}</div>;
 };
-
 
 const HomeScreenLayout = (props) => {
   return (
     <BaseLayout>
-      <div
-        class="min-h-screen bg-home-screen bg-cover bg-no-repeat"
-      >
+      <div class="min-h-screen bg-home-screen bg-cover bg-no-repeat">
         {props.children}
       </div>
     </BaseLayout>
-  )
+  );
 };
 
 const DashboardView = (props) => {
@@ -64,6 +57,8 @@ const MapView = (props) => {
         onMouseOver={() => setStore({ ...store, sidebarOpen: false })}
       >
         <div>{props.children}</div>
+        <Filter />
+        <PropertySwitchBtn />
       </main>
     </BaseLayout>
   );

@@ -12,8 +12,8 @@ const PropertySwitchBtn = () => {
       </button>
 
       <button
-        class="bg-blue rounded-2xl  z-20
-        cursor-pointer w-32 h-9 text-white flex 
+        class="bg-white rounded-2xl  z-20
+        cursor-pointer w-32 h-9 text-black flex 
         items-center justify-center gap-1.5 hover:scale-110 
         duration-300 active:bg-violet-700 focus:outline-none 
         focus:ring focus:ring-violet-300"
