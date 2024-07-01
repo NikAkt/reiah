@@ -182,25 +182,44 @@ func (p *Prices) UnmarshalJSON(data []byte) error {
 }
 
 type GetPricesQueryParams struct {
-	Zipcode         int     `query:"zipcode"`
-	HomeValue       float64 `query:"homevalue"`
-	HouseholdIncome float64 `query:"income"`
-	MedianAge       float64 `query:"age"`
+	Zipcodes     []int   `query:"zipcode"`
+	MinHomeValue float64 `query:"min_homevalue"`
+	MaxHomeValue float64 `query:"max_homevalue"`
+	MinIncome    float64 `query:"min_income"`
+	MaxIncome    float64 `query:"max_income"`
+	MinAge       float64 `query:"min_age"`
+	MaxAge       float64 `query:"max_age"`
 }
 
 func filterPricesGetRequest(a []Prices, f *GetPricesQueryParams) []Prices {
 	var filtered []Prices
+	zipSet := make(map[int]struct{})
+	for _, zip := range f.Zipcodes {
+		zipSet[zip] = struct{}{}
+	}
+
 	for _, prices := range a {
-		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
+		if len(zipSet) > 0 {
+			if _, found := zipSet[prices.Zipcode]; !found {
+				continue
+			}
+		}
+		if f.MinHomeValue != 0 && prices.HomeValue < f.MinHomeValue {
 			continue
 		}
-		if f.HomeValue != 0 && prices.HomeValue != f.HomeValue {
+		if f.MaxHomeValue != 0 && prices.HomeValue > f.MaxHomeValue {
 			continue
 		}
-		if f.HouseholdIncome != 0 && prices.HouseholdIncome != f.HouseholdIncome {
+		if f.MinIncome != 0 && prices.HouseholdIncome < f.MinIncome {
 			continue
 		}
-		if f.MedianAge != 0 && prices.MedianAge != f.MedianAge {
+		if f.MaxIncome != 0 && prices.HouseholdIncome > f.MaxIncome {
+			continue
+		}
+		if f.MinAge != 0 && prices.MedianAge < f.MinAge {
+			continue
+		}
+		if f.MaxAge != 0 && prices.MedianAge > f.MaxAge {
 			continue
 		}
 		filtered = append(filtered, prices)
@@ -212,6 +231,16 @@ func GetRealEstatePriceData(c echo.Context) error {
 	var p GetPricesQueryParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
+	}
+
+	// Parse multiple zipcodes query parameters
+	zipcodes := c.QueryParams()["zipcode"]
+	for _, z := range zipcodes {
+		zipcode, err := strconv.Atoi(z)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid zipcode format")
+		}
+		p.Zipcodes = append(p.Zipcodes, zipcode)
 	}
 
 	file, err := os.Open("public/real_estate_price_data.json")
