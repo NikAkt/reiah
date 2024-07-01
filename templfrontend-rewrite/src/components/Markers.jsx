@@ -1,22 +1,9 @@
 import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
-import { store } from "../data/stores";
+import { setStore, store } from "../data/stores";
 import { Loader } from "@googlemaps/js-api-loader";
 import { realEstateData } from "../data/dataToBeSent";
 import { borough_neighbourhood } from "../data/dataToBeSent";
 
-const [cluster_borough, setClusterBorough] = createSignal(true);
-const [cluster_neighbourhood, setClusterNeighbourhood] = createSignal(false);
-let zipcode_markers = [];
-let borough_markers = [];
-let neighbourhood_markers = [];
-let markersOnMap = [];
-// const svg = window.btoa(`
-//   <svg fill="${"#0145ac"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-//   <circle cx="120" cy="120" opacity=".6" r="70" />
-//   <circle cx="120" cy="120" opacity=".3" r="90" />
-//   <circle cx="120" cy="120" opacity=".2" r="110" />
-//   <circle cx="120" cy="120" opacity=".1" r="130" />
-// </svg>`);
 // const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
 
 //marker size range
@@ -24,8 +11,13 @@ let markersOnMap = [];
 // const finalSize = 100;
 // const sizeDifference = finalSize - initialSize;
 
+const [zipcode_markers, setZipcodeMarkers] = createSignal([]);
+const [borough_markers, setBoroughMarkers] = createSignal([]);
+const [neighbourhood_markers, setNeighbourhoodMarkers] = createSignal([]);
+const [markersOnMap, setMarkersOnMap] = createSignal([]);
+
 // Sets the map on all markers in the array.
-function setMapOnAll(map) {
+function setMapOnAll(map, markersOnMap) {
   for (let i = 0; i < markersOnMap.length; i++) {
     markersOnMap[i].setMap(map);
   }
@@ -38,7 +30,7 @@ function hideMarkers() {
 //generate the historic time series data
 
 //calculate the avgerage price
-async function calculateAvgPrice() {
+function calculateAvgPrice() {
   let totalAvgPrice = 0;
   let count = 0;
 
@@ -54,7 +46,7 @@ async function calculateAvgPrice() {
 }
 
 //find the borough and neighbourhood and cdta according the zipcode
-async function findBoroughNeighbourhood(zipcode, borough_neighbourhood) {
+function findBoroughNeighbourhood(zipcode, borough_neighbourhood) {
   let borough = "",
     neighborhood = "",
     cdta = "";
@@ -76,38 +68,273 @@ async function findBoroughNeighbourhood(zipcode, borough_neighbourhood) {
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
   version: "weekly",
+  // libraries: ["marker", "core"],
 });
 
-const Markers = (props) => {
-  // Load the maps library
-  // loader
-  //   .importLibrary("core")
-  //   .then((coreLibrary) => {
-  //     // Destructure the LatLngBounds class from the loaded map library
-  //     const { LatLngBounds } = coreLibrary;
+const createZipcodeMarkers = (
+  zipcodes,
+  Marker,
+  zipcodes_latlng,
+  realEstateData,
+  map
+) => {
+  const level = "zipcode";
+  const svg = window.btoa(`
+<svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+<circle cx="120" cy="120" opacity=".0" r="70" />
+</svg>`);
+  zipcodes.forEach((el) => {
+    const positionObj = zipcodes_latlng.filter(
+      (obj) => obj["zip_code"] * 1 == el
+    );
+    const realEstateDataObj = realEstateData.filter(
+      (obj) => obj.zipcode * 1 === el
+    );
 
-  //     // Check if LatLngBounds is correctly imported
-  //     console.log(LatLngBounds);
+    try {
+      const position = {
+        lat: positionObj[0]["latitude"] * 1,
+        lng: positionObj[0]["longitude"] * 1,
+      };
 
-  //     // Example usage of LatLngBounds (optional, just for demonstration)
-  //     const bounds = new LatLngBounds(
-  //       { lat: 40.712, lng: -74.227 }, // southwest corner
-  //       { lat: 40.774, lng: -74.125 } // northeast corner
-  //     );
+      const { avg_home_value, median_age, median_household_income } =
+        realEstateDataObj[0];
 
-  //     const position = bounds.getCenter();
-
-  //     // Log the created bounds (optional)
-  //     console.log("center", position.lat(), position.lng());
-
-  //     // Log the amenities data
-  //     console.log(props.dataResources.amenitiesData());
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error loading the maps library:", error);
-  //   });
-  console.log(realEstateData);
+      const marker = new Marker({
+        position,
+        title: el.toString(),
+        level,
+        avg_home_value,
+        median_age,
+        median_household_income,
+        label: {
+          text: `${(avg_home_value / 1000).toFixed(1)}k`,
+          color: "black",
+        },
+        // icon: {
+        //   url: `data:image/svg+xml;base64,${svg}`,
+        //   scaledSize: new google.maps.Size(45, 45),
+        // },
+        map,
+      });
+      setZipcodeMarkers((prev) => [...prev, marker]);
+    } catch (error) {
+      console.log(
+        `${el} is problematic, it does not have latitude and longitude in zipcodes or data in realEstateData : ${error}`
+      );
+    }
+  });
 };
+
+function putMarkersOnMap(markesArray, map) {
+  markesArray.forEach((marker) => {
+    marker.setMap(map);
+  });
+}
+
+const Markers = async (props) => {
+  const zipcodes_latlng = props.zipcodes;
+
+  //extract all zipcodes from borough_neighbourhood
+  let zipcodes = [];
+  for (let key1 of Object.keys(borough_neighbourhood)) {
+    for (let key2 of Object.keys(borough_neighbourhood[key1])) {
+      for (let key3 of Object.keys(borough_neighbourhood[key1][key2])) {
+        zipcodes = [...zipcodes, ...borough_neighbourhood[key1][key2][key3]];
+      }
+    }
+  }
+
+  let borough_zipcode = {};
+  let neighbourhood_zipcode = {};
+
+  for (let [key, value] of Object.entries(borough_neighbourhood)) {
+    if (!borough_zipcode.hasOwnProperty(key)) {
+      borough_zipcode[key] = [];
+    }
+    for (let [neighbourhood, zipcodeObj] of Object.entries(value)) {
+      const zipcodeArray = Object.values(zipcodeObj)[0];
+      if (!neighbourhood_zipcode.hasOwnProperty(neighbourhood)) {
+        neighbourhood_zipcode[neighbourhood] = [];
+      }
+      neighbourhood_zipcode[neighbourhood] = [
+        ...neighbourhood_zipcode[neighbourhood],
+        ...zipcodeArray,
+      ];
+      borough_zipcode[key] = [...borough_zipcode[key], ...zipcodeArray];
+    }
+  }
+
+  const { Marker } = await loader.importLibrary("marker");
+  const { LatLng, LatLngBounds } = await loader.importLibrary("core");
+  const map = props.map();
+  createNeighbourhoodMarkers(
+    neighbourhood_zipcode,
+    zipcodes_latlng,
+    LatLng,
+    LatLngBounds,
+    realEstateData,
+    map,
+    Marker
+  );
+};
+
+function createNeighbourhoodMarkers(
+  neighbourhood_zipcode,
+  zipcodes_latlng,
+  LatLng,
+  LatLngBounds,
+  realEstateData,
+  map,
+  Marker
+) {
+  for (let [neighbourhood, zipcodeArray] of Object.entries(
+    neighbourhood_zipcode
+  )) {
+    const latlngArray = [];
+    const realEstateDataObj = {
+      avg_home_value: 0,
+      median_age: 0,
+      median_household_income: 0,
+    };
+    let count = 0;
+
+    zipcodeArray.forEach((zipcode) => {
+      try {
+        const { latitude, longitude } = zipcodes_latlng.filter(
+          (obj) => obj["zip_code"] * 1 == zipcode
+        )[0];
+        const { avg_home_value, median_age, median_household_income } =
+          realEstateData.filter((obj) => obj.zipcode === zipcode)[0];
+        latlngArray.push({ lat: latitude * 1, lng: longitude * 1 });
+        realEstateDataObj["avg_home_value"] += avg_home_value;
+        realEstateDataObj["median_age"] += median_age;
+        realEstateDataObj["median_household_income"] += median_household_income;
+        count += 1;
+      } catch (error) {
+        console.log(`${zipcode}: ${error}`);
+      }
+    });
+
+    //average the values inside
+    for (let key of Object.keys(realEstateDataObj)) {
+      realEstateDataObj[key] /= count;
+    }
+    const { avg_home_value, median_age, median_household_income } =
+      realEstateDataObj;
+
+    //center position:
+    const bounds = new LatLngBounds();
+
+    latlngArray.forEach((obj) => {
+      bounds.extend(new LatLng(obj["lat"], obj["lng"]));
+    });
+    // centerPositionArray.push(bounds.getCenter());
+    const svg = window.btoa(`
+      <svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" opacity=".6" r="70" />
+      <circle cx="120" cy="120" opacity=".3" r="90" />
+      <circle cx="120" cy="120" opacity=".2" r="120" />
+      </svg>`);
+    const position = bounds.getCenter();
+    const marker = new Marker({
+      position,
+      title: neighbourhood,
+      level: "neighbourhood",
+      avg_home_value,
+      median_age,
+      median_household_income,
+      label: {
+        text: `${(avg_home_value / 1000).toFixed(1)}k`,
+        color: "black",
+        fontSize: "16px",
+      },
+      icon: {
+        url: `data:image/svg+xml;base64,${svg}`,
+        scaledSize: new google.maps.Size(45, 45),
+      },
+      map,
+    });
+    setNeighbourhoodMarkers((prev) => [...prev, marker]);
+  }
+}
+
+function createBoroughMarkers(
+  borough_zipcode,
+  zipcodes_latlng,
+  LatLng,
+  LatLngBounds,
+  map,
+  realEstateData,
+  Marker
+) {
+  for (let [borough, zipcodeArray] of Object.entries(borough_zipcode)) {
+    const latlngArray = [];
+    const realEstateDataObj = {
+      avg_home_value: 0,
+      median_age: 0,
+      median_household_income: 0,
+    };
+    let count = 0;
+
+    zipcodeArray.forEach((zipcode) => {
+      try {
+        const { latitude, longitude } = zipcodes_latlng.filter(
+          (obj) => obj["zip_code"] * 1 == zipcode
+        )[0];
+        const { avg_home_value, median_age, median_household_income } =
+          realEstateData.filter((obj) => obj.zipcode === zipcode)[0];
+        latlngArray.push({ lat: latitude * 1, lng: longitude * 1 });
+        realEstateDataObj["avg_home_value"] += avg_home_value;
+        realEstateDataObj["median_age"] += median_age;
+        realEstateDataObj["median_household_income"] += median_household_income;
+        count += 1;
+      } catch (error) {
+        console.log(`${zipcode}: ${error}`);
+      }
+    });
+
+    //average the values inside
+    for (let key of Object.keys(realEstateDataObj)) {
+      realEstateDataObj[key] /= count;
+    }
+    const { avg_home_value, median_age, median_household_income } =
+      realEstateDataObj;
+
+    //center position:
+    const bounds = new LatLngBounds();
+
+    latlngArray.forEach((obj) => {
+      bounds.extend(new LatLng(obj["lat"], obj["lng"]));
+    });
+    // centerPositionArray.push(bounds.getCenter());
+    const svg = window.btoa(`
+      <svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" opacity=".0" r="70" />
+      </svg>`);
+    const position = bounds.getCenter();
+    const marker = new Marker({
+      position,
+      title: borough,
+      level: "borough",
+      avg_home_value,
+      median_age,
+      median_household_income,
+      label: {
+        text: `${(avg_home_value / 1000).toFixed(1)}k`,
+        color: "black",
+        fontSize: "20px",
+      },
+      icon: {
+        url: `data:image/svg+xml;base64,${svg}`,
+        scaledSize: new google.maps.Size(45, 45),
+      },
+      map,
+    });
+    setBoroughMarkers((prev) => [...prev, marker]);
+    console.log("borough_markers", borough_markers());
+  }
+}
 
 //   onMount(async () => {
 //     if (true) {
@@ -243,37 +470,6 @@ const Markers = (props) => {
 // };
 
 export default Markers;
-
-//create markers
-/**
- * position:{lat,lng}
- * labelText:String
- * title: String
- * cdta:String
- * level: String
- */
-async function createMarker(position, labelText, price, title, cdta, level) {
-  const marker = new google.maps.Marker({
-    position,
-    label: {
-      text: labelText,
-      color: "white",
-      fontSize: "12px",
-    },
-    // price,
-    // animation: google.maps.Animation.DROP,
-    title,
-    clickable: true,
-    cdta,
-    level,
-  });
-  return marker;
-}
-
-/**
- *
- * @param {object} markers_obj {borough:{marker,avgPrice}}
- */
 
 // async function sortMarkersObj(markers_obj) {
 //   //sort the markers ascendingly by home value or other value

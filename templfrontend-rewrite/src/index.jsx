@@ -2,12 +2,12 @@
 import { render } from "solid-js/web";
 import { Show, Suspense, createResource } from "solid-js";
 import { Route, Router } from "@solidjs/router";
-import { Dashboard } from "./pages/Dashboard"
-import { Home } from "./pages/Home"
-import { Settings } from "./pages/Settings"
-import { Map } from "./pages/Map"
+import { Dashboard } from "./pages/Dashboard";
+import { HomePage } from "./pages/HomePage";
+import { Settings } from "./pages/Settings";
+import { Map } from "./pages/Map";
 import { RegisterPage, LoginPage } from "./pages/Auth";
-import './index.css';
+import "./index.css";
 import { store, setStore } from "./data/stores";
 import Markers from "./components/Markers";
 
@@ -54,19 +54,19 @@ const fetchData = async ([json_path, storeKey]) => {
 //   ["http://localhost:8000/api/prices", "realEstateData"],
 //   fetchData
 // );
-console.log("start fetching data");
-const [historicalRealEstateData] = createResource(
-  ["http://localhost:8000/api/historic-prices", "historicalRealEstateData"],
-  fetchData
-);
+// console.log("start fetching data");
+// const [historicalRealEstateData] = createResource(
+//   ["http://localhost:8000/api/historic-prices", "historicalRealEstateData"],
+//   fetchData
+// );
 
 const [amenitiesData] = createResource(
   ["http://localhost:8000/api/amenities", "amenitiesdata"],
   fetchData
 );
 
-const [us_zipcodes] = createResource(
-  ["http://localhost:8000/api/zipcodes", "us_zipcodes"],
+const [zipcodes] = createResource(
+  ["http://localhost:8000/api/zipcodes"],
   fetchData
 );
 
@@ -81,9 +81,9 @@ const [neighbourhood_geojson] = createResource(
 );
 
 const dataResources = {
-  historicalRealEstateData,
+  // historicalRealEstateData,
   amenitiesData,
-  us_zipcodes,
+  zipcodes,
   borough_geojson,
   neighbourhood_geojson,
 };
@@ -105,9 +105,16 @@ render(
       />
       <Route path="/settings" component={Settings} />
       <Route path="/dashboard" component={Dashboard} />
-      <Route path="/map" component={Map} />
+      <Route
+        path="/map"
+        component={() => <Map dataResources={dataResources} />}
+      />
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
+      <Route
+        path="/develop"
+        component={() => <Markers dataResources={dataResources} />}
+      />
     </Router>
   ),
   root

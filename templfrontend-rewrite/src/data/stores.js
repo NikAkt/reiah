@@ -10,6 +10,9 @@ const [store, setStore] = createStore({
   businessData: "",
   us_zipcodes: "",
   amenitiesData: "",
+  zipcode_markers: [],
+  borough_markers: [],
+  neighbourhood_markers: [],
   mapOptions: {
     center: { lat: 40.75, lng: -73.971321 },
     zoom: 11,
