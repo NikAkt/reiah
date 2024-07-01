@@ -53,14 +53,14 @@ func main() {
 	e.GET("/", handlers.HandleHome, handlers.CustomAuthMiddleware)
 
 	// API DATA ROUTES
-	e.GET("/api/amenities", handlers.ServeAmenitiesData)
-	e.GET("/api/businesses", handlers.ServeBusinessData)
-	e.GET("/api/prices", handlers.ServeRealEstatePriceData)
-	e.GET("/api/historic-prices", handlers.ServeHistoricRealEstatePrices)
-	e.GET("/api/neighbourhoods", handlers.ServeNeighbourhoods)
-	e.GET("/api/borough", handlers.ServeBoroughs)
-	e.GET("/api/zipcodes", handlers.ServeZipCodes)
-	e.GET("/api/borough-neighbourhood", handlers.ServeBoroughNeighbourhood)
+	e.GET("/api/amenities", handlers.GetAmenitiesData)
+	e.GET("/api/businesses", handlers.GetBusinessData)
+	e.GET("/api/prices", handlers.GetRealEstatePriceData)
+	e.GET("/api/historic-prices", handlers.GetHistoricRealEstatePriceData)
+	e.GET("/api/neighbourhoods", handlers.GetNeighbourhoods)
+	e.GET("/api/borough", handlers.GetBoroughs)
+	e.GET("/api/zipcodes", handlers.GetZipCodes)
+	e.GET("/api/borough-neighbourhood", handlers.GetBoroughNeighbourhood)
 
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/", "public")

@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -24,7 +24,7 @@ type Amenity struct {
 	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
 }
 
-type AmenityFilterParams struct {
+type GetAmenityQueryParams struct {
 	Borough      string `query:"borough"`
 	Zipcode      int    `query:"zipcode"`
 	FacilityType string `query:"facilitytype"`
@@ -32,7 +32,7 @@ type AmenityFilterParams struct {
 	Name         string `query:"name"`
 }
 
-func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
+func filterAmenitiesGetRequest(a []Amenity, f *GetAmenityQueryParams) []Amenity {
 	var filtered []Amenity //
 	for _, amenity := range a {
 		if f.Borough != "" && amenity.Borough != f.Borough {
@@ -55,26 +55,26 @@ func filterAmenities(a []Amenity, f *AmenityFilterParams) []Amenity {
 	return filtered
 }
 
-func ServeAmenitiesData(c echo.Context) error {
-	var p AmenityFilterParams // Create a variable that is of type AmenityFilterParams
+func GetAmenitiesData(c echo.Context) error {
+	var p GetAmenityQueryParams // Create a variable that is of type GetAmenityQueryParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	} // bind it to the request with proper error message if so
 
 	file, err := os.Open("public/cleaned_amenities_data2.json") // open the json file
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the amenities file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the amenities file: "+err.Error())
 	}
 
 	defer file.Close() // defer its closing to the end of the function scope
 
 	var amenities []Amenity                                          // an array of amenitys
 	if err := json.NewDecoder(file).Decode(&amenities); err != nil { // Create a decoder from the file and decode the dson into an array of amenities
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the amenities file")
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the amenities file")
 	}
 
-	filteredAmenities := filterAmenities(amenities, &p) // filter the amenities using zipcode and borough
-	return c.JSON(http.StatusOK, filteredAmenities)     // return the json
+	filteredAmenities := filterAmenitiesGetRequest(amenities, &p) // filter the amenities using zipcode and borough
+	return c.JSON(http.StatusOK, filteredAmenities)               // return the json
 }
 
 type Businesses struct {
@@ -86,13 +86,13 @@ type Businesses struct {
 	Counts       int     `json:"Counts"`
 }
 
-type BusinessesFilterParams struct {
+type GetBusinessQueryParams struct {
 	TaxiZone     int    `query:"taxizone"`
 	BusinessType string `query:"businesstype"`
 	Zipcode      int    `query:"zipcode"`
 }
 
-func filterBusinesses(a []Businesses, f *BusinessesFilterParams) []Businesses {
+func filterBusinessGetRequest(a []Businesses, f *GetBusinessQueryParams) []Businesses {
 	var filtered []Businesses
 	for _, business := range a {
 		if f.TaxiZone != 0 && business.TaxiZone != f.TaxiZone {
@@ -109,26 +109,26 @@ func filterBusinesses(a []Businesses, f *BusinessesFilterParams) []Businesses {
 	return filtered
 }
 
-func ServeBusinessData(c echo.Context) error {
-	var p BusinessesFilterParams // Create a variable that is of type BusinessesFilterParams
+func GetBusinessData(c echo.Context) error {
+	var p GetBusinessQueryParams // Create a variable that is of type BusinessesFilterParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	} // bind it to the request with proper error message if so
 
 	file, err := os.Open("public/cleaned_business_data.json") // open the json file
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the business file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the business file: "+err.Error())
 	}
 
 	defer file.Close() // defer its closing to the end of the function scope
 
 	var business []Businesses                                       // an array of business
 	if err := json.NewDecoder(file).Decode(&business); err != nil { // Create a decoder from the file and decode the dson into an array of business
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the business file")
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the business file")
 	}
 
-	filteredBusiness := filterBusinesses(business, &p) // filter the business
-	return c.JSON(http.StatusOK, filteredBusiness)     // return the json
+	filteredBusiness := filterBusinessGetRequest(business, &p) // filter the business
+	return c.JSON(http.StatusOK, filteredBusiness)             // return the json
 }
 
 type Prices struct {
@@ -140,14 +140,14 @@ type Prices struct {
 	Longitude       float64 `json:"lng"`
 }
 
-type PricesFilterParams struct {
+type GetPricesQueryParams struct {
 	Zipcode         int     `query:"zipcode"`
 	HomeValue       float64 `query:"homevalue"`
 	HouseholdIncome float64 `query:"income"`
 	MedianAge       float64 `query:"age"`
 }
 
-func filterPrices(a []Prices, f *PricesFilterParams) []Prices {
+func filterPricesGetRequest(a []Prices, f *GetPricesQueryParams) []Prices {
 	var filtered []Prices
 	for _, prices := range a {
 		if f.Zipcode != 0 && prices.Zipcode != f.Zipcode {
@@ -167,25 +167,25 @@ func filterPrices(a []Prices, f *PricesFilterParams) []Prices {
 	return filtered
 }
 
-func ServeRealEstatePriceData(c echo.Context) error {
-	var p PricesFilterParams
+func GetRealEstatePriceData(c echo.Context) error {
+	var p GetPricesQueryParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
 
 	file, err := os.Open("public/real_estate_price_data.json")
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the real_estate_price_data file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the real_estate_price_data file: "+err.Error())
 	}
 	defer file.Close()
 
 	var prices []Prices
 	if err := json.NewDecoder(file).Decode(&prices); err != nil {
 		c.Logger().Error("Error decoding JSON: ", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the prices file")
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the prices file")
 	}
 
-	filteredPrices := filterPrices(prices, &p)
+	filteredPrices := filterPricesGetRequest(prices, &p)
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
@@ -223,12 +223,12 @@ func (p *HistoricPrices) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type HistoricPricesFilterParams struct {
+type GetHistoricPricesQueryParam struct {
 	Zipcodes []int  `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
 	Date     string `query:"date"`
 }
 
-func filterHistoricPrices(a []HistoricPrices, f *HistoricPricesFilterParams) []HistoricPrices {
+func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQueryParam) []HistoricPrices {
 	var filtered []HistoricPrices
 	zipcodeSet := make(map[int]struct{}) // Map for storing and lookingup the zipcodes
 	for _, z := range f.Zipcodes {
@@ -253,8 +253,8 @@ func filterHistoricPrices(a []HistoricPrices, f *HistoricPricesFilterParams) []H
 	return filtered
 }
 
-func ServeHistoricRealEstatePrices(c echo.Context) error {
-	var p HistoricPricesFilterParams
+func GetHistoricRealEstatePriceData(c echo.Context) error {
+	var p GetHistoricPricesQueryParam
 
 	// Here we bind zipcodes / date params
 	if err := c.Bind(&p); err != nil {
@@ -273,20 +273,21 @@ func ServeHistoricRealEstatePrices(c echo.Context) error {
 
 	file, err := os.Open("public/historic_real_estate_prices.json")
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the historic_real_estate_prices file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the historic_real_estate_prices file: "+err.Error())
 	}
 	defer file.Close()
 
 	var prices []HistoricPrices
 	if err := json.NewDecoder(file).Decode(&prices); err != nil { //calls the UnmarshalJSON method using the encoding/json package
 		c.Logger().Error("Error decoding JSON: ", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the historic prices file")
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the historic prices file")
 	}
 
-	filteredPrices := filterHistoricPrices(prices, &p)
+	filteredPrices := filterHistoricPricesGetRequest(prices, &p)
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
+// TODO: Just a question. Do we need this? I just load in the geojson and populate the whole map?
 type FeatureCollection struct {
 	Type     string    `json:"type"`
 	Features []Feature `json:"features"`
@@ -317,7 +318,7 @@ type Geometry struct {
 	Coordinates []interface{} `json:"coordinates"`
 }
 
-func ServeNeighbourhoods(c echo.Context) error {
+func GetNeighbourhoods(c echo.Context) error {
 	file, err := os.Open("public/NYC_Neighborhood.geojson")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
@@ -328,7 +329,7 @@ func ServeNeighbourhoods(c echo.Context) error {
 	return c.File("public/NYC_Neighborhood.geojson")
 }
 
-func ServeBoroughs(c echo.Context) error {
+func GetBoroughs(c echo.Context) error {
 	file, err := os.Open("public/borough.geojson")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
@@ -339,7 +340,7 @@ func ServeBoroughs(c echo.Context) error {
 	return c.File("public/borough.geojson")
 }
 
-func ServeZipCodes(c echo.Context) error {
+func GetZipCodes(c echo.Context) error {
 	file, err := os.Open("public/us_zip_codes.json")
 	if err == nil {
 		log.Println("MANAGED TO OPEN THE FILE")
@@ -350,16 +351,18 @@ func ServeZipCodes(c echo.Context) error {
 	return c.File("public/us_zip_codes.json")
 }
 
+//TODO: Above todo ends here
+
 type NeighbourhoodData map[string]map[string]map[string][]int
 
-type NeighbourhoodFilterParams struct {
+type GetNeighbourhoodQueryParams struct {
 	Borough       string   `query:"borough"`
 	Neighbourhood string   `query:"neighbourhood"`
 	Cdta          string   `query:"cdta"`
 	Zipcodes      []string `query:"zipcode"`
 }
 
-func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcodes []string) NeighbourhoodData {
+func filterNeighbourhoodsGetRequest(data NeighbourhoodData, borough, neighbourhood, cdta string, zipcodes []string) NeighbourhoodData {
 	result := make(NeighbourhoodData)
 
 	zipSet := make(map[int]struct{})
@@ -412,8 +415,8 @@ func filterNeighbourhoods(data NeighbourhoodData, borough, neighbourhood, cdta s
 	return result
 }
 
-func ServeBoroughNeighbourhood(c echo.Context) error {
-	var p NeighbourhoodFilterParams
+func GetBoroughNeighbourhood(c echo.Context) error {
+	var p GetNeighbourhoodQueryParams
 	if err := c.Bind(&p); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
 	}
@@ -426,15 +429,15 @@ func ServeBoroughNeighbourhood(c echo.Context) error {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Println("Error opening file:", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to open the file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the file: "+err.Error())
 	}
 	defer file.Close()
 
 	// Read the raw JSON content
-	rawContent, err := ioutil.ReadAll(file)
+	rawContent, err := io.ReadAll(file)
 	if err != nil {
 		log.Println("Error reading file:", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to read the file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to read the file: "+err.Error())
 	}
 
 	log.Println("Raw JSON Content:", string(rawContent))
@@ -443,12 +446,12 @@ func ServeBoroughNeighbourhood(c echo.Context) error {
 	var data NeighbourhoodData
 	if err := json.Unmarshal(rawContent, &data); err != nil {
 		log.Println("Error decoding JSON:", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to parse the file: "+err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the file: "+err.Error())
 	}
 
 	log.Println("Loaded Data:", data)
 
-	result := filterNeighbourhoods(data, p.Borough, p.Neighbourhood, p.Cdta, p.Zipcodes)
+	result := filterNeighbourhoodsGetRequest(data, p.Borough, p.Neighbourhood, p.Cdta, p.Zipcodes)
 	log.Println("Filter Result:", result)
 	return c.JSON(http.StatusOK, result)
 }
