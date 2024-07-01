@@ -4,8 +4,6 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { realEstateData } from "../data/dataToBeSent";
 import { borough_neighbourhood } from "../data/dataToBeSent";
 
-// const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
-
 //marker size range
 // const initialSize = 50;
 // const finalSize = 100;

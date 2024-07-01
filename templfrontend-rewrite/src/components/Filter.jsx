@@ -1,6 +1,5 @@
 import { createSignal } from "solid-js";
 // import filter_img from "/assets/icon/Filter.png";
-import MapFilter from "./MapFilter";
 
 // import ScrollBar from "./ScrollBar";
 
@@ -167,7 +166,6 @@ const Filter = ({
               <p class="font-sans text-2xl font-bold text-black">
                 Edit your map
               </p>
-              <MapFilter />
             </div>
 
             {/* /////////// PROPERTY FILTER////////////////// */}
