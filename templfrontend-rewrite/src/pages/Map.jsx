@@ -45,10 +45,6 @@ export const Map = (props) => {
               props.dataResources.zipcodes()
             }
           >
-            {/* <Markers
-              zipcodes={props.dataResources.zipcodes()}
-              map={mapObject}
-            /> */}
             <MapComponent
               mapZoom={mapZoom}
               setMapZoom={setMapZoom}
@@ -60,15 +56,16 @@ export const Map = (props) => {
               <LineChart asyncData={historicPrices}></LineChart>
               <BarChart asyncData={historicPrices}></BarChart>
               {createEffect(() => {
-                <Show
-                  when={props.dataResources.zipcodes() && mapObject()}
-                  fallback={props.dataResources.zipcodes.error}
-                >
-                  <Markers
-                    zipcodes={props.dataResources.zipcodes()}
-                    map={mapObject}
-                  />
-                </Show>;
+                // <Show
+                //   when={props.dataResources.zipcodes() && mapObject()}
+                //   fallback={props.dataResources.zipcodes.error}
+                // >
+                <Markers
+                  zipcodes={props.dataResources.zipcodes()}
+                  map={mapObject}
+                  mapZoom={mapZoom}
+                />;
+                // </Show>;
               })}
             </MapComponent>
           </Show>

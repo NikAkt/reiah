@@ -17,16 +17,16 @@ import { FormInput, InputGroup } from "./Forms";
 function validateSettingsFormValues(values) {
   const errors = {};
   if (values.Name.length < 1) {
-    errors.name = 'Name must be greater than one character';
+    errors.name = "Name must be greater than one character";
   }
   if (values.Surname.length < 1) {
-    errors.surname = 'Surname must be greater than one character';
+    errors.surname = "Surname must be greater than one character";
   }
   if (values.Username.length < 1) {
-    errors.username = 'Username must be greater than one character';
+    errors.username = "Username must be greater than one character";
   }
   if (!isValidEmail(values.Email)) {
-    errors.email = 'Please enter a valid email address';
+    errors.email = "Please enter a valid email address";
   }
   return errors;
 }
@@ -39,7 +39,7 @@ function validateSettingsFormValues(values) {
  * @param {Object<string, string>} props.errors - The validation errors.
  */
 function SettingsForm({ userId, values, errors }) {
-  const [editOn, setEditOn] = createSignal(false)
+  const [editOn, setEditOn] = createSignal(false);
 
   const handleSettingsPatch = async (event) => {
     event.preventDefault();
@@ -48,22 +48,22 @@ function SettingsForm({ userId, values, errors }) {
     const urlEncodedData = new URLSearchParams(formData).toString();
 
     try {
-      const response = await fetch('/settings/edit' + userId, {
-        method: 'PATCH',
+      const response = await fetch("/settings/edit" + userId, {
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: urlEncodedData,
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const responseData = await response.json();
-      console.log('Success:', responseData);
+      console.log("Success:", responseData);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
@@ -140,7 +140,4 @@ function SettingsForm({ userId, values, errors }) {
   );
 }
 
-export {
-  SettingsForm,
-  validateSettingsFormValues
-}
+export { SettingsForm, validateSettingsFormValues };

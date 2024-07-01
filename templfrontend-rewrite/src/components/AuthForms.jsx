@@ -14,10 +14,10 @@ import { FormInput, InputGroup } from "./Forms";
 function validateLoginFormValues(values) {
   const errors = {};
   if (values.Username.length < 1) {
-    errors.username = 'Username must be greater than one character';
+    errors.username = "Username must be greater than one character";
   }
   if (values.Password.length < 1) {
-    errors.password = 'Password must be greater than one character';
+    errors.password = "Password must be greater than one character";
   }
   return errors;
 }
@@ -62,10 +62,19 @@ function LoginForm({ invalid }) {
         </div>
       </form>
       {invalid && (
-        <div class="mt-6 text-red-400 dark:text-red-200">Failed to login invalid credentials</div>
+        <div class="mt-6 text-red-400 dark:text-red-200">
+          Failed to login invalid credentials
+        </div>
       )}
       <p class="mt-6 dark:text-white">
-        New to reiah? <a class="text-teal-500 hover:text-green-200" hx-boost="true" href="/register">Register here</a>
+        New to reiah?{" "}
+        <a
+          class="text-teal-500 hover:text-green-200"
+          hx-boost="true"
+          href="/register"
+        >
+          Register here
+        </a>
       </p>
     </div>
   );
@@ -85,14 +94,13 @@ function LoginForm({ invalid }) {
 function validateRegisterFormValues(values) {
   const errors = {};
   if (values.Username.length < 1) {
-    errors.username = 'Username must be greater than one character';
+    errors.username = "Username must be greater than one character";
   }
   if (values.Password.length < 1) {
-    errors.password = 'Password must be greater than one character';
+    errors.password = "Password must be greater than one character";
   }
   return errors;
 }
-
 
 /**
  * @param {Object} props
@@ -174,15 +182,22 @@ function RegisterForm() {
         </div>
       </form>
       <p class="mt-6 dark:text-white">
-        Already have an account with us? <a class="text-teal-500 dark:text-teal-300 hover:text-green-200" hx-boost="true" href="/login">Login here</a>
+        Already have an account with us?{" "}
+        <a
+          class="text-teal-500 dark:text-teal-300 hover:text-green-200"
+          hx-boost="true"
+          href="/login"
+        >
+          Login here
+        </a>
       </p>
     </div>
-  )
+  );
 }
 
 export {
   validateLoginFormValues,
   LoginForm,
   validateRegisterFormValues,
-  RegisterForm
-}
+  RegisterForm,
+};

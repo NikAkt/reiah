@@ -56,11 +56,11 @@ export const MapComponent = (props) => {
       map.data.addListener("click", function (event) {
         event.feature.setProperty("isColorful", true);
       });
-      // map.data.addListener("mouseover", function (event) {
-      //   map.data.revertStyle();
-      //   map.data.overrideStyle(event.feature, { strokeWeight: 3 });
-      //   event.feature.setProperty("isColorful", true);
-      // });
+      map.data.addListener("mouseover", function (event) {
+        map.data.revertStyle();
+        map.data.overrideStyle(event.feature, { strokeWeight: 3 });
+        event.feature.setProperty("isColorful", true);
+      });
 
       map.data.addListener("mouseout", function (event) {
         event.feature.setProperty("isColorful", false);
@@ -82,33 +82,23 @@ export const MapComponent = (props) => {
     loader.importLibrary("maps").then(({ Map }) => {
       if (!props.mapObject()) {
         props.setMapObject(new Map(ref, mapOptions));
+        console.log("loading map object signal...");
       }
-
+      console.log("start inserting data layer");
       insertDataLayer(neighbourhood_geojson, props.mapObject());
       // setNeighbourhood(true);
-      props.mapObject().data.addListener("mouseover", (event) => {
-        // Reset the polygons to grey
-        props.mapObject().data.forEach(function (feature) {
-          props.mapObject().data.overrideStyle(feature, {
-            fillColor: store.darkModeOn ? "white" : "black",
-            strokeWeight: 1,
-          });
-        });
-
-        // props.mapObject().data.overrideStyle(event.feature, { fillColor: "red" });
-      });
-
-      //automatically update mapZoom signal
+      // props.mapObject().data.addListener("mouseover", (event) => {
+      //   // Reset the polygons to grey
+      //   props.mapObject().data.forEach(function (feature) {
+      //     props.mapObject().data.overrideStyle(feature, {
+      //       fillColor: store.darkModeOn ? "white" : "black",
+      //       strokeWeight: 1,
+      //     });
+      //   });
       props.mapObject().addListener("zoom_changed", () => {
         props.setMapZoom(props.mapObject().zoom);
       });
 
-      // props.mapObject().data.forEach(function (feature) {
-      //   props.mapObject().data.overrideStyle(feature, {
-      //     fillColor: store.darkModeOn ? "white" : "black",
-      //     strokeWeight: 1,
-      //   });
-      // });
       props
         .mapObject()
         .controls[google.maps.ControlPosition.TOP_RIGHT].push(
@@ -118,12 +108,22 @@ export const MapComponent = (props) => {
         const zipcode = event.feature.getProperty("ZIPCODE");
         props.zipcodeSetter(zipcode);
       });
+      // props.mapObject().data.overrideStyle(event.feature, { fillColor: "red" });
     });
 
-    // props.mapObject().catch((e) => {
-    //   console.error(e);
+    //automatically update mapZoom signal
+
+    // props.mapObject().data.forEach(function (feature) {
+    //   props.mapObject().data.overrideStyle(feature, {
+    //     fillColor: store.darkModeOn ? "white" : "black",
+    //     strokeWeight: 1,
+    //   });
     // });
   });
+
+  // props.mapObject().catch((e) => {
+  //   console.error(e);
+  // });
 
   createEffect(() => {
     if (props.mapObject() !== null) {

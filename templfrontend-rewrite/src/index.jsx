@@ -3,13 +3,12 @@ import { render } from "solid-js/web";
 import { Show, Suspense, createResource } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { Dashboard } from "./pages/Dashboard";
-import { HomePage } from "./pages/HomePage";
+import { Home } from "./pages/Home";
 import { Settings } from "./pages/Settings";
 import { Map } from "./pages/Map";
 import { RegisterPage, LoginPage } from "./pages/Auth";
 import "./index.css";
 import { store, setStore } from "./data/stores";
-import Markers from "./components/Markers";
 
 const root = document.getElementById("root");
 
@@ -91,8 +90,6 @@ const dataResources = {
 function App(props) {
   return (
     <div data-mode={store.darkModeOn ? "dark" : "light"}>{props.children}</div>
-
-    // </DataResourcesContext.Provider>
   );
 }
 
@@ -101,7 +98,7 @@ render(
     <Router root={App}>
       <Route
         path="/"
-        component={() => <HomePage dataResources={dataResources} />}
+        component={() => <Home dataResources={dataResources} />}
       />
       <Route path="/settings" component={Settings} />
       <Route path="/dashboard" component={Dashboard} />
@@ -111,10 +108,6 @@ render(
       />
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
-      <Route
-        path="/develop"
-        component={() => <Markers dataResources={dataResources} />}
-      />
     </Router>
   ),
   root

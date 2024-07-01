@@ -15,11 +15,14 @@
 function FormInput(props) {
   return (
     <label class="block mb-4">
-      <span class="text-accent text-sm mb-2 dark:text-slate-200">{props.Label}</span>
+      <span class="text-accent text-sm mb-2 dark:text-slate-200">
+        {props.Label}
+      </span>
       <input
         disabled={props.Disabled}
-        class={`shadow appearance-none border ${props.Error ? 'border-red-500' : ''
-          } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+        class={`shadow appearance-none border ${
+          props.Error ? "border-red-500" : ""
+        } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
         type={props.Type}
         placeholder={props.Placeholder}
         name={props.Name}
@@ -35,14 +38,7 @@ function FormInput(props) {
  * @param {number} props.gs - Number of grid columns
  */
 function InputGroup(props) {
-  return (
-    <div class={`grid gap-2 grid-cols-${props.gs}`}>
-      {props.children}
-    </div>
-  );
+  return <div class={`grid gap-2 grid-cols-${props.gs}`}>{props.children}</div>;
 }
 
-export {
-  FormInput,
-  InputGroup
-}
+export { FormInput, InputGroup };
