@@ -1,5 +1,5 @@
 import Chart from "chart.js/auto";
-import { createEffect, onMount, Show } from "solid-js";
+import { createEffect, onCleanup, onMount, Show } from "solid-js";
 
 const transformData = (historicpricesObject) => {
   if (historicpricesObject == undefined) {
@@ -10,6 +10,7 @@ const transformData = (historicpricesObject) => {
     const newObject = { x: key, y: value };
     chartDataList.push(newObject);
   }
+  console.log("chartDataList", chartDataList);
 
   return chartDataList;
 };
@@ -23,6 +24,8 @@ const ChartLoadingIndicator = () => {
 };
 
 const createBarChart = (ctx, data, label) => {
+  console.log("createBarChart");
+  console.log("data in create Bar Chart", data);
   if (ctx === undefined) {
     return;
   }
@@ -50,6 +53,7 @@ const createBarChart = (ctx, data, label) => {
 };
 
 const BarChart = (props) => {
+  console.log("Barchart");
   let ref;
 
   onMount(() => {
@@ -59,7 +63,8 @@ const BarChart = (props) => {
   createEffect(() => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData()?.[0];
-      let transformedData = transformData(newData?.historicprices);
+      console.log("newData", newData);
+      let transformedData = transformData(newData?.history);
       createBarChart(ref, transformedData, newData.zipcode);
     }
   });
@@ -71,7 +76,7 @@ const BarChart = (props) => {
         fallback={<ChartLoadingIndicator />}
       >
         <div class="relative w-full h-full">
-          <canvas ref={ref}></canvas>
+          <canvas ref={(el) => (ref = el)}></canvas>
         </div>
       </Show>
     </div>
@@ -98,6 +103,16 @@ const createLineChart = (ctx, data, label) => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: "Historic Home Prices",
+          padding: {
+            top: 10,
+            bottom: 30,
+          },
+        },
+      },
     },
   });
 };
@@ -112,9 +127,14 @@ const LineChart = (props) => {
   createEffect(() => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData()?.[0];
-      let transformedData = transformData(newData?.historicprices);
+      let transformedData = transformData(newData?.history);
       createLineChart(ref, transformedData, newData.zipcode);
     }
+    onCleanup((ref) => {
+      if (ref) {
+        ref = null;
+      }
+    });
   });
 
   return (

@@ -1,7 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
-import { AirBNBSlider } from "./AirBNBSlider";
+// import { AirBNBSlider } from "./AirBNBSlider";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -64,6 +64,8 @@ export const MapComponent = (props) => {
       map.data.addListener("click", function (event) {
         event.feature.setProperty("isColorful", true);
         handleDataLayerClick(event.feature);
+        const zipcode = event.feature.getProperty("ZIPCODE");
+        props.zipcodeSetter(zipcode);
       });
       map.data.addListener("mouseover", function (event) {
         map.data.revertStyle();
@@ -111,10 +113,7 @@ export const MapComponent = (props) => {
         .controls[google.maps.ControlPosition.TOP_RIGHT].push(
           createCenterControl()
         );
-      props.mapObject().data.addListener("click", (event) => {
-        const zipcode = event.feature.getProperty("ZIPCODE");
-        props.zipcodeSetter(zipcode);
-      });
+
       // props.mapObject().data.overrideStyle(event.feature, { fillColor: "red" });
     });
 
@@ -192,11 +191,11 @@ export const MapComponent = (props) => {
           <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
         </Show>
       </Suspense>
-      {/* <div
+      <div
         class="left-[0] top-[10vh] bg-black text-white w-[20vw] h-[20vh] overflow-x-auto"
         id="infoWindow"
-      ></div> */}
-      <AirBNBSlider />
+      ></div>
+      {/* <AirBNBSlider /> */}
 
       <div
         class={`bg-white dark:bg-gray-900 basis-3/5 drop-shadow overflow-scroll p-6 ${
@@ -211,7 +210,9 @@ export const MapComponent = (props) => {
         </Show>
         <Show when={!props.isLoading}>
           <div>
-            <h1 class="font-medium">Information on 12345</h1>
+            <h1 class="font-medium">
+              {`Information on ${props.zipcodeOnCharts()}`}
+            </h1>
             <h2 class="txt-neutral-500 text-sm">click for more information</h2>
           </div>
         </Show>

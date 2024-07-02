@@ -9,12 +9,14 @@ import {
 } from "solid-js";
 import { BarChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
+import { Dashboard } from "./Dashboard";
+import { DashboardInfo } from "../components/DashboardInfo";
 
 export const Map = (props) => {
   const [mapZoom, setMapZoom] = createSignal(10);
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
-      `http://localhost:8000/api/historic-prices?zipcode=${zip}&aggregateBy=year`
+      `http://localhost:8000/api/historic-prices?zipcode=${zip}`
     );
     if (!response.ok) {
       return [];
@@ -52,9 +54,11 @@ export const Map = (props) => {
               zipcodeSetter={setSelectedZip}
               mapObject={mapObject}
               setMapObject={setMapObject}
+              zipcodeOnCharts={getSelectedZip}
             >
               <LineChart asyncData={historicPrices}></LineChart>
-              <BarChart asyncData={historicPrices}></BarChart>
+              {/* <BarChart asyncData={historicPrices}></BarChart> */}
+              <DashboardInfo />
               {createEffect(() => {
                 // <Show
                 //   when={props.dataResources.zipcodes() && mapObject()}
