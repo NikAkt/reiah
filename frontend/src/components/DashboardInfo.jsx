@@ -37,6 +37,15 @@ export const DashboardInfo = (props) => {
             obj["median_age"];
         }
       });
+    fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
+      .then((response) => response.json())
+      .then((data) => {
+        //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
+        if (data) {
+          let amenities = {};
+          data.forEach();
+        }
+      });
   };
 
   fetchDashboardInfoData("zipcode", 11385);
