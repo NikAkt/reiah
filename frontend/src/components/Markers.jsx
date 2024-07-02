@@ -1,4 +1,4 @@
-import { onMount, createEffect, createSignal, onCleanup } from "solid-js";
+import { onMount, createEffect, createSignal, untrack } from "solid-js";
 import { setStore, store } from "../data/stores";
 import { Loader } from "@googlemaps/js-api-loader";
 import { realEstateData } from "../data/dataToBeSent";
@@ -69,6 +69,8 @@ const createZipcodeMarkers = (
 };
 
 function putMarkersOnMap(markersArray, map) {
+  console.log("markersArray", markersArray);
+  console.log("map", map);
   markersArray.forEach((marker) => {
     marker.setMap(map);
   });
@@ -111,70 +113,77 @@ const Markers = async (props) => {
         borough_zipcode[key] = [...borough_zipcode[key], ...zipcodeArray];
       }
     }
-    const { Marker } = await loader.importLibrary("marker");
-    const { LatLng, LatLngBounds } = await loader.importLibrary("core");
-
-    createZipcodeMarkers(zipcodes, Marker, zipcodes_latlng, realEstateData);
-    createBoroughMarkers(
-      borough_zipcode,
-      zipcodes_latlng,
-      LatLng,
-      LatLngBounds,
-      realEstateData,
-      Marker
-    );
-    createNeighbourhoodMarkers(
-      neighbourhood_zipcode,
-      zipcodes_latlng,
-      LatLng,
-      LatLngBounds,
-      realEstateData
-    );
+    // const { Marker } = await loader.importLibrary("marker");
+    // const { LatLng, LatLngBounds } = await loader.importLibrary("core");
+    loader.importLibrary("marker").then(({ Marker }) => {
+      loader.importLibrary("core").then(({ LatLng, LatLngBounds }) => {
+        createZipcodeMarkers(zipcodes, Marker, zipcodes_latlng, realEstateData);
+        createBoroughMarkers(
+          borough_zipcode,
+          zipcodes_latlng,
+          LatLng,
+          LatLngBounds,
+          realEstateData,
+          Marker
+        );
+        createNeighbourhoodMarkers(
+          neighbourhood_zipcode,
+          zipcodes_latlng,
+          LatLng,
+          LatLngBounds,
+          realEstateData,
+          Marker
+        );
+      });
+    });
   });
-  createEffect(() => {
-    const map = props.map();
-    try {
-      if (props.mapZoom() <= 10) {
-        //borough level markers
-        //if it has neighbourhood markers, clear the data layer
-        if (!markersOnMap() === "borough") {
-          switch (markersOnMap()) {
-            case "neighbourhood":
-              clearMarkers(neighbourhood_markers(), map);
-            case "zipcode":
-              clearMarkers(zipcode_markers(), map);
-          }
-          putMarkersOnMap(borough_markers(), map);
-          setMarkersOnMap("borough");
-        }
-      } else if (props.mapZoom() <= 13) {
-        //datalayer changed to neighbourhood level
-        if (!markersOnMap() === "neighbourhood") {
-          switch (markersOnMap()) {
-            case "borough":
-              clearMarkers(borough_markers(), map);
-            case "zipcode":
-              clearMarkers(zipcode_markers(), map);
-          }
-          putMarkersOnMap(neighbourhood_markers(), map);
-          setMarkersOnMap("neighbourhood");
-        }
-      } else {
-        // zipcode level markers
-        if (!markersOnMap() === "zipcode") {
-          switch (markersOnMap()) {
-            case "borough":
-              clearMarkers(borough_markers(), map);
-            case "neighbourhood":
-              clearMarkers(neighbourhood_markers(), map);
-          }
-          putMarkersOnMap(zipcode_markers(), map);
-          setMarkersOnMap("zipcode");
+
+  const switchMarkers = (props, map) => {
+    if (props.mapZoom() <= 10) {
+      //borough level markers
+      //if it has neighbourhood markers, clear the data layer
+      if (!markersOnMap() === "borough") {
+        switch (markersOnMap()) {
+          case "neighbourhood":
+            clearMarkers(untrack(neighbourhood_markers()), map);
+          case "zipcode":
+            clearMarkers(zipcode_markers(), map);
         }
       }
-    } catch (error) {
-      console.log(error);
+      putMarkersOnMap(borough_markers(), map);
+      setMarkersOnMap("borough");
+    } else if (props.mapZoom() <= 13 && props.mapZoom() > 10) {
+      console.log("trigger neighborhood level markers");
+      //datalayer changed to neighbourhood level
+      if (!markersOnMap() === "neighbourhood") {
+        switch (markersOnMap()) {
+          case "borough":
+            clearMarkers(borough_markers(), map);
+          case "zipcode":
+            clearMarkers(zipcode_markers(), map);
+        }
+      }
+      putMarkersOnMap(neighbourhood_markers(), map);
+      setMarkersOnMap("neighbourhood");
+    } else {
+      // zipcode level markers
+      if (!markersOnMap() === "zipcode") {
+        switch (markersOnMap()) {
+          case "borough":
+            clearMarkers(borough_markers(), map);
+          case "neighbourhood":
+            clearMarkers(neighbourhood_markers(), map);
+        }
+      }
+      putMarkersOnMap(zipcode_markers(), map);
+      setMarkersOnMap("zipcode");
     }
+  };
+
+  createEffect(() => {
+    console.log("trigger create effect");
+    const map = props.map();
+    switchMarkers(props, map);
   });
 };
 

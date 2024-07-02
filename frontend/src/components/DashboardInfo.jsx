@@ -1,15 +1,19 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
+import Markers from "./Markers";
 
 export const DashboardInfo = (props) => {
   let ref;
   const [zipcode, setZipcode] = createSignal(11385);
+  const loader = new Loader({
+    apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
+    version: "weekly",
+  });
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
   const fetchDashboardInfoData = async (level, area) => {
-    console.log("fetching data for dashboard");
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
@@ -23,6 +27,7 @@ export const DashboardInfo = (props) => {
             Object.keys(data[keys[0]]);
         }
       });
+
     fetch(`http://localhost:8000/api/prices?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
@@ -42,8 +47,39 @@ export const DashboardInfo = (props) => {
       .then((data) => {
         //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
         if (data) {
-          let amenities = {};
-          data.forEach();
+          loader.importLibrary("marker").then(({ Marker }) => {
+            let amenities = {};
+            data.forEach((el) => {
+              if (!amenities.hasOwnProperty(el["FACILITY_TYPE"])) {
+                amenities[el["FACILITY_TYPE"]] = {};
+              }
+              if (
+                !amenities[el["FACILITY_TYPE"]].hasOwnProperty(
+                  el["FACILITY_DESC"]
+                )
+              ) {
+                amenities[el["FACILITY_TYPE"]][el["FACILITY_DESC"]] = [];
+              }
+              amenities[el["FACILITY_TYPE"]][el["FACILITY_DESC"]].push(
+                el["NAME"]
+              );
+              new Marker({
+                position: { lat: el["LAT"], lng: el["LNG"] },
+                title: el["NAME"],
+                level: "amenties",
+                facility_type: el["FACILITY_TYPE"],
+                facility_desc: el["FACILITY_DESC"],
+                map: props.map(),
+              });
+            });
+            const facilityTypeUl = document.getElementById("facility_type_ul");
+            Object.keys(amenities).forEach((a) => {
+              const facilityDesc = Object.keys(amenities[a])
+                .map((el) => `<li>${el}</li>`)
+                .join("");
+              facilityTypeUl.innerHTML += `<li><ul>${a}${facilityDesc}</ul></li>`;
+            });
+          });
         }
       });
   };
@@ -75,9 +111,8 @@ export const DashboardInfo = (props) => {
         </ul>
       </div>
       <div>
-        <p>Amenities</p>
         <div>
-          <ul>Facility Type</ul>
+          <ul id="facility_type_ul">Amenities</ul>
         </div>
       </div>
     </div>

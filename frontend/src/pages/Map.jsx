@@ -9,7 +9,6 @@ import {
 } from "solid-js";
 import { BarChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
-import { Dashboard } from "./Dashboard";
 import { DashboardInfo } from "../components/DashboardInfo";
 
 export const Map = (props) => {
@@ -58,7 +57,7 @@ export const Map = (props) => {
             >
               <LineChart asyncData={historicPrices}></LineChart>
               {/* <BarChart asyncData={historicPrices}></BarChart> */}
-              <DashboardInfo />
+              <DashboardInfo map={mapObject} />
               {createEffect(() => {
                 // <Show
                 //   when={props.dataResources.zipcodes() && mapObject()}
