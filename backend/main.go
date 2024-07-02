@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	// INTEND ON REPLACING THIS LATER ON WITH THE POSTGRES DB
 	err := db.InitDB("sqlite3", "db/application.db")
 	if err != nil {
@@ -28,29 +27,6 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
-
-	// HOME PAGE
-	e.GET("/", handlers.HandleHome, handlers.CustomAuthMiddleware, middleware.Logger())
-
-	// MAP PAGE
-	e.GET("/map", handlers.HandleMap, handlers.CustomAuthMiddleware, middleware.Logger())
-
-	// SETTINGS PAGE
-	e.GET("/settings", handlers.HandleSettingsGet, handlers.CustomAuthMiddleware, middleware.Logger())
-	e.GET("/settings/edit", handlers.HandleSettingsEditGet, handlers.CustomAuthMiddleware, middleware.Logger())
-	e.PATCH("/settings/edit/:userid", handlers.HandleSettingsEditPatch, handlers.CustomAuthMiddleware, middleware.Logger())
-
-	// DASHBOARD PAGE
-	e.GET("/dashboard", handlers.HandleDashboard, handlers.CustomAuthMiddleware, middleware.Logger())
-
-	//LOGIN AND REGISTER PAGE
-	e.GET("/login", handlers.HandleLoginPage, middleware.Logger())
-	e.POST("/login", handlers.HandleLoginAttempt, middleware.Logger())
-	e.GET("/register", handlers.HandleRegisterPage, middleware.Logger())
-	e.POST("/register", handlers.HandleRegisterAttempt, middleware.Logger())
-
-	// Routes
-	e.GET("/", handlers.HandleHome, handlers.CustomAuthMiddleware)
 
 	// API DATA ROUTES
 	e.GET("/api/amenities", handlers.GetAmenitiesData)
