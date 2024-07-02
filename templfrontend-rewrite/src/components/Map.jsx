@@ -1,6 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
+import { AirBNBSlider } from "./AirBNBSlider";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -39,7 +40,6 @@ export const MapComponent = (props) => {
   function handleDataLayerClick(info) {
     const infoWindow = document.getElementById("infoWindow");
     infoWindow.innerText = JSON.stringify(info["Fg"]);
-    fetch(`http:localhost:8000//api/his`);
   }
 
   const insertDataLayer = (data, map) => {
@@ -192,10 +192,11 @@ export const MapComponent = (props) => {
           <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
         </Show>
       </Suspense>
-      <div
+      {/* <div
         class="left-[0] top-[10vh] bg-black text-white w-[20vw] h-[20vh] overflow-x-auto"
         id="infoWindow"
-      ></div>
+      ></div> */}
+      <AirBNBSlider />
 
       <div
         class={`bg-white dark:bg-gray-900 basis-3/5 drop-shadow overflow-scroll p-6 ${
