@@ -57,25 +57,7 @@ func filterAmenitiesGetRequest(a []Amenity, f *GetAmenityQueryParams) []Amenity 
 }
 
 func GetAmenitiesData(c echo.Context) error {
-	var p GetAmenityQueryParams // Create a variable that is of type GetAmenityQueryParams
-	if err := c.Bind(&p); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
-	} // bind it to the request with proper error message if so
-
-	file, err := os.Open("public/cleaned_amenities_data2.json") // open the json file
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the amenities file: "+err.Error())
-	}
-
-	defer file.Close() // defer its closing to the end of the function scope
-
-	var amenities []Amenity                                          // an array of amenitys
-	if err := json.NewDecoder(file).Decode(&amenities); err != nil { // Create a decoder from the file and decode the dson into an array of amenities
-		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the amenities file")
-	}
-
-	filteredAmenities := filterAmenitiesGetRequest(amenities, &p) // filter the amenities using zipcode and borough
-	return c.JSON(http.StatusOK, filteredAmenities)               // return the json
+	return GenericGetDataHandler(c, "public/cleaned_amenities_data2.json", filterAmenitiesGetRequest)
 }
 
 // ---------------------------------------
@@ -112,25 +94,7 @@ func filterBusinessGetRequest(a []Businesses, f *GetBusinessQueryParams) []Busin
 }
 
 func GetBusinessData(c echo.Context) error {
-	var p GetBusinessQueryParams // Create a variable that is of type BusinessesFilterParams
-	if err := c.Bind(&p); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid filter parameters")
-	} // bind it to the request with proper error message if so
-
-	file, err := os.Open("public/cleaned_business_data.json") // open the json file
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Unable to open the business file: "+err.Error())
-	}
-
-	defer file.Close() // defer its closing to the end of the function scope
-
-	var business []Businesses                                       // an array of business
-	if err := json.NewDecoder(file).Decode(&business); err != nil { // Create a decoder from the file and decode the dson into an array of business
-		return echo.NewHTTPError(http.StatusBadRequest, "Unable to parse the business file")
-	}
-
-	filteredBusiness := filterBusinessGetRequest(business, &p) // filter the business
-	return c.JSON(http.StatusOK, filteredBusiness)             // return the json
+	return GenericGetDataHandler(c, "public/cleaned_business_data.json", filterBusinessGetRequest)
 }
 
 // ---------------------------------------
@@ -355,7 +319,6 @@ func GetHistoricRealEstatePriceData(c echo.Context) error {
 	return c.JSON(http.StatusOK, filteredPrices)
 }
 
-// TODO: Just a question. Do we need this? I just load in the geojson and populate the whole map?
 type FeatureCollection struct {
 	Type     string    `json:"type"`
 	Features []Feature `json:"features"`
@@ -387,39 +350,16 @@ type Geometry struct {
 }
 
 func GetNeighbourhoods(c echo.Context) error {
-	file, err := os.Open("public/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
-	if err == nil {
-		log.Println("MANAGED TO OPEN THE FILE")
-	} else {
-		log.Println(err.Error())
-	}
-	defer file.Close()
 	return c.File("public/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
 }
 
 func GetBoroughs(c echo.Context) error {
-	file, err := os.Open("public/borough.geojson")
-	if err == nil {
-		log.Println("MANAGED TO OPEN THE FILE")
-	} else {
-		log.Println(err.Error())
-	}
-	defer file.Close()
 	return c.File("public/borough.geojson")
 }
 
 func GetZipCodes(c echo.Context) error {
-	file, err := os.Open("public/us_zip_codes.json")
-	if err == nil {
-		log.Println("MANAGED TO OPEN THE FILE")
-	} else {
-		log.Println(err.Error())
-	}
-	defer file.Close()
 	return c.File("public/us_zip_codes.json")
 }
-
-//TODO: Above todo ends here
 
 type NeighbourhoodData map[string]map[string]map[string][]int
 
