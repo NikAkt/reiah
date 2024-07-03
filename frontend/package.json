@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.6",
+    "@googlemaps/markerclusterer": "^2.5.3",
     "@solidjs/router": "^0.13.6",
     "chart.js": "^4.4.3",
     "solid-js": "^1.8.11",

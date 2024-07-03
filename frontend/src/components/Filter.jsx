@@ -58,7 +58,7 @@ const Filter = ({
     <div
       class="absolute z-30 w-32 flex flex-col 
     items-center gap-0.5 top-[2vh] left-[55vw]
-     justify-center border-2 border-solid border-indigo-600
+     justify-center 
     text-black"
     >
       <button
@@ -108,7 +108,7 @@ const Filter = ({
             {/* /////////// PROPERTY FILTER////////////////// */}
             <div
               id="property-filter-container"
-              class="flex flex-col items-center border-2 border-indigo-600"
+              class="flex flex-col items-center "
             >
               <div id="property-filter">
                 <div
@@ -169,9 +169,7 @@ const Filter = ({
                   <p class="font-sans text-2xl font-bold text-black">
                     Median Household Income
                   </p>
-                  <div>
-                    <ColChart data={median_household_income} />
-                  </div>
+                  <div>{/* <ColChart data={median_household_income} /> */}</div>
                   <div class="flex gap-2 ">
                     <div
                       class="flex flex-col w-[35%] h-[10%] 

@@ -24,7 +24,7 @@ export const MapComponent = (props) => {
 
     // Create the button element
     const controlButton = document.createElement("button");
-    controlButton.textContent = "Show List";
+    controlButton.textContent = sideBarOpen() ? "Hide List" : "Show List";
     controlButton.title = "Click to show details";
     controlButton.type = "button";
     controlButton.className =

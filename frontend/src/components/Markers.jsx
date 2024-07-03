@@ -1,7 +1,7 @@
 import { onMount, createEffect, createSignal, untrack } from "solid-js";
 import { setStore, store } from "../data/stores";
 import { Loader } from "@googlemaps/js-api-loader";
-
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
 // import { borough_neighbourhood } from "../data/dataToBeSent";
 
 //marker size range
@@ -57,6 +57,10 @@ const createZipcodeMarkers = (
           text: `\$${(avg_home_value / 1000).toFixed(1)}k`,
           color: "black",
         },
+        icon: {
+          url: `data:image/svg+xml;base64,${svg}`,
+          scaledSize: new google.maps.Size(45, 45),
+        },
       });
       setZipcodeMarkers((prev) => [...prev, marker]);
     } catch (error) {
@@ -82,6 +86,8 @@ function clearMarkers(markersArray) {
 const Markers = async (props) => {
   onMount(async () => {
     const zipcodes_latlng = props.zipcodes;
+    const borough_neighbourhood = props.borough_neighbourhood;
+    const realEstateData = props.realEstateData;
     //extract all zipcodes from borough_neighbourhood
     let zipcodes = [];
     for (let key1 of Object.keys(borough_neighbourhood)) {
@@ -113,12 +119,7 @@ const Markers = async (props) => {
 
     loader.importLibrary("marker").then(({ Marker }) => {
       loader.importLibrary("core").then(({ LatLng, LatLngBounds }) => {
-        const realEstateData = createZipcodeMarkers(
-          zipcodes,
-          Marker,
-          zipcodes_latlng,
-          realEstateData
-        );
+        createZipcodeMarkers(zipcodes, Marker, zipcodes_latlng, realEstateData);
         createBoroughMarkers(
           borough_zipcode,
           zipcodes_latlng,
@@ -136,6 +137,63 @@ const Markers = async (props) => {
           Marker
         );
         putMarkersOnMap(zipcode_markers(), props.map());
+
+        const clusterRenderer = {
+          render: (cluster, stats) => {
+            // Access to the cluster's attributes, check all available in the doc
+            const { markers, position, count } = cluster;
+            // Access to the stats' attributes if you need it
+            //// <circle cx="120" cy="120" opacity=".6" r="70" />
+            const color = "#0145ac";
+            const svg = window.btoa(`
+      <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" opacity=".0" r="90" />
+      <circle cx="120" cy="120" opacity=".0" r="110" />
+      <circle cx="120" cy="120" opacity=".0" r="130" />
+      </svg>`);
+            let avgHomeValue = 0;
+            let title = "";
+            markers.forEach((marker) => {
+              avgHomeValue += marker["avg_home_value"];
+              title += `${marker.title} `;
+            });
+            avgHomeValue /= markers.length;
+
+            return new google.maps.Marker({
+              icon: {
+                url: `data:image/svg+xml;base64,${svg}`,
+                scaledSize: new google.maps.Size(2, 2),
+              },
+              title,
+
+              label: {
+                text: `\$${(avgHomeValue / 1000).toFixed(1)}k`,
+                color: "black",
+              },
+              position: position,
+              map,
+              zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+            });
+          },
+        };
+        const map = props.map();
+        const markers = zipcode_markers();
+        const markerCluster = new MarkerClusterer({
+          markers,
+          map,
+          renderer: clusterRenderer,
+          onClusterClick: async (event, cluster, map) => {
+            console.log(cluster.markers);
+            //   const infoWindow = document.getElementById("dashboard");
+            //   infoWindow.innerText = `Cluster center: ${cluster.position},
+            // Number of markers: ${cluster.markers.length}`;
+            //   infoWindow.innerHTML += '<ul id="infoContent"> </ul>';
+            //   const infoContent = document.getElementById("infoContent");
+            //   cluster.markers.forEach((marker) => {
+            //     infoContent.innerHTML += `<li>ZIPCODE : ${marker.title}</li>`;
+            //   });
+          },
+        });
       });
     });
   });
@@ -217,9 +275,9 @@ function createNeighbourhoodMarkers(
     // centerPositionArray.push(bounds.getCenter());
     const svg = window.btoa(`
       <svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-      <circle cx="120" cy="120" opacity=".6" r="70" />
-      <circle cx="120" cy="120" opacity=".3" r="90" />
-      <circle cx="120" cy="120" opacity=".2" r="120" />
+      <circle cx="120" cy="120" opacity=".0" r="70" />
+      <circle cx="120" cy="120" opacity=".0" r="90" />
+      <circle cx="120" cy="120" opacity=".0" r="120" />
       </svg>`);
     const position = bounds.getCenter();
     const marker = new Marker({
@@ -236,7 +294,7 @@ function createNeighbourhoodMarkers(
       },
       icon: {
         url: `data:image/svg+xml;base64,${svg}`,
-        scaledSize: new google.maps.Size(45, 45),
+        scaledSize: new google.maps.Size(2, 2),
       },
     });
     setNeighbourhoodMarkers((prev) => [...prev, marker]);

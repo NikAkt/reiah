@@ -95,7 +95,8 @@ export const DashboardInfo = (props) => {
               const facilityDesc = Object.keys(amenities[a])
                 .map((el) => `<li>${el}</li>`)
                 .join("");
-              facilityTypeUl.innerHTML += `<li><ul>${a}${facilityDesc}</ul></li>`;
+              console.log(facilityDesc);
+              facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
             });
           });
         }
@@ -112,30 +113,47 @@ export const DashboardInfo = (props) => {
     <div class="relative w-[100%] flex flex-col items-center justify-center h-[100%]">
       <div>
         <p>
-          Borough: <span id="borough-dashboardInfo"></span>
+          <span class="bg-[#0145ac] rounded-lg text-white">Borough: </span>
+          <span id="borough-dashboardInfo"></span>
         </p>
         <p>
-          Neighbourhood: <span id="neighbourhood-dashboardInfo"></span>
+          <span class="bg-[#0145ac] rounded-lg text-white">
+            Neighbourhood:{" "}
+          </span>
+          <span id="neighbourhood-dashboardInfo"></span>
         </p>
       </div>
       <div>
-        <p>Real estate information</p>
+        <p>
+          {" "}
+          <span class="bg-[#0145ac] rounded-lg text-white">
+            Real estate information
+          </span>
+        </p>
         <ul>
           <li>
-            Average Home Value: <span id="avgHomeValue-dashboardInfo"></span>
+            <span class="bg-[#0145ac] rounded-lg text-white">
+              Average Home Value:{" "}
+            </span>
+            <span id="avgHomeValue-dashboardInfo"></span>
           </li>
           <li>
-            Median Home Income:{" "}
+            <span class="bg-[#0145ac] rounded-lg text-white">
+              Median Home Income:{" "}
+            </span>
             <span id="medianHomeIncome-dashboardInfo"></span>
           </li>
           <li>
-            Median Age: <span id="medianAge-dashboardInfo"></span>
+            <span class="bg-[#0145ac] rounded-lg text-white">Median Age: </span>
+            <span id="medianAge-dashboardInfo"></span>
           </li>
         </ul>
       </div>
       <div>
         <div>
-          <ul id="facility_type_ul">Amenities:</ul>
+          <ul id="facility_type_ul">
+            <span class="bg-[#0145ac] rounded-lg text-white">Amenities: </span>
+          </ul>
         </div>
       </div>
     </div>

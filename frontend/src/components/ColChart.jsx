@@ -6,7 +6,7 @@ function ColChart({ data }) {
   //   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
   //   21, 22,
   // ];
-  const numCols = 20;
+  const numCols = 24;
   const [from, setFrom] = createSignal(0);
   const [to, setTo] = createSignal(numCols + 1);
   // const [greyColumns, setGretColumns] = createSignal([]);
@@ -44,13 +44,13 @@ function ColChart({ data }) {
 
   return (
     <div
-      class="relative flex flex-col gap-2 w-[90%] h-[10%] m-auto 
-        items-center justify-center p-0 m-0 border-2 border-solid border-indigo-600
+      class="relative flex flex-col w-[100%] h-[10%] m-auto 
+        items-center justify-center p-0 m-0 
         "
     >
       <div
         class="flex flex-row place-content-between 
-      items-end gap-[0.5%]
+      items-end gap-[0.5%] w-[90%]
       border-2 border-solid border-indigo-600"
       >
         <Index each={freqArray} fallback={<div>Loading...</div>}>
@@ -58,7 +58,7 @@ function ColChart({ data }) {
             return (
               <Column
                 width={50}
-                height={item() * 5}
+                height={item() * 3}
                 label={item()}
                 backgroundColor={
                   index + 1 < from() || index + 1 > to()

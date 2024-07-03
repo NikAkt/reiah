@@ -61,7 +61,7 @@ function DualRangeSlider({ data, setTo, setFrom, gap }) {
   let fromInput;
 
   return (
-    <div class="flex flex-col w-full my-2" id="slider_container">
+    <div class="flex flex-col w-full m-0" id="slider_container">
       <div id="sliders_control" class="relative min-h-[50px] ml-[-5%] w-[110%]">
         <div class="w-[100%] h-[1px] bg-[#C6C6C6]"></div>
         <input
@@ -130,9 +130,11 @@ function DualRangeSlider({ data, setTo, setFrom, gap }) {
       </div>
       <div
         id="form_control"
-        class="relative flex justify-between text-2xl text-[#635a5a] mt-4"
+        class="relative flex justify-between text-md 
+        text-[#635a5a] border-2 border-solid border-indigo-600 place-content-betweens
+        "
       >
-        <div id="minimum_vol" class="flex flex-col w-1/4">
+        <div id="minimum_vol" class="flex flex-col w-full ">
           <label htmlFor="minimum_vol" class="mb-2">
             Minimum
           </label>
@@ -145,10 +147,10 @@ function DualRangeSlider({ data, setTo, setFrom, gap }) {
             onInput={() =>
               controlFromInput(fromSlider, fromInput, toInput, setFrom, gap)
             }
-            class="text-[#8a8383] w-12 h-8 text-xl border-none"
+            class="text-[#8a8383] w-[40%] h-8 text-sm border-none"
           />
         </div>
-        <div id="maximum_vol" class="flex flex-col w-1/4">
+        <div id="maximum_vol" class="flex flex-col w-full">
           <label htmlFor="maximum_vol" class="mb-2">
             Maximum
           </label>
@@ -161,7 +163,7 @@ function DualRangeSlider({ data, setTo, setFrom, gap }) {
             onInput={() =>
               controlToInput(toSlider, fromInput, toInput, setTo, gap)
             }
-            class="text-[#8a8383] w-12 h-8 text-xl border-none"
+            class="text-[#8a8383] w-[40%] h-8 text-sm border-none"
           />
         </div>
       </div>

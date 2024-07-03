@@ -50,17 +50,17 @@ const fetchData = async ([json_path, storeKey]) => {
 };
 
 const [realEstateData] = createResource(
-  ["http://localhost:8000/api/prices", "realEstateData"],
+  ["http://localhost:8000/api/prices"],
   fetchData
 );
 console.log("start fetching data");
 const [historicalRealEstateData] = createResource(
-  ["http://localhost:8000/api/historic-prices", "historicalRealEstateData"],
+  ["http://localhost:8000/api/historic-prices"],
   fetchData
 );
 
 const [amenitiesData] = createResource(
-  ["http://localhost:8000/api/amenities", "amenitiesdata"],
+  ["http://localhost:8000/api/amenities"],
   fetchData
 );
 
@@ -70,12 +70,17 @@ const [zipcodes] = createResource(
 );
 
 const [borough_geojson] = createResource(
-  ["http://localhost:8000/api/borough", "borough_geojson"],
+  ["http://localhost:8000/api/borough"],
   fetchData
 );
 
 const [neighbourhood_geojson] = createResource(
-  ["http://localhost:8000/api/neighbourhoods", "neighbourhood_geojson"],
+  ["http://localhost:8000/api/neighbourhoods"],
+  fetchData
+);
+
+const [borough_neighbourhood] = createResource(
+  ["http://localhost:8000/api/borough-neighbourhood"],
   fetchData
 );
 
@@ -86,6 +91,7 @@ const dataResources = {
   zipcodes,
   borough_geojson,
   neighbourhood_geojson,
+  borough_neighbourhood,
 };
 
 function App(props) {

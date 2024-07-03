@@ -121,18 +121,27 @@ export const Map = (props) => {
               {/* <LineChart asyncData={historicNeighbourhoodPrices}></LineChart> */}
               {/* <BarChart asyncData={historicPrices}></BarChart> */}
               <DashboardInfo map={mapObject} getSelectedZip={getSelectedZip} />
-              {/* {createEffect(() => {
-                // <Show
-                //   when={props.dataResources.zipcodes() && mapObject()}
-                //   fallback={props.dataResources.zipcodes.error}
-                // >
-                // <Markers
-                //   zipcodes={props.dataResources.zipcodes()}
-                //   map={mapObject}
-                //   getDataLayerLevel={getDataLayerLevel}
-                // />;
-                // </Show>;
-              })} */}
+              {createEffect(() => {
+                if (mapObject()) {
+                }
+                <Show
+                  when={
+                    !props.dataResources.zipcodes.loading &&
+                    !props.dataResources.borough_neighbourhood.loading &&
+                    !props.dataResources.realEstateData.loading
+                  }
+                  fallback={props.dataResources.zipcodes.error}
+                >
+                  <Markers
+                    zipcodes={props.dataResources.zipcodes()}
+                    map={mapObject}
+                    getDataLayerLevel={getDataLayerLevel}
+                    borough_neighbourhood={props.dataResources.borough_neighbourhood()}
+                    realEstateData={props.dataResources.realEstateData()}
+                  />
+                  ;
+                </Show>;
+              })}
             </MapComponent>
           </Show>
         </Suspense>
