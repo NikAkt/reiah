@@ -8,8 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// GenericFilterFunction type definition
 type GenericFilterFunction[T any, P any] func(T, *P) T
 
+// GenericGetDataHandler function
 func GenericGetDataHandler[P any, T any](c echo.Context, file_path string, filter GenericFilterFunction[T, P]) error {
 	var params P
 	if err := c.Bind(&params); err != nil {
@@ -27,6 +29,6 @@ func GenericGetDataHandler[P any, T any](c echo.Context, file_path string, filte
 		return echo.NewHTTPError(http.StatusBadRequest, "Could not decode data from json file "+err.Error())
 	}
 
-	var filtered_data T = filter(data, &params)
-	return c.JSON(http.StatusOK, filtered_data)
+	filteredData := filter(data, &params)
+	return c.JSON(http.StatusOK, filteredData)
 }

@@ -9,19 +9,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// ---------------------------------------
+// Amenity struct definition
 type Amenity struct {
 	Borough            string  `json:"BOROUGH"`
 	Name               string  `json:"NAME"`
-	FacilityType       string  `json:"FACILITY_TYPE"`
-	FacilityDesc       string  `json:"FACILITY_DESC"`
-	Zipcode            int     `json:"ZIP_CODE"`
+	FacilityType       string  `json:"FACILITY_T"`
+	FacilityDesc       string  `json:"FACILITY_DOMAIN_NAME"`
+	Zipcode            string  `json:"-"`
 	Longitude          float64 `json:"LNG"`
 	Latitude           float64 `json:"LAT"`
-	Count              int     `json:"COUNT"`
 	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
 }
 
+// GetAmenityQueryParams struct definition
 type GetAmenityQueryParams struct {
 	Borough      string `query:"borough"`
 	Zipcode      int    `query:"zipcode"`
@@ -30,31 +30,46 @@ type GetAmenityQueryParams struct {
 	Name         string `query:"name"`
 }
 
-func filterAmenitiesGetRequest(a []Amenity, f *GetAmenityQueryParams) []Amenity {
-	var filtered []Amenity //
-	for _, amenity := range a {
-		if f.Borough != "" && amenity.Borough != f.Borough {
-			continue
+// filterAmenitiesGetRequest function
+func filterAmenitiesGetRequest(a map[string][]Amenity, f *GetAmenityQueryParams) []Amenity {
+	var filtered []Amenity
+	for zipcode, amenities := range a {
+		for _, amenity := range amenities {
+			// Populate Zipcode field for filtering
+			amenity.Zipcode = zipcode
+
+			if f.Borough != "" && amenity.Borough != f.Borough {
+				continue
+			}
+			if f.Zipcode != 0 && amenity.Zipcode != strconv.Itoa(f.Zipcode) {
+				continue
+			}
+			if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
+				continue
+			}
+			if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
+				continue
+			}
+			if f.Name != "" && amenity.Name != f.Name {
+				continue
+			}
+			filtered = append(filtered, amenity)
 		}
-		if f.Zipcode != 0 && amenity.Zipcode != f.Zipcode {
-			continue
-		}
-		if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
-			continue
-		}
-		if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
-			continue
-		}
-		if f.Name != "" && amenity.Name != f.Name {
-			continue
-		}
-		filtered = append(filtered, amenity)
 	}
 	return filtered
 }
 
 func GetAmenitiesData(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/cleaned_amenities_data.json", filterAmenitiesGetRequest)
+	filterFunc := func(a map[string][]Amenity, f *GetAmenityQueryParams) map[string][]Amenity {
+		filtered := filterAmenitiesGetRequest(a, f)
+		filteredMap := make(map[string][]Amenity)
+		for _, amenity := range filtered {
+			zipcode := amenity.Zipcode
+			filteredMap[zipcode] = append(filteredMap[zipcode], amenity)
+		}
+		return filteredMap
+	}
+	return GenericGetDataHandler[GetAmenityQueryParams, map[string][]Amenity](c, "public/data/cleaned_amenities.json", filterFunc)
 }
 
 // ---------------------------------------
