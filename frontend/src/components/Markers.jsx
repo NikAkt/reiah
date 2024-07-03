@@ -48,13 +48,13 @@ const createZipcodeMarkers = (
 
       const marker = new Marker({
         position,
-        title: el.toString(),
+        title: `ZIPCODE: ${el.toString()}`,
         level,
         avg_home_value,
         median_age,
         median_household_income,
         label: {
-          text: `\$ ${(avg_home_value / 1000).toFixed(1)}k`,
+          text: `\$${(avg_home_value / 1000).toFixed(1)}k`,
           color: "black",
         },
       });
@@ -130,6 +130,7 @@ const Markers = async (props) => {
           realEstateData,
           Marker
         );
+        putMarkersOnMap(zipcode_markers(), props.map());
       });
     });
   });
@@ -154,9 +155,9 @@ const Markers = async (props) => {
     }
   };
 
-  createEffect(() => {
-    switchMarkers(props.props.map());
-  });
+  // createEffect(() => {
+  //   switchMarkers(props.props.map());
+  // });
 };
 
 function createNeighbourhoodMarkers(
