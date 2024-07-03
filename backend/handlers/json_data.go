@@ -230,14 +230,17 @@ type GetNeighbourhoodQueryParams struct {
 func filterNeighbourhoodsGetRequest(a []NeighbourhoodData, f *GetNeighbourhoodQueryParams) []NeighbourhoodData {
 	var filtered []NeighbourhoodData
 	for _, entry := range a {
-		if f.Neighbourhood != "" && entry.Neighbourhood != f.Neighbourhood {
-			continue
+		if f.Neighbourhood != "" {
+			if entry.Neighbourhood != f.Neighbourhood {
+				continue
+			}
 		}
-		if f.Borough != "" && entry.Borough != f.Borough {
-			continue
+		if f.Borough != "" {
+			if entry.Borough != f.Borough {
+				continue
+			}
 		}
 		if len(f.Zipcodes) > 0 {
-			log.Printf("Filtering by zipcodes: %v\n", f.Zipcodes)
 			zipSet := make(map[string]struct{})
 			for _, z := range f.Zipcodes {
 				zipSet[z] = struct{}{}
