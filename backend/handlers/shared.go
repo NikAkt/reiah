@@ -24,7 +24,7 @@ func GenericGetDataHandler[P any, T any](c echo.Context, file_path string, filte
 
 	var data T
 	if err := json.NewDecoder(file).Decode(&data); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Could not decode data from json file")
+		return echo.NewHTTPError(http.StatusBadRequest, "Could not decode data from json file "+err.Error())
 	}
 
 	var filtered_data T = filter(data, &params)

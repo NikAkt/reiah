@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -91,10 +93,10 @@ func GetBusinessData(c echo.Context) error {
 
 // ---------------------------------------
 type Prices struct {
-	Zipcode         int     `json:"zipcode"`
-	HomeValue       float64 `json:"avg_home_value"`
-	HouseholdIncome float64 `json:"median_household_income"`
-	MedianAge       float64 `json:"median_age"`
+	Zipcode         json.Number `json:"zipcode"`
+	HomeValue       float64     `json:"avg_home_value"`
+	HouseholdIncome float64     `json:"median_household_income"`
+	MedianAge       float64     `json:"median_age"`
 }
 
 type GetPricesQueryParams struct {
@@ -109,14 +111,18 @@ type GetPricesQueryParams struct {
 
 func filterPricesGetRequest(a []Prices, f *GetPricesQueryParams) []Prices {
 	var filtered []Prices
-	zipSet := make(map[int]struct{})
+	zipSet := make(map[int]bool)
 	for _, zip := range f.Zipcodes {
-		zipSet[zip] = struct{}{}
+		zipSet[zip] = true
 	}
 
 	for _, prices := range a {
 		if len(zipSet) > 0 {
-			if _, found := zipSet[prices.Zipcode]; !found {
+			intZip, err := prices.Zipcode.Int64()
+			if err != nil {
+				continue //TODO: implement error handling here
+			}
+			if _, found := zipSet[int(intZip)]; !found {
 				continue
 			}
 		}
@@ -148,8 +154,8 @@ func GetRealEstatePriceData(c echo.Context) error {
 }
 
 type HistoricPrices struct {
-	Zipcode string             `json:"zipcode"`
-	History map[string]float64 `json:"historicprices"`
+	Zipcode string                 `json:"zipcode"`
+	History map[string]json.Number `json:"historicprices"`
 }
 
 type GetHistoricPricesQueryParam struct {
@@ -172,7 +178,12 @@ func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQuer
 		}
 		if f.Date != "" {
 			if price, ok := prices.History[f.Date]; ok {
-				prices.History = map[string]float64{f.Date: price}
+				// get value from price
+				floatPrice, err := price.Float64()
+				if err != nil {
+					//TODO: implement some type of error handling here
+				}
+				prices.History = map[string]float64{f.Date: floatPrice} //TODO: implement filter function accounting for different data type
 				filtered = append(filtered, prices)
 			} // This loop checks for the date from the query if there is one and filters the History map to include only corresponding prices
 		} else {
