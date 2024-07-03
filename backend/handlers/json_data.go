@@ -54,7 +54,7 @@ func filterAmenitiesGetRequest(a []Amenity, f *GetAmenityQueryParams) []Amenity 
 }
 
 func GetAmenitiesData(c echo.Context) error {
-	return GenericGetDataHandler[GetAmenityQueryParams, []Amenity](c, "public/data/cleaned_amenities_data.json", filterAmenitiesGetRequest)
+	return GenericGetDataHandler(c, "public/data/cleaned_amenities_data.json", filterAmenitiesGetRequest)
 }
 
 // ---------------------------------------
@@ -91,7 +91,7 @@ func filterBusinessGetRequest(a []Businesses, f *GetBusinessQueryParams) []Busin
 }
 
 func GetBusinessData(c echo.Context) error {
-	return GenericGetDataHandler[GetBusinessQueryParams, []Businesses](c, "public/data/cleaned_business_data.json", filterBusinessGetRequest)
+	return GenericGetDataHandler(c, "public/data/cleaned_business_data.json", filterBusinessGetRequest)
 }
 
 // ---------------------------------------
@@ -154,9 +154,10 @@ func filterPricesGetRequest(a []Prices, f *GetPricesQueryParams) []Prices {
 }
 
 func GetRealEstatePriceData(c echo.Context) error {
-	return GenericGetDataHandler[GetPricesQueryParams, []Prices](c, "public/data/real_estate_price_data.json", filterPricesGetRequest)
+	return GenericGetDataHandler(c, "public/data/real_estate_price_data.json", filterPricesGetRequest)
 }
 
+// ---------------------------------------
 type HistoricPrices struct {
 	Zipcode string                 `json:"zipcode"`
 	History map[string]json.Number `json:"historicprices"`
@@ -211,9 +212,10 @@ func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQuer
 }
 
 func GetHistoricRealEstatePriceData(c echo.Context) error {
-	return GenericGetDataHandler[GetHistoricPricesQueryParam, []HistoricPrices](c, "public/data/historic_real_estate_prices.json", filterHistoricPricesGetRequest)
+	return GenericGetDataHandler(c, "public/data/historic_real_estate_prices.json", filterHistoricPricesGetRequest)
 }
 
+// ---------------------------------------
 type NeighbourhoodData struct {
 	Neighbourhood string `json:"neighbourhood"`
 	Borough       string `json:"borough"`
@@ -263,9 +265,10 @@ func filterNeighbourhoodsGetRequest(a []NeighbourhoodData, f *GetNeighbourhoodQu
 }
 
 func GetBoroughNeighbourhood(c echo.Context) error {
-	return GenericGetDataHandler[GetNeighbourhoodQueryParams, []NeighbourhoodData](c, "public/data/borough_neighbourhood.json", filterNeighbourhoodsGetRequest)
+	return GenericGetDataHandler(c, "public/data/borough_neighbourhood.json", filterNeighbourhoodsGetRequest)
 }
 
+// ---------------------------------------
 type FeatureCollection struct {
 	Type     string    `json:"type"`
 	Features []Feature `json:"features"`
