@@ -1,12 +1,14 @@
 import { MapView } from "../layouts/Layout";
 import { MapComponent } from "../components/Map";
 import { LoadingAnimation } from "../components/LoadingAnimation";
+import { ErrorPage } from "../components/ErrorPage";
 import {
   Show,
   Suspense,
   createSignal,
   createResource,
   createEffect,
+  ErrorBoundary,
 } from "solid-js";
 import { BarChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
@@ -85,73 +87,78 @@ export const Map = (props) => {
   return (
     <MapView>
       <div class="h-screen flex">
-        <Show
-          when={
-            !props.dataResources.realEstateData.loading &&
-            !props.dataResources.historicalRealEstateData.loading &&
-            !props.dataResources.amenitiesData.loading
-          }
-        >
-          <Filter
-            realEstateData={props.dataResources.realEstateData()}
-            historicalRealEstateData={props.dataResources.historicalRealEstateData()}
-            amenitiesData={props.dataResources.amenitiesData()}
-          />
-        </Show>
-        <Suspense
-          fallback={
-            <div>
-              <LoadingAnimation />
-            </div>
-          }
-        >
-          <Show
-            when={
-              props.dataResources.borough_geojson() &&
-              props.dataResources.neighbourhood_geojson() &&
-              props.dataResources.zipcodes()
+        <ErrorBoundary fallback={<ErrorPage />}>
+          <Suspense
+            fallback={
+              <div>
+                <LoadingAnimation />
+              </div>
             }
           >
-            <MapComponent
-              getDataLayerLevel={getDataLayerLevel}
-              setDataLayerLevel={setDataLayerLevel}
-              dataResources={props.dataResources}
-              mapObject={mapObject}
-              setMapObject={setMapObject}
-              zipcodeOnCharts={getSelectedZip}
-              boroughSetter={setSelectedBorough}
-              neighbourhoodSetter={setSelectedNeighbourhood}
-              zipcodeSetter={setSelectedZip}
+            <Show
+              when={
+                !props.dataResources.realEstateData.loading &&
+                !props.dataResources.historicalRealEstateData.loading &&
+                !props.dataResources.amenitiesData.loading
+              }
             >
-              <LineChart asyncData={historicPrices}></LineChart>
-              {/* <LineChart asyncData={historicPrices}></LineChart> */}
-              {/* <LineChart asyncData={historicNeighbourhoodPrices}></LineChart> */}
-              {/* <BarChart asyncData={historicPrices}></BarChart> */}
-              <DashboardInfo map={mapObject} getSelectedZip={getSelectedZip} />
-              {createEffect(() => {
-                if (mapObject()) {
-                }
-                <Show
-                  when={
-                    !props.dataResources.zipcodes.loading &&
-                    !props.dataResources.borough_neighbourhood.loading &&
-                    !props.dataResources.realEstateData.loading
+              <Filter
+                realEstateData={props.dataResources.realEstateData()}
+                historicalRealEstateData={props.dataResources.historicalRealEstateData()}
+                amenitiesData={props.dataResources.amenitiesData()}
+              />
+            </Show>
+            <Show
+              when={
+                props.dataResources.borough_geojson() &&
+                props.dataResources.neighbourhood_geojson() &&
+                props.dataResources.zipcodes()
+              }
+            >
+              <MapComponent
+                getDataLayerLevel={getDataLayerLevel}
+                setDataLayerLevel={setDataLayerLevel}
+                dataResources={props.dataResources}
+                mapObject={mapObject}
+                setMapObject={setMapObject}
+                zipcodeOnCharts={getSelectedZip}
+                boroughSetter={setSelectedBorough}
+                neighbourhoodSetter={setSelectedNeighbourhood}
+                zipcodeSetter={setSelectedZip}
+              >
+                <LineChart asyncData={historicPrices}></LineChart>
+                {/* <LineChart asyncData={historicPrices}></LineChart> */}
+                {/* <LineChart asyncData={historicNeighbourhoodPrices}></LineChart> */}
+                {/* <BarChart asyncData={historicPrices}></BarChart> */}
+                <DashboardInfo
+                  map={mapObject}
+                  getSelectedZip={getSelectedZip}
+                />
+                {createEffect(() => {
+                  if (mapObject()) {
                   }
-                  fallback={props.dataResources.zipcodes.error}
-                >
-                  <Markers
-                    zipcodes={props.dataResources.zipcodes()}
-                    map={mapObject}
-                    getDataLayerLevel={getDataLayerLevel}
-                    borough_neighbourhood={props.dataResources.borough_neighbourhood()}
-                    realEstateData={props.dataResources.realEstateData()}
-                  />
-                  ;
-                </Show>;
-              })}
-            </MapComponent>
-          </Show>
-        </Suspense>
+                  <Show
+                    when={
+                      !props.dataResources.zipcodes.loading &&
+                      !props.dataResources.borough_neighbourhood.loading &&
+                      !props.dataResources.realEstateData.loading
+                    }
+                    fallback={props.dataResources.zipcodes.error}
+                  >
+                    <Markers
+                      zipcodes={props.dataResources.zipcodes()}
+                      map={mapObject}
+                      getDataLayerLevel={getDataLayerLevel}
+                      borough_neighbourhood={props.dataResources.borough_neighbourhood()}
+                      realEstateData={props.dataResources.realEstateData()}
+                    />
+                    ;
+                  </Show>;
+                })}
+              </MapComponent>
+            </Show>
+          </Suspense>
+        </ErrorBoundary>
 
         <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>
       </div>
