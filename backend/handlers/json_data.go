@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -118,9 +121,10 @@ func filterPricesGetRequest(a []Prices, f *GetPricesQueryParams) []Prices {
 
 	for _, prices := range a {
 		if len(zipSet) > 0 {
-			intZip, err := prices.Zipcode.Int64()
+			intZip, err := strconv.Atoi(prices.Zipcode.String())
 			if err != nil {
-				continue //TODO: implement error handling here
+				log.Printf("Error converting zipcode to int: %v\n", err)
+				continue
 			}
 			if _, found := zipSet[int(intZip)]; !found {
 				continue
@@ -181,12 +185,25 @@ func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQuer
 				// get value from price
 				floatPrice, err := price.Float64()
 				if err != nil {
-					//TODO: implement some type of error handling here
+					log.Printf("Error converting price to float: %v\n", err)
+					continue
 				}
-				prices.History = map[string]float64{f.Date: floatPrice} //TODO: implement filter function accounting for different data type
+				// This update the map to include only the date and json.Number for the value type
+				prices.History = map[string]json.Number{f.Date: json.Number(fmt.Sprintf("%f", floatPrice))}
 				filtered = append(filtered, prices)
-			} // This loop checks for the date from the query if there is one and filters the History map to include only corresponding prices
+			}
 		} else {
+			// Converting the history map values to float64 for filtering
+			convertedHistory := make(map[string]json.Number)
+			for date, price := range prices.History {
+				floatPrice, err := price.Float64()
+				if err != nil {
+					log.Printf("Error converting price to float: %v\n", err)
+					continue
+				}
+				convertedHistory[date] = json.Number(fmt.Sprintf("%f", floatPrice))
+			}
+			prices.History = convertedHistory
 			filtered = append(filtered, prices)
 		}
 	}
