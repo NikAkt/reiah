@@ -1,5 +1,6 @@
 import { MapView } from "../layouts/Layout";
 import { MapComponent } from "../components/Map";
+import { LoadingAnimation } from "../components/LoadingAnimation";
 import {
   Show,
   Suspense,
@@ -97,7 +98,13 @@ export const Map = (props) => {
             amenitiesData={props.dataResources.amenitiesData()}
           />
         </Show>
-        <Suspense fallback={<div>Loading data...</div>}>
+        <Suspense
+          fallback={
+            <div>
+              <LoadingAnimation />
+            </div>
+          }
+        >
           <Show
             when={
               props.dataResources.borough_geojson() &&
