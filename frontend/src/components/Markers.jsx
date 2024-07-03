@@ -1,8 +1,8 @@
 import { onMount, createEffect, createSignal, untrack } from "solid-js";
 import { setStore, store } from "../data/stores";
 import { Loader } from "@googlemaps/js-api-loader";
-import { realEstateData } from "../data/dataToBeSent";
-import { borough_neighbourhood } from "../data/dataToBeSent";
+
+// import { borough_neighbourhood } from "../data/dataToBeSent";
 
 //marker size range
 // const initialSize = 50;
@@ -113,7 +113,12 @@ const Markers = async (props) => {
 
     loader.importLibrary("marker").then(({ Marker }) => {
       loader.importLibrary("core").then(({ LatLng, LatLngBounds }) => {
-        createZipcodeMarkers(zipcodes, Marker, zipcodes_latlng, realEstateData);
+        const realEstateData = createZipcodeMarkers(
+          zipcodes,
+          Marker,
+          zipcodes_latlng,
+          realEstateData
+        );
         createBoroughMarkers(
           borough_zipcode,
           zipcodes_latlng,

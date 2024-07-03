@@ -102,23 +102,23 @@ export const Map = (props) => {
               neighbourhoodSetter={setSelectedNeighbourhood}
               zipcodeSetter={setSelectedZip}
             >
-              <LineChart asyncData={historicBoroughPrices}></LineChart>
+              <LineChart asyncData={historicPrices}></LineChart>
               {/* <LineChart asyncData={historicPrices}></LineChart> */}
               {/* <LineChart asyncData={historicNeighbourhoodPrices}></LineChart> */}
               {/* <BarChart asyncData={historicPrices}></BarChart> */}
-              <DashboardInfo map={mapObject} />
-              {createEffect(() => {
+              <DashboardInfo map={mapObject} getSelectedZip={getSelectedZip} />
+              {/* {createEffect(() => {
                 // <Show
                 //   when={props.dataResources.zipcodes() && mapObject()}
                 //   fallback={props.dataResources.zipcodes.error}
                 // >
-                <Markers
-                  zipcodes={props.dataResources.zipcodes()}
-                  map={mapObject}
-                  getDataLayerLevel={getDataLayerLevel}
-                />;
+                // <Markers
+                //   zipcodes={props.dataResources.zipcodes()}
+                //   map={mapObject}
+                //   getDataLayerLevel={getDataLayerLevel}
+                // />;
                 // </Show>;
-              })}
+              })} */}
             </MapComponent>
           </Show>
         </Suspense>

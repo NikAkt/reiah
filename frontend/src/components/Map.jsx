@@ -2,6 +2,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
 // import { AirBNBSlider } from "./AirBNBSlider";
+import { zipcode_geojson } from "../data/dataToBeSent";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -18,20 +19,40 @@ export const MapComponent = (props) => {
   const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
 
   function createCenterControl() {
+    // Create the main control container
     const centerControlDiv = document.createElement("div");
-    const controlButton = document.createElement("button");
 
+    // Create the button element
+    const controlButton = document.createElement("button");
+    controlButton.textContent = "Show List";
+    controlButton.title = "Click to show details";
+    controlButton.type = "button";
     controlButton.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     controlButton.addEventListener("click", () =>
       setSidebarOpen(!sideBarOpen())
     );
-    // Set CSS for the control.
-    controlButton.textContent = "Show List";
-    controlButton.title = "Click to show details";
-    controlButton.type = "button";
 
-    centerControlDiv.append(controlButton);
+    // Create the hover location div
+    const hoverLocationDiv = document.createElement("div");
+    hoverLocationDiv.className =
+      "absolute rounded shadow-md color-zinc-900 bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+
+    // Create the inner div and span
+    const innerDiv = document.createElement("div");
+    innerDiv.textContent = "Location: ";
+    const span = document.createElement("span");
+    span.id = "hoverLocation-div";
+
+    // Append the span to the inner div
+    innerDiv.appendChild(span);
+
+    // Append the inner div to the hover location div
+    hoverLocationDiv.appendChild(innerDiv);
+
+    // Append the button and hover location div to the main control container
+    centerControlDiv.append(controlButton, hoverLocationDiv);
+
     return centerControlDiv;
   }
 
@@ -62,7 +83,7 @@ export const MapComponent = (props) => {
         if (feature.getProperty("isColorful")) {
           color = feature.getProperty("color");
         }
-        if (geometryType === "MultiPolygon") {
+        if (geometryType === "MultiPolygon" || geometryType === "Polygon") {
           return {
             strokeColor: "#10b981",
             fillColor: color,
@@ -76,21 +97,31 @@ export const MapComponent = (props) => {
         event.feature.setProperty("isColorful", true);
         const { level, area } = handleDataLayerClick(event.feature);
 
-        // const zipcode = event.feature.getProperty("ZIPCODE");
-        switch (level) {
-          case "zipcode":
-            props.zipcodeSetter(area);
-          case "borough":
-            props.boroughSetter(area);
-          case "cdta":
-            props.neighbourhoodSetter(area);
-        }
-        // props.zipcodeSetter(zipcode);
+        const zipcode = event.feature.getProperty("ZIPCODE");
+        console.log("zipcode", zipcode);
+        // switch (level) {
+        //   case "zipcode":
+        //     props.zipcodeSetter(area);
+        //   case "borough":
+        //     props.boroughSetter(area);
+        //   case "cdta":
+        //     props.neighbourhoodSetter(area);
+        // }
+        props.zipcodeSetter(zipcode);
       });
+
       map.data.addListener("mouseover", function (event) {
         map.data.revertStyle();
-        map.data.overrideStyle(event.feature, { strokeWeight: 3 });
+        map.data.overrideStyle(event.feature, {
+          strokeColor: "#0145ac",
+          strokeWeight: 3,
+          fillColor: "#a888f1",
+          fillOpacity: 0.7,
+          clickable: true,
+        });
         event.feature.setProperty("isColorful", true);
+        document.getElementById("hoverLocation-div").innerText =
+          event.feature.getProperty("ZIPCODE");
       });
 
       map.data.addListener("mouseout", function (event) {
@@ -140,6 +171,7 @@ export const MapComponent = (props) => {
         .controls[google.maps.ControlPosition.TOP_RIGHT].push(
           createCenterControl()
         );
+      insertDataLayer(zipcode_geojson, props.mapObject());
 
       // props.mapObject().data.overrideStyle(event.feature, { fillColor: "red" });
     });
@@ -175,37 +207,38 @@ export const MapComponent = (props) => {
     }
   });
 
-  createEffect(() => {
-    // console.log("neighbourhood signal: ", neighbourhood());
-    try {
-      if (props.getDataLayerLevel() === "borough") {
-        //if it has neighbourhood datalayer, clear the data layer
-        if (props.mapObject().data) {
-          clearDataLayer(props.mapObject());
-          // setNeighbourhood(false);
-        }
-        //if not duplicated, insert the borough data layer
-        // if (!borough()) {
-        insertDataLayer(borough_geojson, props.mapObject());
-        // setBorough(true);
-        // }
-      } else if (props.getDataLayerLevel() === "neighbourhood") {
-        //datalayer changed to neighbourhood level
-        clearDataLayer(props.mapObject());
-        // setBorough(false);
+  //change data layer according to zoom
+  // createEffect(() => {
+  //   // console.log("neighbourhood signal: ", neighbourhood());
+  //   try {
+  //     if (props.getDataLayerLevel() === "borough") {
+  //       //if it has neighbourhood datalayer, clear the data layer
+  //       if (props.mapObject().data) {
+  //         // clearDataLayer(props.mapObject());
+  //         // setNeighbourhood(false);
+  //       }
+  //       //if not duplicated, insert the borough data layer
+  //       // if (!borough()) {
+  //       // insertDataLayer(borough_geojson, props.mapObject());
+  //       // setBorough(true);
+  //       // }
+  //     } else if (props.getDataLayerLevel() === "neighbourhood") {
+  //       //datalayer changed to neighbourhood level
+  //       // clearDataLayer(props.mapObject());
+  //       // setBorough(false);
+  //       //if not duplicated, insert the borough data layer
+  //       // if (!neighbourhood()) {
+  //       // insertDataLayer(neighbourhood_geojson, props.mapObject());
+  //       // setNeighbourhood(true);
+  //       // }
+  //     } else if (props.getDataLayerLevel() === "zipcode") {
+  //       // insertDataLayer(zipcode_geojson, props.mapObject());
 
-        //if not duplicated, insert the borough data layer
-        // if (!neighbourhood()) {
-        insertDataLayer(neighbourhood_geojson, props.mapObject());
-        // setNeighbourhood(true);
-        // }
-      } else if (props.getDataLayerLevel() === "zipcode") {
-        // insertDataLayer(zipcode_geojson, props.mapObject());
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
 
   return (
     <>
