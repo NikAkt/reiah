@@ -8,8 +8,6 @@ const loader = new Loader({
   version: "weekly",
 });
 
-const DataLayer = () => {};
-
 export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
@@ -38,8 +36,21 @@ export const MapComponent = (props) => {
   }
 
   function handleDataLayerClick(info) {
-    const infoWindow = document.getElementById("infoWindow");
-    infoWindow.innerText = JSON.stringify(info["Fg"]);
+    console.log("info", info);
+    //gonna add a zipcode level data layer later
+    let level, area;
+    if (props.getDataLayerLevel() === "borough") {
+      level = "borough";
+      area = info["Fg"]["boro_name"];
+    } else if (props.getDataLayerLevel() === "neighbourhood") {
+      level = "cdta";
+      area = info["Fg"]["cdta2020"];
+    } else if (props.getDataLayerLevel() === "zipcode") {
+      level = "zipcode";
+      area = null;
+    }
+    console.log("level,area", level, area);
+    return { level, area };
   }
 
   const insertDataLayer = (data, map) => {
@@ -63,9 +74,18 @@ export const MapComponent = (props) => {
       });
       map.data.addListener("click", function (event) {
         event.feature.setProperty("isColorful", true);
-        handleDataLayerClick(event.feature);
-        const zipcode = event.feature.getProperty("ZIPCODE");
-        props.zipcodeSetter(zipcode);
+        const { level, area } = handleDataLayerClick(event.feature);
+
+        // const zipcode = event.feature.getProperty("ZIPCODE");
+        switch (level) {
+          case "zipcode":
+            props.zipcodeSetter(area);
+          case "borough":
+            props.boroughSetter(area);
+          case "cdta":
+            props.neighbourhoodSetter(area);
+        }
+        // props.zipcodeSetter(zipcode);
       });
       map.data.addListener("mouseover", function (event) {
         map.data.revertStyle();
@@ -93,8 +113,6 @@ export const MapComponent = (props) => {
   onMount(() => {
     loader.importLibrary("maps").then(({ Map }) => {
       props.setMapObject(new Map(ref, mapOptions));
-
-      insertDataLayer(neighbourhood_geojson, props.mapObject());
       // setNeighbourhood(true);
       // props.mapObject().data.addListener("mouseover", (event) => {
       //   // Reset the polygons to grey
@@ -105,7 +123,16 @@ export const MapComponent = (props) => {
       //     });
       //   });
       props.mapObject().addListener("zoom_changed", () => {
-        props.setMapZoom(props.mapObject().zoom);
+        const mapZoom = props.mapObject().zoom;
+        console.log("mapzoom", mapZoom);
+        if (mapZoom <= 10) {
+          props.setDataLayerLevel("borough");
+        } else if (mapZoom > 10 && mapZoom <= 13) {
+          props.setDataLayerLevel("neighbourhood");
+        } else {
+          props.setDataLayerLevel("zipcode");
+        }
+        // console.log(props.getDataLayerLevel());
       });
 
       props
@@ -149,30 +176,31 @@ export const MapComponent = (props) => {
   });
 
   createEffect(() => {
-    console.log("neighbourhood signal: ", neighbourhood());
+    // console.log("neighbourhood signal: ", neighbourhood());
     try {
-      if (props.mapZoom() <= 10) {
+      if (props.getDataLayerLevel() === "borough") {
         //if it has neighbourhood datalayer, clear the data layer
-        if (neighbourhood()) {
+        if (props.mapObject().data) {
           clearDataLayer(props.mapObject());
-          setNeighbourhood(false);
+          // setNeighbourhood(false);
         }
         //if not duplicated, insert the borough data layer
-        if (!borough()) {
-          insertDataLayer(borough_geojson, props.mapObject());
-          setBorough(true);
-        }
-      } else {
+        // if (!borough()) {
+        insertDataLayer(borough_geojson, props.mapObject());
+        // setBorough(true);
+        // }
+      } else if (props.getDataLayerLevel() === "neighbourhood") {
         //datalayer changed to neighbourhood level
-        if (borough()) {
-          clearDataLayer(props.mapObject());
-          setBorough(false);
-        }
+        clearDataLayer(props.mapObject());
+        // setBorough(false);
+
         //if not duplicated, insert the borough data layer
-        if (!neighbourhood()) {
-          insertDataLayer(neighbourhood_geojson, props.mapObject());
-          setNeighbourhood(true);
-        }
+        // if (!neighbourhood()) {
+        insertDataLayer(neighbourhood_geojson, props.mapObject());
+        // setNeighbourhood(true);
+        // }
+      } else if (props.getDataLayerLevel() === "zipcode") {
+        // insertDataLayer(zipcode_geojson, props.mapObject());
       }
     } catch (error) {
       console.log(error);
@@ -191,10 +219,7 @@ export const MapComponent = (props) => {
           <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
         </Show>
       </Suspense>
-      <div
-        class="left-[0] top-[10vh] bg-black text-white w-[20vw] h-[20vh] overflow-x-auto"
-        id="infoWindow"
-      ></div>
+
       {/* <AirBNBSlider /> */}
 
       <div

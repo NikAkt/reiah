@@ -84,7 +84,9 @@ export const DashboardInfo = (props) => {
       });
   };
 
-  fetchDashboardInfoData("zipcode", 11385);
+  createEffect(() => {
+    fetchDashboardInfoData("zipcode", zipcode());
+  });
 
   return (
     <div>

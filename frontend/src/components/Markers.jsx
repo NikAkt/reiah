@@ -12,7 +12,6 @@ import { borough_neighbourhood } from "../data/dataToBeSent";
 const [zipcode_markers, setZipcodeMarkers] = createSignal([]);
 const [borough_markers, setBoroughMarkers] = createSignal([]);
 const [neighbourhood_markers, setNeighbourhoodMarkers] = createSignal([]);
-const [markersOnMap, setMarkersOnMap] = createSignal("neighbourhood");
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -55,7 +54,7 @@ const createZipcodeMarkers = (
         median_age,
         median_household_income,
         label: {
-          text: `${(avg_home_value / 1000).toFixed(1)}k`,
+          text: `\$ ${(avg_home_value / 1000).toFixed(1)}k`,
           color: "black",
         },
       });
@@ -69,15 +68,12 @@ const createZipcodeMarkers = (
 };
 
 function putMarkersOnMap(markersArray, map) {
-  console.log("markersArray", markersArray);
-  console.log("map", map);
   markersArray.forEach((marker) => {
     marker.setMap(map);
   });
 }
 
 function clearMarkers(markersArray) {
-  console.log("trigger clear markers");
   markersArray.forEach((marker) => {
     marker.setMap(null);
   });
@@ -114,8 +110,7 @@ const Markers = async (props) => {
         borough_zipcode[key] = [...borough_zipcode[key], ...zipcodeArray];
       }
     }
-    // const { Marker } = await loader.importLibrary("marker");
-    // const { LatLng, LatLngBounds } = await loader.importLibrary("core");
+
     loader.importLibrary("marker").then(({ Marker }) => {
       loader.importLibrary("core").then(({ LatLng, LatLngBounds }) => {
         createZipcodeMarkers(zipcodes, Marker, zipcodes_latlng, realEstateData);
@@ -140,32 +135,27 @@ const Markers = async (props) => {
   });
 
   const switchMarkers = (props, map) => {
-    if (props.mapZoom() <= 10) {
+    if (props.getDataLayerLevel() === "borough") {
       //borough level markers
       //if it has neighbourhood markers, clear the data layer
       clearMarkers(neighbourhood_markers(), map);
       clearMarkers(zipcode_markers(), map);
       putMarkersOnMap(borough_markers(), map);
-      setMarkersOnMap("borough");
-    } else if (props.mapZoom() <= 13 && props.mapZoom() > 10) {
+    } else if (props.getDataLayerLevel() === "neighbourhood") {
       //datalayer changed to neighbourhood level
       clearMarkers(borough_markers(), map);
       clearMarkers(zipcode_markers(), map);
       putMarkersOnMap(neighbourhood_markers(), map);
-      setMarkersOnMap("neighbourhood");
-    } else {
+    } else if (props.getDataLayerLevel() === "zipcode") {
       // zipcode level markers
       clearMarkers(borough_markers(), map);
       clearMarkers(neighbourhood_markers(), map);
       putMarkersOnMap(zipcode_markers(), map);
-      setMarkersOnMap("zipcode");
     }
   };
 
   createEffect(() => {
-    console.log("trigger create effect");
-    const map = props.map();
-    switchMarkers(props, map);
+    switchMarkers(props.props.map());
   });
 };
 
@@ -234,7 +224,7 @@ function createNeighbourhoodMarkers(
       median_age,
       median_household_income,
       label: {
-        text: `${(avg_home_value / 1000).toFixed(1)}k`,
+        text: `\$ ${(avg_home_value / 1000).toFixed(1)}k`,
         color: "black",
         fontSize: "16px",
       },
@@ -308,7 +298,7 @@ function createBoroughMarkers(
       median_age,
       median_household_income,
       label: {
-        text: `${(avg_home_value / 1000).toFixed(1)}k`,
+        text: `\$ ${(avg_home_value / 1000).toFixed(1)}k`,
         color: "black",
         fontSize: "20px",
       },

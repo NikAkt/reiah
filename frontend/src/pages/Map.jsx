@@ -12,7 +12,8 @@ import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 
 export const Map = (props) => {
-  const [mapZoom, setMapZoom] = createSignal(10);
+  // const [mapZoom, setMapZoom] = createSignal(10);
+  const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
       `http://localhost:8000/api/historic-prices?zipcode=${zip}`
@@ -27,10 +28,54 @@ export const Map = (props) => {
       throw new Error(e);
     }
   }
-  const [getSelectedZip, setSelectedZip] = createSignal(11385);
+
+  async function fetchHistoricBNPrices([level, area]) {
+    const response = await fetch(
+      `http://localhost:8000/api/historic-prices?${level}=${area}`
+    );
+    if (!response.ok) {
+      return [];
+    }
+    try {
+      const data = await response.json();
+      console.log("data", data);
+      //aggregated by year
+      let dataAggregatedHistory = {};
+      data.forEach((obj) => {
+        const history = obj["history"];
+        Object.keys(history).forEach((key) => {
+          if (!dataAggregatedHistory.hasOwnProperty(key)) {
+            dataAggregatedHistory[key] = 0;
+          }
+          dataAggregatedHistory[key] += history[key];
+        });
+      });
+      Object.keys(dataAggregatedHistory).forEach((key) => {
+        dataAggregatedHistory[key] /= data.length;
+      });
+      const dataAggregated = [{ level: area, history: dataAggregatedHistory }];
+      console.log("dataAggregated", dataAggregated);
+      return dataAggregated;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+  const [getSelectedZip, setSelectedZip] = createSignal("");
+  const [getSelectedBorough, setSelectedBorough] = createSignal("");
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
   const [historicPrices] = createResource(
     () => getSelectedZip(),
     fetchHistoricPrices
+  );
+
+  const [historicBoroughPrices] = createResource(
+    () => ["borough", getSelectedBorough()],
+    fetchHistoricBNPrices
+  );
+
+  const [historicNeighbourhoodPrices] = createResource(
+    () => ["neighbourhood", getSelectedNeighbourhood()],
+    fetchHistoricBNPrices
   );
 
   const [mapObject, setMapObject] = createSignal(null);
@@ -47,15 +92,19 @@ export const Map = (props) => {
             }
           >
             <MapComponent
-              mapZoom={mapZoom}
-              setMapZoom={setMapZoom}
+              getDataLayerLevel={getDataLayerLevel}
+              setDataLayerLevel={setDataLayerLevel}
               dataResources={props.dataResources}
-              zipcodeSetter={setSelectedZip}
               mapObject={mapObject}
               setMapObject={setMapObject}
               zipcodeOnCharts={getSelectedZip}
+              boroughSetter={setSelectedBorough}
+              neighbourhoodSetter={setSelectedNeighbourhood}
+              zipcodeSetter={setSelectedZip}
             >
-              <LineChart asyncData={historicPrices}></LineChart>
+              <LineChart asyncData={historicBoroughPrices}></LineChart>
+              {/* <LineChart asyncData={historicPrices}></LineChart> */}
+              {/* <LineChart asyncData={historicNeighbourhoodPrices}></LineChart> */}
               {/* <BarChart asyncData={historicPrices}></BarChart> */}
               <DashboardInfo map={mapObject} />
               {createEffect(() => {
@@ -66,7 +115,7 @@ export const Map = (props) => {
                 <Markers
                   zipcodes={props.dataResources.zipcodes()}
                   map={mapObject}
-                  mapZoom={mapZoom}
+                  getDataLayerLevel={getDataLayerLevel}
                 />;
                 // </Show>;
               })}

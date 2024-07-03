@@ -29,6 +29,14 @@ const createBarChart = (ctx, data, label) => {
   if (ctx === undefined) {
     return;
   }
+
+  let datasets = [];
+  if (data.length > 1) {
+    data.forEach((d) => {
+      datasets.push({ label: label, data: d, borderWidth: 1 });
+    });
+  }
+
   new Chart(ctx, {
     type: "bar",
     data: {
@@ -128,7 +136,11 @@ const LineChart = (props) => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData()?.[0];
       let transformedData = transformData(newData?.history);
-      createLineChart(ref, transformedData, newData.zipcode);
+      createLineChart(
+        ref,
+        [...transformedData],
+        newData[Object.keys(newData)[0]]
+      );
     }
     onCleanup((ref) => {
       if (ref) {
