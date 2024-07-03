@@ -236,7 +236,24 @@ func filterNeighbourhoodsGetRequest(a []NeighbourhoodData, f *GetNeighbourhoodQu
 		if f.Borough != "" && entry.Borough != f.Borough {
 			continue
 		}
-		//TODO: Add zipcode loop
+		if len(f.Zipcodes) > 0 {
+			log.Printf("Filtering by zipcodes: %v\n", f.Zipcodes)
+			zipSet := make(map[string]struct{})
+			for _, z := range f.Zipcodes {
+				zipSet[z] = struct{}{}
+			}
+			found := false
+			for _, zip := range entry.Zipcodes {
+				if _, ok := zipSet[fmt.Sprintf("%d", zip)]; ok {
+					found = true
+					break
+				}
+			}
+			if !found {
+				log.Printf("Skipping entry due to zipcode mismatch: %v\n", entry.Zipcodes)
+				continue
+			}
+		}
 		filtered = append(filtered, entry)
 	}
 	return filtered
