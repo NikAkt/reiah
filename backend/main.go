@@ -37,6 +37,7 @@ func main() {
 	e.GET("/api/borough", handlers.GetBoroughs)
 	e.GET("/api/zipcodes", handlers.GetZipCodes)
 	e.GET("/api/borough-neighbourhood", handlers.GetBoroughNeighbourhood)
+	e.GET("/api/zipcode-areas", handlers.GetZipCodeAreas)
 
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/", "public")
