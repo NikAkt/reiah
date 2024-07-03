@@ -1,11 +1,11 @@
 import { createEffect, createSignal, Index } from "solid-js";
 import { DualRangeSlider } from "./DualRangeSlider";
 
-function ColChart() {
-  const data = [
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22,
-  ];
+function ColChart({ data }) {
+  // const data = [
+  //   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  //   21, 22,
+  // ];
   const numCols = 20;
   const [from, setFrom] = createSignal(0);
   const [to, setTo] = createSignal(numCols + 1);
@@ -44,7 +44,7 @@ function ColChart() {
 
   return (
     <div
-      class="flex flex-col gap-2 w-[500px] h-[700px] m-auto
+      class="relative flex flex-col gap-2 w-[90%] h-[10%] m-auto 
         items-center justify-center p-0 m-0 border-2 border-solid border-indigo-600
         "
     >
@@ -58,7 +58,7 @@ function ColChart() {
             return (
               <Column
                 width={50}
-                height={item() * 100}
+                height={item() * 5}
                 label={item()}
                 backgroundColor={
                   index + 1 < from() || index + 1 > to()
@@ -79,8 +79,7 @@ function ColChart() {
 function Column({ height, label, backgroundColor, idx }) {
   return (
     <div
-      class={`${backgroundColor} z-10 border-dashed border-2 border-indigo-600 
-      bottom-0 w-[22px] hover:bg-violet-600 cursor-pointer`}
+      class={`${backgroundColor} w-[10px] hover:bg-violet-600 cursor-pointer relative`}
       style={{
         height: `${height}px`,
       }}

@@ -1,5 +1,5 @@
 //TODO: @Yu, I wasn't suggesting we use this. The one you had finished already met the project needs
-const AirBNBSlider = () => {
+const AirBNBSlider = ({ miniValue, maxValue }) => {
   const leftButton = document.getElementById("BUTTON-LEFT");
   const rightButton = document.getElementById("BUTTON-RIGHT");
   const bars = Array.from(document.querySelectorAll(".rounded-t-sm"));
@@ -41,10 +41,12 @@ const AirBNBSlider = () => {
     containerLeft,
     containerWidth
   ) {
-    bottomBar.style.left = `${(100 * (leftSliderCenter - containerLeft)) / containerWidth
-      }%`;
-    bottomBar.style.width = `${(100 * (rightSliderCenter - leftSliderCenter)) / containerWidth
-      }%`;
+    bottomBar.style.left = `${
+      (100 * (leftSliderCenter - containerLeft)) / containerWidth
+    }%`;
+    bottomBar.style.width = `${
+      (100 * (rightSliderCenter - leftSliderCenter)) / containerWidth
+    }%`;
   }
 
   function updateBarsColor(leftSliderCenter, rightSliderCenter) {
@@ -96,7 +98,7 @@ const AirBNBSlider = () => {
   }
 
   function createMouseHandlers(isTouch, isLeftButton) {
-    return function(event) {
+    return function (event) {
       const containerRect = container.getBoundingClientRect();
       const element = event.target;
 

@@ -10,6 +10,7 @@ import {
 import { BarChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
+import Filter from "../components/Filter";
 
 export const Map = (props) => {
   // const [mapZoom, setMapZoom] = createSignal(10);
@@ -83,6 +84,19 @@ export const Map = (props) => {
   return (
     <MapView>
       <div class="h-screen flex">
+        <Show
+          when={
+            !props.dataResources.realEstateData.loading &&
+            !props.dataResources.historicalRealEstateData.loading &&
+            !props.dataResources.amenitiesData.loading
+          }
+        >
+          <Filter
+            realEstateData={props.dataResources.realEstateData()}
+            historicalRealEstateData={props.dataResources.historicalRealEstateData()}
+            amenitiesData={props.dataResources.amenitiesData()}
+          />
+        </Show>
         <Suspense fallback={<div>Loading data...</div>}>
           <Show
             when={

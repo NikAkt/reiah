@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
-import { DualRangeSlider } from "./DualRangeSlider";
+import { ColChart } from "./ColChart";
+import { AirBNBSlider } from "./AirBNBSlider";
 
 const Filter = ({
   realEstateData,
@@ -14,24 +15,11 @@ const Filter = ({
   let zipcode = [];
   let median_household_income = [];
   let median_age = [];
-  let neighborhood = ["Dumbo", "Harlem"];
+  let neighborhood = [];
 
   const toggleFilter = () => {
     setFilterDisplay(!filterDisplay());
   };
-
-  const parseData = (data) => {
-    try {
-      return JSON.parse(data);
-    } catch (e) {
-      console.error("Failed to parse data:", e);
-      return [];
-    }
-  };
-
-  realEstateData = parseData(realEstateData);
-  historicalRealEstateData = parseData(historicalRealEstateData);
-  amenitiesData = parseData(amenitiesData);
 
   realEstateData.map((el) => {
     avg_home_value.push(el["avg_home_value"]);
@@ -70,7 +58,7 @@ const Filter = ({
     <div
       class="absolute z-30 w-32 flex flex-col 
     items-center gap-0.5 top-[2vh] left-[55vw]
-     justify-center
+     justify-center border-2 border-solid border-indigo-600
     text-black"
     >
       <button
@@ -97,14 +85,15 @@ const Filter = ({
             z-30 flex-row rounded-t-lg
             "
           >
-            <div
+            <button
               class="absolute rounded-full w-[20px] h-[20px] 
               left-[2%] hover:bg-white
             text-white items-center flex hover:text-black
             justify-center cursor-pointer"
+              onClick={toggleFilter}
             >
               X
-            </div>
+            </button>
             <p>Filters for {filterTarget()}</p>
           </div>
           {/* /////////// FILTER CONTENNT////////////////// */}
@@ -134,10 +123,10 @@ const Filter = ({
                     class="relative w-[90%] h-[100%] 
                   border-2 border-dashed border-indigo-600 items-center"
                   >
-                    Hello World
+                    <ColChart data={avg_home_value} />
                   </div>
                   <div class="flex gap-2 items-center justify-center">
-                    <div
+                    {/* <div
                       class="flex flex-col w-[35%] h-[10%] 
                 border-solid border-2 border-[#dddddd] rounded-lg
                 items-center"
@@ -164,7 +153,7 @@ const Filter = ({
                           ...avg_home_value
                         ).toString()}`}
                       ></input>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 
@@ -180,7 +169,9 @@ const Filter = ({
                   <p class="font-sans text-2xl font-bold text-black">
                     Median Household Income
                   </p>
-                  <div>Here should be a chart that looks like airbnb's</div>
+                  <div>
+                    <ColChart data={median_household_income} />
+                  </div>
                   <div class="flex gap-2 ">
                     <div
                       class="flex flex-col w-[35%] h-[10%] 

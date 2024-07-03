@@ -49,15 +49,15 @@ const fetchData = async ([json_path, storeKey]) => {
   }
 };
 
-// const [realEstateData] = createResource(
-//   ["http://localhost:8000/api/prices", "realEstateData"],
-//   fetchData
-// );
-// console.log("start fetching data");
-// const [historicalRealEstateData] = createResource(
-//   ["http://localhost:8000/api/historic-prices", "historicalRealEstateData"],
-//   fetchData
-// );
+const [realEstateData] = createResource(
+  ["http://localhost:8000/api/prices", "realEstateData"],
+  fetchData
+);
+console.log("start fetching data");
+const [historicalRealEstateData] = createResource(
+  ["http://localhost:8000/api/historic-prices", "historicalRealEstateData"],
+  fetchData
+);
 
 const [amenitiesData] = createResource(
   ["http://localhost:8000/api/amenities", "amenitiesdata"],
@@ -80,7 +80,8 @@ const [neighbourhood_geojson] = createResource(
 );
 
 const dataResources = {
-  // historicalRealEstateData,
+  realEstateData,
+  historicalRealEstateData,
   amenitiesData,
   zipcodes,
   borough_geojson,
