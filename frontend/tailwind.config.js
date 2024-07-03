@@ -31,6 +31,7 @@ module.exports = {
         "fade-down": "fade-down 0.2s ease-out forwards",
         "fade-in": "fade-in 0.2s ease-out forwards",
         "fade-out": "fade-out 0.2s ease-out backwards",
+        slide: "slide 2s ease-in-out infinite",
         expand: "expand 250ms cubic-bezier(0.32,0.72,0,0.75)",
         collapse: "collapse 250ms cubic-bezier(0.32,0.72,0,0.75)",
       },
@@ -46,6 +47,10 @@ module.exports = {
         "fade-out": {
           "0%": { opacity: "1", transform: "translateX(0)" },
           "100%": { opacity: "0", transform: "translateX(2vw)" },
+        },
+        slide: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(500%)" },
         },
         expand: {
           "0%": {
