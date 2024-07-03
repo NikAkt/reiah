@@ -262,5 +262,5 @@ func GetZipCodes(c echo.Context) error {
 }
 
 func GetZipCodeAreas(c echo.Context) error {
-	return c.File("public/nyc_zipcode_areas.geojson")
+	return c.File("public/data/nyc_zipcode_areas.geojson")
 }
