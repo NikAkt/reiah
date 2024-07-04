@@ -212,9 +212,10 @@ const LineChart = (props) => {
 
 const DoughnutChart = (props) => {
   let ref;
-  createDoughnutChart(ref, dataset);
+  // createDoughnutChart(ref, dataset);
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
+      <div>{props.amenities}</div>
       <canvas ref={(el) => (ref = el)}></canvas>
     </div>
   );

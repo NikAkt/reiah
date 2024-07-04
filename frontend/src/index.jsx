@@ -10,6 +10,7 @@ import { RegisterPage, LoginPage } from "./pages/Auth";
 import "./index.css";
 import { store, setStore } from "./data/stores";
 import { ErrorPage } from "./components/ErrorPage";
+import { DoughnutChart } from "./components/Charts";
 
 const root = document.getElementById("root");
 
@@ -117,6 +118,7 @@ render(
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/error" component={ErrorPage} />
+      <Route path="/develop" component={DoughnutChart} />
     </Router>
   ),
   root

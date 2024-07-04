@@ -13,6 +13,7 @@ export const DashboardInfo = (props) => {
     version: "weekly",
   });
   let amenitiesOnMap = [];
+  let amenities = {};
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -53,8 +54,10 @@ export const DashboardInfo = (props) => {
               amenitiesOnMap.forEach((marker) => marker.setMap(null));
               amenitiesOnMap = [];
             }
+            if (amenities) {
+              amenities = {};
+            }
 
-            let amenities = {};
             data[area].forEach((el) => {
               if (!amenities.hasOwnProperty(el["FACILITY_T"])) {
                 amenities[el["FACILITY_T"]] = {};
@@ -150,7 +153,7 @@ export const DashboardInfo = (props) => {
       <div>
         <div>
           <p class="bg-[#0145ac] rounded-lg text-white">Amenities: </p>
-          <DoughnutChart />
+          <DoughnutChart amenities={amenities} />
           <ul id="facility_type_ul"></ul>
         </div>
       </div>
