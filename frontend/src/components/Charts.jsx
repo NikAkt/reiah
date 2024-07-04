@@ -72,7 +72,7 @@ const BarChart = (props) => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData()?.[0];
       console.log("newData", newData);
-      let transformedData = transformData(newData?.history);
+      let transformedData = transformData(newData?.historicprices);
       createBarChart(ref, transformedData, newData.zipcode);
     }
   });
@@ -135,12 +135,16 @@ const LineChart = (props) => {
   createEffect(() => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData()?.[0];
-      let transformedData = transformData(newData?.history);
-      createLineChart(
-        ref,
-        [...transformedData],
-        newData[Object.keys(newData)[0]]
-      );
+      let transformedData = transformData(newData?.historicprices);
+      try {
+        createLineChart(
+          ref,
+          [...transformedData],
+          newData[Object.keys(newData)[0]]
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
     onCleanup((ref) => {
       if (ref) {

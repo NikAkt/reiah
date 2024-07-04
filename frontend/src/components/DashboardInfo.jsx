@@ -20,13 +20,12 @@ export const DashboardInfo = (props) => {
       .then((response) => response.json())
       .then((data) => {
         if (data) {
-          // {"Queens":{"West Central Queens":{"QN05":[11374,11375,11379,11385]}}}
-          const keys = Object.keys(data);
-          console.log(keys);
+          // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
+          const obj = data[0];
           document.getElementById("borough-dashboardInfo").innerText =
-            Object.keys(data);
+            obj["borough"];
           document.getElementById("neighbourhood-dashboardInfo").innerText =
-            Object.keys(data[keys[0]]);
+            obj["neighbourhood"];
         }
       });
 
@@ -36,7 +35,6 @@ export const DashboardInfo = (props) => {
         //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
         if (data) {
           const obj = data[0];
-          console.log("obj in dashboard info", obj);
           document.getElementById("avgHomeValue-dashboardInfo").innerText =
             obj["avg_home_value"];
           document.getElementById("medianHomeIncome-dashboardInfo").innerText =
@@ -48,7 +46,6 @@ export const DashboardInfo = (props) => {
     fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
         if (data) {
           loader.importLibrary("marker").then(({ Marker, Animation }) => {
             if (amenitiesOnMap) {
@@ -57,26 +54,26 @@ export const DashboardInfo = (props) => {
             }
 
             let amenities = {};
-            data.forEach((el) => {
-              if (!amenities.hasOwnProperty(el["FACILITY_TYPE"])) {
-                amenities[el["FACILITY_TYPE"]] = {};
+            data[area].forEach((el) => {
+              if (!amenities.hasOwnProperty(el["FACILITY_T"])) {
+                amenities[el["FACILITY_T"]] = {};
               }
               if (
-                !amenities[el["FACILITY_TYPE"]].hasOwnProperty(
-                  el["FACILITY_DESC"]
+                !amenities[el["FACILITY_T"]].hasOwnProperty(
+                  el["FACILITY_DOMAIN_NAME"]
                 )
               ) {
-                amenities[el["FACILITY_TYPE"]][el["FACILITY_DESC"]] = [];
+                amenities[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]] = [];
               }
-              amenities[el["FACILITY_TYPE"]][el["FACILITY_DESC"]].push(
+              amenities[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]].push(
                 el["NAME"]
               );
               const marker = new Marker({
                 position: { lat: el["LAT"], lng: el["LNG"] },
                 title: el["NAME"],
                 level: "amenties",
-                facility_type: el["FACILITY_TYPE"],
-                facility_desc: el["FACILITY_DESC"],
+                facility_type: el["FACILITY_T"],
+                facility_desc: el["FACILITY_DOMAIN_NAME"],
                 animation: Animation.DROP,
                 map: props.map(),
                 icon: {
