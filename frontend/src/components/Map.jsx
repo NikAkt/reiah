@@ -44,6 +44,7 @@ export const MapComponent = (props) => {
     const input = document.createElement("input");
     input.type = "text";
     input.id = "hoverLocation-div";
+    input.className = "relative w-[100%]";
 
     // Append the span to the inner div
     innerDiv.appendChild(input);

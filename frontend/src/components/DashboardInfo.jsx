@@ -2,6 +2,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
 import Markers from "./Markers";
+import { DoughnutChart } from "./Charts";
 
 export const DashboardInfo = (props) => {
   let ref;
@@ -148,9 +149,9 @@ export const DashboardInfo = (props) => {
       </div>
       <div>
         <div>
-          <ul id="facility_type_ul">
-            <span class="bg-[#0145ac] rounded-lg text-white">Amenities: </span>
-          </ul>
+          <p class="bg-[#0145ac] rounded-lg text-white">Amenities: </p>
+          <DoughnutChart />
+          <ul id="facility_type_ul"></ul>
         </div>
       </div>
     </div>

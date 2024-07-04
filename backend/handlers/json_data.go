@@ -227,7 +227,7 @@ func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQuer
 }
 
 func GetHistoricRealEstatePriceData(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/historic_real_estate_prices.json", filterHistoricPricesGetRequest)
+	return GenericGetDataHandler(c, "public/data/historic_real_estate_prices_by_zipcode.json", filterHistoricPricesGetRequest)
 }
 
 // ---------------------------------------

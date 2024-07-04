@@ -23,8 +23,6 @@ const ChartLoadingIndicator = () => {
 };
 
 const createBarChart = (ctx, data, label) => {
-  console.log("createBarChart");
-  console.log("data in create Bar Chart", data);
   if (ctx === undefined) {
     return;
   }
@@ -212,4 +210,48 @@ const LineChart = (props) => {
   );
 };
 
-export { BarChart, LineChart };
+const DoughnutChart = (props) => {
+  let ref;
+  createDoughnutChart(ref, dataset);
+  return (
+    <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
+      <canvas ref={(el) => (ref = el)}></canvas>
+    </div>
+  );
+};
+
+const createDoughnutChart = (ctx, dataset) => {
+  if (ctx === undefined) {
+    return;
+  }
+
+  // {
+  //   labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+  //   datasets: [
+  //     {
+  //       label: 'Dataset 1',
+  //       data: Utils.numbers(NUMBER_CFG),
+  //       backgroundColor: Object.values(Utils.CHART_COLORS),
+  //     }
+  //   ]
+  // };
+
+  new Chart(ctx, {
+    type: "doughnut",
+    data: dataset,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Amenities",
+        },
+      },
+    },
+  });
+};
+
+export { BarChart, LineChart, DoughnutChart };

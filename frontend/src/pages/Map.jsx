@@ -176,6 +176,7 @@ export const Map = (props) => {
                   comparedAsyncData={comparedAsyncData}
                   getComparedZip={getComparedZip}
                 ></LineChart>
+                <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
                 <DashboardInfo
                   map={mapObject}
                   getSelectedZip={getSelectedZip}
