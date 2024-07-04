@@ -118,18 +118,91 @@ const createLineChart = (ctx, datasets) => {
     },
   });
 };
+const [getZipOnCharts, setZipOnCharts] = createSignal([]);
+
+async function fetchMultipleHistoricPrices(zipArray) {
+  if (zipArray.length > 1) {
+    let query = "";
+    for (let i = 0; i <= zipArray.length; i++) {
+      if (i == 0) {
+        query += `?zipcode=${zipArray[i]}`;
+      } else {
+        query += `&zipcode=${zipArray[i]}`;
+      }
+    }
+    const response = await fetch(
+      `http://localhost:8000/api/historic-prices${query}`
+    );
+    if (!response.ok) {
+      return [];
+    }
+    try {
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+}
 
 const LineChart = (props) => {
   const uniqueZipcode = Object.keys(props.historicalRealEstateData);
-
   const [showDropDown, setShowDropDown] = createSignal(false);
+
   let ref;
+  const handleSubmit = () => {
+    const zipArray = [
+      ...new Set([props.getSelectedZip() * 1, ...props.getComparedZip()]),
+    ];
+    setZipOnCharts(zipArray);
+    if (zipArray.length > 1) {
+      let query = "";
+      for (let i = 0; i < zipArray.length; i++) {
+        if (i > 6) {
+          //limit is 7
+          break;
+        }
+        console.log(zipArray[i]);
+        if (i == 0) {
+          query += `?zipcode=${zipArray[i]}`;
+        } else {
+          query += `&zipcode=${zipArray[i]}`;
+        }
+      }
+    }
+    fetchMultipleHistoricPrices(getZipOnCharts()).then((comparedAsyncData) => {
+      generateMultiLineChart(comparedAsyncData);
+    });
+  };
+
+  const generateMultiLineChart = (comparedAsyncData) => {
+    if (comparedAsyncData) {
+      const comparedNewData = comparedAsyncData;
+      const transformedDataArr = [...Object.values(comparedNewData)];
+
+      try {
+        let datasets = [];
+        for (let i = 0; i < transformedDataArr.length; i++) {
+          const obj = {
+            label: Object.keys(comparedAsyncData)[i],
+            data: transformedDataArr[i],
+            fill: false,
+          };
+          datasets.push(obj);
+        }
+        createLineChart(ref, datasets);
+      } catch (error) {
+        console.log(
+          "error when creating compared async data line charts",
+          error
+        );
+      }
+    }
+  };
 
   onMount(() => {
     createLineChart(ref);
   });
-
-  createEffect(() => {});
 
   createEffect(() => {
     if (!props.asyncData.loading) {
@@ -156,37 +229,6 @@ const LineChart = (props) => {
     });
   });
 
-  createEffect(() => {
-    if (!props.comparedAsyncData.loading && props.comparedAsyncData()) {
-      const comparedNewData = props.comparedAsyncData();
-      console.log("comparedNewData", comparedNewData);
-      const transformedDataArr = [...Object.values(comparedNewData)];
-
-      try {
-        let datasets = [];
-        for (let i = 0; i < transformedDataArr.length; i++) {
-          const obj = {
-            label: Object.keys(props.comparedAsyncData())[i],
-            data: transformedDataArr[i],
-            fill: false,
-          };
-          datasets.push(obj);
-        }
-        createLineChart(ref, datasets);
-      } catch (error) {
-        console.log(
-          "error when creating compared async data line charts",
-          error
-        );
-      }
-      onCleanup((ref) => {
-        if (ref) {
-          ref = null;
-        }
-      });
-    }
-  });
-
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
       <Show
@@ -209,7 +251,7 @@ const LineChart = (props) => {
                 <input
                   type="Submit"
                   class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer"
-                  onClick={props.handleSubmit}
+                  onClick={handleSubmit}
                 />
               </div>
 

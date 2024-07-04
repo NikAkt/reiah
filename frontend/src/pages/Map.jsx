@@ -21,30 +21,9 @@ export const Map = (props) => {
   const [getSelectedZip, setSelectedZip] = createSignal("");
   const [getSelectedBorough, setSelectedBorough] = createSignal("");
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
-  const [getZipOnCharts, setZipOnCharts] = createSignal([]);
 
   //limit is 7
   const [getComparedZip, setComparedZip] = createSignal([]);
-
-  const handleSubmit = () => {
-    const zipArray = [...new Set([getSelectedZip() * 1, ...getComparedZip()])];
-    setZipOnCharts(zipArray);
-    if (zipArray.length > 1) {
-      let query = "";
-      for (let i = 0; i < zipArray.length; i++) {
-        if (i > 6) {
-          //limit is 7
-          break;
-        }
-        console.log(zipArray[i]);
-        if (i == 0) {
-          query += `?zipcode=${zipArray[i]}`;
-        } else {
-          query += `&zipcode=${zipArray[i]}`;
-        }
-      }
-    }
-  };
 
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
@@ -59,31 +38,6 @@ export const Map = (props) => {
       return data;
     } catch (e) {
       throw new Error(e);
-    }
-  }
-
-  async function fetchMultipleHistoricPrices(zipArray) {
-    if (zipArray.length > 1) {
-      let query = "";
-      for (let i = 0; i <= zipArray.length; i++) {
-        if (i == 0) {
-          query += `?zipcode=${zipArray[i]}`;
-        } else {
-          query += `&zipcode=${zipArray[i]}`;
-        }
-      }
-      const response = await fetch(
-        `http://localhost:8000/api/historic-prices${query}`
-      );
-      if (!response.ok) {
-        return [];
-      }
-      try {
-        const data = await response.json();
-        return data;
-      } catch (e) {
-        throw new Error(e);
-      }
     }
   }
 
@@ -123,6 +77,10 @@ export const Map = (props) => {
     fetchHistoricPrices
   );
 
+  createEffect(() => {
+    console.log("historicPrices", historicPrices);
+  });
+
   // const [historicBoroughPrices] = createResource(
   //   () => ["borough", getSelectedBorough()],
   //   fetchHistoricBNPrices
@@ -132,11 +90,6 @@ export const Map = (props) => {
   //   () => ["neighbourhood", getSelectedNeighbourhood()],
   //   fetchHistoricBNPrices
   // );
-
-  const [comparedAsyncData] = createResource(
-    () => getZipOnCharts(),
-    fetchMultipleHistoricPrices
-  );
 
   const [mapObject, setMapObject] = createSignal(null);
 
@@ -183,15 +136,12 @@ export const Map = (props) => {
                 neighbourhoodSetter={setSelectedNeighbourhood}
                 zipcodeSetter={setSelectedZip}
               >
-                <Show
-                  when={!comparedAsyncData.loading && !historicPrices.loading}
-                >
+                <Show when={!historicPrices.loading}>
                   <LineChart
                     asyncData={historicPrices}
-                    handleSubmit={handleSubmit}
-                    comparedAsyncData={comparedAsyncData}
                     getComparedZip={getComparedZip}
                     setComparedZip={setComparedZip}
+                    getSelectedZip={getSelectedZip}
                     historicalRealEstateData={props.dataResources.historicalRealEstateData()}
                   ></LineChart>
                 </Show>
