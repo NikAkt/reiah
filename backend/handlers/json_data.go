@@ -183,44 +183,32 @@ type GetHistoricPricesQueryParam struct {
 	Date     string   `query:"date"`
 }
 
-func filterHistoricPricesGetRequest(a []HistoricPrices, f *GetHistoricPricesQueryParam) []HistoricPrices {
-	var filtered []HistoricPrices
-	zipcodeSet := make(map[string]struct{}) // Map for storing and lookingup the zipcodes
+func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHistoricPricesQueryParam) map[string]map[string]float64 {
+	filtered := make(map[string]map[string]float64)
+	zipcodeSet := make(map[string]struct{}) // Map to store and look for zipcodes
+
+	// This loop populates the map with the zipcodes from the query
 	for _, z := range f.Zipcodes {
-		zipcodeSet[z] = struct{}{} // This loop populates the map with all the zipcodes in the query params
+		zipcodeSet[z] = struct{}{}
 	}
 
-	for _, prices := range a {
+	// loop data and apply filters
+	for zipcode, history := range data {
+		// if the zipcode is in the query params add to map
 		if len(zipcodeSet) > 0 {
-			if _, ok := zipcodeSet[prices.Zipcode]; !ok {
-				continue // This loop cheks if the map (query) contains actual zipcodes in the json (prices.Zipcode)
+			if _, ok := zipcodeSet[zipcode]; !ok {
+				continue
 			}
 		}
+
+		// Filter by date if in query
 		if f.Date != "" {
-			if price, ok := prices.History[f.Date]; ok {
-				// get value from price
-				floatPrice, err := price.Float64()
-				if err != nil {
-					log.Printf("Error converting price to float: %v\n", err)
-					continue
-				}
-				// This update the map to include only the date and json.Number for the value type
-				prices.History = map[string]json.Number{f.Date: json.Number(fmt.Sprintf("%f", floatPrice))}
-				filtered = append(filtered, prices)
+			if price, ok := history[f.Date]; ok {
+				filtered[zipcode] = map[string]float64{f.Date: price}
 			}
 		} else {
-			// Converting the history map values to float64 for filtering
-			convertedHistory := make(map[string]json.Number)
-			for date, price := range prices.History {
-				floatPrice, err := price.Float64()
-				if err != nil {
-					log.Printf("Error converting price to float: %v\n", err)
-					continue
-				}
-				convertedHistory[date] = json.Number(fmt.Sprintf("%f", floatPrice))
-			}
-			prices.History = convertedHistory
-			filtered = append(filtered, prices)
+			// No date filter, include all data
+			filtered[zipcode] = history
 		}
 	}
 	return filtered
