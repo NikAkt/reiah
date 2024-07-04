@@ -35,7 +35,8 @@ const SidebarLink = (props) => {
     <li class="mb-1 group">
       <a
         href={props.link.Href}
-        class="flex items-center py-2 px-4 text-gray-900 dark:text-slate-200 hover:bg-gray-950 hover:text-gray-100 dark:hover:text-gray-950 dark:hover:bg-gray-100 rounded-md"
+        class="flex items-center py-2 px-4 text-gray-900 dark:text-slate-200 
+        hover:bg-gray-950 hover:text-gray-100 dark:hover:text-gray-950 dark:hover:bg-gray-100 rounded-md"
       >
         <span class="text-lg">{props.link.Title}</span>
       </a>

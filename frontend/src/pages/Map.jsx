@@ -18,6 +18,21 @@ import Filter from "../components/Filter";
 export const Map = (props) => {
   // const [mapZoom, setMapZoom] = createSignal(10);
   const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
+  const [getSelectedZip, setSelectedZip] = createSignal("");
+  const [getSelectedBorough, setSelectedBorough] = createSignal("");
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
+  //limit is 7
+  const [getComparedZip, setComparedZip] = createSignal([
+    10304, 10465, 11220, 11426, 10464, 11434, 11433,
+  ]);
+
+  const handleSubmit = (zipcodeArray) => {
+    const input = document.getElementById("compareSearchBar").value;
+    if (input in zipcode) {
+      setComparedZip((prev) => [...prev, input * 1]);
+    }
+  };
+
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
       `http://localhost:8000/api/historic-prices?zipcode=${zip}`
@@ -27,9 +42,35 @@ export const Map = (props) => {
     }
     try {
       const data = await response.json();
+      console.log("fetchHistoriPrices", data);
       return data;
     } catch (e) {
       throw new Error(e);
+    }
+  }
+
+  async function fetchMultipleHistoricPrices(zipArray) {
+    if (zipArray.length > 1) {
+      let query = "";
+      for (let i = 0; i <= zipArray.length; i++) {
+        if (i == 0) {
+          query += `?zipcode=${zipArray[i]}`;
+        } else {
+          query += `&zipcode=${zipArray[i]}`;
+        }
+      }
+      const response = await fetch(
+        `http://localhost:8000/api/historic-prices${query}`
+      );
+      if (!response.ok) {
+        return [];
+      }
+      try {
+        const data = await response.json();
+        return data;
+      } catch (e) {
+        throw new Error(e);
+      }
     }
   }
 
@@ -64,9 +105,7 @@ export const Map = (props) => {
       throw new Error(e);
     }
   }
-  const [getSelectedZip, setSelectedZip] = createSignal("");
-  const [getSelectedBorough, setSelectedBorough] = createSignal("");
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
+
   const [historicPrices] = createResource(
     () => getSelectedZip(),
     fetchHistoricPrices
@@ -80,6 +119,11 @@ export const Map = (props) => {
   const [historicNeighbourhoodPrices] = createResource(
     () => ["neighbourhood", getSelectedNeighbourhood()],
     fetchHistoricBNPrices
+  );
+
+  const [comparedAsyncData] = createResource(
+    () => getComparedZip(),
+    fetchMultipleHistoricPrices
   );
 
   const [mapObject, setMapObject] = createSignal(null);
@@ -102,11 +146,11 @@ export const Map = (props) => {
                 !props.dataResources.amenitiesData.loading
               }
             >
-              {/* <Filter
+              <Filter
                 realEstateData={props.dataResources.realEstateData()}
                 historicalRealEstateData={props.dataResources.historicalRealEstateData()}
                 amenitiesData={props.dataResources.amenitiesData()}
-              /> */}
+              />
             </Show>
             <Show
               when={
@@ -126,10 +170,12 @@ export const Map = (props) => {
                 neighbourhoodSetter={setSelectedNeighbourhood}
                 zipcodeSetter={setSelectedZip}
               >
-                <LineChart asyncData={historicPrices}></LineChart>
-                {/* <LineChart asyncData={historicPrices}></LineChart> */}
-                {/* <LineChart asyncData={historicNeighbourhoodPrices}></LineChart> */}
-                {/* <BarChart asyncData={historicPrices}></BarChart> */}
+                <LineChart
+                  asyncData={historicPrices}
+                  handleSubmit={handleSubmit}
+                  comparedAsyncData={comparedAsyncData}
+                  getComparedZip={getComparedZip}
+                ></LineChart>
                 <DashboardInfo
                   map={mapObject}
                   getSelectedZip={getSelectedZip}

@@ -10,7 +10,6 @@ const transformData = (historicpricesObject) => {
     const newObject = { x: key, y: value };
     chartDataList.push(newObject);
   }
-  console.log("chartDataList", chartDataList);
 
   return chartDataList;
 };
@@ -91,22 +90,14 @@ const BarChart = (props) => {
   );
 };
 
-const createLineChart = (ctx, data, label) => {
+const createLineChart = (ctx, datasets) => {
   if (ctx === undefined) {
     return;
   }
   new Chart(ctx, {
     type: "line",
     data: {
-      datasets: [
-        {
-          label: label,
-          data: data,
-          fill: false,
-          borderColor: "rgb(75, 192, 192)",
-          tension: 0.1,
-        },
-      ],
+      datasets,
     },
     options: {
       responsive: true,
@@ -137,11 +128,15 @@ const LineChart = (props) => {
       let newData = props.asyncData()?.[0];
       let transformedData = transformData(newData?.historicprices);
       try {
-        createLineChart(
-          ref,
-          [...transformedData],
-          newData[Object.keys(newData)[0]]
-        );
+        createLineChart(ref, [
+          {
+            label: newData[Object.keys(newData)[0]],
+            data: [...transformedData],
+            fill: false,
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1,
+          },
+        ]);
       } catch (error) {
         console.log(error);
       }
@@ -153,13 +148,63 @@ const LineChart = (props) => {
     });
   });
 
+  createEffect(() => {
+    if (!props.comparedAsyncData.loading) {
+      console.log("comparedAsyncData", props.comparedAsyncData());
+      let comparedNewData = props.comparedAsyncData();
+      let transformedDataArr = [];
+      comparedNewData.forEach((el) => {
+        const transformedData = transformData(el.historicprices);
+        transformedDataArr.push(transformedData);
+      });
+      console.log("transformedDataArr", transformedDataArr);
+      try {
+        let datasets = [];
+        for (let i = 0; i < transformedDataArr.length; i++) {
+          const obj = {
+            label: props.getComparedZip()[i],
+            data: transformedDataArr[i],
+            fill: false,
+          };
+          datasets.push(obj);
+        }
+        createLineChart(ref, datasets);
+      } catch (error) {
+        console.log(
+          "error when creating compared async data line charts",
+          error
+        );
+      }
+      onCleanup((ref) => {
+        if (ref) {
+          ref = null;
+        }
+      });
+    }
+  });
+
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
       <Show
         when={!props.asyncData.loading}
         fallback={<ChartLoadingIndicator />}
       >
-        <div class="relative w-full h-full">
+        <div class="relative w-full h-[40vh]">
+          <div>
+            <input
+              type="text"
+              class="rounded-lg text-center w-[40%] relative"
+              placeholder="Compare To?"
+              id="compareSearchBar"
+            />
+            <button
+              class="relative ml-[2%] rounded-lg bg-black text-white w-[10%]"
+              onClick={props.handleSubmit}
+            >
+              Submit
+            </button>
+          </div>
+
           <canvas ref={ref}></canvas>
         </div>
       </Show>

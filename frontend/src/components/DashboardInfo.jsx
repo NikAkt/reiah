@@ -107,7 +107,10 @@ export const DashboardInfo = (props) => {
   });
 
   return (
-    <div class="relative w-[100%] flex flex-col items-center justify-center h-[100%]">
+    <div
+      class="relative w-[100%] grid divide-y-2 grid-cols-2
+    items-center justify-center h-[100%] border-2 border-indigo-600 border-solid"
+    >
       <div>
         <p>
           <span class="bg-[#0145ac] rounded-lg text-white">Borough: </span>
@@ -119,10 +122,7 @@ export const DashboardInfo = (props) => {
           </span>
           <span id="neighbourhood-dashboardInfo"></span>
         </p>
-      </div>
-      <div>
         <p>
-          {" "}
           <span class="bg-[#0145ac] rounded-lg text-white">
             Real estate information
           </span>

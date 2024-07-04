@@ -41,11 +41,12 @@ export const MapComponent = (props) => {
     // Create the inner div and span
     const innerDiv = document.createElement("div");
     innerDiv.textContent = "Location: ";
-    const span = document.createElement("span");
-    span.id = "hoverLocation-div";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = "hoverLocation-div";
 
     // Append the span to the inner div
-    innerDiv.appendChild(span);
+    innerDiv.appendChild(input);
 
     // Append the inner div to the hover location div
     hoverLocationDiv.appendChild(innerDiv);
@@ -120,7 +121,7 @@ export const MapComponent = (props) => {
           clickable: true,
         });
         event.feature.setProperty("isColorful", true);
-        document.getElementById("hoverLocation-div").innerText =
+        document.getElementById("hoverLocation-div").value =
           event.feature.getProperty("ZIPCODE");
       });
 
@@ -253,12 +254,10 @@ export const MapComponent = (props) => {
         </Show>
       </Suspense>
 
-      {/* <AirBNBSlider /> */}
-
       <div
-        class={`bg-white dark:bg-gray-900 basis-3/5 drop-shadow overflow-scroll p-6 ${
-          sideBarOpen() ? "" : "hidden"
-        }`}
+        class={`bg-white dark:bg-gray-900 w-[60vw] gap-2 
+      right-0 h-screen flex flex-col
+          drop-shadow overflow-scroll p-6 ${sideBarOpen() ? "" : "hidden"}`}
       >
         <Show when={props.isLoading}>
           <div class="flex flex-col gap-2 animate-pulse">
@@ -272,9 +271,12 @@ export const MapComponent = (props) => {
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
             <h2 class="txt-neutral-500 text-sm">click for more information</h2>
+            <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
           </div>
         </Show>
-        <div class="grid grid-cols-3 gap-6 mt-6">{props.children}</div>
+        <div class="gap-6 mt-6 py-3 flex flex-col">
+          <div class="flex flex-col">{props.children}</div>
+        </div>
       </div>
     </>
   );

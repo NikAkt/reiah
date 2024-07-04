@@ -9,7 +9,6 @@ import { Map } from "./pages/Map";
 import { RegisterPage, LoginPage } from "./pages/Auth";
 import "./index.css";
 import { store, setStore } from "./data/stores";
-import { DashboardCard } from "./components/DashboardCard";
 
 const root = document.getElementById("root");
 
@@ -116,7 +115,7 @@ render(
       />
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
-      <Route path="/develop" component={DashboardCard} />
+      {/* <Route path="/develop" component={SideBarContent} /> */}
     </Router>
   ),
   root

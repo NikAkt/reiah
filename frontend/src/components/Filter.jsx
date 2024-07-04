@@ -2,15 +2,9 @@ import { createSignal } from "solid-js";
 import { ColChart } from "./ColChart";
 import { AirBNBSlider } from "./AirBNBSlider";
 
-const Filter = ({
-  realEstateData,
-  historicalRealEstateData,
-  amenitiesData,
-}) => {
+const Filter = ({ realEstateData, amenitiesData }) => {
   const [filterDisplay, setFilterDisplay] = createSignal(false);
   const [filterTarget, setFilterTarget] = createSignal("Residential Property");
-  // let chartInstance = null;
-  // let homeValuePlotRef;
   let avg_home_value = [];
   let zipcode = [];
   let median_household_income = [];
@@ -21,6 +15,8 @@ const Filter = ({
     setFilterDisplay(!filterDisplay());
   };
 
+  console.log(realEstateData);
+
   realEstateData.map((el) => {
     avg_home_value.push(el["avg_home_value"]);
     zipcode.push(el["zipcode"]);
@@ -28,25 +24,33 @@ const Filter = ({
     median_age.push(el["median_age"]);
   });
 
-  const unique_borough = amenitiesData
-    ? [...new Set(amenitiesData.map((item) => item["BOROUGH"]))]
-    : [];
+  const unique_borough = [
+    "Broxn",
+    "Manhattan",
+    "Queens",
+    "Brooklyn",
+    "Staten Island",
+  ];
 
-  const unique_amenity_type = amenitiesData
-    ? [...new Set(amenitiesData.map((item) => item["FACILITY_TYPE"]))]
-    : [];
-
-  //{recreational facility:['...']}
   let amenities_type_desc = {};
-  amenitiesData.map((item) => {
-    const { FACILITY_TYPE, FACILITY_DESC } = item;
-    if (!amenities_type_desc[FACILITY_TYPE]) {
-      amenities_type_desc[FACILITY_TYPE] = [];
-    }
-    if (!amenities_type_desc[FACILITY_TYPE].includes(FACILITY_DESC)) {
-      amenities_type_desc[FACILITY_TYPE].push(FACILITY_DESC);
-    }
-  });
+
+  for (let key of Object.keys(amenitiesData)) {
+    const obj = amenitiesData[key];
+    obj.forEach((arr) => {
+      if (!amenities_type_desc.hasOwnProperty(arr["FACILITY_T"])) {
+        amenities_type_desc[arr["FACILITY_T"]] = [];
+      }
+      if (
+        !amenities_type_desc[arr["FACILITY_T"]].includes(
+          arr["FACILITY_DOMAIN_NAME"]
+        )
+      ) {
+        amenities_type_desc[arr["FACILITY_T"]].push(
+          arr["FACILITY_DOMAIN_NAME"]
+        );
+      }
+    });
+  }
 
   console.log(amenities_type_desc);
 
@@ -123,7 +127,7 @@ const Filter = ({
                     class="relative w-[90%] h-[100%] 
                   border-2 border-dashed border-indigo-600 items-center"
                   >
-                    <ColChart data={avg_home_value} />
+                    {/* <ColChart data={avg_home_value} /> */}
                   </div>
                   <div class="flex gap-2 items-center justify-center">
                     {/* <div
@@ -266,7 +270,7 @@ const Filter = ({
                     Amenities
                   </p>
                   <div class="grid-cols-2">
-                    {unique_amenity_type.map((el) => (
+                    {Object.keys(amenities_type_desc).forEach((el) => (
                       <div>
                         <button
                           class="border-solid border-2 
