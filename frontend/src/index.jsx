@@ -117,6 +117,7 @@ render(
       <Route path="/register" component={RegisterPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/develop" component={DashboardCard} />
+      <Route path="/error" component={ErrorPage} />
     </Router>
   ),
   root
