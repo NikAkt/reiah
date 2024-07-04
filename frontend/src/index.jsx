@@ -55,7 +55,7 @@ const [realEstateData] = createResource(
   ["http://localhost:8000/api/prices"],
   fetchData
 );
-console.log("start fetching data");
+
 const [historicalRealEstateData] = createResource(
   ["http://localhost:8000/api/historic-prices"],
   fetchData

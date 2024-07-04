@@ -1,5 +1,5 @@
 import Chart from "chart.js/auto";
-import { createEffect, onCleanup, onMount, Show } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
 
 const transformData = (historicpricesObject) => {
   if (historicpricesObject == undefined) {
@@ -88,11 +88,16 @@ const BarChart = (props) => {
   );
 };
 
+let chartInstance;
+
 const createLineChart = (ctx, datasets) => {
   if (ctx === undefined) {
     return;
   }
-  new Chart(ctx, {
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+  chartInstance = new Chart(ctx, {
     type: "line",
     data: {
       datasets,
@@ -115,21 +120,26 @@ const createLineChart = (ctx, datasets) => {
 };
 
 const LineChart = (props) => {
+  const uniqueZipcode = Object.keys(props.historicalRealEstateData);
+
+  const [showDropDown, setShowDropDown] = createSignal(false);
   let ref;
 
   onMount(() => {
     createLineChart(ref);
   });
 
+  createEffect(() => {});
+
   createEffect(() => {
     if (!props.asyncData.loading) {
-      let newData = props.asyncData()?.[0];
-      let transformedData = transformData(newData?.historicprices);
+      let newData = props.asyncData();
+      let transformedData = Object.values(newData)[0];
       try {
         createLineChart(ref, [
           {
-            label: newData[Object.keys(newData)[0]],
-            data: [...transformedData],
+            label: Object.keys(newData)[0],
+            data: transformedData,
             fill: false,
             borderColor: "rgb(75, 192, 192)",
             tension: 0.1,
@@ -147,20 +157,16 @@ const LineChart = (props) => {
   });
 
   createEffect(() => {
-    if (!props.comparedAsyncData.loading) {
-      console.log("comparedAsyncData", props.comparedAsyncData());
-      let comparedNewData = props.comparedAsyncData();
-      let transformedDataArr = [];
-      comparedNewData.forEach((el) => {
-        const transformedData = transformData(el.historicprices);
-        transformedDataArr.push(transformedData);
-      });
-      console.log("transformedDataArr", transformedDataArr);
+    if (!props.comparedAsyncData.loading && props.comparedAsyncData()) {
+      const comparedNewData = props.comparedAsyncData();
+      console.log("comparedNewData", comparedNewData);
+      const transformedDataArr = [...Object.values(comparedNewData)];
+
       try {
         let datasets = [];
         for (let i = 0; i < transformedDataArr.length; i++) {
           const obj = {
-            label: props.getComparedZip()[i],
+            label: Object.keys(props.comparedAsyncData())[i],
             data: transformedDataArr[i],
             fill: false,
           };
@@ -189,21 +195,60 @@ const LineChart = (props) => {
       >
         <div class="relative w-full h-[40vh]">
           <div>
-            <input
-              type="text"
-              class="rounded-lg text-center w-[40%] relative"
-              placeholder="Compare To?"
-              id="compareSearchBar"
-            />
-            <button
-              class="relative ml-[2%] rounded-lg bg-black text-white w-[10%]"
-              onClick={props.handleSubmit}
-            >
-              Submit
-            </button>
+            <div class="flex flex-col">
+              <div class="flex flex-row gap-2">
+                <input
+                  type="text"
+                  class="rounded-lg text-center w-[40%] relative"
+                  placeholder="Compare To?"
+                  id="compareSearchBar"
+                  onMouseOver={() => {
+                    setShowDropDown(true);
+                  }}
+                />
+                <input
+                  type="Submit"
+                  class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer"
+                  onClick={props.handleSubmit}
+                />
+              </div>
+
+              <div
+                class={`overflow-y-auto absolute w-[15vw] h-[20vh] mt-[3vh] bg-white 
+                  border rounded-lg mt-1 z-10 ${
+                    showDropDown() ? "block" : "hidden"
+                  }`}
+                onMouseOver={() => setShowDropDown(true)}
+                onMouseLeave={() => setShowDropDown(false)}
+              >
+                {uniqueZipcode.map((zip) => (
+                  <div key={zip} class="p-2">
+                    <input
+                      type="checkbox"
+                      id={`compareCheckbox-${zip}`}
+                      value={zip}
+                      class="accent-teal-500 compareCheckbox"
+                      onClick={(event) =>
+                        event.target.checked
+                          ? props.setComparedZip((prev) => [
+                              ...prev,
+                              event.target.value * 1,
+                            ])
+                          : props.setComparedZip((prev) =>
+                              prev.filter((el) => el != event.target.value * 1)
+                            )
+                      }
+                    />
+                    <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
+                      {zip}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <canvas ref={ref}></canvas>
+          <canvas ref={(el) => (ref = el)}></canvas>
         </div>
       </Show>
     </div>

@@ -6,8 +6,6 @@ import { DoughnutChart } from "./Charts";
 
 export const DashboardInfo = (props) => {
   let ref;
-  const zipcode = props.getSelectedZip();
-  console.log(zipcode);
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
     version: "weekly",
@@ -96,7 +94,7 @@ export const DashboardInfo = (props) => {
               const facilityDesc = Object.keys(amenities[a])
                 .map((el) => `<li>${el}</li>`)
                 .join("");
-              console.log(facilityDesc);
+
               facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
             });
           });
