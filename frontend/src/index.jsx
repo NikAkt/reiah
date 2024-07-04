@@ -10,6 +10,7 @@ import { RegisterPage, LoginPage } from "./pages/Auth";
 import "./index.css";
 import { store, setStore } from "./data/stores";
 import { DashboardCard } from "./components/DashboardCard";
+import { ErrorPage } from "./components/ErrorPage";
 
 const root = document.getElementById("root");
 

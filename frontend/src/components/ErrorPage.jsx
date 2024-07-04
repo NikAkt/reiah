@@ -1,11 +1,13 @@
+import labradorDontCare from "../assets/labrador_dont_care.gif";
+
 const ErrorPage = () => {
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="text-center">
         <img
-          src="https://example.com/funny-image.png"
-          alt="Funny Error"
-          className="w-1/3 mx-auto mb-4"
+          src={labradorDontCare}
+          alt="Dog fumbled the ball"
+          className="w-1/2 mx-auto mb-4"
         />
         <h1 className="text-4xl font-bold text-red-500 mb-2">
           Oops! Something went wrong...
@@ -20,12 +22,6 @@ const ErrorPage = () => {
         >
           Retry
         </button>
-        <div className="mt-4 text-gray-500">
-          <span>Meanwhile, enjoy this random joke:</span>
-          <blockquote className="italic mt-2">
-            "Why don't programmers like nature? It has too many bugs."
-          </blockquote>
-        </div>
       </div>
     </div>
   );
