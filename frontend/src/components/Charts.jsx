@@ -299,7 +299,27 @@ const LineChart = (props) => {
 
 const DoughnutChart = (props) => {
   let ref;
-  // createDoughnutChart(ref, dataset);
+
+  createEffect(() => {
+    if (props.amenities()) {
+      const labels = Object.keys(props.amenities());
+      let data = [];
+      for (let key of labels) {
+        const obj = props.amenities[key];
+        let value = 0;
+        for (let desc of Object.keys(obj)) {
+          value += obj[desc].length;
+        }
+        data.push(value);
+      }
+      const datasets = {
+        labels,
+        datasets: [{ label: "Amenities DoughnutChart", data }],
+      };
+      createDoughnutChart(ref, datasets);
+    }
+  });
+
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
       <div>{props.amenities}</div>
@@ -312,17 +332,6 @@ const createDoughnutChart = (ctx, dataset) => {
   if (ctx === undefined) {
     return;
   }
-
-  // {
-  //   labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-  //   datasets: [
-  //     {
-  //       label: 'Dataset 1',
-  //       data: Utils.numbers(NUMBER_CFG),
-  //       backgroundColor: Object.values(Utils.CHART_COLORS),
-  //     }
-  //   ]
-  // };
 
   new Chart(ctx, {
     type: "doughnut",

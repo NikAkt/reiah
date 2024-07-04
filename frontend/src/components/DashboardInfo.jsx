@@ -11,7 +11,7 @@ export const DashboardInfo = (props) => {
     version: "weekly",
   });
   let amenitiesOnMap = [];
-  let amenities = {};
+  const [amenities, setAmenities] = createSignal({});
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -52,22 +52,24 @@ export const DashboardInfo = (props) => {
               amenitiesOnMap.forEach((marker) => marker.setMap(null));
               amenitiesOnMap = [];
             }
-            if (amenities) {
-              amenities = {};
+            if (amenities()) {
+              setAmenities({});
             }
 
+            let amenitiesObj = {};
+
             data[area].forEach((el) => {
-              if (!amenities.hasOwnProperty(el["FACILITY_T"])) {
-                amenities[el["FACILITY_T"]] = {};
+              if (!amenitiesObj.hasOwnProperty(el["FACILITY_T"])) {
+                amenitiesObj[el["FACILITY_T"]] = {};
               }
               if (
-                !amenities[el["FACILITY_T"]].hasOwnProperty(
+                !amenitiesObj[el["FACILITY_T"]].hasOwnProperty(
                   el["FACILITY_DOMAIN_NAME"]
                 )
               ) {
-                amenities[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]] = [];
+                amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]] = [];
               }
-              amenities[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]].push(
+              amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]].push(
                 el["NAME"]
               );
               const marker = new Marker({
@@ -89,9 +91,10 @@ export const DashboardInfo = (props) => {
               });
               amenitiesOnMap.push(marker);
             });
+            setAmenities(amenitiesObj);
             const facilityTypeUl = document.getElementById("facility_type_ul");
-            Object.keys(amenities).forEach((a) => {
-              const facilityDesc = Object.keys(amenities[a])
+            Object.keys(amenitiesObj).forEach((a) => {
+              const facilityDesc = Object.keys(amenitiesObj[a])
                 .map((el) => `<li>${el}</li>`)
                 .join("");
 
@@ -151,9 +154,10 @@ export const DashboardInfo = (props) => {
       <div>
         <div>
           <p class="bg-[#0145ac] rounded-lg text-white">Amenities: </p>
-          <DoughnutChart amenities={amenities} />
+
           <ul id="facility_type_ul"></ul>
         </div>
+        {/* <DoughnutChart amenities={amenities} /> */}
       </div>
     </div>
   );
