@@ -52,9 +52,6 @@ export const DashboardInfo = (props) => {
               amenitiesOnMap.forEach((marker) => marker.setMap(null));
               amenitiesOnMap = [];
             }
-            if (amenities()) {
-              setAmenities({});
-            }
 
             let amenitiesObj = {};
 
@@ -92,14 +89,17 @@ export const DashboardInfo = (props) => {
               amenitiesOnMap.push(marker);
             });
             setAmenities(amenitiesObj);
-            const facilityTypeUl = document.getElementById("facility_type_ul");
-            Object.keys(amenitiesObj).forEach((a) => {
-              const facilityDesc = Object.keys(amenitiesObj[a])
-                .map((el) => `<li>${el}</li>`)
-                .join("");
 
-              facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
-            });
+            const facilityTypeUl = document.getElementById("facility_type_ul");
+            if (facilityTypeUl) {
+              Object.keys(amenities()).forEach((a) => {
+                const facilityDesc = Object.keys(amenities()[a])
+                  .map((el) => `<li>${el}</li>`)
+                  .join("");
+
+                facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
+              });
+            }
           });
         }
       });
@@ -114,7 +114,7 @@ export const DashboardInfo = (props) => {
   return (
     <div
       class="relative w-[100%] grid divide-y-2 grid-cols-2
-    items-center justify-center h-[100%] border-2 border-indigo-600 border-solid"
+    items-center justify-center h-[100%] border-2 border-indigo-600 border-solid overflow-y-auto"
     >
       <div>
         <p>
@@ -151,13 +151,18 @@ export const DashboardInfo = (props) => {
           </li>
         </ul>
       </div>
+      <div class="w-full h-[40vh]">
+        <Suspense>
+          <Show when={amenities()}>
+            <DoughnutChart amenities={amenities} />
+          </Show>
+        </Suspense>
+      </div>
       <div>
         <div>
           <p class="bg-[#0145ac] rounded-lg text-white">Amenities: </p>
-
           <ul id="facility_type_ul"></ul>
         </div>
-        {/* <DoughnutChart amenities={amenities} /> */}
       </div>
     </div>
   );

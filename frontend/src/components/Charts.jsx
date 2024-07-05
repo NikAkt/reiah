@@ -297,33 +297,47 @@ const LineChart = (props) => {
   );
 };
 
+let doughnutChartInstance;
+
 const DoughnutChart = (props) => {
-  let ref;
+  let ref2;
+  onMount(() => {
+    createDoughnutChart(ref2);
+  });
 
   createEffect(() => {
+    console.log("triggered create effect");
+    console.log(props.amenities());
     if (props.amenities()) {
       const labels = Object.keys(props.amenities());
       let data = [];
       for (let key of labels) {
-        const obj = props.amenities[key];
+        const obj = props.amenities()[key];
         let value = 0;
+        console.log("obj in creating doughnut", obj);
         for (let desc of Object.keys(obj)) {
           value += obj[desc].length;
         }
+        console.log("value in doughnutchart", value);
         data.push(value);
       }
       const datasets = {
         labels,
         datasets: [{ label: "Amenities DoughnutChart", data }],
       };
-      createDoughnutChart(ref, datasets);
+      createDoughnutChart(ref2, datasets);
+    }
+  });
+  onCleanup(() => {
+    if (doughnutChartInstance) {
+      doughnutChartInstance.destroy();
     }
   });
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
       <div>{props.amenities}</div>
-      <canvas ref={(el) => (ref = el)}></canvas>
+      <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
   );
 };
@@ -333,7 +347,11 @@ const createDoughnutChart = (ctx, dataset) => {
     return;
   }
 
-  new Chart(ctx, {
+  if (doughnutChartInstance) {
+    doughnutChartInstance.destroy();
+  }
+
+  doughnutChartInstance = new Chart(ctx, {
     type: "doughnut",
     data: dataset,
     options: {
