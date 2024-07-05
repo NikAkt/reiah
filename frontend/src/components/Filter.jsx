@@ -1,12 +1,14 @@
-import { createSignal } from "solid-js";
-// import { ColChart } from "./ColChart";
-import { AirBNBSlider } from "./AirBNBSlider";
+import { createSignal, createEffect, onMount } from "solid-js";
 
 const Filter = ({ realEstateData, amenitiesData }) => {
   const [filterDisplay, setFilterDisplay] = createSignal(false);
   const [filterTarget, setFilterTarget] = createSignal("Residential Property");
+  const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
+  const [applyZip, setApplyZip] = createSignal([]);
+  const [boroughData, setBoroughData] = createSignal([]);
+  const [selectedZipCodes, setSelectedZipCodes] = createSignal(new Set());
+
   let avg_home_value = [];
-  let zipcode = [];
   let median_household_income = [];
   let median_age = [];
   let neighborhood = [];
@@ -19,18 +21,42 @@ const Filter = ({ realEstateData, amenitiesData }) => {
 
   realEstateData.map((el) => {
     avg_home_value.push(el["avg_home_value"]);
-    zipcode.push(el["zipcode"]);
     median_household_income.push(el["median_household_income"]);
     median_age.push(el["median_age"]);
+    neighborhood.push(el["neighborhood"]);
   });
 
   const unique_borough = [
-    "Broxn",
+    "Bronx",
     "Manhattan",
     "Queens",
     "Brooklyn",
     "Staten Island",
   ];
+
+  const getNeighborhoods = (boroughs) => {
+    return [
+      ...new Set(
+        boroughs.flatMap((borough) =>
+          boroughData()
+            .filter((el) => el.borough === borough)
+            .map((el) => el.neighbourhood)
+        )
+      ),
+    ];
+  };
+
+  const getZipcodes = (boroughs) => {
+    return [
+      ...new Set(
+        boroughs.flatMap((borough) =>
+          boroughData()
+            .filter((el) => el.borough === borough)
+            .flatMap((el) => el.zipcodes)
+        )
+      ),
+    ];
+  };
 
   let amenities_type_desc = {};
 
@@ -58,10 +84,55 @@ const Filter = ({ realEstateData, amenitiesData }) => {
     toggleFilter();
   };
 
+  const handleBoroughChange = (borough) => {
+    setSelectedBoroughs((prev) => {
+      const newBoroughs = new Set(prev);
+      if (newBoroughs.has(borough)) {
+        newBoroughs.delete(borough);
+      } else {
+        newBoroughs.add(borough);
+      }
+      return newBoroughs;
+    });
+  };
+
+  const handleZipCodeChange = (zipCode) => {
+    setSelectedZipCodes((prev) => {
+      const newZipCodes = new Set(prev);
+      if (newZipCodes.has(zipCode)) {
+        newZipCodes.delete(zipCode);
+      } else {
+        newZipCodes.add(zipCode);
+      }
+      return newZipCodes;
+    });
+  };
+
+  const handleApplyFilter = () => {
+    console.log('Applying filter with selected zip codes:', [...selectedZipCodes()]);
+    setApplyZip([...selectedZipCodes()]);
+    toggleFilter();
+  };
+
+  createEffect(() => {
+    const zipcodes = applyZip();
+    if (zipcodes.length > 0) {
+      console.log('Applying effect with zipcodes:', zipcodes);
+      // Highlight the areas on the map based on zipcodes
+      // Implement the map highlighting logic here
+    }
+  });
+
+  onMount(async () => {
+    const response = await fetch("http://localhost:8000/api/borough-neighbourhood");
+    const data = await response.json();
+    setBoroughData(data);
+  });
+
   return (
     <div
-      class="absolute z-30 w-32 flex flex-col 
-    items-center gap-0.5 top-[2vh] left-[55vw]
+      class="absolute z-30 w-full flex flex-col 
+    items-center gap-0.5 top-[2vh] left-[50%] transform -translate-x-1/2
      justify-center 
     text-black"
     >
@@ -70,24 +141,21 @@ const Filter = ({ realEstateData, amenitiesData }) => {
         bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center"
         onClick={handleToggleFilter}
       >
-        {/* <img src={filter_img} alt="filter" /> */}
         <span>Filter</span>
       </button>
-      {/* bg-gradient-to-b from-green to-cyan-500 */}
       {filterDisplay() && (
         <div
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
-          left-[70vw] w-[40vw] h-[80vh] shadow-md
+          left-[50%] transform -translate-x-1/2 w-[40vw] h-[80vh] shadow-md
         z-20 items-center delay-[300ms] bg-white 
         animate-fade-down rounded-lg"
         >
-          {/* /////////// FILTER TITLE ////////////////// */}
+          {/* FILTER TITLE */}
           <div
             id="filter-dropdown-title"
             class="items-center justify-center relative
             flex h-[8%] bg-black text-white w-[100%] 
-            z-30 flex-row rounded-t-lg
-            "
+            z-30 flex-row rounded-t-lg"
           >
             <button
               class="absolute rounded-full w-[20px] h-[20px] 
@@ -96,20 +164,31 @@ const Filter = ({ realEstateData, amenitiesData }) => {
             justify-center cursor-pointer"
               onClick={toggleFilter}
             >
-              X
+              <svg
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
             <p>Filters for {filterTarget()}</p>
           </div>
-          {/* /////////// FILTER CONTENNT////////////////// */}
+          {/* FILTER CONTENT */}
           <div
             class="w-[100%] flex flex-col h-[84%] relative
             items-center py-4 px-[10%] gap-y-2.5 bg-white
             overflow-y-auto"
             id="filter-details-container"
           >
-            {/* /////////// MAP FILTER ////////////////// */}
-
-            {/* /////////// PROPERTY FILTER////////////////// */}
             <div
               id="property-filter-container"
               class="flex flex-col items-center "
@@ -129,36 +208,6 @@ const Filter = ({ realEstateData, amenitiesData }) => {
                   >
                     {/* <ColChart data={avg_home_value} /> */}
                   </div>
-                  <div class="flex gap-2 items-center justify-center">
-                    {/* <div
-                      class="flex flex-col w-[35%] h-[10%] 
-                border-solid border-2 border-[#dddddd] rounded-lg
-                items-center"
-                    >
-                      <p>Minimum</p>
-                      <input
-                        class="relative w-[80%] text-center"
-                        type="number"
-                        placeholder={`${Math.min(
-                          ...avg_home_value
-                        ).toString()}`}
-                      ></input>
-                    </div>
-                    <div>---</div>
-                    <div
-                      class="flex w-[35%] h-[10%] flex-col 
-                    border-solid border-2 border-[border-[#dddddd]] rounded-lg items-center"
-                    >
-                      <p>Maximum</p>
-                      <input
-                        class="relative w-[80%] text-center"
-                        type="number"
-                        placeholder={`${Math.max(
-                          ...avg_home_value
-                        ).toString()}`}
-                      ></input>
-                    </div> */}
-                  </div>
                 </div>
 
                 <div
@@ -166,14 +215,9 @@ const Filter = ({ realEstateData, amenitiesData }) => {
                   border-solid border-2 border-indigo-600"
                   id="median-income-container"
                 >
-                  {/* <canvas
-                ref={(el) => (homeValuePlotRef = el)}
-                id="home_value_plot"
-              ></canvas> */}
                   <p class="font-sans text-2xl font-bold text-black">
                     Median Household Income
                   </p>
-                  <div>{/* <ColChart data={median_household_income} /> */}</div>
                   <div class="flex gap-2 ">
                     <div
                       class="flex flex-col w-[35%] h-[10%] 
@@ -216,6 +260,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
                         name="borough-selection"
                         value={el.toString()}
                         type="checkbox"
+                        onChange={() => handleBoroughChange(el)}
                       />
                       <label htmlFor="borough-selection">{el.toString()}</label>
                     </>
@@ -233,11 +278,12 @@ const Filter = ({ realEstateData, amenitiesData }) => {
                     Neighborhood:
                   </label>
                   <select name="neighborhood" id="neighborhood">
-                    {neighborhood.map((el) => (
-                      <option key={el} value={el}>
-                        {el}
-                      </option>
-                    ))}
+                    {[...selectedBoroughs()].length > 0 &&
+                      getNeighborhoods([...selectedBoroughs()]).map((el) => (
+                        <option key={el} value={el}>
+                          {el}
+                        </option>
+                      ))}
                   </select>
                 </div>
 
@@ -252,12 +298,17 @@ const Filter = ({ realEstateData, amenitiesData }) => {
                     ZIPCODE:
                   </label>
                   <div class="grid grid-cols-5">
-                    {zipcode.map((el) => (
-                      <div>
-                        <input type="checkbox" />
-                        <label htmlFor="">{el.toString()}</label>
-                      </div>
-                    ))}
+                    {[...selectedBoroughs()].length > 0 &&
+                      getZipcodes([...selectedBoroughs()]).map((el) => (
+                        <div key={el}>
+                          <input
+                            type="checkbox"
+                            value={el}
+                            onChange={() => handleZipCodeChange(el)}
+                          />
+                          <label htmlFor="">{el.toString()}</label>
+                        </div>
+                      ))}
                   </div>
                 </div>
                 <div
@@ -270,8 +321,8 @@ const Filter = ({ realEstateData, amenitiesData }) => {
                     Amenities
                   </p>
                   <div class="grid-cols-2">
-                    {Object.keys(amenities_type_desc).forEach((el) => (
-                      <div>
+                    {Object.keys(amenities_type_desc).map((el) => (
+                      <div key={el}>
                         <button
                           class="border-solid border-2 
                     border-indigo-600 rounded-full 
@@ -282,7 +333,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
 
                         <div class="grid grid-cols-2">
                           {amenities_type_desc[el].map((item) => (
-                            <div>
+                            <div key={item}>
                               <input type="checkbox" />
                               <label htmlFor="">{item}</label>
                             </div>
@@ -308,6 +359,11 @@ const Filter = ({ realEstateData, amenitiesData }) => {
            gap-1.5 hover:scale-110 duration-300 
            active:bg-violet-700 focus:outline-none focus:ring 
            focus:ring-violet-300"
+              onClick={() => {
+                setSelectedBoroughs(new Set());
+                setSelectedZipCodes(new Set());
+                setApplyZip([]);
+              }}
             >
               Clear all
             </button>
@@ -316,6 +372,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
            w-32 h-9 text-white flex items-center justify-center 
            gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 
            focus:outline-none focus:ring focus:ring-violet-300"
+              onClick={handleApplyFilter}
             >
               Apply
             </button>
