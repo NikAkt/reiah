@@ -21,7 +21,9 @@ export const MapComponent = (props) => {
   function createCenterControl() {
     // Create the main control container
     const centerControlDiv = document.createElement("div");
-
+    centerControlDiv.className = !sideBarOpen()
+      ? "w-[80%] overflow-x-auto flex"
+      : "w-[80%] overflow-x-auto flex flex-col";
     // Create the button element
     const controlButton = document.createElement("button");
     controlButton.textContent = sideBarOpen() ? "Hide List" : "Show List";
@@ -36,24 +38,41 @@ export const MapComponent = (props) => {
     // Create the hover location div
     const hoverLocationDiv = document.createElement("div");
     hoverLocationDiv.className =
-      "absolute rounded shadow-md color-zinc-900 bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
     // Create the inner div and span
     const innerDiv = document.createElement("div");
     innerDiv.textContent = "Location: ";
+    innerDiv.className = "flex justify-center items-center";
     const input = document.createElement("input");
     input.type = "text";
     input.id = "hoverLocation-div";
-    input.className = "relative w-[100%]";
+    input.className = "relative w-[100%] bg-transparent text-center";
 
     // Append the span to the inner div
     innerDiv.appendChild(input);
 
     // Append the inner div to the hover location div
     hoverLocationDiv.appendChild(innerDiv);
+    //Create the Recommendation Button
+    const recommendZipBtn = document.createElement("button");
+    recommendZipBtn.textContent = "Recommend Zipcode";
+    recommendZipBtn.className =
+      "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+
+    const filterBtn = document.createElement("button");
+    filterBtn.textContent = "Filter";
+    filterBtn.className =
+      "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+    // Append the button and hover location div to the main control container
 
     // Append the button and hover location div to the main control container
-    centerControlDiv.append(controlButton, hoverLocationDiv);
+    centerControlDiv.append(
+      hoverLocationDiv,
+      filterBtn,
+      controlButton,
+      recommendZipBtn
+    );
 
     return centerControlDiv;
   }

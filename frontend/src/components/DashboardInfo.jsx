@@ -1,6 +1,13 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
-import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+  Show,
+  Suspense,
+} from "solid-js";
 import Markers from "./Markers";
 import { DoughnutChart } from "./Charts";
 
@@ -90,16 +97,16 @@ export const DashboardInfo = (props) => {
             });
             setAmenities(amenitiesObj);
 
-            const facilityTypeUl = document.getElementById("facility_type_ul");
-            if (facilityTypeUl) {
-              Object.keys(amenities()).forEach((a) => {
-                const facilityDesc = Object.keys(amenities()[a])
-                  .map((el) => `<li>${el}</li>`)
-                  .join("");
+            // const facilityTypeUl = document.getElementById("facility_type_ul");
+            // if (facilityTypeUl) {
+            //   Object.keys(amenities()).forEach((a) => {
+            //     const facilityDesc = Object.keys(amenities()[a])
+            //       .map((el) => `<li>${el}</li>`)
+            //       .join("");
 
-                facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
-              });
-            }
+            //     facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
+            //   });
+            // }
           });
         }
       });
@@ -110,57 +117,76 @@ export const DashboardInfo = (props) => {
       fetchDashboardInfoData("zipcode", props.getSelectedZip());
     }
   });
+  onCleanup((amenitiesOnMap) => {
+    if (amenitiesOnMap) {
+      amenitiesOnMap.forEach((marker) => {
+        marker.setMap(null);
+      });
+    }
+  });
 
   return (
     <div
-      class="relative w-[100%] grid divide-y-2 grid-cols-2
-    items-center justify-center h-[100%] border-2 border-indigo-600 border-solid overflow-y-auto"
+      class="relative w-[100%] grid divide-x-2 grid-cols-2 
+    h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
     >
-      <div>
-        <p>
-          <span class="bg-[#0145ac] rounded-lg text-white">Borough: </span>
-          <span id="borough-dashboardInfo"></span>
-        </p>
-        <p>
-          <span class="bg-[#0145ac] rounded-lg text-white">
-            Neighbourhood:{" "}
-          </span>
-          <span id="neighbourhood-dashboardInfo"></span>
-        </p>
-        <p>
-          <span class="bg-[#0145ac] rounded-lg text-white">
-            Real estate information
-          </span>
-        </p>
-        <ul>
-          <li>
+      <div class="basic-info">
+        <div class="cursor-pointer bg-teal-500 text-white rounded-sm items-center text-center">
+          Basic Information
+        </div>
+        <div>
+          <p>LOCATION</p>
+          <p>
+            <span class="bg-[#0145ac] rounded-lg text-white">Borough: </span>
+            <span id="borough-dashboardInfo"></span>
+          </p>
+          <p>
             <span class="bg-[#0145ac] rounded-lg text-white">
-              Average Home Value:{" "}
+              Neighbourhood:{" "}
             </span>
-            <span id="avgHomeValue-dashboardInfo"></span>
-          </li>
-          <li>
-            <span class="bg-[#0145ac] rounded-lg text-white">
-              Median Home Income:{" "}
-            </span>
-            <span id="medianHomeIncome-dashboardInfo"></span>
-          </li>
-          <li>
-            <span class="bg-[#0145ac] rounded-lg text-white">Median Age: </span>
-            <span id="medianAge-dashboardInfo"></span>
-          </li>
-        </ul>
+            <span id="neighbourhood-dashboardInfo"></span>
+          </p>
+          <p>
+            <span class="rounded-lg">REAL ESTATE INFORMATION</span>
+          </p>
+          <ul>
+            <li>
+              <span class="bg-[#0145ac] rounded-lg text-white">
+                Average Home Value:{" "}
+              </span>
+              <span id="avgHomeValue-dashboardInfo"></span>
+            </li>
+            <li>
+              <span class="bg-[#0145ac] rounded-lg text-white">
+                Median Home Income:{" "}
+              </span>
+              <span id="medianHomeIncome-dashboardInfo"></span>
+            </li>
+            <li>
+              <span class="bg-[#0145ac] rounded-lg text-white">
+                Median Age:{" "}
+              </span>
+              <span id="medianAge-dashboardInfo"></span>
+            </li>
+          </ul>
+        </div>
       </div>
+
       <div class="w-full h-[40vh]">
         <Suspense>
           <Show when={amenities()}>
-            <DoughnutChart amenities={amenities} />
+            <p class="bg-teal-500 rounded-sm text-white text-center">
+              Amenities:{" "}
+            </p>
+            <DoughnutChart
+              amenities={amenities}
+              getSelectedZip={props.getSelectedZip}
+            />
           </Show>
         </Suspense>
       </div>
       <div>
         <div>
-          <p class="bg-[#0145ac] rounded-lg text-white">Amenities: </p>
           <ul id="facility_type_ul"></ul>
         </div>
       </div>

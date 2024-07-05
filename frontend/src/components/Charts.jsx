@@ -14,6 +14,91 @@ const transformData = (historicpricesObject) => {
   return chartDataList;
 };
 
+// <block:actions:2>
+const actions = [
+  {
+    name: "Add Dataset",
+    handler(chart) {
+      const data = chart.data;
+      const newDataset = {
+        label: "Dataset " + (data.datasets.length + 1),
+        backgroundColor: [],
+        data: [],
+      };
+
+      for (let i = 0; i < data.labels.length; i++) {
+        newDataset.data.push(Utils.numbers({ count: 1, min: 0, max: 100 }));
+
+        const colorIndex = i % Object.keys(Utils.CHART_COLORS).length;
+        newDataset.backgroundColor.push(
+          Object.values(Utils.CHART_COLORS)[colorIndex]
+        );
+      }
+
+      chart.data.datasets.push(newDataset);
+      chart.update();
+    },
+  },
+  {
+    name: "Add Data",
+    handler(chart) {
+      const data = chart.data;
+      if (data.datasets.length > 0) {
+        data.labels.push("data #" + (data.labels.length + 1));
+
+        for (let index = 0; index < data.datasets.length; ++index) {
+          data.datasets[index].data.push(Utils.rand(0, 100));
+        }
+
+        chart.update();
+      }
+    },
+  },
+  {
+    name: "Hide(0)",
+    handler(chart) {
+      chart.hide(0);
+    },
+  },
+  {
+    name: "Show(0)",
+    handler(chart) {
+      chart.show(0);
+    },
+  },
+  {
+    name: "Hide (0, 1)",
+    handler(chart) {
+      chart.hide(0, 1);
+    },
+  },
+  {
+    name: "Show (0, 1)",
+    handler(chart) {
+      chart.show(0, 1);
+    },
+  },
+  {
+    name: "Remove Dataset",
+    handler(chart) {
+      chart.data.datasets.pop();
+      chart.update();
+    },
+  },
+  {
+    name: "Remove Data",
+    handler(chart) {
+      chart.data.labels.splice(-1, 1); // remove the label first
+
+      chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+      });
+
+      chart.update();
+    },
+  },
+];
+
 const ChartLoadingIndicator = () => {
   return (
     <div class="w-full h-full flex justify-center items-center">
@@ -247,6 +332,20 @@ const LineChart = (props) => {
                   onMouseOver={() => {
                     setShowDropDown(true);
                   }}
+                  onKeyUp={(event) => {
+                    if (event.key === "Enter") {
+                      if (uniqueZipcode.includes(event.target.value)) {
+                        props.setComparedZip((prev) => [
+                          ...prev,
+                          event.target.value * 1,
+                        ]);
+                        event.target.placeholder = props.getComparedZip();
+                        event.target.value = "";
+                      } else {
+                        alert("hello world");
+                      }
+                    }
+                  }}
                 />
                 <input
                   type="Submit"
@@ -270,16 +369,24 @@ const LineChart = (props) => {
                       id={`compareCheckbox-${zip}`}
                       value={zip}
                       class="accent-teal-500 compareCheckbox"
-                      onClick={(event) =>
-                        event.target.checked
-                          ? props.setComparedZip((prev) => [
-                              ...prev,
-                              event.target.value * 1,
-                            ])
-                          : props.setComparedZip((prev) =>
-                              prev.filter((el) => el != event.target.value * 1)
-                            )
-                      }
+                      onClick={(event) => {
+                        if (event.target.checked) {
+                          props.setComparedZip((prev) => [
+                            ...prev,
+                            event.target.value * 1,
+                          ]);
+                          document.getElementById(
+                            "compareSearchBar"
+                          ).placeholder = props.getComparedZip();
+                        } else {
+                          props.setComparedZip((prev) =>
+                            prev.filter((el) => el != event.target.value * 1)
+                          );
+                          document.getElementById(
+                            "compareSearchBar"
+                          ).placeholder = props.getComparedZip();
+                        }
+                      }}
                     />
                     <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
                       {zip}
@@ -306,8 +413,6 @@ const DoughnutChart = (props) => {
   });
 
   createEffect(() => {
-    console.log("triggered create effect");
-    console.log(props.amenities());
     if (props.amenities()) {
       const labels = Object.keys(props.amenities());
       let data = [];
@@ -325,7 +430,7 @@ const DoughnutChart = (props) => {
         labels,
         datasets: [{ label: "Amenities DoughnutChart", data }],
       };
-      createDoughnutChart(ref2, datasets);
+      createDoughnutChart(ref2, datasets, props.getSelectedZip());
     }
   });
   onCleanup(() => {
@@ -342,7 +447,7 @@ const DoughnutChart = (props) => {
   );
 };
 
-const createDoughnutChart = (ctx, dataset) => {
+const createDoughnutChart = (ctx, dataset, title) => {
   if (ctx === undefined) {
     return;
   }
@@ -362,7 +467,7 @@ const createDoughnutChart = (ctx, dataset) => {
         },
         title: {
           display: true,
-          text: "Amenities",
+          text: `Amenities of ZIPCODE ${title}`,
         },
       },
     },

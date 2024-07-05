@@ -111,11 +111,11 @@ export const Map = (props) => {
                 !props.dataResources.amenitiesData.loading
               }
             >
-              <Filter
+              {/* <Filter
                 realEstateData={props.dataResources.realEstateData()}
                 historicalRealEstateData={props.dataResources.historicalRealEstateData()}
                 amenitiesData={props.dataResources.amenitiesData()}
-              />
+              /> */}
             </Show>
             <Show
               when={
