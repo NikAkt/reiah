@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -178,35 +181,99 @@ type HistoricPrices struct {
 	History map[string]json.Number `json:"historicprices"`
 }
 
-type GetHistoricPricesQueryParam struct {
-	Zipcodes []string `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
-	Date     string   `query:"date"`
+type NeighbourhoodMapping struct {
+	Neighbourhood string `json:"neighbourhood"`
+	Borough       string `json:"borough"`
+	Zipcodes      []int  `json:"zipcodes"`
 }
 
-func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHistoricPricesQueryParam) map[string]map[string]float64 {
+type GetHistoricPricesQueryParam struct {
+	Zipcodes         []string `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
+	Date             string   `query:"date"`
+	AggregateByMonth bool     `query:"aggregateByMonth"`
+	Neighbourhood    string   `query:"neighbourhood"`
+	Borough          string   `query:"borough"`
+}
+
+func loadNeighborhoodMappings(filePath string) ([]NeighbourhoodMapping, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var mappings []NeighbourhoodMapping
+	if err := json.NewDecoder(file).Decode(&mappings); err != nil {
+		return nil, err
+	}
+	return mappings, nil
+}
+
+func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHistoricPricesQueryParam, mappings []NeighbourhoodMapping) map[string]map[string]float64 {
 	filtered := make(map[string]map[string]float64)
 	zipcodeSet := make(map[string]struct{}) // Map to store and look for zipcodes
+	var aggregatedZipcodes []string
 
 	// This loop populates the map with the zipcodes from the query
 	for _, z := range f.Zipcodes {
 		zipcodeSet[z] = struct{}{}
 	}
 
-	// loop data and apply filters
-	for zipcode, history := range data {
-		// if the zipcode is in the query params add to map
-		if len(zipcodeSet) > 0 {
-			if _, ok := zipcodeSet[zipcode]; !ok {
-				continue
+	// zipcode set with neighborhood zipcodes if there are
+	for _, mapping := range mappings {
+		if f.Neighbourhood != "" && f.Neighbourhood == mapping.Neighbourhood {
+			for _, z := range mapping.Zipcodes {
+				zipcodeStr := fmt.Sprintf("%d", z)
+				zipcodeSet[zipcodeStr] = struct{}{} // int to string
+				aggregatedZipcodes = append(aggregatedZipcodes, zipcodeStr)
+			}
+		}
+		if f.Borough != "" && f.Borough == mapping.Borough {
+			for _, z := range mapping.Zipcodes {
+				zipcodeStr := fmt.Sprintf("%d", z)
+				zipcodeSet[zipcodeStr] = struct{}{} // int to string
+				aggregatedZipcodes = append(aggregatedZipcodes, zipcodeStr)
+			}
+		}
+	}
+
+	if f.AggregateByMonth {
+		monthlyTotals := make(map[string]float64)
+		monthlyCounts := make(map[string]int)
+
+		// loop data and apply filters
+		for zipcode, history := range data {
+			if len(zipcodeSet) > 0 {
+				if _, ok := zipcodeSet[zipcode]; !ok {
+					continue
+				}
+			}
+
+			// loop for aggregating by month
+			for dateStr, price := range history {
+				month := dateStr[:7] //  slicing the month part from the date "2023-04"
+				monthlyTotals[month] += price
+				monthlyCounts[month]++
 			}
 		}
 
-		// Filter by date if in query
-		if f.Date != "" {
-			if price, ok := history[f.Date]; ok {
-				filtered[zipcode] = map[string]float64{f.Date: price}
+		// calculates the averages
+		averages := make(map[string]float64)
+		for month, total := range monthlyTotals {
+			averages[month] = total / float64(monthlyCounts[month])
+		}
+
+		// aggregated zipcodes as the key
+		aggregatedKey := "aggregated: " + strings.Join(aggregatedZipcodes, ",")
+		filtered[aggregatedKey] = averages
+	} else {
+		// If AggregateByMonth is not in the query loop data and apply filters
+		for zipcode, history := range data {
+			if len(zipcodeSet) > 0 {
+				if _, ok := zipcodeSet[zipcode]; !ok {
+					continue
+				}
 			}
-		} else {
 			// No date filter, include all data
 			filtered[zipcode] = history
 		}
@@ -215,7 +282,16 @@ func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHi
 }
 
 func GetHistoricRealEstatePriceData(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/historic_real_estate_prices_by_zipcode.json", filterHistoricPricesGetRequest)
+	mappings, err := loadNeighborhoodMappings("public/data/borough_neighbourhood.json")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Could not load neighborhood mappings: "+err.Error())
+	}
+
+	filter := func(data map[string]map[string]float64, f *GetHistoricPricesQueryParam) map[string]map[string]float64 {
+		return filterHistoricPricesGetRequest(data, f, mappings)
+	}
+
+	return GenericGetDataHandler(c, "public/data/historic_real_estate_prices_by_zipcode.json", filter)
 }
 
 // ---------------------------------------
