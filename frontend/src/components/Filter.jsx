@@ -165,14 +165,14 @@ const Filter = ({ realEstateData, amenitiesData }) => {
 
   return (
     <div
-      class="absolute z-30 w-[80vw] flex flex-col 
+      class="absolute z-10 w-[80vw] flex flex-col 
     items-center gap-0.5 top-[2vh] left-[10vw] 
     justify-center 
-    text-black"
+    text-black pointer-events-none"
     >
       <button
         class="rounded shadow-md color-zinc-900 cursor-pointer 
-        bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center"
+        bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center pointer-events-auto"
         onClick={toggleFilter}
       >
         <span>Filter</span>
@@ -180,9 +180,9 @@ const Filter = ({ realEstateData, amenitiesData }) => {
       {filterDisplay() && (
         <div
           class="grid-cols-1 divide-y m-0 px-0 mt-[-2vh] 
-          w-full h-[80vh] shadow-md
+          w-full max-h-[80vh] shadow-md
         z-20 items-center bg-white 
-        animate-fade-down rounded-lg transition-all duration-500 overflow-y-auto relative flex flex-col"
+        animate-fade-down rounded-lg transition-all duration-500 overflow-y-auto relative pointer-events-auto"
         >
           {/* FILTER TITLE */}
           <div
@@ -190,7 +190,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
             class="items-center justify-center relative
             flex h-[8%] bg-black text-white w-[100%] 
             z-30 flex-row rounded-t-lg"
-            style="position: sticky; top: 0;"
+            style="position: sticky; top: 0; height: 56px;"
           >
             <button
               class="absolute rounded-full w-[20px] h-[20px] 
@@ -246,7 +246,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
 
             {/* Neighborhood Selection */}
             {[...selectedBoroughs()].length > 0 && (
-              <div id="neighborhood-container" class="border-solid border-2 border-indigo-600 w-full p-4 rounded-lg transition-all duration-500">
+              <div class="border-solid border-2 border-indigo-600 w-full p-4 rounded-lg transition-all duration-500 ease-in-out transform opacity-100 scale-100" id="neighborhood-container">
                 <label htmlFor="neighborhood-selection" class="font-sans text-2xl font-bold text-black">
                   Neighborhood:
                 </label>
@@ -266,7 +266,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
 
             {/* Zipcode Selection */}
             {[...selectedNeighborhoods()].length > 0 && (
-              <div id="zipcode-selection-container" class="border-solid border-2 border-indigo-600 w-full p-4 rounded-lg transition-all duration-500">
+              <div class="border-solid border-2 border-indigo-600 w-full p-4 rounded-lg transition-all duration-500 ease-in-out transform opacity-100 scale-100" id="zipcode-selection-container">
                 <label htmlFor="zipcode-selection" class="font-sans text-2xl font-bold text-black">
                   ZIPCODE:
                 </label>
@@ -293,7 +293,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
             {/* Advanced Filters Button */}
             {selectedZipCodes().size > 0 && (
               <button
-                class="mt-4 p-2 bg-indigo-600 text-white rounded transition-all duration-500"
+                class="mt-4 p-2 bg-indigo-600 text-white rounded transition-all duration-500 ease-in-out transform"
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}
               >
                 {showAdvancedFilters() ? "Hide Advanced Filters" : "Show Advanced Filters"}
@@ -302,7 +302,7 @@ const Filter = ({ realEstateData, amenitiesData }) => {
 
             {/* Advanced Filters */}
             {showAdvancedFilters() && (
-              <div id="advanced-filters-container" class="w-full p-4 border-solid border-2 border-indigo-600 rounded-lg mt-4 flex flex-col transition-all duration-500">
+              <div class="w-full p-4 border-solid border-2 border-indigo-600 rounded-lg mt-4 flex flex-col transition-all duration-500 ease-in-out transform opacity-100 scale-100" id="advanced-filters-container">
                 <div
                   class="flex flex-col items-center justify-center border-solid border-2 border-indigo-600 p-2 rounded-lg"
                   id="home-value-container"
@@ -387,8 +387,8 @@ const Filter = ({ realEstateData, amenitiesData }) => {
           {/* Apply and Clear Buttons */}
           <div
             id="button-container"
-            class="items-center justify-center flex gap-4 h-[8%] bg-black text-white w-[100%] z-30 p-4 mt-auto"
-            style="position: sticky; bottom: 0;"
+            class="items-center justify-center flex gap-4 bg-black text-white w-[100%] z-30 border-solid border-2 border-indigo-600 rounded-b-lg p-4 pointer-events-auto"
+            style="position: sticky; bottom: 0; height: 56px;"
           >
             <button
               class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
