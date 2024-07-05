@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { ColChart } from "./ColChart";
+// import { ColChart } from "./ColChart";
 import { AirBNBSlider } from "./AirBNBSlider";
 
 const Filter = ({ realEstateData, amenitiesData }) => {

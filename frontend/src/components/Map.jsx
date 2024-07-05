@@ -60,16 +60,16 @@ export const MapComponent = (props) => {
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
-    const filterBtn = document.createElement("button");
-    filterBtn.textContent = "Filter";
-    filterBtn.className =
-      "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+    // const filterBtn = document.createElement("button");
+    // filterBtn.textContent = "Filter";
+    // filterBtn.className =
+    //   "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     // Append the button and hover location div to the main control container
 
     // Append the button and hover location div to the main control container
     centerControlDiv.append(
       hoverLocationDiv,
-      filterBtn,
+      // filterBtn,
       controlButton,
       recommendZipBtn
     );
