@@ -10,7 +10,7 @@ import {
   createEffect,
   ErrorBoundary,
 } from "solid-js";
-import { BarChart, LineChart } from "../components/Charts";
+import { BarChart, DoughnutChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import Filter from "../components/Filter";
@@ -136,6 +136,7 @@ export const Map = (props) => {
                 boroughSetter={setSelectedBorough}
                 neighbourhoodSetter={setSelectedNeighbourhood}
                 zipcodeSetter={setSelectedZip}
+                getComparedZip={getComparedZip}
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart
@@ -148,10 +149,25 @@ export const Map = (props) => {
                 </Show>
 
                 <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
+                <div id="compared-dashboardinfo-button" class="flex gap-2">
+                  <For each={getComparedZip()} fallback={<div></div>}>
+                    {(item, index) => (
+                      <button class="bg-black text-white active:bg-teal-500 rounded-lg">
+                        {item}
+                      </button>
+                    )}
+                  </For>
+                </div>
                 <DashboardInfo
                   map={mapObject}
-                  getSelectedZip={getSelectedZip}
+                  // getSelectedZip={getSelectedZip}
+                  zip={getSelectedZip()}
                 />
+                <For each={getComparedZip()} fallback={<div></div>}>
+                  {(item, index) => (
+                    <DashboardInfo map={mapObject} zip={item} />
+                  )}
+                </For>
                 {createEffect(() => {
                   if (mapObject()) {
                   }

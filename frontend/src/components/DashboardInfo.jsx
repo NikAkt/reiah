@@ -113,10 +113,11 @@ export const DashboardInfo = (props) => {
   };
 
   createEffect(() => {
-    if (props.getSelectedZip() !== "") {
-      fetchDashboardInfoData("zipcode", props.getSelectedZip());
+    if (props.zip !== "") {
+      fetchDashboardInfoData("zipcode", props.zip);
     }
   });
+
   onCleanup((amenitiesOnMap) => {
     if (amenitiesOnMap) {
       amenitiesOnMap.forEach((marker) => {
@@ -178,9 +179,11 @@ export const DashboardInfo = (props) => {
             <p class="bg-teal-500 rounded-sm text-white text-center">
               Amenities:{" "}
             </p>
+
             <DoughnutChart
               amenities={amenities}
-              getSelectedZip={props.getSelectedZip}
+              zip={props.zip}
+              ref={(el) => (ref = el)}
             />
           </Show>
         </Suspense>

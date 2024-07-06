@@ -9,6 +9,16 @@ const loader = new Loader({
   version: "weekly",
 });
 
+const colors = [
+  "#4BC0C0",
+  "#36A2EB",
+  "#FF6384",
+  "#FF9F40",
+  "#FFCD56",
+  "#9966FF",
+  "#C9CBCF",
+];
+
 export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
@@ -17,6 +27,7 @@ export const MapComponent = (props) => {
   const [neighbourhood, setNeighbourhood] = createSignal(true);
   const borough_geojson = props.dataResources.borough_geojson();
   const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
+  const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
 
   function createCenterControl() {
     // Create the main control container
@@ -100,14 +111,20 @@ export const MapComponent = (props) => {
       map.data.addGeoJson(data);
       map.data.setStyle(function (feature) {
         const geometryType = feature.getGeometry().getType();
-        let color = "#10b981";
+        // let color = colors[0];
         if (feature.getProperty("isColorful")) {
-          color = feature.getProperty("color");
+          // color = feature.getProperty("color");
+          return {
+            fillColor: colors[0],
+            strokeColor: colors[0],
+            fillOpacity: 0.7,
+            strokeWeight: 4,
+          };
         }
         if (geometryType === "MultiPolygon" || geometryType === "Polygon") {
           return {
             strokeColor: "#10b981",
-            fillColor: color,
+            fillColor: "#10b981",
             strokeWeight: 2,
             fillOpacity: 0.1,
             clickable: true,
@@ -115,11 +132,17 @@ export const MapComponent = (props) => {
         }
       });
       map.data.addListener("click", function (event) {
+        if (getLastClickedDataLayer()) {
+          getLastClickedDataLayer().setProperty("isColorful", false);
+        }
+        console.log("click event", event.feature);
+        setLastClickedDataLayer(event.feature);
+        map.data.revertStyle();
         event.feature.setProperty("isColorful", true);
-        const { level, area } = handleDataLayerClick(event.feature);
+        // const { level, area } = handleDataLayerClick(event.feature);
 
         const zipcode = event.feature.getProperty("ZIPCODE");
-        console.log("zipcode", zipcode);
+
         // switch (level) {
         //   case "zipcode":
         //     props.zipcodeSetter(area);
@@ -129,6 +152,12 @@ export const MapComponent = (props) => {
         //     props.neighbourhoodSetter(area);
         // }
         props.zipcodeSetter(zipcode);
+        map.data.overrideStyle(event.feature, {
+          fillColor: colors[0],
+          strokeColor: colors[0],
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        });
       });
 
       map.data.addListener("mouseover", function (event) {
@@ -140,13 +169,13 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           clickable: true,
         });
-        event.feature.setProperty("isColorful", true);
+        // event.feature.setProperty("isColorful", true);
         document.getElementById("hoverLocation-div").value =
           event.feature.getProperty("ZIPCODE");
       });
 
       map.data.addListener("mouseout", function (event) {
-        event.feature.setProperty("isColorful", false);
+        // event.feature.setProperty("isColorful", false);
         map.data.revertStyle();
       });
     } catch (error) {

@@ -99,6 +99,16 @@ const actions = [
   },
 ];
 
+const colors = [
+  "rgb(75,192,192)",
+  "rgb(54,162,235)",
+  "rgb(255,99,132)",
+  "rgb(255,159,64)",
+  "rgb(255,205,86)",
+  "rgb(153,102,255)",
+  "rgb(201,203,207)",
+];
+
 const ChartLoadingIndicator = () => {
   return (
     <div class="w-full h-full flex justify-center items-center">
@@ -249,9 +259,10 @@ const LineChart = (props) => {
 
   let ref;
   const handleSubmit = () => {
-    const zipArray = [
-      ...new Set([props.getSelectedZip() * 1, ...props.getComparedZip()]),
-    ];
+    const zipArray = [...new Set([...props.getComparedZip()])];
+    if (!zipArray.includes(props.getSelectedZip() * 1)) {
+      zipArray.unshift(props.getSelectedZip() * 1);
+    }
     setZipOnCharts(zipArray);
     if (zipArray.length > 1) {
       let query = "";
@@ -286,6 +297,7 @@ const LineChart = (props) => {
             label: Object.keys(comparedAsyncData)[i],
             data: transformedDataArr[i],
             fill: false,
+            borderColor: colors[i % 7],
           };
           datasets.push(obj);
         }
@@ -353,10 +365,24 @@ const LineChart = (props) => {
                           ...prev,
                           event.target.value * 1,
                         ]);
-                        event.target.placeholder = props.getComparedZip();
+                        console.log(event.target.value);
+
+                        if (
+                          !document.getElementById(
+                            `compareCheckbox-${event.target.value}`
+                          ).checked
+                        ) {
+                          document.getElementById(
+                            `compareCheckbox-${event.target.value}`
+                          ).checked = true;
+                        }
+
+                        event.target.placeholder = [
+                          ...new Set(props.getComparedZip()),
+                        ];
                         event.target.value = "";
                       } else {
-                        alert("hello world");
+                        alert("The zipcode you provided is not included.");
                       }
                     }
                   }}
@@ -428,12 +454,11 @@ const LineChart = (props) => {
   );
 };
 
-let doughnutChartInstance;
-
 const DoughnutChart = (props) => {
   let ref2;
+  let doughnutChartInstance;
   onMount(() => {
-    createDoughnutChart(ref2);
+    doughnutChartInstance = createDoughnutChart(ref2, doughnutChartInstance);
   });
 
   createEffect(() => {
@@ -454,7 +479,12 @@ const DoughnutChart = (props) => {
         labels,
         datasets: [{ label: "Amenities DoughnutChart", data }],
       };
-      createDoughnutChart(ref2, datasets, props.getSelectedZip());
+      doughnutChartInstance = createDoughnutChart(
+        ref2,
+        datasets,
+        props.zip,
+        doughnutChartInstance
+      );
     }
   });
   onCleanup(() => {
@@ -471,7 +501,7 @@ const DoughnutChart = (props) => {
   );
 };
 
-const createDoughnutChart = (ctx, dataset, title) => {
+const createDoughnutChart = (ctx, dataset, title, doughnutChartInstance) => {
   if (ctx === undefined) {
     return;
   }
@@ -480,7 +510,7 @@ const createDoughnutChart = (ctx, dataset, title) => {
     doughnutChartInstance.destroy();
   }
 
-  doughnutChartInstance = new Chart(ctx, {
+  return new Chart(ctx, {
     type: "doughnut",
     data: dataset,
     options: {
