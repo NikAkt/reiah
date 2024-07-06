@@ -29,10 +29,12 @@ export const DashboardInfo = (props) => {
         if (data) {
           // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
           const obj = data[0];
-          document.getElementById("borough-dashboardInfo").innerText =
-            obj["borough"];
-          document.getElementById("neighbourhood-dashboardInfo").innerText =
-            obj["neighbourhood"];
+          document.getElementById(
+            `borough-dashboardInfo-${props.zip}`
+          ).innerText = obj["borough"];
+          document.getElementById(
+            `neighbourhood-dashboardInfo-${props.zip}`
+          ).innerText = obj["neighbourhood"];
         }
       });
 
@@ -42,12 +44,15 @@ export const DashboardInfo = (props) => {
         //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
         if (data) {
           const obj = data[0];
-          document.getElementById("avgHomeValue-dashboardInfo").innerText =
-            obj["avg_home_value"];
-          document.getElementById("medianHomeIncome-dashboardInfo").innerText =
-            obj["median_household_income"];
-          document.getElementById("medianAge-dashboardInfo").innerText =
-            obj["median_age"];
+          document.getElementById(
+            `avgHomeValue-dashboardInfo-${props.zip}`
+          ).innerText = obj["avg_home_value"];
+          document.getElementById(
+            `medianHomeIncome-dashboardInfo-${props.zip}`
+          ).innerText = obj["median_household_income"];
+          document.getElementById(
+            `medianAge-dashboardInfo-${props.zip}`
+          ).innerText = obj["median_age"];
         }
       });
     fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
@@ -130,6 +135,7 @@ export const DashboardInfo = (props) => {
     <div
       class="relative w-[100%] grid divide-x-2 grid-cols-2 
     h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
+      id={`dashboardDiv-${[props.zip]}`}
     >
       <div class="basic-info">
         <div class="cursor-pointer bg-teal-500 text-white rounded-sm items-center text-center">
@@ -139,13 +145,13 @@ export const DashboardInfo = (props) => {
           <p>LOCATION</p>
           <p>
             <span class="bg-[#0145ac] rounded-lg text-white">Borough: </span>
-            <span id="borough-dashboardInfo"></span>
+            <span id={`borough-dashboardInfo-${props.zip}`}></span>
           </p>
           <p>
             <span class="bg-[#0145ac] rounded-lg text-white">
               Neighbourhood:{" "}
             </span>
-            <span id="neighbourhood-dashboardInfo"></span>
+            <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>
           </p>
           <p>
             <span class="rounded-lg">REAL ESTATE INFORMATION</span>
@@ -155,19 +161,19 @@ export const DashboardInfo = (props) => {
               <span class="bg-[#0145ac] rounded-lg text-white">
                 Average Home Value:{" "}
               </span>
-              <span id="avgHomeValue-dashboardInfo"></span>
+              <span id={`avgHomeValue-dashboardInfo-${props.zip}`}></span>
             </li>
             <li>
               <span class="bg-[#0145ac] rounded-lg text-white">
                 Median Home Income:{" "}
               </span>
-              <span id="medianHomeIncome-dashboardInfo"></span>
+              <span id={`medianHomeIncome-dashboardInfo-${props.zip}`}></span>
             </li>
             <li>
               <span class="bg-[#0145ac] rounded-lg text-white">
                 Median Age:{" "}
               </span>
-              <span id="medianAge-dashboardInfo"></span>
+              <span id={`medianAge-dashboardInfo-${props.zip}`}></span>
             </li>
           </ul>
         </div>

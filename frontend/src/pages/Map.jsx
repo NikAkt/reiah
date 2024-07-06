@@ -152,7 +152,18 @@ export const Map = (props) => {
                 <div id="compared-dashboardinfo-button" class="flex gap-2">
                   <For each={getComparedZip()} fallback={<div></div>}>
                     {(item, index) => (
-                      <button class="bg-black text-white active:bg-teal-500 rounded-lg">
+                      <button
+                        class="bg-black text-white active:bg-teal-500 rounded-lg"
+                        onClick={(event) => {
+                          const dashboardDiv = document.getElementById(
+                            `dashboardDiv-${item}`
+                          );
+                          if (dashboardDiv) {
+                            dashboardDiv.classList.toggle("hidden");
+                          }
+                          event.target.classList.toggle("opacity-50");
+                        }}
+                      >
                         {item}
                       </button>
                     )}
