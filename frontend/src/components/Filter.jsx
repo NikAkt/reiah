@@ -11,7 +11,7 @@ function debounce(func, timeout = 300) {
   };
 }
 
-const Filter = () => {
+const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
   const [filterDisplay, setFilterDisplay] = createSignal(false);
   const [filterTarget, setFilterTarget] = createSignal("Residential Property");
   const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
@@ -22,7 +22,7 @@ const Filter = () => {
   const [filteredAmenities, setFilteredAmenities] = createSignal({});
   const [avgHomeValueRange, setAvgHomeValueRange] = createSignal([0, 0]);
   const [medianHouseholdIncomeRange, setMedianHouseholdIncomeRange] = createSignal([0, 0]);
-  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
+  const [filteredZipCodesLocal, setFilteredZipCodesLocal] = createSignal([]);
   const [realEstateData, setRealEstateData] = createSignal([]);
 
   const unique_borough = ["Bronx", "Manhattan", "Queens", "Brooklyn", "Staten Island"];
@@ -117,7 +117,8 @@ const Filter = () => {
       });
     }
 
-    setFilteredZipCodes(zipCodes);
+    setFilteredZipCodesLocal(zipCodes);
+    setFilteredZipCodes(zipCodes); // Update the global filtered zip codes
     fetchAmenities([...selectedNeighborhoods()]);
   };
 
@@ -160,7 +161,7 @@ const Filter = () => {
   };
 
   const highlightZipCodesOnMap = (zipCodes) => {
-    // Implement map highlighting logic here
+    setFilteredZipCodes(zipCodes); // Update the global filtered zip codes
     console.log("Highlighting zip codes on map:", zipCodes);
     toggleFilter();
   };
@@ -289,12 +290,12 @@ const Filter = () => {
               Clear all
             </button>
 
-            {filteredZipCodes().length === 0 ? (
-              <span class="text-red-500">No matches</span>
+            {filteredZipCodesLocal().length === 0 ? (
+              <span class="text-red-500">Change filters</span>
             ) : (
               <div class="flex items-center gap-2">
-                <span>{filteredZipCodes().length} Zipcodes</span>
-                <button class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300" onClick={() => highlightZipCodesOnMap(filteredZipCodes())}>
+                <span>Filters result in {filteredZipCodesLocal().length} zipcodes</span>
+                <button class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300" onClick={() => highlightZipCodesOnMap(filteredZipCodesLocal())}>
                   See on Map
                 </button>
               </div>
