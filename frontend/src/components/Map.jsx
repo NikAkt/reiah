@@ -19,14 +19,21 @@ export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
+  const [borough, setBorough] = createSignal(false);
+  const [neighbourhood, setNeighbourhood] = createSignal(true);
+  const borough_geojson = props.dataResources.borough_geojson();
+  const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
+  const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
   const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
 
   function createCenterControl() {
+    // Create the main control container
     const centerControlDiv = document.createElement("div");
     centerControlDiv.className = !sideBarOpen()
       ? "w-[80%] overflow-x-auto flex"
       : "w-[80%] overflow-x-auto flex flex-col";
 
+    // Create the button element
     const controlButton = document.createElement("button");
     controlButton.textContent = sideBarOpen() ? "Hide List" : "Show List";
     controlButton.title = "Click to show details";
@@ -37,10 +44,12 @@ export const MapComponent = (props) => {
       setSidebarOpen(!sideBarOpen())
     );
 
+    // Create the hover location div
     const hoverLocationDiv = document.createElement("div");
     hoverLocationDiv.className =
       "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
+    // Create the inner div and span
     const innerDiv = document.createElement("div");
     innerDiv.textContent = "Location: ";
     innerDiv.className = "flex justify-center items-center";
@@ -49,21 +58,50 @@ export const MapComponent = (props) => {
     input.id = "hoverLocation-div";
     input.className = "relative w-[100%] bg-transparent text-center";
 
+    // Append the span to the inner div
     innerDiv.appendChild(input);
+
+    // Append the inner div to the hover location div
     hoverLocationDiv.appendChild(innerDiv);
 
+    //Create the Recommendation Button
     const recommendZipBtn = document.createElement("button");
     recommendZipBtn.textContent = "Recommend Zipcode";
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
+    // const filterBtn = document.createElement("button");
+    // filterBtn.textContent = "Filter";
+    // filterBtn.className =
+    //   "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+
+    // Append the button and hover location div to the main control container
     centerControlDiv.append(
       hoverLocationDiv,
+      // filterBtn,
       controlButton,
       recommendZipBtn
     );
 
     return centerControlDiv;
+  }
+
+  function handleDataLayerClick(info) {
+    console.log("info", info);
+    //gonna add a zipcode level data layer later
+    let level, area;
+    if (props.getDataLayerLevel() === "borough") {
+      level = "borough";
+      area = info["Fg"]["boro_name"];
+    } else if (props.getDataLayerLevel() === "neighbourhood") {
+      level = "cdta";
+      area = info["Fg"]["cdta2020"];
+    } else if (props.getDataLayerLevel() === "zipcode") {
+      level = "zipcode";
+      area = null;
+    }
+    console.log("level,area", level, area);
+    return { level, area };
   }
 
   const insertDataLayer = (data, map) => {
@@ -203,6 +241,37 @@ export const MapComponent = (props) => {
   createEffect(() => {
     if (props.mapObject() && props.filteredZipCodes().length > 0) {
       insertDataLayer(zipcode_geojson, props.mapObject());
+    }
+  });
+
+  //change data layer according to zoom
+  createEffect(() => {
+    try {
+      if (props.getDataLayerLevel() === "borough") {
+        //if it has neighbourhood datalayer, clear the data layer
+        if (props.mapObject().data) {
+          // clearDataLayer(props.mapObject());
+          // setNeighbourhood(false);
+        }
+        //if not duplicated, insert the borough data layer
+        // if (!borough()) {
+        // insertDataLayer(borough_geojson, props.mapObject());
+        // setBorough(true);
+        // }
+      } else if (props.getDataLayerLevel() === "neighbourhood") {
+        //datalayer changed to neighbourhood level
+        // clearDataLayer(props.mapObject());
+        // setBorough(false);
+        //if not duplicated, insert the borough data layer
+        // if (!neighbourhood()) {
+        // insertDataLayer(neighbourhood_geojson, props.mapObject());
+        // setNeighbourhood(true);
+        // }
+      } else if (props.getDataLayerLevel() === "zipcode") {
+        // insertDataLayer(zipcode_geojson, props.mapObject());
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
 
