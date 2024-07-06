@@ -159,6 +159,12 @@ const Filter = () => {
     return data ? data.median_household_income : 0;
   };
 
+  const highlightZipCodesOnMap = (zipCodes) => {
+    // Implement map highlighting logic here
+    console.log("Highlighting zip codes on map:", zipCodes);
+    toggleFilter();
+  };
+
   onMount(() => {
     fetchBoroughData();
     fetchRealEstateData();
@@ -284,9 +290,14 @@ const Filter = () => {
             </button>
 
             {filteredZipCodes().length === 0 ? (
-              <span class="text-red-500">Change filters</span>
+              <span class="text-red-500">No matches</span>
             ) : (
-              <span>Filters result in {filteredZipCodes().length} zipcodes</span>
+              <div class="flex items-center gap-2">
+                <span>{filteredZipCodes().length} Zipcodes</span>
+                <button class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300" onClick={() => highlightZipCodesOnMap(filteredZipCodes())}>
+                  See on Map
+                </button>
+              </div>
             )}
           </div>
         </div>
