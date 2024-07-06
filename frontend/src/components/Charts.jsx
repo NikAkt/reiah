@@ -233,6 +233,19 @@ async function fetchMultipleHistoricPrices(zipArray) {
 const LineChart = (props) => {
   const uniqueZipcode = Object.keys(props.historicalRealEstateData);
   const [showDropDown, setShowDropDown] = createSignal(false);
+  //whether the line chart is multiline or not
+  const [clean, setClean] = createSignal(false);
+
+  const handleCleanSubmit = () => {
+    chartInstance.data.datasets = [
+      chartInstance.data.datasets.filter(
+        (obj) => obj.label * 1 == props.getSelectedZip()
+      )[0],
+    ];
+
+    // chartInstance.data.datasets = null;
+    chartInstance.update();
+  };
 
   let ref;
   const handleSubmit = () => {
@@ -257,6 +270,7 @@ const LineChart = (props) => {
     }
     fetchMultipleHistoricPrices(getZipOnCharts()).then((comparedAsyncData) => {
       generateMultiLineChart(comparedAsyncData);
+      setClean(true);
     });
   };
 
@@ -352,6 +366,16 @@ const LineChart = (props) => {
                   class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer"
                   onClick={handleSubmit}
                 />
+                <button
+                  class={
+                    clean()
+                      ? "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-pointe r"
+                      : "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-not-allowed opacity-50"
+                  }
+                  onClick={handleCleanSubmit}
+                >
+                  Clean Comparison
+                </button>
               </div>
 
               <div

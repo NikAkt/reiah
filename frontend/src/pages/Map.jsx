@@ -92,6 +92,7 @@ export const Map = (props) => {
   // );
 
   const [mapObject, setMapObject] = createSignal(null);
+  console.log(props.dataResources);
 
   return (
     <MapView>
@@ -162,13 +163,13 @@ export const Map = (props) => {
                     }
                     fallback={props.dataResources.zipcodes.error}
                   >
-                    <Markers
+                    {/* <Markers
                       zipcodes={props.dataResources.zipcodes()}
                       map={mapObject}
                       getDataLayerLevel={getDataLayerLevel}
                       borough_neighbourhood={props.dataResources.borough_neighbourhood()}
                       realEstateData={props.dataResources.realEstateData()}
-                    />
+                    /> */}
                     ;
                   </Show>;
                 })}
