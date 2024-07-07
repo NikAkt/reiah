@@ -22,6 +22,7 @@ const colors = {
   highlight: "#a888f1", // Purple for hover
   clicked: "#36A2EB", // Blue for clicked
   selected: "#FFA500", // Orange for selected
+  compared: "#FF6384",
 };
 
 export const MapComponent = (props) => {
@@ -56,7 +57,7 @@ export const MapComponent = (props) => {
     // Create the hover location div
     const hoverLocationDiv = document.createElement("div");
     hoverLocationDiv.className =
-      "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
     // Create the inner div and span
     const innerDiv = document.createElement("div");
@@ -129,6 +130,13 @@ export const MapComponent = (props) => {
         return {
           fillColor: colors.selected, // Orange for matched zip codes
           strokeColor: colors.selected,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        };
+      } else if (props.getComparedZip().includes(zipCode)) {
+        return {
+          fillColor: colors.compared, // Orange for matched zip codes
+          strokeColor: colors.compared,
           fillOpacity: 0.7,
           strokeWeight: 2,
         };

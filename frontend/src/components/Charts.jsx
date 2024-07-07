@@ -255,6 +255,12 @@ const LineChart = (props) => {
 
     // chartInstance.data.datasets = null;
     chartInstance.update();
+    props.setCreateMoreDashboardInfo(false);
+    for (let zip of props.getComparedZip()) {
+      const checkbox = document.getElementById(`compareCheckbox-${zip}`);
+      checkbox.checked = false;
+    }
+    props.setComparedZip([]);
   };
 
   let ref;
@@ -283,6 +289,7 @@ const LineChart = (props) => {
       generateMultiLineChart(comparedAsyncData);
       setClean(true);
     });
+    props.setCreateMoreDashboardInfo(true);
   };
 
   const generateMultiLineChart = (comparedAsyncData) => {
@@ -350,58 +357,59 @@ const LineChart = (props) => {
           <div>
             <div class="flex flex-col">
               <div class="flex flex-row gap-2">
-                <input
-                  type="text"
-                  class="rounded-lg text-center w-[40%] relative"
-                  placeholder="Compare To?"
-                  id="compareSearchBar"
-                  onMouseOver={() => {
-                    setShowDropDown(true);
-                  }}
-                  onKeyUp={(event) => {
-                    if (event.key === "Enter") {
-                      if (uniqueZipcode.includes(event.target.value)) {
-                        props.setComparedZip((prev) => [
-                          ...prev,
-                          event.target.value * 1,
-                        ]);
-                        console.log(event.target.value);
+                <Show when={props.getSelectedZip()}>
+                  <input
+                    type="text"
+                    class="rounded-lg text-center w-[40%] relative"
+                    placeholder={`Compare To? ${props.getComparedZip()}`}
+                    id="compareSearchBar"
+                    onMouseOver={() => {
+                      setShowDropDown(true);
+                    }}
+                    onKeyUp={(event) => {
+                      if (event.key === "Enter") {
+                        if (uniqueZipcode.includes(event.target.value)) {
+                          props.setComparedZip((prev) => [
+                            ...prev,
+                            event.target.value * 1,
+                          ]);
 
-                        if (
-                          !document.getElementById(
-                            `compareCheckbox-${event.target.value}`
-                          ).checked
-                        ) {
-                          document.getElementById(
-                            `compareCheckbox-${event.target.value}`
-                          ).checked = true;
+                          if (
+                            !document.getElementById(
+                              `compareCheckbox-${event.target.value}`
+                            ).checked
+                          ) {
+                            document.getElementById(
+                              `compareCheckbox-${event.target.value}`
+                            ).checked = true;
+                          }
+
+                          // event.target.placeholder = [
+                          //   ...new Set(props.getComparedZip()),
+                          // ];
+                          event.target.value = "";
+                        } else {
+                          alert("The zipcode you provided is not included.");
                         }
-
-                        event.target.placeholder = [
-                          ...new Set(props.getComparedZip()),
-                        ];
-                        event.target.value = "";
-                      } else {
-                        alert("The zipcode you provided is not included.");
                       }
+                    }}
+                  />
+                  <input
+                    type="Submit"
+                    class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer px-2"
+                    onClick={handleSubmit}
+                  />
+                  <button
+                    class={
+                      clean()
+                        ? "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-pointe r"
+                        : "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-not-allowed opacity-50"
                     }
-                  }}
-                />
-                <input
-                  type="Submit"
-                  class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer"
-                  onClick={handleSubmit}
-                />
-                <button
-                  class={
-                    clean()
-                      ? "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-pointe r"
-                      : "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-not-allowed opacity-50"
-                  }
-                  onClick={handleCleanSubmit}
-                >
-                  Clean Comparison
-                </button>
+                    onClick={handleCleanSubmit}
+                  >
+                    Clean Comparison
+                  </button>
+                </Show>
               </div>
 
               <div
@@ -425,16 +433,16 @@ const LineChart = (props) => {
                             ...prev,
                             event.target.value * 1,
                           ]);
-                          document.getElementById(
-                            "compareSearchBar"
-                          ).placeholder = props.getComparedZip();
+                          // document.getElementById(
+                          //   "compareSearchBar"
+                          // ).placeholder = props.getComparedZip();
                         } else {
                           props.setComparedZip((prev) =>
                             prev.filter((el) => el != event.target.value * 1)
                           );
-                          document.getElementById(
-                            "compareSearchBar"
-                          ).placeholder = props.getComparedZip();
+                          // document.getElementById(
+                          //   "compareSearchBar"
+                          // ).placeholder = props.getComparedZip();
                         }
                       }}
                     />

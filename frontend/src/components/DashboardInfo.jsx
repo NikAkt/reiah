@@ -138,7 +138,7 @@ export const DashboardInfo = (props) => {
       id={`dashboardDiv-${[props.zip]}`}
     >
       <div class="basic-info">
-        <div class="cursor-pointer bg-teal-500 text-white rounded-sm items-center text-center">
+        <div class="cursor-pointer bg-teal-500 text-white rounded-sm items-center text-center justify-center items-center">
           Basic Information
         </div>
         <div>

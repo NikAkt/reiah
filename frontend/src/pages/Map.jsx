@@ -20,6 +20,8 @@ export const Map = (props) => {
   const [getSelectedZip, setSelectedZip] = createSignal("");
   const [getSelectedBorough, setSelectedBorough] = createSignal("");
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
+  const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
+    createSignal(false);
 
   const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
 
@@ -105,9 +107,7 @@ export const Map = (props) => {
             >
               <Filter
                 realEstateData={props.dataResources.realEstateData()}
-                historicalRealEstateData={
-                  props.dataResources.historicalRealEstateData()
-                }
+                historicalRealEstateData={props.dataResources.historicalRealEstateData()}
                 amenitiesData={props.dataResources.amenitiesData()}
                 setFilteredZipCodes={setFilteredZipCodes} // Pass the setFilteredZipCodes function to Filter
               />
@@ -139,36 +139,42 @@ export const Map = (props) => {
                     getComparedZip={getComparedZip}
                     setComparedZip={setComparedZip}
                     getSelectedZip={getSelectedZip}
-                    historicalRealEstateData={
-                      props.dataResources.historicalRealEstateData()
-                    }
+                    historicalRealEstateData={props.dataResources.historicalRealEstateData()}
+                    setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                   ></LineChart>
                 </Show>
                 <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
                 <div id="compared-dashboardinfo-button" class="flex gap-2">
-                  <For each={getComparedZip()} fallback={<div></div>}>
-                    {(item, index) => (
-                      <button
-                        class="bg-black text-white active:bg-teal-500 rounded-lg"
-                        onClick={(event) => {
-                          const dashboardDiv = document.getElementById(
-                            `dashboardDiv-${item}`
-                          );
-                          if (dashboardDiv) {
-                            dashboardDiv.classList.toggle("hidden");
-                          }
-                          event.target.classList.toggle("opacity-50");
-                        }}
-                      >
-                        {item}
-                      </button>
-                    )}
-                  </For>
+                  {createEffect(() => {
+                    <For each={getComparedZip()} fallback={<div></div>}>
+                      {(item, index) => (
+                        <button
+                          class="bg-black text-white active:bg-teal-500 rounded-lg"
+                          onClick={(event) => {
+                            const dashboardDiv = document.getElementById(
+                              `dashboardDiv-${item}`
+                            );
+                            if (dashboardDiv) {
+                              dashboardDiv.classList.toggle("hidden");
+                            }
+                            event.target.classList.toggle("opacity-50");
+                          }}
+                        >
+                          {item}
+                        </button>
+                      )}
+                    </For>;
+                  })}
                 </div>
                 <DashboardInfo map={mapObject} zip={getSelectedZip()} />
-                <For each={getComparedZip()} fallback={<div></div>}>
-                  {(item, index) => <DashboardInfo map={mapObject} zip={item} />}
-                </For>
+                <Show when={createMoreDashboardInfo()}>
+                  <For each={getComparedZip()} fallback={<div></div>}>
+                    {(item, index) => (
+                      <DashboardInfo map={mapObject} zip={item} />
+                    )}
+                  </For>
+                </Show>
+
                 {createEffect(() => {
                   if (mapObject()) {
                     <Show
