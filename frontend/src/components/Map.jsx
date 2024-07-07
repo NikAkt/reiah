@@ -1,7 +1,6 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
-// import { AirBNBSlider } from "./AirBNBSlider";
 import { zipcode_geojson } from "../data/dataToBeSent";
 
 const loader = new Loader({
@@ -18,6 +17,12 @@ const colorsChartjs = [
   "#9966FF",
   "#C9CBCF",
 ];
+const colors = {
+  default: "#10b981", // Green for default
+  highlight: "#a888f1", // Purple for hover
+  clicked: "#36A2EB", // Blue for clicked
+  selected: "#FFA500", // Orange for selected
+};
 
 export const MapComponent = (props) => {
   let ref;
@@ -28,6 +33,7 @@ export const MapComponent = (props) => {
   const borough_geojson = props.dataResources.borough_geojson();
   const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
   const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
+  const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
 
   function createCenterControl() {
     // Create the main control container
@@ -35,6 +41,7 @@ export const MapComponent = (props) => {
     centerControlDiv.className = !sideBarOpen()
       ? "w-[80%] overflow-x-auto flex"
       : "w-[80%] overflow-x-auto flex flex-col";
+
     // Create the button element
     const controlButton = document.createElement("button");
     controlButton.textContent = sideBarOpen() ? "Hide List" : "Show List";
@@ -65,6 +72,7 @@ export const MapComponent = (props) => {
 
     // Append the inner div to the hover location div
     hoverLocationDiv.appendChild(innerDiv);
+
     //Create the Recommendation Button
     const recommendZipBtn = document.createElement("button");
     recommendZipBtn.textContent = "Recommend Zipcode";
@@ -75,7 +83,6 @@ export const MapComponent = (props) => {
     // filterBtn.textContent = "Filter";
     // filterBtn.className =
     //   "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
-    // Append the button and hover location div to the main control container
 
     // Append the button and hover location div to the main control container
     centerControlDiv.append(
@@ -107,85 +114,114 @@ export const MapComponent = (props) => {
   }
 
   const insertDataLayer = (data, map) => {
-    try {
-      map.data.addGeoJson(data);
-      map.data.setStyle(function (feature) {
-        const geometryType = feature.getGeometry().getType();
-        // let color = colors[0];
-        if (feature.getProperty("isColorful")) {
-          // color = feature.getProperty("color");
+    clearDataLayer(map); // Clear existing layers before adding new ones
+    map.data.addGeoJson(data);
+    map.data.setStyle((feature) => {
+      const zipCode = feature.getProperty("ZIPCODE");
+      if (zipCode === lastClickedZipCode()) {
+        return {
+          fillColor: colors.clicked, // Blue for clicked
+          strokeColor: colors.clicked,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        };
+      } else if (props.filteredZipCodes().includes(parseInt(zipCode))) {
+        return {
+          fillColor: colors.selected, // Orange for matched zip codes
+          strokeColor: colors.selected,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        };
+      } else {
+        return {
+          fillColor: colors.default, // Green for default
+          strokeColor: colors.default,
+          fillOpacity: 0.1,
+          strokeWeight: 2,
+        };
+      }
+    });
+
+    map.data.addListener("click", (event) => {
+      setLastClickedZipCode(event.feature.getProperty("ZIPCODE"));
+      map.data.revertStyle();
+      event.feature.setProperty("isColorful", true);
+      const zipcode = event.feature.getProperty("ZIPCODE");
+      props.zipcodeSetter(zipcode);
+      map.data.setStyle((feature) => {
+        const zipCode = feature.getProperty("ZIPCODE");
+        if (zipCode === lastClickedZipCode()) {
           return {
-            fillColor: colorsChartjs[0],
-            strokeColor: colorsChartjs[0],
+            //Yu Li's version:
+            // fillColor: colorsChartjs[0],
+            // strokeColor: colorsChartjs[0],
+            fillColor: colors.clicked, // Blue for clicked
+            strokeColor: colors.clicked,
             fillOpacity: 0.7,
-            strokeWeight: 4,
-          };
-        }
-        if (geometryType === "MultiPolygon" || geometryType === "Polygon") {
-          return {
-            strokeColor: "#10b981",
-            fillColor: "#10b981",
             strokeWeight: 2,
+          };
+        } else if (props.filteredZipCodes().includes(parseInt(zipCode))) {
+          return {
+            fillColor: colors.selected, // Orange for matched zip codes
+            strokeColor: colors.selected,
+            fillOpacity: 0.7,
+            strokeWeight: 2,
+          };
+        } else {
+          return {
+            fillColor: colors.default, // Green for default
+            strokeColor: colors.default,
             fillOpacity: 0.1,
-            clickable: true,
+            strokeWeight: 2,
           };
         }
       });
-      map.data.addListener("click", function (event) {
-        if (getLastClickedDataLayer()) {
-          getLastClickedDataLayer().setProperty("isColorful", false);
-        }
-        console.log("click event", event.feature);
-        setLastClickedDataLayer(event.feature);
-        map.data.revertStyle();
-        event.feature.setProperty("isColorful", true);
-        // const { level, area } = handleDataLayerClick(event.feature);
+    });
 
-        const zipcode = event.feature.getProperty("ZIPCODE");
+    map.data.addListener("mouseover", (event) => {
+      map.data.revertStyle();
+      map.data.overrideStyle(event.feature, {
+        strokeColor: colors.highlight, // Purple for hover
+        strokeWeight: 3,
+        fillColor: colors.highlight,
+        fillOpacity: 0.7,
+        clickable: true,
+      });
+      document.getElementById("hoverLocation-div").value =
+        event.feature.getProperty("ZIPCODE");
+    });
 
-        // switch (level) {
-        //   case "zipcode":
-        //     props.zipcodeSetter(area);
-        //   case "borough":
-        //     props.boroughSetter(area);
-        //   case "cdta":
-        //     props.neighbourhoodSetter(area);
-        // }
-        props.zipcodeSetter(zipcode);
+    map.data.addListener("mouseout", (event) => {
+      map.data.revertStyle();
+      const zipCode = event.feature.getProperty("ZIPCODE");
+      if (zipCode === lastClickedZipCode()) {
         map.data.overrideStyle(event.feature, {
-          fillColor: colors[0],
-          strokeColor: colors[0],
+          fillColor: colors.clicked, // Blue for clicked
+          strokeColor: colors.clicked,
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
-      });
-
-      map.data.addListener("mouseover", function (event) {
-        map.data.revertStyle();
+      } else if (props.filteredZipCodes().includes(parseInt(zipCode))) {
         map.data.overrideStyle(event.feature, {
-          strokeColor: "#0145ac",
-          strokeWeight: 3,
-          fillColor: "#a888f1",
+          fillColor: colors.selected, // Orange for selected
+          strokeColor: colors.selected,
           fillOpacity: 0.7,
-          clickable: true,
+          strokeWeight: 2,
         });
-        // event.feature.setProperty("isColorful", true);
-        document.getElementById("hoverLocation-div").value =
-          event.feature.getProperty("ZIPCODE");
-      });
-
-      map.data.addListener("mouseout", function (event) {
-        // event.feature.setProperty("isColorful", false);
-        map.data.revertStyle();
-      });
-    } catch (error) {
-      console.log("error in loading data layer", error);
-    }
+      } else {
+        map.data.overrideStyle(event.feature, {
+          fillColor: colors.default, // Green for default
+          strokeColor: colors.default,
+          fillOpacity: 0.1,
+          strokeWeight: 2,
+        });
+      }
+    });
   };
 
   const clearDataLayer = (map) => {
     if (map) {
-      map.data.forEach(function (feature) {
+      map.data.forEach((feature) => {
         map.data.remove(feature);
       });
     }
@@ -193,19 +229,11 @@ export const MapComponent = (props) => {
 
   onMount(() => {
     loader.importLibrary("maps").then(({ Map }) => {
-      props.setMapObject(new Map(ref, mapOptions));
-      // setNeighbourhood(true);
-      // props.mapObject().data.addListener("mouseover", (event) => {
-      //   // Reset the polygons to grey
-      //   props.mapObject().data.forEach(function (feature) {
-      //     props.mapObject().data.overrideStyle(feature, {
-      //       fillColor: store.darkModeOn ? "white" : "black",
-      //       strokeWeight: 1,
-      //     });
-      //   });
-      props.mapObject().addListener("zoom_changed", () => {
-        const mapZoom = props.mapObject().zoom;
-        console.log("mapzoom", mapZoom);
+      const mapInstance = new Map(ref, mapOptions);
+      props.setMapObject(mapInstance);
+
+      mapInstance.addListener("zoom_changed", () => {
+        const mapZoom = mapInstance.zoom;
         if (mapZoom <= 10) {
           props.setDataLayerLevel("borough");
         } else if (mapZoom > 10 && mapZoom <= 13) {
@@ -213,82 +241,51 @@ export const MapComponent = (props) => {
         } else {
           props.setDataLayerLevel("zipcode");
         }
-        // console.log(props.getDataLayerLevel());
       });
 
-      props
-        .mapObject()
-        .controls[google.maps.ControlPosition.TOP_RIGHT].push(
-          createCenterControl()
-        );
-      insertDataLayer(zipcode_geojson, props.mapObject());
-
-      // props.mapObject().data.overrideStyle(event.feature, { fillColor: "red" });
+      mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
+        createCenterControl()
+      );
+      insertDataLayer(zipcode_geojson, mapInstance);
     });
-
-    //automatically update mapZoom signal
-
-    // props.mapObject().data.forEach(function (feature) {
-    //   props.mapObject().data.overrideStyle(feature, {
-    //     fillColor: store.darkModeOn ? "white" : "black",
-    //     strokeWeight: 1,
-    //   });
-    // });
   });
 
-  // props.mapObject().catch((e) => {
-  //   console.error(e);
-  // });
-
   createEffect(() => {
-    if (props.mapObject() !== null) {
-      props.mapObject().setOptions({
-        styles: store.mapStyles[store.darkModeOn ? "dark" : "light"],
-      });
-      props.mapObject().data.forEach(function (feature) {
-        props.mapObject().data.overrideStyle(feature, {
-          fillColor: store.darkModeOn ? "white" : "black",
-          strokeWeight: 1,
-        });
-      });
-
-      props.mapObject().setZoom(sideBarOpen() ? 10 : 11);
-      props.mapObject().setCenter(store.mapOptions.center);
+    if (props.mapObject() && props.filteredZipCodes().length > 0) {
+      insertDataLayer(zipcode_geojson, props.mapObject());
     }
   });
 
   //change data layer according to zoom
-  // createEffect(() => {
-  //   // console.log("neighbourhood signal: ", neighbourhood());
-  //   try {
-  //     if (props.getDataLayerLevel() === "borough") {
-  //       //if it has neighbourhood datalayer, clear the data layer
-  //       if (props.mapObject().data) {
-  //         // clearDataLayer(props.mapObject());
-  //         // setNeighbourhood(false);
-  //       }
-  //       //if not duplicated, insert the borough data layer
-  //       // if (!borough()) {
-  //       // insertDataLayer(borough_geojson, props.mapObject());
-  //       // setBorough(true);
-  //       // }
-  //     } else if (props.getDataLayerLevel() === "neighbourhood") {
-  //       //datalayer changed to neighbourhood level
-  //       // clearDataLayer(props.mapObject());
-  //       // setBorough(false);
-  //       //if not duplicated, insert the borough data layer
-  //       // if (!neighbourhood()) {
-  //       // insertDataLayer(neighbourhood_geojson, props.mapObject());
-  //       // setNeighbourhood(true);
-  //       // }
-  //     } else if (props.getDataLayerLevel() === "zipcode") {
-  //       // insertDataLayer(zipcode_geojson, props.mapObject());
-
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // });
+  createEffect(() => {
+    try {
+      if (props.getDataLayerLevel() === "borough") {
+        //if it has neighbourhood datalayer, clear the data layer
+        if (props.mapObject().data) {
+          // clearDataLayer(props.mapObject());
+          // setNeighbourhood(false);
+        }
+        //if not duplicated, insert the borough data layer
+        // if (!borough()) {
+        // insertDataLayer(borough_geojson, props.mapObject());
+        // setBorough(true);
+        // }
+      } else if (props.getDataLayerLevel() === "neighbourhood") {
+        //datalayer changed to neighbourhood level
+        // clearDataLayer(props.mapObject());
+        // setBorough(false);
+        //if not duplicated, insert the borough data layer
+        // if (!neighbourhood()) {
+        // insertDataLayer(neighbourhood_geojson, props.mapObject());
+        // setNeighbourhood(true);
+        // }
+      } else if (props.getDataLayerLevel() === "zipcode") {
+        // insertDataLayer(zipcode_geojson, props.mapObject());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
   return (
     <>

@@ -16,13 +16,14 @@ import { DashboardInfo } from "../components/DashboardInfo";
 import Filter from "../components/Filter";
 
 export const Map = (props) => {
-  // const [mapZoom, setMapZoom] = createSignal(10);
   const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
   const [getSelectedZip, setSelectedZip] = createSignal("");
   const [getSelectedBorough, setSelectedBorough] = createSignal("");
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
 
-  //limit is 7
+  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
+
+  // Limit is 7
   const [getComparedZip, setComparedZip] = createSignal([]);
 
   async function fetchHistoricPrices(zip) {
@@ -34,7 +35,7 @@ export const Map = (props) => {
     }
     try {
       const data = await response.json();
-      console.log("fetchHistoriPrices", data);
+      console.log("fetchHistoricPrices", data);
       return data;
     } catch (e) {
       throw new Error(e);
@@ -50,7 +51,7 @@ export const Map = (props) => {
     }
     try {
       const data = await response.json();
-      //aggregated by year
+      // Aggregated by year
       let dataAggregatedHistory = {};
       data.forEach((obj) => {
         const history = obj["history"];
@@ -81,16 +82,6 @@ export const Map = (props) => {
     console.log("historicPrices", historicPrices);
   });
 
-  // const [historicBoroughPrices] = createResource(
-  //   () => ["borough", getSelectedBorough()],
-  //   fetchHistoricBNPrices
-  // );
-
-  // const [historicNeighbourhoodPrices] = createResource(
-  //   () => ["neighbourhood", getSelectedNeighbourhood()],
-  //   fetchHistoricBNPrices
-  // );
-
   const [mapObject, setMapObject] = createSignal(null);
   console.log(props.dataResources);
 
@@ -114,8 +105,11 @@ export const Map = (props) => {
             >
               <Filter
                 realEstateData={props.dataResources.realEstateData()}
-                historicalRealEstateData={props.dataResources.historicalRealEstateData()}
+                historicalRealEstateData={
+                  props.dataResources.historicalRealEstateData()
+                }
                 amenitiesData={props.dataResources.amenitiesData()}
+                setFilteredZipCodes={setFilteredZipCodes} // Pass the setFilteredZipCodes function to Filter
               />
             </Show>
             <Show
@@ -137,6 +131,7 @@ export const Map = (props) => {
                 neighbourhoodSetter={setSelectedNeighbourhood}
                 zipcodeSetter={setSelectedZip}
                 getComparedZip={getComparedZip}
+                filteredZipCodes={filteredZipCodes} // Pass the filtered zip codes to MapComponent
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart
@@ -144,10 +139,11 @@ export const Map = (props) => {
                     getComparedZip={getComparedZip}
                     setComparedZip={setComparedZip}
                     getSelectedZip={getSelectedZip}
-                    historicalRealEstateData={props.dataResources.historicalRealEstateData()}
+                    historicalRealEstateData={
+                      props.dataResources.historicalRealEstateData()
+                    }
                   ></LineChart>
                 </Show>
-
                 <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
                 <div id="compared-dashboardinfo-button" class="flex gap-2">
                   <For each={getComparedZip()} fallback={<div></div>}>
@@ -169,36 +165,30 @@ export const Map = (props) => {
                     )}
                   </For>
                 </div>
-                <DashboardInfo
-                  map={mapObject}
-                  // getSelectedZip={getSelectedZip}
-                  zip={getSelectedZip()}
-                />
+                <DashboardInfo map={mapObject} zip={getSelectedZip()} />
                 <For each={getComparedZip()} fallback={<div></div>}>
-                  {(item, index) => (
-                    <DashboardInfo map={mapObject} zip={item} />
-                  )}
+                  {(item, index) => <DashboardInfo map={mapObject} zip={item} />}
                 </For>
                 {createEffect(() => {
                   if (mapObject()) {
-                  }
-                  <Show
-                    when={
-                      !props.dataResources.zipcodes.loading &&
-                      !props.dataResources.borough_neighbourhood.loading &&
-                      !props.dataResources.realEstateData.loading
-                    }
-                    fallback={props.dataResources.zipcodes.error}
-                  >
-                    {/* <Markers
+                    <Show
+                      when={
+                        !props.dataResources.zipcodes.loading &&
+                        !props.dataResources.borough_neighbourhood.loading &&
+                        !props.dataResources.realEstateData.loading
+                      }
+                      fallback={props.dataResources.zipcodes.error}
+                    >
+                      {/* <Markers
                       zipcodes={props.dataResources.zipcodes()}
                       map={mapObject}
                       getDataLayerLevel={getDataLayerLevel}
                       borough_neighbourhood={props.dataResources.borough_neighbourhood()}
                       realEstateData={props.dataResources.realEstateData()}
                     /> */}
-                    ;
-                  </Show>;
+                      ;
+                    </Show>;
+                  }
                 })}
               </MapComponent>
             </Show>
