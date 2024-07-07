@@ -9,7 +9,7 @@ const loader = new Loader({
   version: "weekly",
 });
 
-const colors = [
+const colorsChartjs = [
   "#4BC0C0",
   "#36A2EB",
   "#FF6384",
@@ -115,8 +115,8 @@ export const MapComponent = (props) => {
         if (feature.getProperty("isColorful")) {
           // color = feature.getProperty("color");
           return {
-            fillColor: colors[0],
-            strokeColor: colors[0],
+            fillColor: colorsChartjs[0],
+            strokeColor: colorsChartjs[0],
             fillOpacity: 0.7,
             strokeWeight: 4,
           };
