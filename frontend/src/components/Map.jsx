@@ -133,7 +133,7 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
-      } else if (props.getComparedZip().includes(zipCode)) {
+      } else if (props.getComparedZip().includes(parseInt(zipCode))) {
         return {
           fillColor: colors.compared, // Orange for matched zip codes
           strokeColor: colors.compared,
@@ -175,6 +175,13 @@ export const MapComponent = (props) => {
             fillOpacity: 0.7,
             strokeWeight: 2,
           };
+        } else if (props.getComparedZip().includes(parseInt(zipCode))) {
+          return {
+            fillColor: colors.compared, // Orange for matched zip codes
+            strokeColor: colors.compared,
+            fillOpacity: 0.7,
+            strokeWeight: 2,
+          };
         } else {
           return {
             fillColor: colors.default, // Green for default
@@ -213,6 +220,13 @@ export const MapComponent = (props) => {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.selected, // Orange for selected
           strokeColor: colors.selected,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        });
+      } else if (props.getComparedZip().includes(parseInt(zipCode))) {
+        map.data.overrideStyle(event.feature, {
+          fillColor: colors.compared, // Orange for selected
+          strokeColor: colors.compared,
           fillOpacity: 0.7,
           strokeWeight: 2,
         });

@@ -17,7 +17,7 @@ export const DashboardInfo = (props) => {
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
     version: "weekly",
   });
-  let amenitiesOnMap = [];
+  const [amenitiesOnMap, setAmenitiesOnMap] = createSignal([]);
   const [amenities, setAmenities] = createSignal({});
 
   //   level: borough/neighbourhood/zipcode
@@ -60,9 +60,9 @@ export const DashboardInfo = (props) => {
       .then((data) => {
         if (data) {
           loader.importLibrary("marker").then(({ Marker, Animation }) => {
-            if (amenitiesOnMap) {
-              amenitiesOnMap.forEach((marker) => marker.setMap(null));
-              amenitiesOnMap = [];
+            if (amenitiesOnMap()) {
+              amenitiesOnMap().forEach((marker) => marker.setMap(null));
+              setAmenitiesOnMap([]);
             }
 
             let amenitiesObj = {};
@@ -98,7 +98,7 @@ export const DashboardInfo = (props) => {
                   strokeColor: "#000000", // Circle border color
                 },
               });
-              amenitiesOnMap.push(marker);
+              setAmenitiesOnMap((prev) => [...prev, marker]);
             });
             setAmenities(amenitiesObj);
 
@@ -123,11 +123,13 @@ export const DashboardInfo = (props) => {
     }
   });
 
-  onCleanup((amenitiesOnMap) => {
-    if (amenitiesOnMap) {
-      amenitiesOnMap.forEach((marker) => {
+  onCleanup(() => {
+    const markers = amenitiesOnMap();
+    if (markers) {
+      markers.forEach((marker) => {
         marker.setMap(null);
       });
+      setAmenitiesOnMap([]);
     }
   });
 

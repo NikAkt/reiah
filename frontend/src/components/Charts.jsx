@@ -163,7 +163,7 @@ const BarChart = (props) => {
   createEffect(() => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData()?.[0];
-      console.log("newData", newData);
+      // console.log("newData", newData);
       let transformedData = transformData(newData?.historicprices);
       createBarChart(ref, transformedData, newData.zipcode);
     }
@@ -277,7 +277,7 @@ const LineChart = (props) => {
           //limit is 7
           break;
         }
-        console.log(zipArray[i]);
+        // console.log(zipArray[i]);
         if (i == 0) {
           query += `?zipcode=${zipArray[i]}`;
         } else {
@@ -469,6 +469,8 @@ const DoughnutChart = (props) => {
     doughnutChartInstance = createDoughnutChart(ref2, doughnutChartInstance);
   });
 
+  console.log(props.amenities());
+
   createEffect(() => {
     if (props.amenities()) {
       const labels = Object.keys(props.amenities());
@@ -476,11 +478,11 @@ const DoughnutChart = (props) => {
       for (let key of labels) {
         const obj = props.amenities()[key];
         let value = 0;
-        console.log("obj in creating doughnut", obj);
+        // console.log("obj in creating doughnut", obj);
         for (let desc of Object.keys(obj)) {
           value += obj[desc].length;
         }
-        console.log("value in doughnutchart", value);
+        // console.log("value in doughnutchart", value);
         data.push(value);
       }
       const datasets = {
@@ -491,7 +493,8 @@ const DoughnutChart = (props) => {
         ref2,
         datasets,
         props.zip,
-        doughnutChartInstance
+        doughnutChartInstance,
+        footer
       );
     }
   });
@@ -500,6 +503,16 @@ const DoughnutChart = (props) => {
       doughnutChartInstance.destroy();
     }
   });
+  const footer = (tooltipItems) => {
+    console.log(tooltipItems, props.amenities()[tooltipItems[0].label]);
+    const desc = Object.keys(props.amenities()[tooltipItems[0].label]);
+    let footer_string = "";
+    desc.forEach((d) => {
+      const arr = props.amenities()[tooltipItems[0].label][d];
+      footer_string += `${d}:${arr.length}\n`;
+    });
+    return footer_string;
+  };
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
@@ -509,7 +522,13 @@ const DoughnutChart = (props) => {
   );
 };
 
-const createDoughnutChart = (ctx, dataset, title, doughnutChartInstance) => {
+const createDoughnutChart = (
+  ctx,
+  dataset,
+  title,
+  doughnutChartInstance,
+  footer
+) => {
   if (ctx === undefined) {
     return;
   }
@@ -530,6 +549,11 @@ const createDoughnutChart = (ctx, dataset, title, doughnutChartInstance) => {
         title: {
           display: true,
           text: `Amenities of ZIPCODE ${title}`,
+        },
+        tooltip: {
+          callbacks: {
+            footer: footer,
+          },
         },
       },
     },
