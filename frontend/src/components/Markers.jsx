@@ -90,32 +90,13 @@ const Markers = async (props) => {
     const realEstateData = props.realEstateData;
     //extract all zipcodes from borough_neighbourhood
     let zipcodes = [];
-    for (let key1 of Object.keys(borough_neighbourhood)) {
-      for (let key2 of Object.keys(borough_neighbourhood[key1])) {
-        for (let key3 of Object.keys(borough_neighbourhood[key1][key2])) {
-          zipcodes = [...zipcodes, ...borough_neighbourhood[key1][key2][key3]];
-        }
-      }
-    }
     let borough_zipcode = {};
     let neighbourhood_zipcode = {};
-
-    for (let [key, value] of Object.entries(borough_neighbourhood)) {
-      if (!borough_zipcode.hasOwnProperty(key)) {
-        borough_zipcode[key] = [];
-      }
-      for (let [neighbourhood, zipcodeObj] of Object.entries(value)) {
-        const zipcodeArray = Object.values(zipcodeObj)[0];
-        if (!neighbourhood_zipcode.hasOwnProperty(neighbourhood)) {
-          neighbourhood_zipcode[neighbourhood] = [];
-        }
-        neighbourhood_zipcode[neighbourhood] = [
-          ...neighbourhood_zipcode[neighbourhood],
-          ...zipcodeArray,
-        ];
-        borough_zipcode[key] = [...borough_zipcode[key], ...zipcodeArray];
-      }
-    }
+    borough_neighbourhood.forEach((el) => {
+      zipcodes = [...zipcodes, ...el["zipcodes"]];
+      borough_zipcode[el["borough"]] = el["zipcodes"];
+      neighbourhood_zipcode[el["neighbourhood"]] = el["zipcodes"];
+    });
 
     loader.importLibrary("marker").then(({ Marker }) => {
       loader.importLibrary("core").then(({ LatLng, LatLngBounds }) => {

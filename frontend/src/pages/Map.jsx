@@ -185,13 +185,13 @@ export const Map = (props) => {
                       }
                       fallback={props.dataResources.zipcodes.error}
                     >
-                      {/* <Markers
-                      zipcodes={props.dataResources.zipcodes()}
-                      map={mapObject}
-                      getDataLayerLevel={getDataLayerLevel}
-                      borough_neighbourhood={props.dataResources.borough_neighbourhood()}
-                      realEstateData={props.dataResources.realEstateData()}
-                    /> */}
+                      <Markers
+                        zipcodes={props.dataResources.zipcodes()}
+                        map={mapObject}
+                        getDataLayerLevel={getDataLayerLevel}
+                        borough_neighbourhood={props.dataResources.borough_neighbourhood()}
+                        realEstateData={props.dataResources.realEstateData()}
+                      />
                       ;
                     </Show>;
                   }
