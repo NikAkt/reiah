@@ -41,7 +41,6 @@ func TestGetAmenitiesData(t *testing.T) {
 	err := GetAmenitiesData(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
 
@@ -54,11 +53,8 @@ func TestGetBusinessData(t *testing.T) {
 	err := GetBusinessData(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
-
-// Continue similarly for other handler functions
 
 func TestGetRealEstatePriceData(t *testing.T) {
 	e := setupTestEcho()
@@ -69,7 +65,6 @@ func TestGetRealEstatePriceData(t *testing.T) {
 	err := GetRealEstatePriceData(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
 
@@ -95,7 +90,6 @@ func TestGetNeighbourhoods(t *testing.T) {
 	err := GetNeighbourhoods(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
 
@@ -108,7 +102,6 @@ func TestGetBoroughs(t *testing.T) {
 	err := GetBoroughs(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
 
@@ -121,7 +114,6 @@ func TestGetZipCodes(t *testing.T) {
 	err := GetZipCodes(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
 
@@ -134,6 +126,5 @@ func TestGetZipCodeAreas(t *testing.T) {
 	err := GetZipCodeAreas(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
