@@ -14,6 +14,7 @@ import { BarChart, DoughnutChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import Filter from "../components/Filter";
+import UserMenu from "../components/UserMenu"; 
 
 export const Map = (props) => {
   const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
@@ -84,12 +85,9 @@ export const Map = (props) => {
     console.log("historicPrices", historicPrices);
   });
 
-  // const [mapObject, setMapObject] = createSignal(null);
-  // console.log(props.dataResources);
-
   return (
     <MapView>
-      <div class="h-screen flex">
+      <div class="h-screen flex relative">
         <ErrorBoundary fallback={<ErrorPage />}>
           <Suspense
             fallback={
@@ -202,9 +200,9 @@ export const Map = (props) => {
             </Show>
           </Suspense>
         </ErrorBoundary>
-
         <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>
       </div>
+      <UserMenu /> 
     </MapView>
   );
 };

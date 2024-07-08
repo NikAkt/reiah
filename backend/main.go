@@ -40,6 +40,9 @@ func main() {
 	e.GET("/api/zipcode-areas", handlers.GetZipCodeAreas)
 	e.GET("/api/demographic", handlers.GetDemographicData)
 
+	// Logout route
+	e.GET("/logout", handlers.Logout)
+
 	// Mount the public folder at the publci address for accessing css and static files
 	e.Static("/", "public")
 	e.Logger.Fatal(e.Start("0.0.0.0:8000"))
