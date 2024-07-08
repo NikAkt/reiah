@@ -122,3 +122,28 @@ func TestGetZipCodeAreas(t *testing.T) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 	}
 }
+
+func TestGetDemographicData(t *testing.T) {
+	e := SetupTestEcho()
+	req := httptest.NewRequest(http.MethodGet, "/api/demographic?zipcode=10001&zipcode=10002", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	err := GetDemographicData(c)
+	if assert.NoError(t, err) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		var responseData []DemographicData
+		if assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &responseData)) {
+			// Assert for empty
+			assert.Greater(t, len(responseData), 0)
+
+			// Checks equested zipcodes are returned
+			zipSet := map[int]struct{}{10001: {}, 10002: {}}
+			for _, data := range responseData {
+				_, found := zipSet[data.ZipCode]
+				assert.True(t, found, "ZipCode %d not found in response", data.ZipCode)
+			}
+		}
+	}
+}
