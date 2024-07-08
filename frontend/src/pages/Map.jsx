@@ -84,8 +84,8 @@ export const Map = (props) => {
     console.log("historicPrices", historicPrices);
   });
 
-  const [mapObject, setMapObject] = createSignal(null);
-  console.log(props.dataResources);
+  // const [mapObject, setMapObject] = createSignal(null);
+  // console.log(props.dataResources);
 
   return (
     <MapView>
@@ -124,14 +124,16 @@ export const Map = (props) => {
                 getDataLayerLevel={getDataLayerLevel}
                 setDataLayerLevel={setDataLayerLevel}
                 dataResources={props.dataResources}
-                mapObject={mapObject}
-                setMapObject={setMapObject}
+                mapObject={props.mapObject}
+                setMapObject={props.setMapObject}
                 zipcodeOnCharts={getSelectedZip}
                 boroughSetter={setSelectedBorough}
                 neighbourhoodSetter={setSelectedNeighbourhood}
                 zipcodeSetter={setSelectedZip}
                 getComparedZip={getComparedZip}
                 filteredZipCodes={filteredZipCodes} // Pass the filtered zip codes to MapComponent
+                setFavorite={props.setFavorite}
+                favorite={props.favorite}
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart
@@ -166,17 +168,17 @@ export const Map = (props) => {
                     </For>;
                   })}
                 </div>
-                <DashboardInfo map={mapObject} zip={getSelectedZip()} />
+                <DashboardInfo map={props.mapObject} zip={getSelectedZip()} />
                 <Show when={createMoreDashboardInfo()}>
                   <For each={getComparedZip()} fallback={<div></div>}>
                     {(item, index) => (
-                      <DashboardInfo map={mapObject} zip={item} />
+                      <DashboardInfo map={props.mapObject} zip={item} />
                     )}
                   </For>
                 </Show>
 
                 {createEffect(() => {
-                  if (mapObject()) {
+                  if (props.mapObject()) {
                     <Show
                       when={
                         !props.dataResources.zipcodes.loading &&
@@ -187,7 +189,7 @@ export const Map = (props) => {
                     >
                       <Markers
                         zipcodes={props.dataResources.zipcodes()}
-                        map={mapObject}
+                        map={props.mapObject}
                         getDataLayerLevel={getDataLayerLevel}
                         borough_neighbourhood={props.dataResources.borough_neighbourhood()}
                         realEstateData={props.dataResources.realEstateData()}

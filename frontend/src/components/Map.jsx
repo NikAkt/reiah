@@ -2,6 +2,9 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
 import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
 import { zipcode_geojson } from "../data/dataToBeSent";
+import Favorite from "@suid/icons-material/Favorite";
+import FavoriteBorder from "@suid/icons-material/FavoriteBorder";
+import { Checkbox } from "@suid/material";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -35,6 +38,7 @@ export const MapComponent = (props) => {
   const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
   const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
   const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   function createCenterControl() {
     // Create the main control container
@@ -250,26 +254,39 @@ export const MapComponent = (props) => {
   };
 
   onMount(() => {
-    loader.importLibrary("maps").then(({ Map }) => {
-      const mapInstance = new Map(ref, mapOptions);
-      props.setMapObject(mapInstance);
+    if (!props.mapObject()) {
+      loader.importLibrary("maps").then(({ Map }) => {
+        const mapInstance = new Map(ref, mapOptions);
+        props.setMapObject(mapInstance);
 
-      mapInstance.addListener("zoom_changed", () => {
-        const mapZoom = mapInstance.zoom;
-        if (mapZoom <= 10) {
-          props.setDataLayerLevel("borough");
-        } else if (mapZoom > 10 && mapZoom <= 13) {
-          props.setDataLayerLevel("neighbourhood");
-        } else {
-          props.setDataLayerLevel("zipcode");
-        }
+        mapInstance.addListener("zoom_changed", () => {
+          const mapZoom = mapInstance.zoom;
+          if (mapZoom <= 10) {
+            props.setDataLayerLevel("borough");
+          } else if (mapZoom > 10 && mapZoom <= 13) {
+            props.setDataLayerLevel("neighbourhood");
+          } else {
+            props.setDataLayerLevel("zipcode");
+          }
+        });
+
+        mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
+          createCenterControl()
+        );
+        insertDataLayer(zipcode_geojson, mapInstance);
       });
+    } else {
+      // const existingMap = props.mapObject();
+      // console.log("div for map", existingMap.getDiv());
+      const existingMap = props.mapObject();
+      const existingDiv = existingMap.getDiv();
+      const mapDiv = document.getElementById("map");
+      console.log(existingDiv);
 
-      mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
-        createCenterControl()
-      );
-      insertDataLayer(zipcode_geojson, mapInstance);
-    });
+      if (existingDiv && existingDiv !== mapDiv) {
+        mapDiv.appendChild(existingMap.getDiv()); // Append the map to the new div
+      }
+    }
   });
 
   createEffect(() => {
@@ -334,13 +351,28 @@ export const MapComponent = (props) => {
           </div>
         </Show>
         <Show when={!props.isLoading}>
-          <div>
-            <h1 class="font-medium">
+          <div class="flex">
+            <h1 class="font-medium w-[50%] place-content-between">
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
-            <h2 class="txt-neutral-500 text-sm">click for more information</h2>
-            <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
+            <Show when={props.zipcodeOnCharts()}>
+              <Checkbox
+                {...label}
+                icon={<FavoriteBorder />}
+                checkedIcon={<Favorite />}
+                onClick={() => {
+                  props.setFavorite((prev) => [
+                    ...prev,
+                    props.zipcodeOnCharts(),
+                  ]);
+                  console.log(props.favorite());
+                }}
+              />
+            </Show>
+
+            {/* <h2 class="txt-neutral-500 text-sm">click for more information</h2> */}
           </div>
+          <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
         </Show>
         <div class="gap-6 mt-6 py-3 flex flex-col">
           <div class="flex flex-col">{props.children}</div>

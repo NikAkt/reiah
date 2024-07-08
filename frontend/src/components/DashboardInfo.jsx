@@ -19,6 +19,7 @@ export const DashboardInfo = (props) => {
   });
   const [amenitiesOnMap, setAmenitiesOnMap] = createSignal([]);
   const [amenities, setAmenities] = createSignal({});
+  const [show, setShow] = createSignal(true);
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -109,7 +110,7 @@ export const DashboardInfo = (props) => {
             //       .map((el) => `<li>${el}</li>`)
             //       .join("");
 
-            //     facilityTypeUl.innerHTML += `<li><div class="bg-[#0145ac] rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
+            //     facilityTypeUl.innerHTML += `<li><div class=" rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
             //   });
             // }
           });
@@ -135,70 +136,73 @@ export const DashboardInfo = (props) => {
 
   return (
     <div
-      class="relative w-[100%] grid divide-x-2 grid-cols-2 
+      class="w-[100%] rounded-lg
     h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
       id={`dashboardDiv-${[props.zip]}`}
     >
-      <div class="basic-info">
-        <div class="cursor-pointer bg-teal-500 text-white rounded-sm items-center text-center justify-center items-center">
-          Basic Information
-        </div>
-        <div>
-          <p>LOCATION</p>
-          <p>
-            <span class="bg-[#0145ac] rounded-lg text-white">Borough: </span>
-            <span id={`borough-dashboardInfo-${props.zip}`}></span>
-          </p>
-          <p>
-            <span class="bg-[#0145ac] rounded-lg text-white">
-              Neighbourhood:{" "}
-            </span>
-            <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>
-          </p>
-          <p>
-            <span class="rounded-lg">REAL ESTATE INFORMATION</span>
-          </p>
-          <ul>
-            <li>
-              <span class="bg-[#0145ac] rounded-lg text-white">
-                Average Home Value:{" "}
-              </span>
-              <span id={`avgHomeValue-dashboardInfo-${props.zip}`}></span>
-            </li>
-            <li>
-              <span class="bg-[#0145ac] rounded-lg text-white">
-                Median Home Income:{" "}
-              </span>
-              <span id={`medianHomeIncome-dashboardInfo-${props.zip}`}></span>
-            </li>
-            <li>
-              <span class="bg-[#0145ac] rounded-lg text-white">
-                Median Age:{" "}
-              </span>
-              <span id={`medianAge-dashboardInfo-${props.zip}`}></span>
-            </li>
-          </ul>
-        </div>
+      <div
+        class="col-span-2 text-center justify-center 
+        cursor-pointer
+        bg-teal-500 text-white"
+        onClick={() => {
+          setShow((prev) => !prev);
+        }}
+      >
+        ZIPCODE {props.zip}
       </div>
-
-      <div class="w-full h-[40vh]">
-        <Suspense>
-          <Show when={amenities()}>
-            <p class="bg-teal-500 rounded-sm text-white text-center">
-              Amenities:{" "}
+      <div
+        class={`flex flex-row relative 
+      w-[100%] place-content-stretch
+       ${show() ? "" : "hidden"}`}
+      >
+        <div class="basic-info w-[50%]">
+          <div
+            class="bg-teal-500 text-white items-center
+           text-center justify-center items-center"
+          >
+            Basic Information
+          </div>
+          <div class="grid grid-cols-1 divide-y gap-2">
+            <p>LOCATION</p>
+            <div class="w-[100%] px-2 ">
+              <div>Borough: </div>
+              <div id={`borough-dashboardInfo-${props.zip}`}></div>
+            </div>
+            <p>
+              <span>Neighbourhood: </span>
+              <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>
             </p>
+            <p>
+              <span class="rounded-lg">REAL ESTATE INFORMATION</span>
+            </p>
+            <div class="grid grid-cols-1 divide-y">
+              <div>
+                <span>Average Home Value: </span>
+                <span id={`avgHomeValue-dashboardInfo-${props.zip}`}></span>
+              </div>
+              <div>
+                <span>Median Home Income: </span>
+                <span id={`medianHomeIncome-dashboardInfo-${props.zip}`}></span>
+              </div>
+              <div>
+                <span>Median Age: </span>
+                <span id={`medianAge-dashboardInfo-${props.zip}`}></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-[50%] h-[40vh]">
+          <Suspense>
+            <Show when={amenities()}>
+              <p class="bg-teal-500 text-white text-center">Amenities:</p>
 
-            <DoughnutChart
-              amenities={amenities}
-              zip={props.zip}
-              ref={(el) => (ref = el)}
-            />
-          </Show>
-        </Suspense>
-      </div>
-      <div>
-        <div>
-          <ul id="facility_type_ul"></ul>
+              <DoughnutChart
+                amenities={amenities}
+                zip={props.zip}
+                ref={(el) => (ref = el)}
+              />
+            </Show>
+          </Suspense>
         </div>
       </div>
     </div>

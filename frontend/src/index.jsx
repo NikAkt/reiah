@@ -1,6 +1,12 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import { Show, Suspense, createResource } from "solid-js";
+import {
+  Show,
+  Suspense,
+  createEffect,
+  createResource,
+  createSignal,
+} from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { Dashboard } from "./pages/Dashboard";
 import { Home } from "./pages/Home";
@@ -50,6 +56,9 @@ const fetchData = async ([json_path, storeKey]) => {
     return null;
   }
 };
+
+const [favorite, setFavorite] = createSignal([]);
+const [mapObject, setMapObject] = createSignal(null);
 
 const [realEstateData] = createResource(
   ["http://localhost:8000/api/prices"],
@@ -102,23 +111,34 @@ function App(props) {
   );
 }
 
+createEffect(() => {
+  console.log(favorite());
+});
+
 render(
   () => (
     <Router root={App}>
-      <Route
-        path="/"
-        component={() => <Home dataResources={dataResources} />}
-      />
+      <Route path="/" component={() => <Home />} />
       <Route path="/settings" component={Settings} />
-      <Route path="/dashboard" component={Dashboard} />
+      <Route
+        path="/dashboard"
+        component={() => <Dashboard favorite={favorite} />}
+      />
       <Route
         path="/map"
-        component={() => <Map dataResources={dataResources} />}
+        component={() => (
+          <Map
+            dataResources={dataResources}
+            setFavorite={setFavorite}
+            favorite={favorite}
+            mapObject={mapObject}
+            setMapObject={setMapObject}
+          />
+        )}
       />
       <Route path="/register" component={RegisterPage} />
-      <Route path="/login" component={LoginPage} />
+      <Route path="/login" component={LoginPage} setFavorite={favorite} />
       <Route path="/error" component={ErrorPage} />
-      <Route path="/develop" component={DoughnutChart} />
     </Router>
   ),
   root
