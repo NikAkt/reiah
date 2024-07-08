@@ -393,3 +393,50 @@ func GetZipCodes(c echo.Context) error {
 func GetZipCodeAreas(c echo.Context) error {
 	return c.File("public/data/nyc_zipcode_areas.geojson")
 }
+
+// ---------------------------------------
+type DemographicData struct {
+	ZipCode               int     `json:"ZipCode"`
+	Year                  int     `json:"Year"`
+	Population            int     `json:"Population"`
+	PopulationDensity     int     `json:"PopulationDensity"`
+	MedianHouseholdIncome float64 `json:"MedianHouseholdIncome"`
+	TravelTimeToWork      float64 `json:"travel_time_to_work_in_minutes"`
+	Male                  int     `json:"Male"`
+	Female                int     `json:"Female"`
+	White                 int     `json:"white"`
+	Black                 int     `json:"black"`
+	Asian                 int     `json:"asian"`
+	AmericanIndian        int     `json:"american_indian"`
+	PacificIslander       float64 `json:"pacific_islander"`
+	Other                 int     `json:"other"`
+	FamilyHousehold       int     `json:"FamilyHousehold"`
+	SingleHousehold       int     `json:"SingleHousehold"`
+	DiversityIndex        float64 `json:"DiversityIndex"`
+}
+
+type GetDemographicQueryParams struct {
+	Zipcodes []int `query:"zipcode"`
+}
+
+func filterDemographicGetRequest(a []DemographicData, f *GetDemographicQueryParams) []DemographicData {
+	var filtered []DemographicData
+	zipSet := make(map[int]struct{})
+	for _, zip := range f.Zipcodes {
+		zipSet[zip] = struct{}{}
+	}
+
+	for _, data := range a {
+		if len(zipSet) > 0 {
+			if _, found := zipSet[data.ZipCode]; !found {
+				continue
+			}
+		}
+		filtered = append(filtered, data)
+	}
+	return filtered
+}
+
+func GetDemographicData(c echo.Context) error {
+	return GenericGetDataHandler(c, "public/data/demographic_data.json", filterDemographicGetRequest)
+}
