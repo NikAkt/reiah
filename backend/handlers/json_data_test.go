@@ -1,28 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
-
-func setupTestEcho() *echo.Echo {
-	e := echo.New()
-	e.Static("/", "public")
-	e.GET("/api/amenities", GetAmenitiesData)
-	e.GET("/api/businesses", GetBusinessData)
-	e.GET("/api/prices", GetRealEstatePriceData)
-	e.GET("/api/historic-prices", GetHistoricRealEstatePriceData)
-	e.GET("/api/neighbourhoods", GetNeighbourhoods)
-	e.GET("/api/borough", GetBoroughs)
-	e.GET("/api/zipcodes", GetZipCodes)
-	e.GET("/api/zipcode-areas", GetZipCodeAreas)
-	return e
-}
 
 func TestMain(m *testing.M) {
 	// Set working directory to project root
@@ -33,7 +19,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetAmenitiesData(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/amenities", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -45,19 +31,28 @@ func TestGetAmenitiesData(t *testing.T) {
 }
 
 func TestGetBusinessData(t *testing.T) {
-	e := setupTestEcho()
-	req := httptest.NewRequest(http.MethodGet, "/api/businesses", nil)
+	e := SetupTestEcho()
+	req := httptest.NewRequest(http.MethodGet, "/api/businesses?taxizone=3", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
 	err := GetBusinessData(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
+
+		var responseData []Businesses
+		if assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &responseData)) {
+			// Asserts that it is not empty
+			if assert.Greater(t, len(responseData), 0) {
+				// Checks the first element
+				assert.Equal(t, 3, responseData[0].TaxiZone)
+			}
+		}
 	}
 }
 
 func TestGetRealEstatePriceData(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/prices", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -69,7 +64,7 @@ func TestGetRealEstatePriceData(t *testing.T) {
 }
 
 func TestGetHistoricRealEstatePriceData(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/historic-prices", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -77,12 +72,11 @@ func TestGetHistoricRealEstatePriceData(t *testing.T) {
 	err := GetHistoricRealEstatePriceData(c)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
-		// Add more assertions based on the expected response
 	}
 }
 
 func TestGetNeighbourhoods(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/neighbourhoods", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -94,7 +88,7 @@ func TestGetNeighbourhoods(t *testing.T) {
 }
 
 func TestGetBoroughs(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/borough", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -106,7 +100,7 @@ func TestGetBoroughs(t *testing.T) {
 }
 
 func TestGetZipCodes(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/zipcodes", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -118,7 +112,7 @@ func TestGetZipCodes(t *testing.T) {
 }
 
 func TestGetZipCodeAreas(t *testing.T) {
-	e := setupTestEcho()
+	e := SetupTestEcho()
 	req := httptest.NewRequest(http.MethodGet, "/api/zipcode-areas", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
