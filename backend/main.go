@@ -39,11 +39,14 @@ func main() {
 	e.GET("/api/borough-neighbourhood", handlers.GetBoroughNeighbourhood)
 	e.GET("/api/zipcode-areas", handlers.GetZipCodeAreas)
 	e.GET("/api/demographic", handlers.GetDemographicData)
+	e.GET("/api/property-data", handlers.GetPropertyData)
 
-	// Logout route
-	e.GET("/logout", handlers.Logout)
+	// AUTH
+	e.GET("/api/logout", handlers.Logout) //TODO: SHOULD BE A POST REQUEST
+	e.POST("/api/login", handlers.HandleLoginAttempt)
+	e.POST("/api/register", handlers.HandleRegisterAttempt)
 
 	// Mount the public folder at the publci address for accessing css and static files
-	e.Static("/", "public")
+	e.Static("/api", "public")
 	e.Logger.Fatal(e.Start("0.0.0.0:8000"))
 }

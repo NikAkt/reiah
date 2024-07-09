@@ -14,7 +14,7 @@ const UserMenu = () => {
       </div>
       {showMenu() && (
         <div class="menu">
-          <a href="http://localhost:8000/logout" class="logout-button">
+          <a href="http://localhost:8000/api/logout" class="logout-button">
             Logout
           </a>
         </div>

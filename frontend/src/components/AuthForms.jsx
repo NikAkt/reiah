@@ -1,5 +1,30 @@
 import { FormInput, InputGroup } from "./Forms";
 
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch(form.action, {
+      method: form.method,
+      body: formData,
+    });
+
+    if (response.ok) {
+      // Handle successful response
+      console.log('Login successful');
+      // Optionally, you can redirect or update the UI
+    } else {
+      // Handle error response
+      console.error('Login failed');
+    }
+  } catch (error) {
+    // Handle network errors
+    console.error('Network error', error);
+  }
+};
+
 /**
  * @typedef {Object} LoginFormValues
  * @property {string} Username - The username.
@@ -27,13 +52,14 @@ function validateLoginFormValues(values) {
  * @param {boolean} props.invalid - Indicates whether the login attempt was invalid.
  */
 function LoginForm({ invalid }) {
+
   return (
     <div class="w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Login</h1>
         <p>Login and get back to work</p>
       </div>
-      <form hx-boost="true" action="/login" method="POST">
+      <form onSubmit={handleSubmit} action="/api/login" method="POST">
         <FormInput
           Type="text"
           Label="Username"
@@ -113,7 +139,7 @@ function RegisterForm() {
         <h1 class="text-3xl">Create An Account</h1>
         <p>Sign up and get started</p>
       </div>
-      <form hx-boost="true" action="/register" method="POST">
+      <form onSubmit={handleSubmit} action="/api/register" method="POST">
         <FormInput
           Type="text"
           Label="Username"
