@@ -1,6 +1,13 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
-import { createEffect, createSignal, onMount, Show, Suspense } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+  Show,
+  Suspense,
+} from "solid-js";
 import { zipcode_geojson } from "../data/dataToBeSent";
 import Favorite from "@suid/icons-material/Favorite";
 import FavoriteBorder from "@suid/icons-material/FavoriteBorder";
@@ -54,9 +61,10 @@ export const MapComponent = (props) => {
     controlButton.type = "button";
     controlButton.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
-    controlButton.addEventListener("click", () =>
-      setSidebarOpen(!sideBarOpen())
-    );
+    controlButton.addEventListener("click", () => {
+      console.log("click!");
+      setSidebarOpen(!sideBarOpen());
+    });
 
     // Create the hover location div
     const hoverLocationDiv = document.createElement("div");
@@ -254,39 +262,43 @@ export const MapComponent = (props) => {
   };
 
   onMount(() => {
-    if (!props.mapObject()) {
-      loader.importLibrary("maps").then(({ Map }) => {
-        const mapInstance = new Map(ref, mapOptions);
-        props.setMapObject(mapInstance);
+    // if (!props.mapObject()) {
+    loader.importLibrary("maps").then(({ Map }) => {
+      const mapInstance = new Map(ref, mapOptions);
+      props.setMapObject(mapInstance);
 
-        mapInstance.addListener("zoom_changed", () => {
-          const mapZoom = mapInstance.zoom;
-          if (mapZoom <= 10) {
-            props.setDataLayerLevel("borough");
-          } else if (mapZoom > 10 && mapZoom <= 13) {
-            props.setDataLayerLevel("neighbourhood");
-          } else {
-            props.setDataLayerLevel("zipcode");
-          }
-        });
-
-        mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
-          createCenterControl()
-        );
-        insertDataLayer(zipcode_geojson, mapInstance);
+      mapInstance.addListener("zoom_changed", () => {
+        const mapZoom = mapInstance.zoom;
+        if (mapZoom <= 10) {
+          props.setDataLayerLevel("borough");
+        } else if (mapZoom > 10 && mapZoom <= 13) {
+          props.setDataLayerLevel("neighbourhood");
+        } else {
+          props.setDataLayerLevel("zipcode");
+        }
       });
-    } else {
-      // const existingMap = props.mapObject();
-      // console.log("div for map", existingMap.getDiv());
-      const existingMap = props.mapObject();
-      const existingDiv = existingMap.getDiv();
-      const mapDiv = document.getElementById("map");
-      console.log(existingDiv);
 
-      if (existingDiv && existingDiv !== mapDiv) {
-        mapDiv.appendChild(existingMap.getDiv()); // Append the map to the new div
-      }
-    }
+      mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
+        createCenterControl()
+      );
+      insertDataLayer(zipcode_geojson, mapInstance);
+    });
+    // } else {
+    //   // const existingMap = props.mapObject();
+    //   // console.log("div for map", existingMap.getDiv());
+    //   const existingMap = props.mapObject();
+    //   const existingDiv = existingMap.getDiv();
+    //   const mapDiv = document.getElementById("map");
+
+    //   // if (existingDiv && existingDiv !== mapDiv) {
+    //   mapDiv.appendChild(existingMap.getDiv()); // Append the map to the new div
+    //   console.log("existingMapconttols", existingMap.controls);
+    //   existingMap.controls[google.maps.ControlPosition.TOP_RIGHT].clear();
+    //   existingMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(
+    //     createCenterControl()
+    //   );
+    //   // }
+    // }
   });
 
   createEffect(() => {
@@ -323,6 +335,13 @@ export const MapComponent = (props) => {
       }
     } catch (error) {
       console.log(error);
+    }
+  });
+
+  onCleanup(() => {
+    const mapDiv = document.getElementById("map");
+    if (mapDiv) {
+      mapDiv.innerHTML = ""; // Clear the div to prevent duplicate maps
     }
   });
 

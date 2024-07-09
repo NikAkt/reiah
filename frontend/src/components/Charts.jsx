@@ -471,50 +471,27 @@ const DoughnutChart = (props) => {
   });
 
   createEffect(() => {
-    if (props.amenities()) {
-      const labels = Object.keys(props.amenities());
-      let data = [];
-      for (let key of labels) {
-        const obj = props.amenities()[key];
-        let value = 0;
-        // console.log("obj in creating doughnut", obj);
-        for (let desc of Object.keys(obj)) {
-          value += obj[desc].length;
-        }
-        // console.log("value in doughnutchart", value);
-        data.push(value);
-      }
-      const datasets = {
-        labels,
-        datasets: [{ label: "Amenities DoughnutChart", data }],
-      };
+    if (props.datasets) {
+      console.log(props.datasets);
       doughnutChartInstance = createDoughnutChart(
         ref2,
-        datasets,
+        props.datasets,
         props.zip,
-        doughnutChartInstance,
-        footer
+        doughnutChartInstance
+        // footer
       );
     }
   });
+
   onCleanup(() => {
     if (doughnutChartInstance) {
       doughnutChartInstance.destroy();
     }
   });
-  const footer = (tooltipItems) => {
-    const desc = Object.keys(props.amenities()[tooltipItems[0].label]);
-    let footer_string = "";
-    desc.forEach((d) => {
-      const arr = props.amenities()[tooltipItems[0].label][d];
-      footer_string += `${d}:${arr.length}\n`;
-    });
-    return footer_string;
-  };
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      <div>{props.amenities}</div>
+      {/* <div>{props.amenities}</div> */}
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
   );
@@ -550,8 +527,8 @@ const createDoughnutChart = (
   ctx,
   dataset,
   title,
-  doughnutChartInstance,
-  footer
+  doughnutChartInstance
+  // footer = null
 ) => {
   if (ctx === undefined) {
     return;
@@ -574,11 +551,11 @@ const createDoughnutChart = (
           display: true,
           text: `Amenities of ZIPCODE ${title}`,
         },
-        tooltip: {
-          callbacks: {
-            footer: footer,
-          },
-        },
+        // tooltip: {
+        //   callbacks: {
+        //     footer: footer,
+        //   },
+        // },
       },
     },
   });

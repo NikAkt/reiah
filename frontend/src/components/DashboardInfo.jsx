@@ -20,6 +20,8 @@ export const DashboardInfo = (props) => {
   const [amenitiesOnMap, setAmenitiesOnMap] = createSignal([]);
   const [amenities, setAmenities] = createSignal({});
   const [show, setShow] = createSignal(true);
+  const [race, setRace] = createSignal({});
+  const [gender, setGender] = createSignal({});
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -39,27 +41,71 @@ export const DashboardInfo = (props) => {
         }
       });
 
-    fetch(`http://localhost:8000/api/prices?${level}=${area}`)
+    fetch(`http://localhost:8000/api/demographic?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
         //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
         if (data) {
           const obj = data[0];
-          document.getElementById(
-            `avgHomeValue-dashboardInfo-${props.zip}`
-          ).innerText = obj["avg_home_value"];
-          document.getElementById(
-            `medianHomeIncome-dashboardInfo-${props.zip}`
-          ).innerText = obj["median_household_income"];
-          document.getElementById(
-            `medianAge-dashboardInfo-${props.zip}`
-          ).innerText = obj["median_age"];
+
+          const gender_labels = ["Male", "Female"];
+          const gender_data = [obj["Male"], obj["Female"]];
+
+          const gender_datasets = {
+            labels: gender_labels,
+            datasets: [{ label: "Gender", data: gender_data }],
+          };
+          setGender(gender_datasets);
+
+          const race_labels = [
+            "white",
+            "asian",
+            "black",
+            "pacific_islander",
+            "american_indian",
+            "other",
+          ];
+          const race_data = [
+            obj["white"],
+            obj["asian"],
+            obj["black"],
+            obj["pacific_islander"],
+            obj["american_indian"],
+            obj["other"],
+          ];
+
+          const race_datasets = {
+            labels: race_labels,
+            datasets: [{ label: "Diversity", data: race_data }],
+          };
+
+          setRace(race_datasets);
+          console.log("demographic info", obj);
+          document.getElementById("familyHousehold").innerText =
+            obj["FamilyHousehold"];
+          document.getElementById("medianHouseholdIncome").innerText =
+            obj["MedianHouseholdIncome"];
+          document.getElementById("singleHousehold").innerText =
+            obj["SingleHousehold"];
+          document.getElementById("population").innerText = obj["Population"];
+          document.getElementById("populationDensity").innerText =
+            obj["PopulationDensity"];
+
+          // document.getElementById(
+          //   `avgHomeValue-dashboardInfo-${props.zip}`
+          // ).innerText = obj["avg_home_value"];
+          // document.getElementById(
+          //   `medianHomeIncome-dashboardInfo-${props.zip}`
+          // ).innerText = obj["median_household_income"];
+          // document.getElementById(
+          //   `medianAge-dashboardInfo-${props.zip}`
+          // ).innerText = obj["median_age"];
         }
       });
     fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
       .then((response) => response.json())
-      .then((data) => {
-        if (data) {
+      .then((data_amenities) => {
+        if (data_amenities) {
           loader.importLibrary("marker").then(({ Marker, Animation }) => {
             if (amenitiesOnMap()) {
               amenitiesOnMap().forEach((marker) => marker.setMap(null));
@@ -68,7 +114,9 @@ export const DashboardInfo = (props) => {
 
             let amenitiesObj = {};
 
-            data[area].forEach((el) => {
+            console.log("amenities", data_amenities);
+
+            data_amenities[area].forEach((el) => {
               if (!amenitiesObj.hasOwnProperty(el["FACILITY_T"])) {
                 amenitiesObj[el["FACILITY_T"]] = {};
               }
@@ -101,7 +149,36 @@ export const DashboardInfo = (props) => {
               });
               setAmenitiesOnMap((prev) => [...prev, marker]);
             });
-            setAmenities(amenitiesObj);
+
+            const labels = Object.keys(amenitiesObj);
+            let data = [];
+            for (let key of labels) {
+              const obj = amenitiesObj[key];
+              let value = 0;
+              // console.log("obj in creating doughnut", obj);
+              for (let desc of Object.keys(obj)) {
+                value += obj[desc].length;
+              }
+              // console.log("value in doughnutchart", value);
+              data.push(value);
+            }
+            const datasets = {
+              labels,
+              datasets: [{ label: "Amenities DoughnutChart", data }],
+            };
+            console.log("amenities", datasets);
+
+            setAmenities(datasets);
+
+            const footer = (tooltipItems) => {
+              const desc = Object.keys(amenities()[tooltipItems[0].label]);
+              let footer_string = "";
+              desc.forEach((d) => {
+                const arr = amenities()[tooltipItems[0].label][d];
+                footer_string += `${d}:${arr.length}\n`;
+              });
+              return footer_string;
+            };
 
             // const facilityTypeUl = document.getElementById("facility_type_ul");
             // if (facilityTypeUl) {
@@ -172,11 +249,12 @@ export const DashboardInfo = (props) => {
               <span>Neighbourhood: </span>
               <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>
             </p>
-            <p>
-              <span class="rounded-lg">REAL ESTATE INFORMATION</span>
-            </p>
+
             <div class="grid grid-cols-1 divide-y">
               <div>
+                <span class="rounded-lg">DEMOGRAPHIC INFORMATION</span>
+              </div>
+              {/* <div>
                 <span>Average Home Value: </span>
                 <span id={`avgHomeValue-dashboardInfo-${props.zip}`}></span>
               </div>
@@ -187,7 +265,55 @@ export const DashboardInfo = (props) => {
               <div>
                 <span>Median Age: </span>
                 <span id={`medianAge-dashboardInfo-${props.zip}`}></span>
+              </div> */}
+              <div>
+                Family Household <span id="familyHousehold"></span>
               </div>
+              <div>
+                Single Household <span id="singleHousehold"></span>
+              </div>
+              <div>
+                Population <span id="population"></span>
+              </div>
+              <div>
+                Population Density <span id="populationDensity"></span>
+              </div>
+              <div>
+                Median Household Income <span id="medianHouseholdIncome"></span>
+              </div>
+              <div>
+                <div>
+                  <Suspense>
+                    <Show when={gender()}>
+                      <p class="bg-teal-500 text-white text-center">Gender:</p>
+
+                      <DoughnutChart
+                        datasets={gender()}
+                        zip={props.zip}
+                        ref={(el) => (ref = el)}
+                      />
+                    </Show>
+                  </Suspense>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <Suspense>
+                    <Show when={race()}>
+                      <p class="bg-teal-500 text-white text-center">
+                        Race Diveristy
+                      </p>
+
+                      <DoughnutChart
+                        datasets={race()}
+                        zip={props.zip}
+                        ref={(el) => (ref = el)}
+                      />
+                    </Show>
+                  </Suspense>
+                </div>
+              </div>
+              <div></div>
             </div>
           </div>
         </div>
@@ -197,7 +323,7 @@ export const DashboardInfo = (props) => {
               <p class="bg-teal-500 text-white text-center">Amenities:</p>
 
               <DoughnutChart
-                amenities={amenities}
+                datasets={amenities()}
                 zip={props.zip}
                 ref={(el) => (ref = el)}
               />
