@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"database/sql"
+	"net/http"
 	"os"
 	"time"
 
@@ -8,6 +10,7 @@ import (
 
 	"github.com/denartha10/SummerProjectGOTH/db"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -99,4 +102,103 @@ func CustomAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.Set("userid", user.Id)
 		return next(c)
 	}
+}
+
+// A login form struct for when submiting the login
+type CreateUserSessionForm struct {
+	Username string `form:"username"`
+	Password string `form:"password"`
+}
+
+// HandleLoginAttempt handles user login attempts.
+func HandleLoginAttempt(c echo.Context) error {
+	var userSessionForm CreateUserSessionForm
+	if err := c.Bind(&userSessionForm); err != nil { // bind the form values to the user session form struct
+		return err
+	}
+
+	// verify the user exists
+	var userEntry db.User // create a user variable
+	query := "SELECT * FROM users WHERE username=?"
+	if err := db.DB.Get(&userEntry, query, userSessionForm.Username); err != nil {
+		// If there is no matching entry, return the login page with invalid flag as true
+		return c.JSON(401, "no user exists with that name")
+	}
+
+	// verify the user password is correct
+	if !VerifyPassword(userSessionForm.Password, userEntry.PasswordHash) {
+		return c.JSON(401, "Incorrect password")
+	}
+
+	// generate a token from the user
+	token, err := GenerateJWTToken(&userEntry)
+	if err != nil {
+		return c.JSON(500, "Failed to generate session")
+	}
+
+	cookie := &http.Cookie{
+		Name:     "session",
+		Value:    token, // TODO: need to create an actual session value and put it in the database too
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	c.SetCookie(cookie) // Sets a cookie in the response with the auth
+	return c.String(200, "Welcome")
+}
+
+type CreateUserForm struct {
+	Username             string `form:"username"`
+	Name                 string `form:"name"`
+	Surname              string `form:"surname"`
+	Email                string `form:"email"`
+	Password             string `form:"password"`
+	PasswordConfirmation string `form:"confirmpassword"`
+}
+
+// HandleRegisterAttempt handles the registration post of the register form.
+// TODO: Improve error handling in this function.
+func HandleRegisterAttempt(c echo.Context) error {
+	var userRegistration CreateUserForm
+	if err := c.Bind(&userRegistration); err != nil {
+		return c.JSON(400, "UNauthorised")
+	}
+
+	if userRegistration.Password != userRegistration.PasswordConfirmation {
+		return c.JSON(400, "UNauthorised")
+	}
+
+	hashedPassword, err := HashPassword(userRegistration.Password)
+	if err != nil {
+		return c.JSON(400, "UNauthorised")
+	}
+
+	var user db.User
+	query := "SELECT * FROM users WHERE username=? OR email=?"
+	if err := db.DB.Get(&user, query, userRegistration.Username, userRegistration.Email); err != nil {
+		if err == sql.ErrNoRows {
+			newUser := db.User{
+				Id:           uuid.New().String(),
+				Username:     userRegistration.Username,
+				Name:         userRegistration.Name,
+				Email:        userRegistration.Email,
+				Surname:      userRegistration.Surname,
+				PasswordHash: hashedPassword,
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
+			}
+
+			_, err := db.DB.NamedExec("INSERT INTO users (id, username, name, email, surname, password_hash, created_at, updated_at) VALUES (:id, :username, :name, :email, :surname, :password_hash, :created_at, :updated_at)", &newUser)
+			if err != nil {
+				return c.JSON(400, "UNauthorised")
+			}
+		} else {
+			return c.JSON(400, "UNauthorised")
+		}
+	} else {
+		return c.JSON(400, "UNauthorised")
+	}
+
+	return c.JSON(200, "You registered :)")
 }
