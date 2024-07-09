@@ -440,3 +440,71 @@ func filterDemographicGetRequest(a []DemographicData, f *GetDemographicQueryPara
 func GetDemographicData(c echo.Context) error {
 	return GenericGetDataHandler(c, "public/data/demographic_data.json", filterDemographicGetRequest)
 }
+
+// Property data
+
+type Property struct {
+	Price        float64 `json:"PRICE"`
+	Beds         float64 `json:"BEDS"`
+	Type         string  `json:"TYPE"`
+	Bath         float64 `json:"BATH"`
+	PropertySqft float64 `json:"PROPERTYSQFT"`
+	Latitude     float64 `json:"LATITUDE"`
+	Longitude    float64 `json:"LONGITUDE"`
+	Zipcode      string  `json:"ZIPCODE"`
+	Borough      string  `json:"BOROUGH"`
+	Neighborhood string  `json:"NEIGHBORHOOD"`
+	PricePerSqft float64 `json:"PRICE_PER_SQFT"`
+}
+
+type GetPropertyQueryParams struct {
+	Zipcode      string  `query:"zipcode"`
+	Beds         float64 `query:"beds"`
+	Type         string  `query:"type"`
+	MinPrice     float64 `query:"minprice"`
+	MaxPrice     float64 `query:"maxprice"`
+	Neighborhood string  `query:"neighborhood"`
+}
+
+func filterPropertyGetRequest(a map[string][]Property, f *GetPropertyQueryParams) []Property {
+	var filtered []Property
+	for zipcode, properties := range a {
+		for _, property := range properties {
+			property.Zipcode = zipcode
+
+			if f.Zipcode != "" && property.Zipcode != f.Zipcode {
+				continue
+			}
+			if f.Beds != 0 && property.Beds != f.Beds {
+				continue
+			}
+			if f.Type != "" && property.Type != f.Type {
+				continue
+			}
+			if f.MinPrice != 0 && property.Price < f.MinPrice {
+				continue
+			}
+			if f.MaxPrice != 0 && property.Price > f.MaxPrice {
+				continue
+			}
+			if f.Neighborhood != "" && property.Neighborhood != f.Neighborhood {
+				continue
+			}
+			filtered = append(filtered, property)
+		}
+	}
+	return filtered
+}
+
+func GetPropertyData(c echo.Context) error {
+	filterFunc := func(a map[string][]Property, f *GetPropertyQueryParams) map[string][]Property {
+		filtered := filterPropertyGetRequest(a, f)
+		filteredMap := make(map[string][]Property)
+		for _, property := range filtered {
+			zipcode := property.Zipcode
+			filteredMap[zipcode] = append(filteredMap[zipcode], property)
+		}
+		return filteredMap
+	}
+	return GenericGetDataHandler[GetPropertyQueryParams, map[string][]Property](c, "public/data/property_data_by_zipcode.json", filterFunc)
+}

@@ -39,6 +39,7 @@ func main() {
 	e.GET("/api/borough-neighbourhood", handlers.GetBoroughNeighbourhood)
 	e.GET("/api/zipcode-areas", handlers.GetZipCodeAreas)
 	e.GET("/api/demographic", handlers.GetDemographicData)
+	e.GET("/api/property-data", handlers.GetPropertyData)
 
 	// Logout route
 	e.GET("/logout", handlers.Logout)
