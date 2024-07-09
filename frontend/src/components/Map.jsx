@@ -371,7 +371,10 @@ export const MapComponent = (props) => {
         </Show>
         <Show when={!props.isLoading}>
           <div class="flex">
-            <h1 class="font-medium w-[50%] place-content-between">
+            <h1
+              class="font-medium w-[50%] place-content-between"
+              id="dashboard_top"
+            >
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
             <Show when={props.zipcodeOnCharts()}>
@@ -379,12 +382,17 @@ export const MapComponent = (props) => {
                 {...label}
                 icon={<FavoriteBorder />}
                 checkedIcon={<Favorite />}
-                onClick={() => {
-                  props.setFavorite((prev) => [
-                    ...prev,
-                    props.zipcodeOnCharts(),
-                  ]);
-                  console.log(props.favorite());
+                checked={
+                  props.favorite().includes(props.zipcodeOnCharts())
+                    ? true
+                    : false
+                }
+                onChange={() => {
+                  props.setFavorite((prev) =>
+                    prev.includes(props.zipcodeOnCharts())
+                      ? prev.filter((el) => el !== props.zipcodeOnCharts())
+                      : [...prev, props.zipcodeOnCharts()]
+                  );
                 }}
               />
             </Show>

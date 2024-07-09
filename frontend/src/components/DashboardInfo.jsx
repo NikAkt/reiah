@@ -221,11 +221,14 @@ export const DashboardInfo = (props) => {
         class="col-span-2 text-center justify-center 
         cursor-pointer
         bg-teal-500 text-white"
+        id="dashboard-title"
         onClick={() => {
           setShow((prev) => !prev);
         }}
       >
-        ZIPCODE {props.zip}
+        ZIPCODE {props.zip},
+        <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>,
+        <span id={`borough-dashboardInfo-${props.zip}`}></span>
       </div>
       <div
         class={`flex flex-row relative 
@@ -237,23 +240,10 @@ export const DashboardInfo = (props) => {
             class="bg-teal-500 text-white items-center
            text-center justify-center items-center"
           >
-            Basic Information
+            Demographic Information
           </div>
           <div class="grid grid-cols-1 divide-y gap-2">
-            <p>LOCATION</p>
-            <div class="w-[100%] px-2 ">
-              <div>Borough: </div>
-              <div id={`borough-dashboardInfo-${props.zip}`}></div>
-            </div>
-            <p>
-              <span>Neighbourhood: </span>
-              <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>
-            </p>
-
             <div class="grid grid-cols-1 divide-y">
-              <div>
-                <span class="rounded-lg">DEMOGRAPHIC INFORMATION</span>
-              </div>
               {/* <div>
                 <span>Average Home Value: </span>
                 <span id={`avgHomeValue-dashboardInfo-${props.zip}`}></span>
@@ -327,6 +317,7 @@ export const DashboardInfo = (props) => {
                 zip={props.zip}
                 ref={(el) => (ref = el)}
               />
+              <div></div>
             </Show>
           </Suspense>
         </div>

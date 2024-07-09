@@ -420,37 +420,52 @@ const LineChart = (props) => {
                 onMouseOver={() => setShowDropDown(true)}
                 onMouseLeave={() => setShowDropDown(false)}
               >
-                {uniqueZipcode.map((zip) => (
-                  <div key={zip} class="p-2">
-                    <input
-                      type="checkbox"
-                      id={`compareCheckbox-${zip}`}
-                      value={zip}
-                      class="accent-teal-500 compareCheckbox"
-                      onClick={(event) => {
-                        if (event.target.checked) {
-                          props.setComparedZip((prev) => [
-                            ...prev,
-                            event.target.value * 1,
-                          ]);
-                          // document.getElementById(
-                          //   "compareSearchBar"
-                          // ).placeholder = props.getComparedZip();
-                        } else {
-                          props.setComparedZip((prev) =>
-                            prev.filter((el) => el != event.target.value * 1)
-                          );
-                          // document.getElementById(
-                          //   "compareSearchBar"
-                          // ).placeholder = props.getComparedZip();
-                        }
-                      }}
-                    />
-                    <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
-                      {zip}
-                    </label>
+                <div>
+                  <div>Zipcode</div>
+                  <div>
+                    {uniqueZipcode.map((zip) => (
+                      <div key={zip} class="p-2">
+                        <input
+                          type="checkbox"
+                          id={`compareCheckbox-${zip}`}
+                          value={zip}
+                          class="accent-teal-500 compareCheckbox"
+                          onClick={(event) => {
+                            if (event.target.checked) {
+                              props.setComparedZip((prev) => [
+                                ...prev,
+                                event.target.value * 1,
+                              ]);
+                              // document.getElementById(
+                              //   "compareSearchBar"
+                              // ).placeholder = props.getComparedZip();
+                            } else {
+                              props.setComparedZip((prev) =>
+                                prev.filter(
+                                  (el) => el != event.target.value * 1
+                                )
+                              );
+                              // document.getElementById(
+                              //   "compareSearchBar"
+                              // ).placeholder = props.getComparedZip();
+                            }
+                          }}
+                        />
+                        <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
+                          {zip}
+                        </label>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                <div>
+                  <div>Neighbourhood</div>
+                  <div></div>
+                </div>
+                <div>
+                  <div>Borough</div>
+                  <div></div>
+                </div>
               </div>
             </div>
           </div>
@@ -543,14 +558,18 @@ const createDoughnutChart = (
     data: dataset,
     options: {
       responsive: true,
+      onClick: function (event, elements) {
+        console.log(event);
+        // Actions to be performed
+      },
       plugins: {
         legend: {
           position: "top",
         },
-        title: {
-          display: true,
-          text: `Amenities of ZIPCODE ${title}`,
-        },
+        // title: {
+        //   display: true,
+        //   text: `Amenities of ZIPCODE ${title}`,
+        // },
         // tooltip: {
         //   callbacks: {
         //     footer: footer,
