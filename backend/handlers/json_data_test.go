@@ -146,4 +146,26 @@ func TestGetDemographicData(t *testing.T) {
 			}
 		}
 	}
+
+}
+
+func TestGetPropertyData(t *testing.T) {
+	e := SetupTestEcho()
+	req := httptest.NewRequest(http.MethodGet, "/api/property-data?zipcode=10001&beds=2&type=Condo&minprice=1000000&maxprice=2000000&neighborhood=Chelsea%20-%20Clinton", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	err := GetPropertyData(c)
+	if assert.NoError(t, err) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		var responseData map[string][]Property
+		if assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &responseData)) {
+			// assert it contains data
+			assert.Greater(t, len(responseData), 0)
+
+			// assert expected zipcode
+			assert.Contains(t, responseData, "10001")
+		}
+	}
 }

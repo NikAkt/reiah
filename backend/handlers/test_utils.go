@@ -15,5 +15,6 @@ func SetupTestEcho() *echo.Echo {
 	e.GET("/api/borough", GetBoroughs)
 	e.GET("/api/zipcodes", GetZipCodes)
 	e.GET("/api/zipcode-areas", GetZipCodeAreas)
+	e.GET("/api/property-data", GetPropertyData)
 	return e
 }
