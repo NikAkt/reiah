@@ -1,7 +1,14 @@
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
+import { useContext } from "solid-js";
+import { CustomUserContext } from "../routeguard";
 
 const UserMenu = () => {
   const [showMenu, setShowMenu] = createSignal(false);
+  const { user, logOut } = useContext(CustomUserContext)
+
+  createEffect(() => {
+    console.log(user())
+  })
 
   const handleToggleMenu = () => {
     setShowMenu(!showMenu());
@@ -10,13 +17,13 @@ const UserMenu = () => {
   return (
     <div class="user-menu">
       <div class="username" onClick={handleToggleMenu}>
-        Username
+        {user()?.email}
       </div>
       {showMenu() && (
         <div class="menu">
-          <a href="http://localhost:8000/api/logout" class="logout-button">
+          <button onclick={logOut} class="logout-button">
             Logout
-          </a>
+          </button>
         </div>
       )}
     </div>

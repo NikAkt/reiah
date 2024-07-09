@@ -3,8 +3,6 @@ import { SortableGroup } from "../components/SortableWrapper";
 import { Navbar } from "../components/Navbar";
 import { setStore, store } from "../data/stores";
 import { Show } from "solid-js";
-import Filter from "../components/Filter";
-import PropertySwitchBtn from "../components/PropertySwitchBtn";
 
 const links = [
   { Href: "/map", Title: "Map" },

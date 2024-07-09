@@ -1,57 +1,33 @@
-import { FormInput, InputGroup } from "./Forms";
+import { useSupabase } from 'solid-supabase'
+import { useNavigate } from '@solidjs/router';
+import { createSignal } from 'solid-js';
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
-
-  try {
-    const response = await fetch(form.action, {
-      method: form.method,
-      body: formData,
-    });
-
-    if (response.ok) {
-      // Handle successful response
-      console.log('Login successful');
-      // Optionally, you can redirect or update the UI
-    } else {
-      // Handle error response
-      console.error('Login failed');
-    }
-  } catch (error) {
-    // Handle network errors
-    console.error('Network error', error);
-  }
-};
-
-/**
- * @typedef {Object} LoginFormValues
- * @property {string} Username - The username.
- * @property {string} Password - The password.
- */
-
-/**
- * Validates the login form values.
- * @param {LoginFormValues} values - The login form values to validate.
- * @returns {Object<string, string>} - An object containing validation error messages.
- */
-function validateLoginFormValues(values) {
-  const errors = {};
-  if (values.Username.length < 1) {
-    errors.username = "Username must be greater than one character";
-  }
-  if (values.Password.length < 1) {
-    errors.password = "Password must be greater than one character";
-  }
-  return errors;
+function InputGroup(props) {
+  return <div class={`grid gap-2 grid-cols-${props.gs}`}>{props.children}</div>;
 }
 
-/**
- * @param {Object} props
- * @param {boolean} props.invalid - Indicates whether the login attempt was invalid.
- */
-function LoginForm({ invalid }) {
+function LoginForm(props) {
+  const supabase = useSupabase();
+  const [email, setEmail] = createSignal()
+  const [password, setPassword] = createSignal()
+  const navigate = useNavigate();
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email(),
+      password: password()
+    })
+
+    if (error) {
+      console.error(error.message);
+      return
+    }
+
+    if (data) {
+      navigate("/dashboard")
+    }
+  }
 
   return (
     <div class="w-2/3">
@@ -59,25 +35,27 @@ function LoginForm({ invalid }) {
         <h1 class="text-3xl">Login</h1>
         <p>Login and get back to work</p>
       </div>
-      <form onSubmit={handleSubmit} action="/api/login" method="POST">
-        <FormInput
-          Type="text"
-          Label="Username"
-          Placeholder="example1234"
-          Name="username"
-          Error=""
-          Disabled={false}
-          Value=""
-        />
-        <FormInput
-          Type="password"
-          Label="Password"
-          Placeholder="********"
-          Name="password"
-          Error=""
-          Disabled={false}
-          Value=""
-        />
+      <form onSubmit={(e) => loginUser(e)}>
+        <label class="block mb-4">
+          <span class="text-accent text-sm mb-2 dark:text-slate-200">
+            Email
+          </span>
+          <input
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            placeholder="example1234"
+            onchange={(e) => setEmail(e.target.value)}
+          />
+        </label>
+        <label class="block mb-4">
+          <span class="text-accent text-sm mb-2 dark:text-slate-200">
+            Password
+          </span>
+          <input
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            placeholder="example1234"
+            onchange={(e) => setPassword(e.target.value)}
+          />
+        </label>
         <div class="mt-6">
           <button
             class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -87,11 +65,6 @@ function LoginForm({ invalid }) {
           </button>
         </div>
       </form>
-      {invalid && (
-        <div class="mt-6 text-red-400 dark:text-red-200">
-          Failed to login invalid credentials
-        </div>
-      )}
       <p class="mt-6 dark:text-white">
         New to reiah?{" "}
         <a
@@ -106,98 +79,92 @@ function LoginForm({ invalid }) {
   );
 }
 
-/**
- * @typedef {Object} RegisterFormValues
- * @property {string} Username - The username.
- * @property {string} Password - The password.
- */
+function RegisterForm(props) {
+  const supabase = useSupabase();
+  const [username, setUsername] = createSignal()
+  const [email, setEmail] = createSignal()
+  const [password, setPassword] = createSignal()
+  const [name, setName] = createSignal()
+  const [surname, setSurname] = createSignal()
+  const navigate = useNavigate("/login");
 
-/**
- * Validates the register form values.
- * @param {RegisterFormValues} values - The register form values to validate.
- * @returns {Object<string, string>} - An object containing validation error messages.
- */
-function validateRegisterFormValues(values) {
-  const errors = {};
-  if (values.Username.length < 1) {
-    errors.username = "Username must be greater than one character";
-  }
-  if (values.Password.length < 1) {
-    errors.password = "Password must be greater than one character";
-  }
-  return errors;
-}
+  const registerUser = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signUp({
+      password: password(),
+      email: email(),
+      options: {
+        data: {
+          username: username(),
+          name: name(),
+          surname: surname()
+        }
+      }
+    })
 
-/**
- * @param {Object} props
- * @param {boolean} props.success - Indicates whether the registration was successful.
- */
-function RegisterForm() {
+    if (error) {
+      console.error(error.message);
+      return
+    }
+
+    if (data) {
+      navigate("/login")
+    }
+  }
   return (
     <div class="w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Create An Account</h1>
         <p>Sign up and get started</p>
       </div>
-      <form onSubmit={handleSubmit} action="/api/register" method="POST">
-        <FormInput
-          Type="text"
-          Label="Username"
-          Placeholder="example1234"
-          Name="username"
-          Error=""
-          Disabled={false}
-          Value=""
-        />
+      <form onSubmit={(e) => registerUser(e)}>
+        <label class="block mb-4">
+          <span class="text-accent text-sm mb-2 dark:text-slate-200">
+            Username
+          </span>
+          <input
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            onchange={(e) => setUsername(e.target.value)}
+          />
+        </label>
         <InputGroup gs={2}>
-          <FormInput
-            Type="text"
-            Label="Name"
-            Placeholder="john"
-            Name="name"
-            Error=""
-            Disabled={false}
-            Value=""
-          />
-          <FormInput
-            Type="text"
-            Label="Surname"
-            Placeholder="doe"
-            Name="surname"
-            Error=""
-            Disabled={false}
-            Value=""
-          />
+          <label class="block mb-4">
+            <span class="text-accent text-sm mb-2 dark:text-slate-200">
+              Name
+            </span>
+            <input
+              class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+              onchange={(e) => setName(e.target.value)}
+            />
+          </label>
+          <label class="block mb-4">
+            <span class="text-accent text-sm mb-2 dark:text-slate-200">
+              Surname
+            </span>
+            <input
+              class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+              onchange={(e) => setSurname(e.target.value)}
+            />
+          </label>
         </InputGroup>
-        <FormInput
-          Type="email"
-          Label="Email"
-          Placeholder="johndoe@example.com"
-          Name="email"
-          Error=""
-          Disabled={false}
-          Value=""
-        />
-        <InputGroup gs={2}>
-          <FormInput
-            Type="password"
-            Label="Password"
-            Placeholder="********"
-            Name="password"
-            Error=""
-            Disabled={false}
-            Value=""
+        <label class="block mb-4">
+          <span class="text-accent text-sm mb-2 dark:text-slate-200">
+            Email
+          </span>
+          <input
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            onchange={(e) => setEmail(e.target.value)}
           />
-          <FormInput
-            Type="password"
-            Label="Confirm Password"
-            Placeholder="********"
-            Name="confirmpassword"
-            Error=""
-            Disabled={false}
-            Value=""
+        </label>
+        <label class="block mb-4">
+          <span class="text-accent text-sm mb-2 dark:text-slate-200">
+            Password
+          </span>
+          <input
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""} rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            onchange={(e) => setPassword(e.target.value)}
           />
-        </InputGroup>
+        </label>
         <div class="mt-6">
           <button
             class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -222,8 +189,6 @@ function RegisterForm() {
 }
 
 export {
-  validateLoginFormValues,
   LoginForm,
-  validateRegisterFormValues,
   RegisterForm,
 };
