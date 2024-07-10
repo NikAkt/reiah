@@ -1,22 +1,20 @@
 /* @refresh reload */
+import "./index.css";
 import { render } from "solid-js/web";
-import {
-  Show,
-  Suspense,
-  createEffect,
-  createResource,
-  createSignal,
-} from "solid-js";
+import { createEffect, createResource, createSignal, } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { Dashboard } from "./pages/Dashboard";
 import { Home } from "./pages/Home";
 import { Settings } from "./pages/Settings";
 import { Map } from "./pages/Map";
 import { RegisterPage, LoginPage } from "./pages/Auth";
-import "./index.css";
-import { store, setStore } from "./data/stores";
+import { store } from "./data/stores";
 import { ErrorPage } from "./components/ErrorPage";
-import { DoughnutChart } from "./components/Charts";
+import { createClient } from "@supabase/supabase-js";
+import { SupabaseProvider } from "solid-supabase";
+import { RouteGuard } from "./routeguard";
+
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY);
 
 const root = document.getElementById("root");
 
@@ -26,20 +24,6 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-// const fetchGeoJSON = async () => {
-//   const response = await fetch("http://localhost:8000/api/neighbourhoods");
-//   if (!response.ok) {
-//     throw new Error("Could not fetch GeoJSON: " + response.statusText);
-//   }
-//   try {
-//     const geojson = await response.json();
-//     return geojson;
-//   } catch (e) {
-//     console.error(e);
-//   }
-// };
-
-// fetchGeoJSON().then((v) => setStore({ ...store, geoJSONData: v }));
 //TODO: I am sure there is a more solid way of doing this with createResource but this worked
 const fetchData = async ([json_path, storeKey]) => {
   const response = await fetch(json_path, {
@@ -123,29 +107,33 @@ createEffect(() => {
 
 render(
   () => (
-    <Router root={App}>
-      <Route path="/" component={() => <Home />} />
-      <Route path="/settings" component={Settings} />
-      <Route
-        path="/dashboard"
-        component={() => <Dashboard favorite={favorite} />}
-      />
-      <Route
-        path="/map"
-        component={() => (
-          <Map
-            dataResources={dataResources}
-            setFavorite={setFavorite}
-            favorite={favorite}
-            mapObject={mapObject}
-            setMapObject={setMapObject}
+    <SupabaseProvider client={supabase}>
+      <Router root={App}>
+        <Route path="/register" component={RegisterPage} />
+        <Route path="/login" component={LoginPage} setFavorite={favorite} />
+        <Route path="/error" component={ErrorPage} />
+        <Route path="/" component={() => <Home />} />
+        <Route component={RouteGuard}>
+          <Route
+            path="/map"
+            component={() => (
+              <Map
+                dataResources={dataResources}
+                setFavorite={setFavorite}
+                favorite={favorite}
+                mapObject={mapObject}
+                setMapObject={setMapObject}
+              />
+            )}
           />
-        )}
-      />
-      <Route path="/register" component={RegisterPage} />
-      <Route path="/login" component={LoginPage} setFavorite={favorite} />
-      <Route path="/error" component={ErrorPage} />
-    </Router>
+          <Route path="/settings" component={Settings} />
+          <Route
+            path="/dashboard"
+            component={() => <Dashboard favorite={favorite} />}
+          />
+        </Route>
+      </Router>
+    </SupabaseProvider>
   ),
   root
 );
