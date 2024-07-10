@@ -95,6 +95,11 @@ const [borough_neighbourhood] = createResource(
   fetchData
 );
 
+const [zipcode_geojson] = createResource(
+  ["http://localhost:8000/api/zipcode-areas"],
+  fetchData
+);
+
 const dataResources = {
   realEstateData,
   historicalRealEstateData,
@@ -103,6 +108,7 @@ const dataResources = {
   borough_geojson,
   neighbourhood_geojson,
   borough_neighbourhood,
+  zipcode_geojson,
 };
 
 function App(props) {

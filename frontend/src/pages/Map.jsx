@@ -14,7 +14,8 @@ import { BarChart, DoughnutChart, LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import Filter from "../components/Filter";
-import UserMenu from "../components/UserMenu"; 
+import UserMenu from "../components/UserMenu";
+import RecommendZipcode from "../components/RecommendZipcode";
 
 export const Map = (props) => {
   const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
@@ -40,37 +41,6 @@ export const Map = (props) => {
       const data = await response.json();
       console.log("fetchHistoricPrices", data);
       return data;
-    } catch (e) {
-      throw new Error(e);
-    }
-  }
-
-  async function fetchHistoricBNPrices([level, area]) {
-    const response = await fetch(
-      `http://localhost:8000/api/historic-prices?${level}=${area}`
-    );
-    if (!response.ok) {
-      return [];
-    }
-    try {
-      const data = await response.json();
-      // Aggregated by year
-      let dataAggregatedHistory = {};
-      data.forEach((obj) => {
-        const history = obj["history"];
-        Object.keys(history).forEach((key) => {
-          if (!dataAggregatedHistory.hasOwnProperty(key)) {
-            dataAggregatedHistory[key] = 0;
-          }
-          dataAggregatedHistory[key] += history[key];
-        });
-      });
-      Object.keys(dataAggregatedHistory).forEach((key) => {
-        dataAggregatedHistory[key] /= data.length;
-      });
-      const dataAggregated = [{ level: area, history: dataAggregatedHistory }];
-      console.log("dataAggregated", dataAggregated);
-      return dataAggregated;
     } catch (e) {
       throw new Error(e);
     }
@@ -115,7 +85,8 @@ export const Map = (props) => {
                 props.dataResources.borough_geojson() &&
                 props.dataResources.neighbourhood_geojson() &&
                 props.dataResources.zipcodes() &&
-                props.dataResources.historicalRealEstateData()
+                props.dataResources.historicalRealEstateData() &&
+                props.dataResources.zipcode_geojson()
               }
             >
               <MapComponent
@@ -198,11 +169,12 @@ export const Map = (props) => {
                 })}
               </MapComponent>
             </Show>
+            <RecommendZipcode />
           </Suspense>
         </ErrorBoundary>
         <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>
       </div>
-      <UserMenu /> 
+      <UserMenu />
     </MapView>
   );
 };

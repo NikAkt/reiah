@@ -3,16 +3,6 @@ import { createStore } from "solid-js/store";
 const [store, setStore] = createStore({
   sidebarOpen: false,
   darkModeOn: false,
-  borough_geojson: "",
-  neighbourhood_geojson: "",
-  realEstateData: "",
-  historicalRealEstateData: "",
-  businessData: "",
-  us_zipcodes: "",
-  amenitiesData: "",
-  zipcode_markers: [],
-  borough_markers: [],
-  neighbourhood_markers: [],
   mapOptions: {
     center: { lat: 40.75, lng: -73.971321 },
     zoom: 11,

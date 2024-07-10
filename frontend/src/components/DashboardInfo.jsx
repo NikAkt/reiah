@@ -9,7 +9,7 @@ import {
   Suspense,
 } from "solid-js";
 import Markers from "./Markers";
-import { DoughnutChart } from "./Charts";
+import { DoughnutChart, BarChart } from "./Charts";
 
 export const DashboardInfo = (props) => {
   let ref;
@@ -22,6 +22,11 @@ export const DashboardInfo = (props) => {
   const [show, setShow] = createSignal(true);
   const [race, setRace] = createSignal({});
   const [gender, setGender] = createSignal({});
+  const [getPropertyPrice, setPropertyPrice] = createSignal([]);
+  const [getPricePerSQFT, setPricePerSQFT] = createSignal([]);
+  const [getPropertySQFT, setPropertySQFT] = createSignal([]);
+  const [propertyOnMap, setPropertyOnMap] = createSignal([]);
+  const [getPropertyType, setPropertyType] = createSignal([]);
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -38,6 +43,73 @@ export const DashboardInfo = (props) => {
           document.getElementById(
             `neighbourhood-dashboardInfo-${props.zip}`
           ).innerText = obj["neighbourhood"];
+        }
+      });
+
+    fetch(`http://localhost:8000/api/property-data?${level}=${area}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          let type = {};
+          let price = [];
+          let price_per_sqft = [];
+          let propertysqft = [];
+          let labels = [];
+          data[area].forEach((el) => {
+            if (!type.hasOwnProperty(el.TYPE)) {
+              type[el.TYPE] = 0;
+            }
+            type[el.TYPE] += 1;
+            price.push(el.PRICE);
+            price_per_sqft.push(el["PRICE_PER_SQFT"]);
+            propertysqft.push(el["PROPERTYSQFT"]);
+            labels.push(el["TYPE"]);
+          });
+
+          const priceDatasets = {
+            labels: labels,
+            datasets: [{ label: "Property Price", data: price }],
+          };
+          setPropertyPrice(priceDatasets);
+
+          const datasets = {
+            labels: Object.keys(type),
+            datasets: [{ label: "Property Type", data: Object.values(type) }],
+          };
+          setPropertyType(datasets);
+
+          loader.importLibrary("marker").then(({ Marker, Animation }) => {
+            if (propertyOnMap()) {
+              propertyOnMap().forEach((marker) => marker.setMap(null));
+              setPropertyOnMap([]);
+            }
+
+            data[area].forEach((el) => {
+              const marker = new Marker({
+                position: { lat: el["LATITUDE"], lng: el["LONGITUDE"] },
+                level: "property-data",
+                type: el["TYPE"],
+                bath: el["BATH"],
+                beds: el["BEDS"],
+                price: el["PRICE"],
+                propertysqf: ["PROPERTYSQFT"],
+                animation: Animation.DROP,
+                map: props.map(),
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: 5, // Adjust the scale to make the circle smaller or larger
+                  fillColor: "#ffffff", // Circle color
+                  fillOpacity: 1, // Circle fill opacity
+                  strokeWeight: 1, // Circle border thickness
+                  strokeColor: "#000000", // Circle border color
+                },
+              });
+              setPropertyOnMap((prev) => [...prev, marker]);
+              marker.addListener("click", () => {
+                console.log("marker got clicked");
+              });
+            });
+          });
         }
       });
 
@@ -80,7 +152,6 @@ export const DashboardInfo = (props) => {
           };
 
           setRace(race_datasets);
-          console.log("demographic info", obj);
           document.getElementById("familyHousehold").innerText =
             obj["FamilyHousehold"];
           document.getElementById("medianHouseholdIncome").innerText =
@@ -113,8 +184,6 @@ export const DashboardInfo = (props) => {
             }
 
             let amenitiesObj = {};
-
-            console.log("amenities", data_amenities);
 
             data_amenities[area].forEach((el) => {
               if (!amenitiesObj.hasOwnProperty(el["FACILITY_T"])) {
@@ -166,7 +235,6 @@ export const DashboardInfo = (props) => {
               labels,
               datasets: [{ label: "Amenities DoughnutChart", data }],
             };
-            console.log("amenities", datasets);
 
             setAmenities(datasets);
 
@@ -231,95 +299,103 @@ export const DashboardInfo = (props) => {
         <span id={`borough-dashboardInfo-${props.zip}`}></span>
       </div>
       <div
-        class={`flex flex-row relative 
+        class={`flex flex-col relative 
       w-[100%] place-content-stretch
        ${show() ? "" : "hidden"}`}
       >
-        <div class="basic-info w-[50%]">
-          <div
-            class="bg-teal-500 text-white items-center
-           text-center justify-center items-center"
-          >
-            Demographic Information
-          </div>
-          <div class="grid grid-cols-1 divide-y gap-2">
-            <div class="grid grid-cols-1 divide-y">
-              {/* <div>
-                <span>Average Home Value: </span>
-                <span id={`avgHomeValue-dashboardInfo-${props.zip}`}></span>
-              </div>
+        <div>
+          <div>Real Estate Information</div>
+          <div class="flex flex-row">
+            {" "}
+            <Show when={getPropertyPrice()}>
+              {/* <BarChart datasets={getPropertyPrice()} /> */}
+              <div>Visualisation of Price Information</div>
+            </Show>
+            <Show when={getPropertyType()}>
               <div>
-                <span>Median Home Income: </span>
-                <span id={`medianHomeIncome-dashboardInfo-${props.zip}`}></span>
+                <DoughnutChart datasets={getPropertyType()} />
               </div>
-              <div>
-                <span>Median Age: </span>
-                <span id={`medianAge-dashboardInfo-${props.zip}`}></span>
-              </div> */}
-              <div>
-                Family Household <span id="familyHousehold"></span>
-              </div>
-              <div>
-                Single Household <span id="singleHousehold"></span>
-              </div>
-              <div>
-                Population <span id="population"></span>
-              </div>
-              <div>
-                Population Density <span id="populationDensity"></span>
-              </div>
-              <div>
-                Median Household Income <span id="medianHouseholdIncome"></span>
-              </div>
-              <div>
-                <div>
-                  <Suspense>
-                    <Show when={gender()}>
-                      <p class="bg-teal-500 text-white text-center">Gender:</p>
-
-                      <DoughnutChart
-                        datasets={gender()}
-                        zip={props.zip}
-                        ref={(el) => (ref = el)}
-                      />
-                    </Show>
-                  </Suspense>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <Suspense>
-                    <Show when={race()}>
-                      <p class="bg-teal-500 text-white text-center">
-                        Race Diveristy
-                      </p>
-
-                      <DoughnutChart
-                        datasets={race()}
-                        zip={props.zip}
-                        ref={(el) => (ref = el)}
-                      />
-                    </Show>
-                  </Suspense>
-                </div>
-              </div>
-              <div></div>
-            </div>
+            </Show>
           </div>
         </div>
-        <div class="w-[50%] h-[40vh]">
-          <Suspense>
-            <Show when={amenities()}>
-              <p class="bg-teal-500 text-white text-center">Amenities:</p>
+        <div>
+          <div class="basic-info ">
+            <div
+              class="bg-teal-500 text-white items-center
+           text-center justify-center items-center"
+            >
+              Demographic Information
+            </div>
+            <div class="grid grid-cols-1 divide-y gap-2">
+              <div class="grid grid-cols-1 divide-y">
+                <div>
+                  Family Household <span id="familyHousehold"></span>
+                </div>
+                <div>
+                  Single Household <span id="singleHousehold"></span>
+                </div>
+                <div>
+                  Population <span id="population"></span>
+                </div>
+                <div>
+                  Population Density <span id="populationDensity"></span>
+                </div>
+                <div>
+                  Median Household Income{" "}
+                  <span id="medianHouseholdIncome"></span>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div>
+                    <Suspense>
+                      <Show when={gender()}>
+                        <p class="bg-teal-500 text-white text-center">
+                          Gender:
+                        </p>
 
-              <DoughnutChart
-                datasets={amenities()}
-                zip={props.zip}
-                ref={(el) => (ref = el)}
-              />
-              <div></div>
-            </Show>
-          </Suspense>
+                        <DoughnutChart
+                          datasets={gender()}
+                          zip={props.zip}
+                          ref={(el) => (ref = el)}
+                        />
+                      </Show>
+                    </Suspense>
+                  </div>
+                  <div>
+                    <div>
+                      <Suspense>
+                        <Show when={race()}>
+                          <p class="bg-teal-500 text-white text-center">
+                            Race Diveristy
+                          </p>
+
+                          <DoughnutChart
+                            datasets={race()}
+                            zip={props.zip}
+                            ref={(el) => (ref = el)}
+                          />
+                        </Show>
+                      </Suspense>
+                    </div>
+                  </div>{" "}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <Suspense>
+              <Show when={amenities()}>
+                <p class="bg-teal-500 text-white text-center">Amenities:</p>
+                <div class="flex flex-row">
+                  <DoughnutChart
+                    datasets={amenities()}
+                    zip={props.zip}
+                    ref={(el) => (ref = el)}
+                  />
+                  <div>Details</div>
+                </div>
+              </Show>
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>

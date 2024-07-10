@@ -117,29 +117,21 @@ const ChartLoadingIndicator = () => {
   );
 };
 
-const createBarChart = (ctx, data, label) => {
+const createBarChart = (ctx, data) => {
   if (ctx === undefined) {
     return;
   }
 
-  let datasets = [];
-  if (data.length > 1) {
-    data.forEach((d) => {
-      datasets.push({ label: label, data: d, borderWidth: 1 });
-    });
-  }
+  // let datasets = [];
+  // if (data.length > 1) {
+  //   data.forEach((d) => {
+  //     datasets.push({ label: label, data: d, borderWidth: 1 });
+  //   });
+  // }
 
   new Chart(ctx, {
     type: "bar",
-    data: {
-      datasets: [
-        {
-          label: label,
-          data: data,
-          borderWidth: 1,
-        },
-      ],
-    },
+    data,
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -153,7 +145,6 @@ const createBarChart = (ctx, data, label) => {
 };
 
 const BarChart = (props) => {
-  console.log("Barchart");
   let ref;
 
   onMount(() => {
@@ -161,20 +152,14 @@ const BarChart = (props) => {
   });
 
   createEffect(() => {
-    if (!props.asyncData.loading) {
-      let newData = props.asyncData()?.[0];
-      // console.log("newData", newData);
-      let transformedData = transformData(newData?.historicprices);
-      createBarChart(ref, transformedData, newData.zipcode);
+    if (props.datasets) {
+      createBarChart(ref, props.datasets);
     }
   });
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      <Show
-        when={!props.asyncData.loading}
-        fallback={<ChartLoadingIndicator />}
-      >
+      <Show when={props.datasets} fallback={<ChartLoadingIndicator />}>
         <div class="relative w-full h-full">
           <canvas ref={(el) => (ref = el)}></canvas>
         </div>
@@ -487,7 +472,6 @@ const DoughnutChart = (props) => {
 
   createEffect(() => {
     if (props.datasets) {
-      console.log(props.datasets);
       doughnutChartInstance = createDoughnutChart(
         ref2,
         props.datasets,

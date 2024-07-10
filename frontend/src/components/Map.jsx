@@ -8,10 +8,15 @@ import {
   Show,
   Suspense,
 } from "solid-js";
-import { zipcode_geojson } from "../data/dataToBeSent";
 import Favorite from "@suid/icons-material/Favorite";
 import FavoriteBorder from "@suid/icons-material/FavoriteBorder";
-import { Checkbox } from "@suid/material";
+import {
+  Checkbox,
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+} from "@suid/material";
+import { LocationOn } from "@suid/icons-material";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -39,13 +44,15 @@ export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
-  const [borough, setBorough] = createSignal(false);
-  const [neighbourhood, setNeighbourhood] = createSignal(true);
-  const borough_geojson = props.dataResources.borough_geojson();
-  const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
-  const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
+  // const [borough, setBorough] = createSignal(false);
+  // const [neighbourhood, setNeighbourhood] = createSignal(true);
+  // const borough_geojson = props.dataResources.borough_geojson();
+  // const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
+  // const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
   const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const zipcodes = props.dataResources.zipcodes();
+  const zipcode_geojson = props.dataResources.zipcode_geojson();
 
   function createCenterControl() {
     // Create the main control container
@@ -163,6 +170,18 @@ export const MapComponent = (props) => {
     });
 
     map.data.addListener("click", (event) => {
+      const zipcode_obj = zipcodes.filter(
+        (el) => el["zip_code"] * 1 == event.feature.getProperty("ZIPCODE")
+      );
+
+      map.setZoom(14);
+      const newCenter = {
+        lng: zipcode_obj[0]["longitude"] * 1,
+        lat: zipcode_obj[0]["latitude"] * 1,
+      };
+
+      map.setCenter(newCenter);
+      console.log("mapcenter", map.center);
       setLastClickedZipCode(event.feature.getProperty("ZIPCODE"));
       map.data.revertStyle();
       event.feature.setProperty("isColorful", true);
@@ -283,22 +302,6 @@ export const MapComponent = (props) => {
       );
       insertDataLayer(zipcode_geojson, mapInstance);
     });
-    // } else {
-    //   // const existingMap = props.mapObject();
-    //   // console.log("div for map", existingMap.getDiv());
-    //   const existingMap = props.mapObject();
-    //   const existingDiv = existingMap.getDiv();
-    //   const mapDiv = document.getElementById("map");
-
-    //   // if (existingDiv && existingDiv !== mapDiv) {
-    //   mapDiv.appendChild(existingMap.getDiv()); // Append the map to the new div
-    //   console.log("existingMapconttols", existingMap.controls);
-    //   existingMap.controls[google.maps.ControlPosition.TOP_RIGHT].clear();
-    //   existingMap.controls[google.maps.ControlPosition.TOP_RIGHT].push(
-    //     createCenterControl()
-    //   );
-    //   // }
-    // }
   });
 
   createEffect(() => {
@@ -308,35 +311,35 @@ export const MapComponent = (props) => {
   });
 
   //change data layer according to zoom
-  createEffect(() => {
-    try {
-      if (props.getDataLayerLevel() === "borough") {
-        //if it has neighbourhood datalayer, clear the data layer
-        if (props.mapObject().data) {
-          // clearDataLayer(props.mapObject());
-          // setNeighbourhood(false);
-        }
-        //if not duplicated, insert the borough data layer
-        // if (!borough()) {
-        // insertDataLayer(borough_geojson, props.mapObject());
-        // setBorough(true);
-        // }
-      } else if (props.getDataLayerLevel() === "neighbourhood") {
-        //datalayer changed to neighbourhood level
-        // clearDataLayer(props.mapObject());
-        // setBorough(false);
-        //if not duplicated, insert the borough data layer
-        // if (!neighbourhood()) {
-        // insertDataLayer(neighbourhood_geojson, props.mapObject());
-        // setNeighbourhood(true);
-        // }
-      } else if (props.getDataLayerLevel() === "zipcode") {
-        // insertDataLayer(zipcode_geojson, props.mapObject());
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  // createEffect(() => {
+  //   try {
+  //     if (props.getDataLayerLevel() === "borough") {
+  //       //if it has neighbourhood datalayer, clear the data layer
+  //       if (props.mapObject().data) {
+  //         // clearDataLayer(props.mapObject());
+  //         // setNeighbourhood(false);
+  //       }
+  //       //if not duplicated, insert the borough data layer
+  //       // if (!borough()) {
+  //       // insertDataLayer(borough_geojson, props.mapObject());
+  //       // setBorough(true);
+  //       // }
+  //     } else if (props.getDataLayerLevel() === "neighbourhood") {
+  //       //datalayer changed to neighbourhood level
+  //       // clearDataLayer(props.mapObject());
+  //       // setBorough(false);
+  //       //if not duplicated, insert the borough data layer
+  //       // if (!neighbourhood()) {
+  //       // insertDataLayer(neighbourhood_geojson, props.mapObject());
+  //       // setNeighbourhood(true);
+  //       // }
+  //     } else if (props.getDataLayerLevel() === "zipcode") {
+  //       // insertDataLayer(zipcode_geojson, props.mapObject());
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
 
   onCleanup(() => {
     const mapDiv = document.getElementById("map");
@@ -378,23 +381,42 @@ export const MapComponent = (props) => {
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
             <Show when={props.zipcodeOnCharts()}>
-              <Checkbox
-                {...label}
-                icon={<FavoriteBorder />}
-                checkedIcon={<Favorite />}
-                checked={
-                  props.favorite().includes(props.zipcodeOnCharts())
-                    ? true
-                    : false
-                }
-                onChange={() => {
-                  props.setFavorite((prev) =>
-                    prev.includes(props.zipcodeOnCharts())
-                      ? prev.filter((el) => el !== props.zipcodeOnCharts())
-                      : [...prev, props.zipcodeOnCharts()]
-                  );
-                }}
-              />
+              <Box sx={{ width: 200 }}>
+                <BottomNavigation
+                  showLabels
+                  // value={value()}
+                  // onChange={(event, newValue) => {
+                  //   setValue(newValue);
+                  // }}
+                >
+                  {" "}
+                  <Checkbox
+                    {...label}
+                    icon={<FavoriteBorder />}
+                    checkedIcon={<Favorite />}
+                    checked={
+                      props.favorite().includes(props.zipcodeOnCharts())
+                        ? true
+                        : false
+                    }
+                    onChange={() => {
+                      props.setFavorite((prev) =>
+                        prev.includes(props.zipcodeOnCharts())
+                          ? prev.filter((el) => el !== props.zipcodeOnCharts())
+                          : [...prev, props.zipcodeOnCharts()]
+                      );
+                    }}
+                  />
+                  <BottomNavigationAction
+                    label="Houses"
+                    icon={<LocationOn />}
+                  />
+                  <BottomNavigationAction
+                    label="Amenities"
+                    icon={<LocationOn />}
+                  />
+                </BottomNavigation>
+              </Box>
             </Show>
 
             {/* <h2 class="txt-neutral-500 text-sm">click for more information</h2> */}
