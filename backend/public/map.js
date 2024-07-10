@@ -7,26 +7,55 @@ function initMap() {
       mapTypeControl: false,
       disableDefaultUI: true
     });
-    window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
+    window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode] });
 
-    window.googleMapObject.data.loadGeoJson('/public/NYC_Neighborhood.geojson');
+    // Create the DIV to hold the control.
+    const centerControlDiv = document.createElement("div");
+    // Create the control.
+    const centerControl = createCenterControl();
+
+    // Append the control to the DIV.
+    centerControlDiv.appendChild(centerControl);
+    window.googleMapObject.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
+    window.googleMapObject.data.loadGeoJson('/NYC_Neighborhood.geojson');
+    window.googleMapObject.data.setStyle({
+      fillColor: document.documentElement.dataset.mode === "light" ? "black" : "white",
+      strokeWeight: 1
+    });
     window.mapExists = true
+
   }
+
+}
+
+function createCenterControl(map) {
+  const controlButton = document.createElement("button");
+
+  controlButton.className = "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center"
+  controlButton.setAttribute("x-on:click", "listOpen = !listOpen")
+  // Set CSS for the control.
+  controlButton.textContent = "Show List";
+  controlButton.title = "Click to show details";
+  controlButton.type = "button";
+
+  return controlButton;
 }
 
 function mapDarkModeHandler() {
   if (!window.mapExists) {
     return
   }
-  window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode]});
+  window.googleMapObject.setOptions({ styles: window.mapStyles[document.documentElement.dataset.mode] });
   window.googleMapObject.data.setStyle({
     fillColor: document.documentElement.dataset.mode === "light" ? "black" : "white",
     strokeWeight: 1
   });
 }
 
+
+
 var mapStyles = {
-  light:[
+  light: [
     {
       "featureType": "administrative",
       "elementType": "geometry",

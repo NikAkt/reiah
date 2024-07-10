@@ -1,123 +1,155 @@
-import { onMount, createEffect, createSignal } from "solid-js";
-import { layerStore, isGoogleMapInitialized } from "./layerStore";
-import * as mc from "@googlemaps/markerclusterer";
-const { MarkerClusterer, GridAlgorithm } = mc;
-import Chart from "chart.js/auto";
-// import Plotly from "plotly.js-dist-min";
+import { onMount, createEffect, createSignal, untrack } from "solid-js";
+import { setStore, store } from "../data/stores";
+import { Loader } from "@googlemaps/js-api-loader";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
+// import { borough_neighbourhood } from "../data/dataToBeSent";
 
-let markers;
+//marker size range
+// const initialSize = 50;
+// const finalSize = 100;
+// const sizeDifference = finalSize - initialSize;
 
-const Markers = (props) => {
-  // console.log("data in markers", props.realEstateData);
-  createEffect(async () => {
-    // let Plotly = null;
-    // Plotly = await import("plotly.js-dist-min");
-    console.log(layerStore.map);
-    if (layerStore.map && !markers) {
-      const map = layerStore.map;
-      const icon = {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 15,
-        fillColor: "#81c7",
-        fillOpacity: 1,
-        strokeWeight: 0.4,
+const [zipcode_markers, setZipcodeMarkers] = createSignal([]);
+const [borough_markers, setBoroughMarkers] = createSignal([]);
+const [neighbourhood_markers, setNeighbourhoodMarkers] = createSignal([]);
+
+const loader = new Loader({
+  apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
+  version: "weekly",
+});
+
+const createZipcodeMarkers = (
+  zipcodes,
+  Marker,
+  zipcodes_latlng,
+  realEstateData
+) => {
+  const level = "zipcode";
+  const svg = window.btoa(`
+<svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+<circle cx="120" cy="120" opacity=".0" r="70" />
+</svg>`);
+  zipcodes.forEach((el) => {
+    const positionObj = zipcodes_latlng.filter(
+      (obj) => obj["zip_code"] * 1 == el
+    );
+    const realEstateDataObj = realEstateData.filter(
+      (obj) => obj.zipcode * 1 === el
+    );
+
+    try {
+      const position = {
+        lat: positionObj[0]["latitude"] * 1,
+        lng: positionObj[0]["longitude"] * 1,
       };
 
-      if (map) {
-        console.log("Google Maps instance is available", layerStore.google_map);
-        // const { AdvancedMarkerElement, PinElement } =
-        //   await google.maps.importLibrary("marker");
-        const infoWindow = new google.maps.InfoWindow({
-          content: "",
-          ariaLabel: "Uluru",
-        });
-        const data = JSON.parse(props.realEstateData);
-        const historic_real_estate_data = JSON.parse(
-          props.historicalRealEstateData
+      const { avg_home_value, median_age, median_household_income } =
+        realEstateDataObj[0];
+
+      const marker = new Marker({
+        position,
+        title: `ZIPCODE: ${el.toString()}`,
+        level,
+        avg_home_value,
+        median_age,
+        median_household_income,
+        label: {
+          text: `\$${(avg_home_value / 1000).toFixed(1)}k`,
+          color: "black",
+        },
+        icon: {
+          url: `data:image/svg+xml;base64,${svg}`,
+          scaledSize: new google.maps.Size(45, 45),
+        },
+      });
+      setZipcodeMarkers((prev) => [...prev, marker]);
+    } catch (error) {
+      console.log(
+        `${el} is problematic, it does not have latitude and longitude in zipcodes or data in realEstateData : ${error}`
+      );
+    }
+  });
+};
+
+function putMarkersOnMap(markersArray, map) {
+  markersArray.forEach((marker) => {
+    marker.setMap(map);
+  });
+}
+
+function clearMarkers(markersArray) {
+  markersArray.forEach((marker) => {
+    marker.setMap(null);
+  });
+}
+
+const Markers = async (props) => {
+  onMount(async () => {
+    const zipcodes_latlng = props.zipcodes;
+    const borough_neighbourhood = props.borough_neighbourhood;
+    const realEstateData = props.realEstateData;
+    //extract all zipcodes from borough_neighbourhood
+    let zipcodes = [];
+    let borough_zipcode = {};
+    let neighbourhood_zipcode = {};
+    borough_neighbourhood.forEach((el) => {
+      zipcodes = [...zipcodes, ...el["zipcodes"]];
+      borough_zipcode[el["borough"]] = el["zipcodes"];
+      neighbourhood_zipcode[el["neighbourhood"]] = el["zipcodes"];
+    });
+
+    loader.importLibrary("marker").then(({ Marker }) => {
+      loader.importLibrary("core").then(({ LatLng, LatLngBounds }) => {
+        createZipcodeMarkers(zipcodes, Marker, zipcodes_latlng, realEstateData);
+        createBoroughMarkers(
+          borough_zipcode,
+          zipcodes_latlng,
+          LatLng,
+          LatLngBounds,
+          realEstateData,
+          Marker
         );
-
-        markers = data.map((el) => {
-          const marker = new google.maps.Marker({
-            map,
-            position: {
-              lat: el["lat"] * 1,
-              lng: el["lng"] * 1,
-            },
-            label: {
-              text: `\$ ${(el["avg_home_value"] / 1000).toFixed(2)}k`,
-              color: "white",
-              fontSize: "12px",
-            },
-            price: el["avg_home_value"],
-            animation: google.maps.Animation.DROP,
-            title: el["zipcode"].toString(),
-            clickable: true,
-            icon,
-          });
-
-          marker.addListener("click", async ({ domEvent, latLng }) => {
-            const infoWindow = document.getElementById("dashboard");
-
-            infoWindow.innerText = `ZIPCODE: ${marker.title}`;
-            infoWindow.innerHTML += '<canvas id="chart_js"></canvas>';
-            infoWindow.innerHTML +=
-              '<div id="plotly_js" class="w-[80%]"></div>';
-            const dataFilter = historic_real_estate_data.filter(
-              ({ zipcode }) => String(zipcode) === marker.title
-            );
-            //chart js
-
-            new Chart(document.getElementById("chart_js"), {
-              type: "bar",
-              data: {
-                labels: Object.keys(dataFilter[0]),
-                datasets: [
-                  {
-                    label: marker.title,
-                    data: Object.values(dataFilter[0]),
-                  },
-                ],
-              },
-            });
-          });
-          return marker;
-        });
-
-        let totalAvgPrice = 0;
-        markers.map((marker) => {
-          totalAvgPrice += marker.price;
-        });
-        totalAvgPrice /= markers.length * 1000;
+        createNeighbourhoodMarkers(
+          neighbourhood_zipcode,
+          zipcodes_latlng,
+          LatLng,
+          LatLngBounds,
+          realEstateData,
+          Marker
+        );
+        putMarkersOnMap(zipcode_markers(), props.map());
 
         const clusterRenderer = {
           render: (cluster, stats) => {
             // Access to the cluster's attributes, check all available in the doc
             const { markers, position, count } = cluster;
             // Access to the stats' attributes if you need it
-
-            let avgPrice = 0;
-            markers.map((marker) => {
-              avgPrice += marker.price * 1;
-            });
-            avgPrice /= count * 1000;
-            const color = avgPrice > totalAvgPrice ? "#0145ac" : "#81c7a5";
-
+            //// <circle cx="120" cy="120" opacity=".6" r="70" />
+            const color = "#0145ac";
             const svg = window.btoa(`
-            <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
-            <circle cx="120" cy="120" opacity=".6" r="70" />
-            <circle cx="120" cy="120" opacity=".3" r="90" />
-            <circle cx="120" cy="120" opacity=".2" r="110" />
-            <circle cx="120" cy="120" opacity=".1" r="130" />
-            </svg>`);
+      <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" opacity=".0" r="90" />
+      <circle cx="120" cy="120" opacity=".0" r="110" />
+      <circle cx="120" cy="120" opacity=".0" r="130" />
+      </svg>`);
+            let avgHomeValue = 0;
+            let title = "";
+            markers.forEach((marker) => {
+              avgHomeValue += marker["avg_home_value"];
+              title += `${marker.title} `;
+            });
+            avgHomeValue /= markers.length;
+
             return new google.maps.Marker({
               icon: {
                 url: `data:image/svg+xml;base64,${svg}`,
-                scaledSize: new google.maps.Size(45, 45),
+                scaledSize: new google.maps.Size(2, 2),
               },
+              title,
 
               label: {
-                text: `$${Math.ceil(avgPrice)}k`,
-                color: "white",
+                text: `\$${(avgHomeValue / 1000).toFixed(1)}k`,
+                color: "black",
               },
               position: position,
               map,
@@ -125,28 +157,263 @@ const Markers = (props) => {
             });
           },
         };
-        const mapCluster = new MarkerClusterer({
+        const map = props.map();
+        const markers = zipcode_markers();
+        const markerCluster = new MarkerClusterer({
           markers,
           map,
           renderer: clusterRenderer,
           onClusterClick: async (event, cluster, map) => {
-            const infoWindow = document.getElementById("dashboard");
-            infoWindow.innerText = `Cluster center: ${cluster.position}, 
-                Number of markers: ${cluster.markers.length}`;
-            infoWindow.innerHTML += '<ul id="infoContent"> </ul>';
-            const infoContent = document.getElementById("infoContent");
-            cluster.markers.forEach((marker) => {
-              infoContent.innerHTML += `<li>ZIPCODE : ${marker.title}</li>`;
-            });
+            console.log(cluster.markers);
+            //   const infoWindow = document.getElementById("dashboard");
+            //   infoWindow.innerText = `Cluster center: ${cluster.position},
+            // Number of markers: ${cluster.markers.length}`;
+            //   infoWindow.innerHTML += '<ul id="infoContent"> </ul>';
+            //   const infoContent = document.getElementById("infoContent");
+            //   cluster.markers.forEach((marker) => {
+            //     infoContent.innerHTML += `<li>ZIPCODE : ${marker.title}</li>`;
+            //   });
           },
         });
-      }
-    } else {
-      console.log("Google Maps instance is not available yet");
-    }
+      });
+    });
   });
 
-  return null;
+  const switchMarkers = (props, map) => {
+    if (props.getDataLayerLevel() === "borough") {
+      //borough level markers
+      //if it has neighbourhood markers, clear the data layer
+      clearMarkers(neighbourhood_markers(), map);
+      clearMarkers(zipcode_markers(), map);
+      putMarkersOnMap(borough_markers(), map);
+    } else if (props.getDataLayerLevel() === "neighbourhood") {
+      //datalayer changed to neighbourhood level
+      clearMarkers(borough_markers(), map);
+      clearMarkers(zipcode_markers(), map);
+      putMarkersOnMap(neighbourhood_markers(), map);
+    } else if (props.getDataLayerLevel() === "zipcode") {
+      // zipcode level markers
+      clearMarkers(borough_markers(), map);
+      clearMarkers(neighbourhood_markers(), map);
+      putMarkersOnMap(zipcode_markers(), map);
+    }
+  };
+
+  // createEffect(() => {
+  //   switchMarkers(props.props.map());
+  // });
 };
+
+function createNeighbourhoodMarkers(
+  neighbourhood_zipcode,
+  zipcodes_latlng,
+  LatLng,
+  LatLngBounds,
+  realEstateData,
+  Marker
+) {
+  for (let [neighbourhood, zipcodeArray] of Object.entries(
+    neighbourhood_zipcode
+  )) {
+    const latlngArray = [];
+    const realEstateDataObj = {
+      avg_home_value: 0,
+      median_age: 0,
+      median_household_income: 0,
+    };
+    let count = 0;
+
+    zipcodeArray.forEach((zipcode) => {
+      try {
+        const { latitude, longitude } = zipcodes_latlng.filter(
+          (obj) => obj["zip_code"] * 1 == zipcode
+        )[0];
+        const { avg_home_value, median_age, median_household_income } =
+          realEstateData.filter((obj) => obj.zipcode === zipcode)[0];
+        latlngArray.push({ lat: latitude * 1, lng: longitude * 1 });
+        realEstateDataObj["avg_home_value"] += avg_home_value;
+        realEstateDataObj["median_age"] += median_age;
+        realEstateDataObj["median_household_income"] += median_household_income;
+        count += 1;
+      } catch (error) {
+        console.log(`${zipcode}: ${error}`);
+      }
+    });
+
+    //average the values inside
+    for (let key of Object.keys(realEstateDataObj)) {
+      realEstateDataObj[key] /= count;
+    }
+    const { avg_home_value, median_age, median_household_income } =
+      realEstateDataObj;
+
+    //center position:
+    const bounds = new LatLngBounds();
+
+    latlngArray.forEach((obj) => {
+      bounds.extend(new LatLng(obj["lat"], obj["lng"]));
+    });
+    // centerPositionArray.push(bounds.getCenter());
+    const svg = window.btoa(`
+      <svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" opacity=".0" r="70" />
+      <circle cx="120" cy="120" opacity=".0" r="90" />
+      <circle cx="120" cy="120" opacity=".0" r="120" />
+      </svg>`);
+    const position = bounds.getCenter();
+    const marker = new Marker({
+      position,
+      title: neighbourhood,
+      level: "neighbourhood",
+      avg_home_value,
+      median_age,
+      median_household_income,
+      label: {
+        text: `\$ ${(avg_home_value / 1000).toFixed(1)}k`,
+        color: "black",
+        fontSize: "16px",
+      },
+      icon: {
+        url: `data:image/svg+xml;base64,${svg}`,
+        scaledSize: new google.maps.Size(2, 2),
+      },
+    });
+    setNeighbourhoodMarkers((prev) => [...prev, marker]);
+  }
+}
+
+function createBoroughMarkers(
+  borough_zipcode,
+  zipcodes_latlng,
+  LatLng,
+  LatLngBounds,
+  realEstateData,
+  Marker
+) {
+  for (let [borough, zipcodeArray] of Object.entries(borough_zipcode)) {
+    const latlngArray = [];
+    const realEstateDataObj = {
+      avg_home_value: 0,
+      median_age: 0,
+      median_household_income: 0,
+    };
+    let count = 0;
+
+    zipcodeArray.forEach((zipcode) => {
+      try {
+        const { latitude, longitude } = zipcodes_latlng.filter(
+          (obj) => obj["zip_code"] * 1 == zipcode
+        )[0];
+        const { avg_home_value, median_age, median_household_income } =
+          realEstateData.filter((obj) => obj.zipcode === zipcode)[0];
+        latlngArray.push({ lat: latitude * 1, lng: longitude * 1 });
+        realEstateDataObj["avg_home_value"] += avg_home_value;
+        realEstateDataObj["median_age"] += median_age;
+        realEstateDataObj["median_household_income"] += median_household_income;
+        count += 1;
+      } catch (error) {
+        console.log(`${zipcode}: ${error}`);
+      }
+    });
+
+    //average the values inside
+    for (let key of Object.keys(realEstateDataObj)) {
+      realEstateDataObj[key] /= count;
+    }
+    const { avg_home_value, median_age, median_household_income } =
+      realEstateDataObj;
+
+    //center position:
+    const bounds = new LatLngBounds();
+
+    latlngArray.forEach((obj) => {
+      bounds.extend(new LatLng(obj["lat"], obj["lng"]));
+    });
+    // centerPositionArray.push(bounds.getCenter());
+    const svg = window.btoa(`
+      <svg fill="white xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+      <circle cx="120" cy="120" opacity=".0" r="70" />
+      </svg>`);
+    const position = bounds.getCenter();
+    const marker = new Marker({
+      position,
+      title: borough,
+      level: "borough",
+      avg_home_value,
+      median_age,
+      median_household_income,
+      label: {
+        text: `\$ ${(avg_home_value / 1000).toFixed(1)}k`,
+        color: "black",
+        fontSize: "20px",
+      },
+      icon: {
+        url: `data:image/svg+xml;base64,${svg}`,
+        scaledSize: new google.maps.Size(45, 45),
+      },
+    });
+    setBoroughMarkers((prev) => [...prev, marker]);
+  }
+}
+
+// const clusterRenderer = {
+//   render: (cluster, stats) => {
+//     // Access to the cluster's attributes, check all available in the doc
+//     const { markers, position, count } = cluster;
+//     // Access to the stats' attributes if you need it
+
+//     const svg = window.btoa(`
+//     <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+//     <circle cx="120" cy="120" opacity=".6" r="70" />
+//     <circle cx="120" cy="120" opacity=".3" r="90" />
+//     <circle cx="120" cy="120" opacity=".2" r="110" />
+//     <circle cx="120" cy="120" opacity=".1" r="130" />
+//     </svg>`);
+//     return new google.maps.Marker({
+//       icon: {
+//         url: `data:image/svg+xml;base64,${svg}`,
+//         scaledSize: new google.maps.Size(45, 45),
+//       },
+
+//       label: {
+//         text: `$${avgPrice.toFixed(1)}m`,
+//         color: "white",
+//       },
+//       position: position,
+//       map,
+//       zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+//     });
+//   },
+// };
+// new MarkerClusterer({
+//   markers,
+//   map,
+//   renderer: clusterRenderer,
+//   onClusterClick: async (event, cluster, map) => {
+//     const infoWindow = document.getElementById("dashboard");
+//     infoWindow.innerText = `Cluster center: ${cluster.position},
+//         Number of markers: ${cluster.markers.length}`;
+//     infoWindow.innerHTML += '<ul id="infoContent"> </ul>';
+//     const infoContent = document.getElementById("infoContent");
+//     cluster.markers.forEach((marker) => {
+//       infoContent.innerHTML += `<li>ZIPCODE : ${marker.title}</li>`;
+//     });
+//   },
+// });
+//     }
+//     onCleanup(() => {
+//       if (markersOnMap) {
+//         hideMarkers();
+
+//         //clear the markers
+//         zipcode_markers = [];
+//         borough_markers = [];
+//         neighbourhood_markers = [];
+//       }
+//     });
+//   });
+
+//   return null;
+// };
 
 export default Markers;
