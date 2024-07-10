@@ -60928,144 +60928,6 @@
       "DISTANCE_TO_FACILITY": 1.4291991841493328
     }
   ],
-  "10550": [
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "ASTOR LAWRENCE F HICKEY CENTER",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial Early Childhood",
-      "LNG": -73.83072984482865,
-      "LAT": 40.890884138018905,
-      "DISTANCE_TO_FACILITY": 1.7303809039204197
-    }
-  ],
-  "10704": [
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "E  241 OVR BX RIV PKWY METRO N",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.85565988998358,
-      "LAT": 40.905796919617806,
-      "DISTANCE_TO_FACILITY": 2.303894865755055
-    }
-  ],
-  "10705": [
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "VAN CORTLANDT PARK CARLEY FIELD",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.89599574141303,
-      "LAT": 40.910632975688756,
-      "DISTANCE_TO_FACILITY": 1.6805139953948824
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "VAN CORTLANDT PARK CROTON WOODS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.88225826650331,
-      "LAT": 40.90414688530344,
-      "DISTANCE_TO_FACILITY": 2.578291149450081
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "VAN CORTLANDT PARK NORTHWEST FOREST",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.89225332148182,
-      "LAT": 40.9084456880664,
-      "DISTANCE_TO_FACILITY": 1.5078943091115633
-    }
-  ],
-  "10803": [
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "PLHM BAY PK EQUES PED BR OV AMTK",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.80306840968706,
-      "LAT": 40.88558041030783,
-      "DISTANCE_TO_FACILITY": 2.1031369805668376
-    }
-  ],
-  "10805": [
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "DAVIDS ISLAND CHANNEL BUOY 7A",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.7777229497018,
-      "LAT": 40.877970831052295,
-      "DISTANCE_TO_FACILITY": 2.36265933629533
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "GLEN ISLAND CHANNEL BUOY 1",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.78372032246148,
-      "LAT": 40.88104378038683,
-      "DISTANCE_TO_FACILITY": 2.346489170285345
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "GLEN ISLAND CHANNEL BUOY 2",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.78390139348566,
-      "LAT": 40.88081183363808,
-      "DISTANCE_TO_FACILITY": 2.392334143081932
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "GLEN ISLAND CHANNEL BUOY 4",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.78535305513336,
-      "LAT": 40.88153386345916,
-      "DISTANCE_TO_FACILITY": 2.473323275835483
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "GLEN ISLAND CHANNEL BUOY 6",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.7876320356277,
-      "LAT": 40.88315569038015,
-      "DISTANCE_TO_FACILITY": 2.546267322477327
-    },
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "PEA ISLAND BUOY 1",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.76722321894395,
-      "LAT": 40.87564606334772,
-      "DISTANCE_TO_FACILITY": 3.7861786656233534
-    }
-  ],
-  "11001": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS 191 MAYFLOWER",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Elementary School",
-      "LNG": -73.70886914351462,
-      "LAT": 40.73434370456675,
-      "DISTANCE_TO_FACILITY": 1.606075862968197
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS Q993",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public High School",
-      "LNG": -73.70877567035012,
-      "LAT": 40.73412821527366,
-      "DISTANCE_TO_FACILITY": 1.6248053042392954
-    }
-  ],
   "11004": [
     {
       "BOROUGH": "Queens",
@@ -61311,138 +61173,6 @@
       "LNG": -73.72404457997732,
       "LAT": 40.75235966163572,
       "DISTANCE_TO_FACILITY": 1.5654239359167548
-    }
-  ],
-  "11020": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "NASSAU MALL",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.72483901879058,
-      "LAT": 40.76468380812579,
-      "DISTANCE_TO_FACILITY": 1.8623813837908045
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "TEMPLE TORAH OF LITTLE NECK",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Synagogue",
-      "LNG": -73.72533048585609,
-      "LAT": 40.76650404961044,
-      "DISTANCE_TO_FACILITY": 1.7148874232667168
-    }
-  ],
-  "11024": [
-    {
-      "BOROUGH": "Bronx",
-      "NAME": "HART ISLAND LIGHT 46",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.76670724535934,
-      "LAT": 40.84490251883864,
-      "DISTANCE_TO_FACILITY": 5.8260308259749465
-    }
-  ],
-  "11096": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FIRST PRESBYTERIAN CHURCH OF FAR ROCKAWAY",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.74687476697652,
-      "LAT": 40.60955896665101,
-      "DISTANCE_TO_FACILITY": 2.4311515673451254
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "GRASS HASSOCK CHANNEL BUOY 22",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.77342154349317,
-      "LAT": 40.61459671799246,
-      "DISTANCE_TO_FACILITY": 2.5730716305787595
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "GRASS HASSOCK CHANNEL BUOY 25",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.76957797453362,
-      "LAT": 40.62054004606918,
-      "DISTANCE_TO_FACILITY": 1.486726059552666
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "GRASS HASSOCK CHANNEL BUOY M",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.77218082340816,
-      "LAT": 40.61514215970016,
-      "DISTANCE_TO_FACILITY": 2.374807671588151
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HEAD OF BAY BUOY 29",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.76389429933491,
-      "LAT": 40.6283661358795,
-      "DISTANCE_TO_FACILITY": 1.545612308799079
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HEAD OF BAY BUOY NP",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.74723405641816,
-      "LAT": 40.63531212598548,
-      "DISTANCE_TO_FACILITY": 2.6331497219717477
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA BAY PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.76837576621885,
-      "LAT": 40.61371765410785,
-      "DISTANCE_TO_FACILITY": 2.1105664443211865
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "KENNEDY AIRPORT DOCK LIGHT F",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.77581690496436,
-      "LAT": 40.61818268274062,
-      "DISTANCE_TO_FACILITY": 2.44091466683539
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MOTTS BASIN BUOY 2",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.76540509072747,
-      "LAT": 40.61465799927977,
-      "DISTANCE_TO_FACILITY": 1.6764431506945954
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MOTTS BASIN BUOY 6",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.75584357462014,
-      "LAT": 40.610518270179064,
-      "DISTANCE_TO_FACILITY": 1.3291312272884213
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "REDFERN PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.74953886926764,
-      "LAT": 40.61150546384053,
-      "DISTANCE_TO_FACILITY": 1.919375024993812
     }
   ],
   "11101": [
@@ -95112,233 +94842,6 @@
       "DISTANCE_TO_FACILITY": 1.9653702669027098
     }
   ],
-  "11351": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "DISTRICT 25 PRE-K CENTER",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Early Childhood",
-      "LNG": -73.82542787090048,
-      "LAT": 40.78577710798185,
-      "DISTANCE_TO_FACILITY": 0.5724246559397415
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FLUSHING FIELDS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.81659812215072,
-      "LAT": 40.774727652483385,
-      "DISTANCE_TO_FACILITY": 1.6341670156134285
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FLUSHING FIELDS BASEBALL FIELD",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.81662803608529,
-      "LAT": 40.77402065414455,
-      "DISTANCE_TO_FACILITY": 1.7093233844869857
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FLUSHING FIELDS BASKETBALL COURT",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.81730780411361,
-      "LAT": 40.7755686308269,
-      "DISTANCE_TO_FACILITY": 1.4620437216022708
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FLUSHING FIELDS HANDBALL COURT",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.81726491181242,
-      "LAT": 40.775209268132414,
-      "DISTANCE_TO_FACILITY": 1.5066940261232347
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FLUSHING FIELDS TENNIS COURTS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.81676665743328,
-      "LAT": 40.774726716768534,
-      "DISTANCE_TO_FACILITY": 1.6155634635983631
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FRANCIS LEWIS PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.82520976909434,
-      "LAT": 40.79656397771992,
-      "DISTANCE_TO_FACILITY": 1.7658111574388329
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FRANCIS LEWIS PLAYGROUND AT FRANCIS LEWIS PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.8244943736025,
-      "LAT": 40.79644170355798,
-      "DISTANCE_TO_FACILITY": 1.8316476250576557
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HART PLAYGROUND 147 ST & 26 AV",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.81945729907268,
-      "LAT": 40.774008247207405,
-      "DISTANCE_TO_FACILITY": 1.3966523629097836
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HARVEY PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.82343360135606,
-      "LAT": 40.78345586428261,
-      "DISTANCE_TO_FACILITY": 0.5079651848468529
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HARVEY PARK BASEBALL FIELD",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.82348412379805,
-      "LAT": 40.78357365874097,
-      "DISTANCE_TO_FACILITY": 0.5154323786635189
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HARVEY PARK BASKETBALL COURT",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.82394451659984,
-      "LAT": 40.78222024835779,
-      "DISTANCE_TO_FACILITY": 0.3141002251323002
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HARVEY PARK RINK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.82343938498045,
-      "LAT": 40.784529631139314,
-      "DISTANCE_TO_FACILITY": 0.6265113236341193
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HARVEY PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.82372228446461,
-      "LAT": 40.78261006177055,
-      "DISTANCE_TO_FACILITY": 0.38203728095905376
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HOLY TRINITY CATHOLIC ACADEMY",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial Elementary School",
-      "LNG": -73.82541485015435,
-      "LAT": 40.78594367314321,
-      "DISTANCE_TO_FACILITY": 0.5894680860291217
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HOLY TRINITY RC CHURCH WHITESTONE",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.82530125127165,
-      "LAT": 40.78529182142348,
-      "DISTANCE_TO_FACILITY": 0.5045030691602364
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "I-678 SB BCIP EB OVER ACCESS RD",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.82250676999729,
-      "LAT": 40.78950298001612,
-      "DISTANCE_TO_FACILITY": 1.2820733120895937
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JHS 185 EDWARD BLEEKER",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Junior High-Intermediate-Middle",
-      "LNG": -73.81853536161312,
-      "LAT": 40.77504311594588,
-      "DISTANCE_TO_FACILITY": 1.384116990951206
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LEONARDO INGRAVALLO PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.8173143459969,
-      "LAT": 40.77603575263439,
-      "DISTANCE_TO_FACILITY": 1.40946705192529
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MALBA YACHT CLUB",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Marina",
-      "LNG": -73.82903945812346,
-      "LAT": 40.79647344338271,
-      "DISTANCE_TO_FACILITY": 2.1606040671854956
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MEMORIAL FIELD OF FLUSHING",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.81659958735605,
-      "LAT": 40.77560726453309,
-      "DISTANCE_TO_FACILITY": 1.5363674403042538
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS 21 EDWARD HART",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Elementary School",
-      "LNG": -73.81823609573233,
-      "LAT": 40.77424007027082,
-      "DISTANCE_TO_FACILITY": 1.5064735736494654
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIVERVIEW MONTESSORI SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial Early Childhood",
-      "LNG": -73.83103150041362,
-      "LAT": 40.79017987486954,
-      "DISTANCE_TO_FACILITY": 1.6831346564306031
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "WHITESTONE",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.82661642130311,
-      "LAT": 40.797182526598505,
-      "DISTANCE_TO_FACILITY": 1.9703552170803889
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "WHTSTNE EX NB OV BLT CRSS IS PKW",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.82243393897821,
-      "LAT": 40.78975381962283,
-      "DISTANCE_TO_FACILITY": 1.3180007515530079
-    }
-  ],
   "11354": [
     {
       "BOROUGH": "Queens",
@@ -102292,179 +101795,6 @@
       "LNG": -73.88303653616902,
       "LAT": 40.76771968957449,
       "DISTANCE_TO_FACILITY": 1.3911800280072697
-    }
-  ],
-  "11371": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "ERIC M TAYLOR CENTER",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.88631239716224,
-      "LAT": 40.78990987548751,
-      "DISTANCE_TO_FACILITY": 2.5068819058958454
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "GEORGE R VIERNO CENTER",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.874788209608,
-      "LAT": 40.789405290527704,
-      "DISTANCE_TO_FACILITY": 1.8675195150632575
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIKER'S ISLAND",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.88189407022294,
-      "LAT": 40.790575349571114,
-      "DISTANCE_TO_FACILITY": 2.4915704028598
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIKERS ISLAND",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.88514373689752,
-      "LAT": 40.786728087346724,
-      "DISTANCE_TO_FACILITY": 2.7198134911111325
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIKERS ISLAND BEACON",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.87713665749001,
-      "LAT": 40.78793562237968,
-      "DISTANCE_TO_FACILITY": 1.9650640655358984
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIKERS ISLAND GARBAGE INCINERATOR",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.8749119520028,
-      "LAT": 40.791684326260416,
-      "DISTANCE_TO_FACILITY": 2.1342278872177545
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIKERS ISLAND RMSC",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.87755916099076,
-      "LAT": 40.79121084455103,
-      "DISTANCE_TO_FACILITY": 2.3755116151387057
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "RIKERS ISLAND VISIT CONTROL BUILDING",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "FDNY Other",
-      "LNG": -73.88455436299574,
-      "LAT": 40.78853817800855,
-      "DISTANCE_TO_FACILITY": 2.463998533578824
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "ROBERT N DAVOREN COMPLEX",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Correctional Facility",
-      "LNG": -73.882966023348,
-      "LAT": 40.789025511990744,
-      "DISTANCE_TO_FACILITY": 2.5446155773989076
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "CHANNEL LIGHTED BUOY 3",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.86189346271462,
-      "LAT": 40.788401068326124,
-      "DISTANCE_TO_FACILITY": 2.6823739455225635
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "CHANNEL LIGHTED BUOY 4",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.86036285922025,
-      "LAT": 40.78362624211501,
-      "DISTANCE_TO_FACILITY": 2.254145498680714
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "FLUSHING BAY CHANNEL BUOY 6",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.85783233754175,
-      "LAT": 40.77909641058862,
-      "DISTANCE_TO_FACILITY": 2.3138031082027055
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LAGUARDIA AIRPORT",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.87729494569417,
-      "LAT": 40.7744216217219,
-      "DISTANCE_TO_FACILITY": 0.4825799831844364
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LAGUARDIA AIRPORT AIR TRAFFIC CONTROL TOWER",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.8736521323038,
-      "LAT": 40.77333982128022,
-      "DISTANCE_TO_FACILITY": 0.08117552361800051
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LAGUARDIA AIRPORT TERMINAL B",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.87283413204894,
-      "LAT": 40.77451468388644,
-      "DISTANCE_TO_FACILITY": 0.14003225396265861
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LAGUARDIA AIRPORT WEST PARKING GARAGE",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.87504006895396,
-      "LAT": 40.77268201781414,
-      "DISTANCE_TO_FACILITY": 0.30825267652036104
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LGA - DELTA SHUTTLE",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.88486277133399,
-      "LAT": 40.77369168988917,
-      "DISTANCE_TO_FACILITY": 1.2864990403745011
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "LGA - US AIRWAYS TERMINAL",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.86477681071635,
-      "LAT": 40.77064063308462,
-      "DISTANCE_TO_FACILITY": 1.3266227380923041
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "OVERLOOK PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.87240314627044,
-      "LAT": 40.770682077256424,
-      "DISTANCE_TO_FACILITY": 0.4754991885174604
     }
   ],
   "11372": [
@@ -109448,658 +108778,6 @@
       "DISTANCE_TO_FACILITY": 1.4529538479717488
     }
   ],
-  "11424": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "ARCHBISHOP MOLLOY HIGH SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial High School",
-      "LNG": -73.82020896789393,
-      "LAT": 40.71117071400259,
-      "DISTANCE_TO_FACILITY": 1.1307923094858552
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "BRAMSON ORT COLLEGE MAIN ANNEX",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.83220695585015,
-      "LAT": 40.71411071078881,
-      "DISTANCE_TO_FACILITY": 0.5702342018088942
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "BRIARWOOD LIBRARY",
-      "FACILITY_T": "Cultural Facility",
-      "FACILITY_DOMAIN_NAME": "Library",
-      "LNG": -73.81946570815937,
-      "LAT": 40.710060922337874,
-      "DISTANCE_TO_FACILITY": 1.2088137738129703
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "CONGREGATION AHAVATH SHOLOM",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Synagogue",
-      "LNG": -73.8360891772027,
-      "LAT": 40.71910951525919,
-      "DISTANCE_TO_FACILITY": 1.3193801367313114
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "EHRENREICH-AUSTIN PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.836913463268,
-      "LAT": 40.71557094317308,
-      "DISTANCE_TO_FACILITY": 1.2118321149599751
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "EZRA ACADEMY",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial High School",
-      "LNG": -73.83236946740946,
-      "LAT": 40.71402733703851,
-      "DISTANCE_TO_FACILITY": 0.5975274711756171
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HOOVER MANTON PLAYGROUNDS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.82098064478367,
-      "LAT": 40.71125059819808,
-      "DISTANCE_TO_FACILITY": 1.0362690290256467
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HOOVER PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.82011054329547,
-      "LAT": 40.71024587470536,
-      "DISTANCE_TO_FACILITY": 1.1577667864965235
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HOOVER PLAYGROUND SITTING AREA",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.82085226411806,
-      "LAT": 40.71141596458274,
-      "DISTANCE_TO_FACILITY": 1.0321636142111856
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "J R PKWY UNION TPKE OV AUSTIN ST",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.83361794009026,
-      "LAT": 40.71304522028845,
-      "DISTANCE_TO_FACILITY": 0.8451228980009375
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA TRAIN YARD",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Transit/Maintenance Yard",
-      "LNG": -73.82881180428546,
-      "LAT": 40.71995656724338,
-      "DISTANCE_TO_FACILITY": 0.7993522397016264
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JUDGE MOSES WEINSTEIN PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.82057232198517,
-      "LAT": 40.718180265989304,
-      "DISTANCE_TO_FACILITY": 1.1729307844594956
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JUDGE MOSES WEINSTEIN PLAYGROUND BASEBALL FIELD",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.82048139220392,
-      "LAT": 40.7179929591704,
-      "DISTANCE_TO_FACILITY": 1.162232933280336
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JUDGE MOSES WEINSTEIN PLAYGROUND COMFORT STATION",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -73.8204350375905,
-      "LAT": 40.71869369131614,
-      "DISTANCE_TO_FACILITY": 1.2451595635465438
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "KEW FOREST SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial K-12 all grades",
-      "LNG": -73.8329262393327,
-      "LAT": 40.71374241680989,
-      "DISTANCE_TO_FACILITY": 0.6909553000319448
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MANTON PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.82148773187107,
-      "LAT": 40.712112749229256,
-      "DISTANCE_TO_FACILITY": 0.8842835978635222
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MAPLE GROVE PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.82408320915306,
-      "LAT": 40.71188663172989,
-      "DISTANCE_TO_FACILITY": 0.6212846619927532
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "NORTH QUEENS COMMUNITY HIGH SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public High School",
-      "LNG": -73.81959522509625,
-      "LAT": 40.72066574873262,
-      "DISTANCE_TO_FACILITY": 1.557277123637526
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PLAZA COLLEGE",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.83116671969576,
-      "LAT": 40.71489165853933,
-      "DISTANCE_TO_FACILITY": 0.498542984094712
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS 164 QUEENS VALLEY",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public K-8",
-      "LNG": -73.82322179706946,
-      "LAT": 40.72131200106618,
-      "DISTANCE_TO_FACILITY": 1.2264616436359006
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS 99 KEW GARDENS",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Elementary School",
-      "LNG": -73.82796616325611,
-      "LAT": 40.711394054611816,
-      "DISTANCE_TO_FACILITY": 0.4010550595159543
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEEN OF PEACE RC CHURCH",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.81916176602259,
-      "LAT": 40.7207795664853,
-      "DISTANCE_TO_FACILITY": 1.6180248513611346
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEEN OF PEACE RECTORY",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -73.81973852175362,
-      "LAT": 40.72094985696029,
-      "DISTANCE_TO_FACILITY": 1.572907207940517
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS BLVD OVER J ROBINSON PKWY",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.83106985048644,
-      "LAT": 40.7143455703105,
-      "DISTANCE_TO_FACILITY": 0.42717470846054084
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS CENTRAL BOOKING",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "NYPD Other",
-      "LNG": -73.82584922542554,
-      "LAT": 40.71259793010915,
-      "DISTANCE_TO_FACILITY": 0.3463027356494095
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS HOUSE OF DETENTION",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -73.8260419151126,
-      "LAT": 40.71336651147638,
-      "DISTANCE_TO_FACILITY": 0.23960164862357658
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS VALLEY PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.82363594272877,
-      "LAT": 40.72176093689844,
-      "DISTANCE_TO_FACILITY": 1.2303233528337998
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "SHAAREI ZION OHEL BRACHA SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial Elementary School",
-      "LNG": -73.83466904027917,
-      "LAT": 40.71885117368689,
-      "DISTANCE_TO_FACILITY": 1.3268067502325707
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "VLEIGH PLACE PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -73.8206153014503,
-      "LAT": 40.7187926126674,
-      "DISTANCE_TO_FACILITY": 1.2361305450981632
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "WILLOW LAKE BRIDGE",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.8326115675452,
-      "LAT": 40.71979030639038,
-      "DISTANCE_TO_FACILITY": 1.2026710068492719
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YOUNG ISRAEL QUEENS VALLEY",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Synagogue",
-      "LNG": -73.81944490447859,
-      "LAT": 40.72146719894574,
-      "DISTANCE_TO_FACILITY": 1.6629236858542313
-    }
-  ],
-  "11425": [
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "17 AV PEDESTRIAN",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.01175731417418,
-      "LAT": 40.6017019701923,
-      "DISTANCE_TO_FACILITY": 1.8073814353210054
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "4 AVENUE OVER BELT SHORE PKWY",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.03563055054612,
-      "LAT": 40.61066225946755,
-      "DISTANCE_TO_FACILITY": 1.620800911516902
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "AMBROSE CHANNEL LIGHTED GONG BUOY 21",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -74.0348190169404,
-      "LAT": 40.56591406548867,
-      "DISTANCE_TO_FACILITY": 5.852136611142015
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "ANTHONY MOSOMILLO MEMORIAL CRTS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.01691052935173,
-      "LAT": 40.607129972854366,
-      "DISTANCE_TO_FACILITY": 0.8492052551233229
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "BATH BEACH PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -74.0110535882556,
-      "LAT": 40.60238855168378,
-      "DISTANCE_TO_FACILITY": 1.8092844667280445
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "BATH BEACH PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -74.01138580087304,
-      "LAT": 40.60270222267771,
-      "DISTANCE_TO_FACILITY": 1.7375913858660397
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "BAY    8 ST OVER BELT SHORE PKWY",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.01912188974434,
-      "LAT": 40.60373951070019,
-      "DISTANCE_TO_FACILITY": 0.9800855506578259
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "BAY 8 PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Playground",
-      "LNG": -74.01624774722384,
-      "LAT": 40.60669548878645,
-      "DISTANCE_TO_FACILITY": 0.9710018028578347
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "BEN VITALE ATHLETIC FIELDS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.01937350791502,
-      "LAT": 40.605817305043686,
-      "DISTANCE_TO_FACILITY": 0.7215207615839745
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "BROOKLYN VA HOSPITAL",
-      "FACILITY_T": "Health Services",
-      "FACILITY_DOMAIN_NAME": "Hospital",
-      "LNG": -74.02412168372672,
-      "LAT": 40.60866059222145,
-      "DISTANCE_TO_FACILITY": 0.12113163024606166
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "DYKER BEACH GOLF COURSE",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Golf Course",
-      "LNG": -74.01966141566758,
-      "LAT": 40.61314815573956,
-      "DISTANCE_TO_FACILITY": 1.0733411479895167
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "DYKER BEACH PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -74.01823131313812,
-      "LAT": 40.61174814410429,
-      "DISTANCE_TO_FACILITY": 1.0766812372456585
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "DYKER BEACH PARK JUNIOR GOLF CENTER",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Golf Course",
-      "LNG": -74.01747423632976,
-      "LAT": 40.607689048961014,
-      "DISTANCE_TO_FACILITY": 0.7245763327244035
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "DYKER BEACH PRK BAY 8 ST CFST",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -74.01774791734775,
-      "LAT": 40.60570286746062,
-      "DISTANCE_TO_FACILITY": 0.9146638862713843
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "FORT HAMILTON SENIOR CENTER",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Recreational Center",
-      "LNG": -74.03172809958319,
-      "LAT": 40.61183850499766,
-      "DISTANCE_TO_FACILITY": 1.2817829989953466
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "GRAVESEND BAY ANCHORAGE BUOY A",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -74.02847503387177,
-      "LAT": 40.59777405213993,
-      "DISTANCE_TO_FACILITY": 1.6114959722336906
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "GRAVESEND BAY ANCHORAGE BUOY B",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -74.0256970845665,
-      "LAT": 40.590416045011466,
-      "DISTANCE_TO_FACILITY": 2.1198823906086233
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "GRAVESEND BAY ANCHORAGE BUOY C",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -74.02263508241734,
-      "LAT": 40.58283396165483,
-      "DISTANCE_TO_FACILITY": 2.9106371079899986
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "GRAVESEND BAY CHANNEL BUOY 1",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -74.01741595053086,
-      "LAT": 40.58868601997168,
-      "DISTANCE_TO_FACILITY": 2.840382274218122
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "JOHN J CARTY PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -74.03029927486412,
-      "LAT": 40.61318645375149,
-      "DISTANCE_TO_FACILITY": 0.9790501236669584
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "JOHN PAUL JONES PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -74.03426596502513,
-      "LAT": 40.611024320328156,
-      "DISTANCE_TO_FACILITY": 1.509520674214059
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "LUCILLE FERRERA TENNIS COURTS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.01682399042038,
-      "LAT": 40.60611784216728,
-      "DISTANCE_TO_FACILITY": 0.9711575827705161
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "MAGLIO FIELD 1 A GRANDSTAND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.0201616317557,
-      "LAT": 40.606909294627066,
-      "DISTANCE_TO_FACILITY": 0.5128281715135827
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "MAIMONIDES BAY RIDGE EMERGENCY DEPARTMENT HOSPITAL",
-      "FACILITY_T": "Health Services",
-      "FACILITY_DOMAIN_NAME": "Hospital",
-      "LNG": -74.02318182447779,
-      "LAT": 40.615254878090305,
-      "DISTANCE_TO_FACILITY": 0.9164219509897222
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "NICK BUFF MAGLIO BALLFIELD",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.02052935657255,
-      "LAT": 40.60675495272203,
-      "DISTANCE_TO_FACILITY": 0.48914266830195174
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "POLY PREP MIDDLE & UPPER SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial High School",
-      "LNG": -74.02510433345213,
-      "LAT": 40.61229032443904,
-      "DISTANCE_TO_FACILITY": 0.6331060259196235
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "SUNY DOWNSTATE MEDICAL CENTER BAY RIDGE",
-      "FACILITY_T": "Health Services",
-      "FACILITY_DOMAIN_NAME": "Hospital",
-      "LNG": -74.02290041548412,
-      "LAT": 40.615184776414985,
-      "DISTANCE_TO_FACILITY": 0.9398770633268256
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VERRAZANO BRIDGE UPPER LEVEL",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.04261429156107,
-      "LAT": 40.60730314393105,
-      "DISTANCE_TO_FACILITY": 2.123224386931483
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VERRAZZANO",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.04271671853805,
-      "LAT": 40.60727790367868,
-      "DISTANCE_TO_FACILITY": 2.137395449389331
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VERRAZZANO BRIDGE LOWER LEVEL",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.04284427793243,
-      "LAT": 40.607246488733075,
-      "DISTANCE_TO_FACILITY": 2.1550416011281115
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELD 2 GRANDSTAND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.0198963809466,
-      "LAT": 40.60684084107932,
-      "DISTANCE_TO_FACILITY": 0.5498693551229081
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELDS BALLFIELD 1 B",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.02198229728162,
-      "LAT": 40.60687145979366,
-      "DISTANCE_TO_FACILITY": 0.314933964643906
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELDS BALLFIELD 2",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.01977899925282,
-      "LAT": 40.60658594397442,
-      "DISTANCE_TO_FACILITY": 0.5911923017762604
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELDS BALLFIELD 3",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.02054756822682,
-      "LAT": 40.60502280051091,
-      "DISTANCE_TO_FACILITY": 0.679390070112774
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELDS BALLFIELD 4",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.01902820983602,
-      "LAT": 40.60484436437996,
-      "DISTANCE_TO_FACILITY": 0.8678452620266057
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELDS BALLFIELD 5",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.0182843421472,
-      "LAT": 40.605404404255296,
-      "DISTANCE_TO_FACILITY": 0.8882501493236532
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VITALE FIELDS BALLFIELD 6",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -74.01827824669004,
-      "LAT": 40.60597623781373,
-      "DISTANCE_TO_FACILITY": 0.82545322008162
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "CRAVEN SHOAL LIGHTED GONG BUOY 21",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -74.04134796096665,
-      "LAT": 40.58540403938163,
-      "DISTANCE_TO_FACILITY": 4.41346229593654
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VERRAZZANO",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.04420378784582,
-      "LAT": 40.606654734939724,
-      "DISTANCE_TO_FACILITY": 2.371631872575861
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VERRAZZANO BRIDGE LOWER LEVEL",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.04411432923285,
-      "LAT": 40.60668477661086,
-      "DISTANCE_TO_FACILITY": 2.358367341040747
-    },
-    {
-      "BOROUGH": "Brooklyn",
-      "NAME": "VERRAZZANO BRIDGE UPPER LEVEL",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -74.0442973554536,
-      "LAT": 40.60659737717664,
-      "DISTANCE_TO_FACILITY": 2.388384588741374
-    }
-  ],
   "11426": [
     {
       "BOROUGH": "Queens",
@@ -110844,188 +109522,6 @@
       "LNG": -73.73911517323108,
       "LAT": 40.71064826360236,
       "DISTANCE_TO_FACILITY": 0.14923248851204818
-    }
-  ],
-  "11430": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK AIRPORT",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78828139456249,
-      "LAT": 40.64832160208839,
-      "DISTANCE_TO_FACILITY": 0.5356856282476201
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING  81A",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.7901939252855,
-      "LAT": 40.65342582903161,
-      "DISTANCE_TO_FACILITY": 1.31454572919899
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING  81B",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78928677609493,
-      "LAT": 40.653891463923266,
-      "DISTANCE_TO_FACILITY": 1.2655376420196305
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING 245C",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78413868342608,
-      "LAT": 40.64886806889973,
-      "DISTANCE_TO_FACILITY": 0.2862007875756518
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING 287",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.80276043497086,
-      "LAT": 40.64538592462322,
-      "DISTANCE_TO_FACILITY": 2.1673316485881813
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING 290",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.80264889702347,
-      "LAT": 40.64553406893402,
-      "DISTANCE_TO_FACILITY": 2.1385069179291705
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING 61",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78463373333139,
-      "LAT": 40.647839259349546,
-      "DISTANCE_TO_FACILITY": 0.11705238801561535
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING 63",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78450940139159,
-      "LAT": 40.6474799182424,
-      "DISTANCE_TO_FACILITY": 0.09096637044001454
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK BUILDING 91",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.80003466656193,
-      "LAT": 40.645045619362826,
-      "DISTANCE_TO_FACILITY": 1.9025452391000144
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK CONTROL TOWER",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78126216665414,
-      "LAT": 40.642481552431896,
-      "DISTANCE_TO_FACILITY": 0.8916941814491466
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK TERMINAL 4",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78211634843915,
-      "LAT": 40.64344507639041,
-      "DISTANCE_TO_FACILITY": 0.6899288439192617
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK TERMINAL 4 PARKING GARAGE",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78134271955466,
-      "LAT": 40.64557277642492,
-      "DISTANCE_TO_FACILITY": 0.5396269462664307
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK TERMINAL 5",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.77777131267266,
-      "LAT": 40.64578286469817,
-      "DISTANCE_TO_FACILITY": 0.9127333118380747
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK TERMINAL 5 PARKING GARAGE",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.77959260834078,
-      "LAT": 40.64596427798399,
-      "DISTANCE_TO_FACILITY": 0.6904326179501368
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK TERMINAL 8",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.79071580150895,
-      "LAT": 40.64712904265935,
-      "DISTANCE_TO_FACILITY": 0.6735307026820365
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JFK TERMINALS 1 2 3 GAR",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Airport",
-      "LNG": -73.78886864265971,
-      "LAT": 40.64346807919485,
-      "DISTANCE_TO_FACILITY": 0.8382235445992592
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "KENNEDY AIRPORT DOCK LIGHT C",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.7981324903111,
-      "LAT": 40.63118665656741,
-      "DISTANCE_TO_FACILITY": 3.2297485455499952
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "WINHOLE CHANNEL LIGHTED BUOY 8",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.8104697235071,
-      "LAT": 40.6282010744919,
-      "DISTANCE_TO_FACILITY": 4.2435075778891544
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "WINHOLE CHANNEL LIGHTED BUOY 9",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.8117724753643,
-      "LAT": 40.63015334414482,
-      "DISTANCE_TO_FACILITY": 4.604814965512588
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "WINHOLE CHANNEL SHOAL DAYBEACON",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Water Navigation",
-      "LNG": -73.80968363478121,
-      "LAT": 40.628790061853756,
-      "DISTANCE_TO_FACILITY": 4.236140405052723
     }
   ],
   "11432": [
@@ -113144,444 +111640,6 @@
       "DISTANCE_TO_FACILITY": 0.9398485616666576
     }
   ],
-  "11451": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "103 PRECINCT",
-      "FACILITY_T": "Public Safety",
-      "FACILITY_DOMAIN_NAME": "NYPD Precinct",
-      "LNG": -73.79270419036794,
-      "LAT": 40.70708491194628,
-      "DISTANCE_TO_FACILITY": 0.9591396431207571
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "ADVENTIST JAMAICA CHURCH",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.7990858896477,
-      "LAT": 40.707929058143584,
-      "DISTANCE_TO_FACILITY": 1.0834652048318958
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "ASHMEAD MALL",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.79037251503705,
-      "LAT": 40.70290508298361,
-      "DISTANCE_TO_FACILITY": 0.801705042069301
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "CENTRAL ADULT LEARNING CENTER QUEENS LIBRARY",
-      "FACILITY_T": "Cultural Facility",
-      "FACILITY_DOMAIN_NAME": "Library",
-      "LNG": -73.79438609942015,
-      "LAT": 40.70594635502258,
-      "DISTANCE_TO_FACILITY": 0.693778371870664
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "CHRIST APOSTOLIC CHURCH WOSEM",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.79949571002405,
-      "LAT": 40.69286433573002,
-      "DISTANCE_TO_FACILITY": 1.3254925466360206
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "CHURCH OF JESUS CHRIST OF LATTER DAY SAINTS",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.79749033644133,
-      "LAT": 40.70545991718315,
-      "DISTANCE_TO_FACILITY": 0.632284152316295
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "DISTRICT 29 PRE-K CENTER JAMAICA AVE",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Early Childhood",
-      "LNG": -73.79063627060141,
-      "LAT": 40.70665907122717,
-      "DISTANCE_TO_FACILITY": 1.1891208694602682
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "DOHMH JAMAICA STD CLINIC",
-      "FACILITY_T": "Health Services",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -73.80024061729284,
-      "LAT": 40.703964674347034,
-      "DISTANCE_TO_FACILITY": 0.7715933720258121
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "EMMANU-EL IN ZION TEMPLE GRACE",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.79916935078298,
-      "LAT": 40.69577971356496,
-      "DISTANCE_TO_FACILITY": 0.9656597311989046
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "GEORGE WASHINGTON CARVER BOTANICAL GARDEN",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Garden",
-      "LNG": -73.79466658968327,
-      "LAT": 40.69243507155971,
-      "DISTANCE_TO_FACILITY": 1.1269096020296558
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "GRACE EPISCOPAL CHURCH",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.80101546793267,
-      "LAT": 40.703462882186,
-      "DISTANCE_TO_FACILITY": 0.8019028631722662
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HILLCREST HIGH SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public High School",
-      "LNG": -73.80245556834083,
-      "LAT": 40.70947267187953,
-      "DISTANCE_TO_FACILITY": 1.6288406644598012
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA BUS TERMINAL",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bus Terminal",
-      "LNG": -73.79561482419282,
-      "LAT": 40.70744070049771,
-      "DISTANCE_TO_FACILITY": 0.7232622698434099
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA LEARNING CENTER HUB",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -73.79950434029676,
-      "LAT": 40.708326184121496,
-      "DISTANCE_TO_FACILITY": 1.1739942104263008
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA MULTIPLEX CINEMAS",
-      "FACILITY_T": "Cultural Facility",
-      "FACILITY_DOMAIN_NAME": "Theater/Concert Hall",
-      "LNG": -73.79977126519128,
-      "LAT": 40.70320851290595,
-      "DISTANCE_TO_FACILITY": 0.6355613687924517
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA PERFORMING ARTS CENTER",
-      "FACILITY_T": "Cultural Facility",
-      "FACILITY_DOMAIN_NAME": "Theater/Concert Hall",
-      "LNG": -73.80171793846468,
-      "LAT": 40.70243540054789,
-      "DISTANCE_TO_FACILITY": 0.7658266303944572
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA SDA ELEMENTARY SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial Elementary School",
-      "LNG": -73.799004289506,
-      "LAT": 40.7078678643093,
-      "DISTANCE_TO_FACILITY": 1.0676150734978762
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "JAMAICA YMCA",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Recreational Center",
-      "LNG": -73.80100565693652,
-      "LAT": 40.70503540224324,
-      "DISTANCE_TO_FACILITY": 0.9753635689533198
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MARCONI PARK",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.79544070976398,
-      "LAT": 40.69366260153213,
-      "DISTANCE_TO_FACILITY": 0.9047264461320879
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MARCONI PARK ATHLETIC FIELD",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.79515314621231,
-      "LAT": 40.69356237496324,
-      "DISTANCE_TO_FACILITY": 0.9477711495137555
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MARCONI PARK COMFORT STATION",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Other",
-      "LNG": -73.79558095522484,
-      "LAT": 40.693298732490206,
-      "DISTANCE_TO_FACILITY": 0.9295486636310031
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MARCONI PARK COURT",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.79569264620496,
-      "LAT": 40.69436585710057,
-      "DISTANCE_TO_FACILITY": 0.7987001330871379
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MARCONI PARK PLAYGROUND",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Sports",
-      "LNG": -73.79584081409523,
-      "LAT": 40.693176086101595,
-      "DISTANCE_TO_FACILITY": 0.914318078153201
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MS 358",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Junior High-Intermediate-Middle",
-      "LNG": -73.79829260458587,
-      "LAT": 40.708668842821154,
-      "DISTANCE_TO_FACILITY": 1.077526662178876
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "MTA JAMAICA DEPOT",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bus Terminal",
-      "LNG": -73.79118916760223,
-      "LAT": 40.70143611219885,
-      "DISTANCE_TO_FACILITY": 0.54800085022584
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "NEW DAWN CHARTER HIGH SCHOOL II",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public High School",
-      "LNG": -73.79937640868654,
-      "LAT": 40.705944989324614,
-      "DISTANCE_TO_FACILITY": 0.8954811792376347
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "NEW DAWN ELEMENTARY SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial K-8",
-      "LNG": -73.79814674802812,
-      "LAT": 40.70656516218598,
-      "DISTANCE_TO_FACILITY": 0.8278280337643267
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS 48 WILLIAM WORDSWORTH",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Elementary School",
-      "LNG": -73.79604112581961,
-      "LAT": 40.69348974379788,
-      "DISTANCE_TO_FACILITY": 0.8726134044112328
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "PS 82 ANNEX",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public School Annex",
-      "LNG": -73.79769211427484,
-      "LAT": 40.69296857705572,
-      "DISTANCE_TO_FACILITY": 1.1137226313210178
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS CENTRAL LIBRARY",
-      "FACILITY_T": "Cultural Facility",
-      "FACILITY_DOMAIN_NAME": "Library",
-      "LNG": -73.79469822921058,
-      "LAT": 40.70777326268797,
-      "DISTANCE_TO_FACILITY": 0.8619187159911519
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS HIGH SCHOOL FOR THE SCIENCES AT YORK COLLEGE",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public High School",
-      "LNG": -73.7983555402615,
-      "LAT": 40.701020358592345,
-      "DISTANCE_TO_FACILITY": 0.293615165275078
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS SATELLITE HIGH SCHOOL FOR OPPORTUNITY",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public High School",
-      "LNG": -73.79965492983109,
-      "LAT": 40.70827883885008,
-      "DISTANCE_TO_FACILITY": 1.185454323609271
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "QUEENS SCHOOL FOR LEADERSHIP & EXCELLENCE",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Elementary School",
-      "LNG": -73.79832996372927,
-      "LAT": 40.70873943299867,
-      "DISTANCE_TO_FACILITY": 1.08950903680104
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "ST JOSEPH CHURCH SOUTH JAMAICA",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.79827148213523,
-      "LAT": 40.69249835550873,
-      "DISTANCE_TO_FACILITY": 1.230227055540972
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "THE RIVERVIEW SCHOOL JAMAICA",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Public Junior High-Intermediate-Middle",
-      "LNG": -73.79825734204306,
-      "LAT": 40.708607041279706,
-      "DISTANCE_TO_FACILITY": 1.0667525488262228
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLL ATHLETIC FIELD STORAGE",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.7964435152564,
-      "LAT": 40.69970072410509,
-      "DISTANCE_TO_FACILITY": 0.22785981779429676
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.79562288214917,
-      "LAT": 40.70190346469225,
-      "DISTANCE_TO_FACILITY": 0.10773466228219064
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE ACADEMIC CORE BLDG",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.79637272801132,
-      "LAT": 40.70165367326934,
-      "DISTANCE_TO_FACILITY": 0.08573654215284421
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE CLASSROOM BUILDING",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.79797726365331,
-      "LAT": 40.70114334340698,
-      "DISTANCE_TO_FACILITY": 0.23797514734135206
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE FDA BUILDING",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.79892513850848,
-      "LAT": 40.700176843232384,
-      "DISTANCE_TO_FACILITY": 0.45047077564583304
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE HEALTH & PHYSICAL EDUCATION BUILDING",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.7953770233782,
-      "LAT": 40.70050468762255,
-      "DISTANCE_TO_FACILITY": 0.15232407891825517
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE PERFORMING ARTS CTR",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.794675298806,
-      "LAT": 40.702502623861626,
-      "DISTANCE_TO_FACILITY": 0.2794230811754801
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE SCIENCE BUILDING",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Post Secondary Degree Granting Institution",
-      "LNG": -73.7982257661332,
-      "LAT": 40.7008027713888,
-      "DISTANCE_TO_FACILITY": 0.3033624166274791
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "YORK COLLEGE ST MONICA'S CHURCH",
-      "FACILITY_T": "Religious Institution",
-      "FACILITY_DOMAIN_NAME": "Church",
-      "LNG": -73.79814270360077,
-      "LAT": 40.70191260050905,
-      "DISTANCE_TO_FACILITY": 0.31094475618960615
-    }
-  ],
-  "11509": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "SEAGIRT AVENUE WETLANDS",
-      "FACILITY_T": "Recreational Facility",
-      "FACILITY_DOMAIN_NAME": "Park",
-      "LNG": -73.74046705127834,
-      "LAT": 40.59693849832996,
-      "DISTANCE_TO_FACILITY": 2.3215150065220485
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "TORAH ACADEMY FOR GIRLS",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial Elementary School",
-      "LNG": -73.74014284393088,
-      "LAT": 40.59917804224994,
-      "DISTANCE_TO_FACILITY": 2.534117366071321
-    },
-    {
-      "BOROUGH": "Queens",
-      "NAME": "TORAH ACADEMY FOR GIRLS HIGH SCHOOL",
-      "FACILITY_T": "Education Facility",
-      "FACILITY_DOMAIN_NAME": "Private/Parochial High School",
-      "LNG": -73.74234024550495,
-      "LAT": 40.599568947590086,
-      "DISTANCE_TO_FACILITY": 2.3331985664513084
-    }
-  ],
-  "11516": [
-    {
-      "BOROUGH": "Queens",
-      "NAME": "HOOK CREEK",
-      "FACILITY_T": "Transportation Facility",
-      "FACILITY_DOMAIN_NAME": "Bridge",
-      "LNG": -73.73999760644608,
-      "LAT": 40.63525309279285,
-      "DISTANCE_TO_FACILITY": 2.528435615520891
-    }
-  ],
   "11691": [
     {
       "BOROUGH": "Queens",
@@ -115316,6 +113374,296 @@
       "LNG": -73.85228614084468,
       "LAT": 40.57391038421929,
       "DISTANCE_TO_FACILITY": 1.3190969854187813
+    }
+  ],
+  "11697": [
+    {
+      "BOROUGH": "Queens",
+      "NAME": "GERRITSEN INLET BUOY 5",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.9183133706353,
+      "LAT": 40.57552962277864,
+      "DISTANCE_TO_FACILITY": 2.4632289879103766
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "GERRITSEN INLET BUOY 7",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.91259373198037,
+      "LAT": 40.57691596553231,
+      "DISTANCE_TO_FACILITY": 3.223081075734484
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "GERRITSEN INLET LIGHTED BUOY 2",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.91759009159111,
+      "LAT": 40.57055093413724,
+      "DISTANCE_TO_FACILITY": 1.9908785226204557
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "GERRITSEN INLET LIGHTED BUOY 4",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.91720955324232,
+      "LAT": 40.574893877986284,
+      "DISTANCE_TO_FACILITY": 2.515185046580612
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "MARINE PARKWAY BRIDGE FOG SIGNAL",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.88557711399237,
+      "LAT": 40.574065661340455,
+      "DISTANCE_TO_FACILITY": 4.997159244362464
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "SHEEPSHEAD BAY APPROACH BUOY 2",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.93512186667255,
+      "LAT": 40.567747839449154,
+      "DISTANCE_TO_FACILITY": 2.9435763795078174
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "SHEEPSHEAD BAY APPROACH BUOY 3",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.9323627302371,
+      "LAT": 40.57215672062002,
+      "DISTANCE_TO_FACILITY": 3.1266980451398823
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "SHEEPSHEAD BAY APPROACH LIGHTED BUOY 4",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.92933537328412,
+      "LAT": 40.571835228435525,
+      "DISTANCE_TO_FACILITY": 2.7549757908794774
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "SHEEPSHEAD BAY CHANNEL BUOY 7A",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.9278970045702,
+      "LAT": 40.57524668845353,
+      "DISTANCE_TO_FACILITY": 2.9739889256331793
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "AMBROSE CHANNEL ENTRANCE LIGHTED BELL BUOY 6",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.92389067944498,
+      "LAT": 40.49470483122278,
+      "DISTANCE_TO_FACILITY": 7.127404152663722
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "AMBROSE CHANNEL ENTRANCE LIGHTED GONG BUOY 5",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.92727882697473,
+      "LAT": 40.489711068564795,
+      "DISTANCE_TO_FACILITY": 8.057796183502496
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "AMBROSE CHANNEL LIGHTED BUOY 3",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.9122531864102,
+      "LAT": 40.48459102324157,
+      "DISTANCE_TO_FACILITY": 8.825253728654694
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "AMBROSE CHANNEL LIGHTED BUOY 4",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.8995257543478,
+      "LAT": 40.486085947552205,
+      "DISTANCE_TO_FACILITY": 10.072062089099695
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "BREEZY POINT BEACH",
+      "FACILITY_T": "Recreational Facility",
+      "FACILITY_DOMAIN_NAME": "Beach",
+      "LNG": -73.91219028818657,
+      "LAT": 40.55666811758553,
+      "DISTANCE_TO_FACILITY": 1.049264063285321
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "FORT TILDEN",
+      "FACILITY_T": "Recreational Facility",
+      "FACILITY_DOMAIN_NAME": "Park",
+      "LNG": -73.8882205048944,
+      "LAT": 40.562737807948736,
+      "DISTANCE_TO_FACILITY": 4.383645639030746
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "FT TILDEN BEACH",
+      "FACILITY_T": "Recreational Facility",
+      "FACILITY_DOMAIN_NAME": "Beach",
+      "LNG": -73.89003432733573,
+      "LAT": 40.55922919957036,
+      "DISTANCE_TO_FACILITY": 3.792855818044494
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "OUTFALL GATE HOUSE LIGHT",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.93078532606248,
+      "LAT": 40.56610937837962,
+      "DISTANCE_TO_FACILITY": 2.280351193072036
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "RIIS LANDING ROCKAWAY FERRY",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Ferry landing/terminal",
+      "LNG": -73.88480488445613,
+      "LAT": 40.56824603779609,
+      "DISTANCE_TO_FACILITY": 5.374193020735248
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET BUOY 10",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.93868808697772,
+      "LAT": 40.55722296349421,
+      "DISTANCE_TO_FACILITY": 2.171165602383539
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET BUOY 13",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.93159140907446,
+      "LAT": 40.563824177930584,
+      "DISTANCE_TO_FACILITY": 2.116169157558687
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET BUOY 15",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.92087299395965,
+      "LAT": 40.567509854338915,
+      "DISTANCE_TO_FACILITY": 1.3355351611396387
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET BUOY 16",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.91727586322132,
+      "LAT": 40.5649752925988,
+      "DISTANCE_TO_FACILITY": 1.4068616609006597
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET BUOY 5",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.94557925900476,
+      "LAT": 40.54194329244553,
+      "DISTANCE_TO_FACILITY": 4.291367288074248
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET BUOY 7",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.94648307051447,
+      "LAT": 40.554667041664636,
+      "DISTANCE_TO_FACILITY": 2.9793542023319404
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET LIGHTED BELL BUOY 12",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.93072676937116,
+      "LAT": 40.56125950152458,
+      "DISTANCE_TO_FACILITY": 1.7355150694266612
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET LIGHTED BELL BUOY 8",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.94290902758311,
+      "LAT": 40.55387597645631,
+      "DISTANCE_TO_FACILITY": 2.6704436750748783
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET LIGHTED BUOY 20",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.89857695487666,
+      "LAT": 40.56980159246637,
+      "DISTANCE_TO_FACILITY": 4.018159772457885
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY INLET LIGHTED BUOY 9",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.94246907006963,
+      "LAT": 40.55810008277468,
+      "DISTANCE_TO_FACILITY": 2.6882149657179113
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY POINT BREAKWATER LIGHT 4",
+      "FACILITY_T": "Transportation Facility",
+      "FACILITY_DOMAIN_NAME": "Water Navigation",
+      "LNG": -73.9408037159215,
+      "LAT": 40.54041586097093,
+      "DISTANCE_TO_FACILITY": 3.9308268995134554
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY POINT VFD",
+      "FACILITY_T": "Public Safety",
+      "FACILITY_DOMAIN_NAME": "Other",
+      "LNG": -73.91434276980358,
+      "LAT": 40.56125651333851,
+      "DISTANCE_TO_FACILITY": 1.319650532377473
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ROCKAWAY POINT YACHT CLUB",
+      "FACILITY_T": "Recreational Facility",
+      "FACILITY_DOMAIN_NAME": "Other",
+      "LNG": -73.91020884468938,
+      "LAT": 40.56449619425812,
+      "DISTANCE_TO_FACILITY": 2.1381208021302953
+    },
+    {
+      "BOROUGH": "Queens",
+      "NAME": "ST GENEVIEVES RC CHURCH BREEZY POINT",
+      "FACILITY_T": "Religious Institution",
+      "FACILITY_DOMAIN_NAME": "Church",
+      "LNG": -73.8891683495943,
+      "LAT": 40.56604204215544,
+      "DISTANCE_TO_FACILITY": 4.645204874286428
     }
   ]
 }
