@@ -1,43 +1,6 @@
 import { createSignal } from "solid-js";
 import { FormInput, InputGroup } from "./Forms";
 
-/**
- * @typedef {Object} SettingsFormValues
- * @property {string} Username - The username.
- * @property {string} Email - The email address.
- * @property {string} Name - The first name.
- * @property {string} Surname - The surname.
- */
-
-/**
- * Validates the settings form values.
- * @param {SettingsFormValues} values - The settings form values to validate.
- * @returns {Object<string, string>} - An object containing validation error messages.
- */
-function validateSettingsFormValues(values) {
-  const errors = {};
-  if (values.Name.length < 1) {
-    errors.name = "Name must be greater than one character";
-  }
-  if (values.Surname.length < 1) {
-    errors.surname = "Surname must be greater than one character";
-  }
-  if (values.Username.length < 1) {
-    errors.username = "Username must be greater than one character";
-  }
-  if (!isValidEmail(values.Email)) {
-    errors.email = "Please enter a valid email address";
-  }
-  return errors;
-}
-
-/**
- * @param {Object} props
- * @param {boolean} props.editOn() - Indicates whether the form is in edit mode.
- * @param {string} props.userId - The user ID.
- * @param {SettingsFormValues} props.values - The form values.
- * @param {Object<string, string>} props.errors - The validation errors.
- */
 function SettingsForm({ userId, values, errors }) {
   const [editOn, setEditOn] = createSignal(false);
 
@@ -109,6 +72,8 @@ function SettingsForm({ userId, values, errors }) {
           Value={values.Email}
         />
       </InputGroup>
+
+
       <div class="mt-6 grid grid-cols-3 gap-2">
         <div class="col-start-3 grid gap-2">
           {editOn() ? (
@@ -140,4 +105,4 @@ function SettingsForm({ userId, values, errors }) {
   );
 }
 
-export { SettingsForm, validateSettingsFormValues };
+export { SettingsForm };

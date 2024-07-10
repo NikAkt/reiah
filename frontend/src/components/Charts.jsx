@@ -399,8 +399,7 @@ const LineChart = (props) => {
 
               <div
                 class={`overflow-y-auto absolute w-[15vw] h-[20vh] mt-[3vh] bg-white 
-                  border rounded-lg mt-1 z-10 ${
-                    showDropDown() ? "block" : "hidden"
+                  border rounded-lg mt-1 z-10 ${showDropDown() ? "block" : "hidden"
                   }`}
                 onMouseOver={() => setShowDropDown(true)}
                 onMouseLeave={() => setShowDropDown(false)}
@@ -490,37 +489,10 @@ const DoughnutChart = (props) => {
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      {/* <div>{props.amenities}</div> */}
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
   );
 };
-
-// const centerTextPlugin = {
-//   id: "centerText",
-//   beforeDraw: function (chart) {
-//     if (chart.config.type === "doughnut") {
-//       const { ctx, data } = chart;
-//       if (data) {
-//         const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
-//         const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-//         let sum;
-//         for (let num of data.datasets[0].data) {
-//           console.log(typeof num);
-//           sum += num;
-//         }
-//         const text = sum.toString(); // Change this to the text you want to display
-//         ctx.save();
-//         ctx.font = "bold 16px Arial"; // Customize your font size and style
-//         ctx.textAlign = "center";
-//         ctx.textBaseline = "middle";
-//         ctx.fillStyle = "#000"; // Customize your text color
-//         ctx.fillText(text, centerX, centerY);
-//         ctx.restore();
-//       }
-//     }
-//   },
-// };
 
 const createDoughnutChart = (
   ctx,
@@ -542,7 +514,7 @@ const createDoughnutChart = (
     data: dataset,
     options: {
       responsive: true,
-      onClick: function (event, elements) {
+      onClick: function(event, elements) {
         console.log(event);
         // Actions to be performed
       },
@@ -550,15 +522,6 @@ const createDoughnutChart = (
         legend: {
           position: "top",
         },
-        // title: {
-        //   display: true,
-        //   text: `Amenities of ZIPCODE ${title}`,
-        // },
-        // tooltip: {
-        //   callbacks: {
-        //     footer: footer,
-        //   },
-        // },
       },
     },
   });

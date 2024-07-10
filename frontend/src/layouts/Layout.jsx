@@ -1,5 +1,5 @@
 import { Sidebar, DarkLightModeToggle } from "../components/Sidebar";
-import { SortableGroup } from "../components/SortableWrapper";
+import { SortableGroup } from "../components/SortableGroup";
 import { Navbar } from "../components/Navbar";
 import { setStore, store } from "../data/stores";
 import { Show } from "solid-js";

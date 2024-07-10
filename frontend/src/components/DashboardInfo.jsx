@@ -1,10 +1,8 @@
 import { Loader } from "@googlemaps/js-api-loader";
-import { store } from "../data/stores";
 import {
   createEffect,
   createSignal,
   onCleanup,
-  onMount,
   Show,
   Suspense,
 } from "solid-js";

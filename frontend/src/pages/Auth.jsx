@@ -1,4 +1,4 @@
-import { LoginForm, RegisterForm } from "../components/AuthForms"
+import { LoginForm, RegisterForm } from "../components/LoginAndRegisterComponent"
 import { AuthLayout } from "../layouts/Layout"
 
 const LoginPage = () => {
