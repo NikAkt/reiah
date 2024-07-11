@@ -11,8 +11,11 @@ function debounce(func, timeout = 300) {
   };
 }
 
-const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
-  const [filterDisplay, setFilterDisplay] = createSignal(false);
+const Filter = ({
+  realEstateDataProp,
+  setFilteredZipCodes,
+  setShowFilterBoard,
+}) => {
   const [filterTarget, setFilterTarget] = createSignal("Residential Property");
   const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
   const [selectedNeighborhoods, setSelectedNeighborhoods] = createSignal(
@@ -62,10 +65,6 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
       setFilteredAmenities({});
     }
   }, 300);
-
-  const toggleFilter = () => {
-    setFilterDisplay(!filterDisplay());
-  };
 
   const handleBoroughChange = (borough) => {
     setSelectedBoroughs((prev) => {
@@ -213,281 +212,276 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
 
   return (
     <div
-      class="absolute z-10 w-[80vw] flex flex-col items-center left-[30vw]
-    gap-0.5 top-[0.5vh] justify-center text-black pointer-events-none"
+      class="absolute z-10 w-[80%] flex flex-col items-center left-[15%]
+    gap-0.5 top-[10%] justify-center text-black pointer-events-none"
     >
-      <button
+      {/* <button
         class="rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center pointer-events-auto"
         onClick={toggleFilter}
       >
         <span>Filter</span>
-      </button>
-      {filterDisplay() && (
-        <div
-          class="grid-cols-1 divide-y m-0 px-0 ml-[-10vw]
+      </button> */}
+      (
+      <div
+        class="grid-cols-1 divide-y m-0 px-0 ml-[-10vw]
         mt-[-2vh] w-full max-h-[80vh] shadow-md z-20 
         items-center bg-white animate-fade-down rounded-lg t
         ransition-all duration-500 overflow-y-auto relative pointer-events-auto"
+      >
+        {/* FILTER TITLE */}
+        <div
+          id="filter-dropdown-title"
+          class="items-center justify-center relative flex h-[8%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
+          style="position: sticky; top: 0; height: 56px;"
         >
-          {/* FILTER TITLE */}
-          <div
-            id="filter-dropdown-title"
-            class="items-center justify-center relative flex h-[8%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
-            style="position: sticky; top: 0; height: 56px;"
+          <button
+            class="absolute rounded-full w-[20px] h-[20px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer"
+            onClick={() => setShowFilterBoard((prev) => !prev)}
           >
-            <button
-              class="absolute rounded-full w-[20px] h-[20px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer"
-              onClick={toggleFilter}
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
             >
-              <svg
-                class="h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <p>Filters for {filterTarget()}</p>
-          </div>
-          {/* FILTER CONTENT */}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <p>Filters for {filterTarget()}</p>
+        </div>
+        {/* FILTER CONTENT */}
+        <div
+          class="w-[100%] flex flex-col h-auto relative items-center py-4 px-[10%] gap-y-2.5 bg-white"
+          id="filter-details-container"
+        >
+          {/* Borough Selection */}
           <div
-            class="w-[100%] flex flex-col h-auto relative items-center py-4 px-[10%] gap-y-2.5 bg-white"
-            id="filter-details-container"
+            id="borough-selection-container"
+            class="w-full p-4 rounded-lg transition-all duration-500"
           >
-            {/* Borough Selection */}
+            <label
+              htmlFor="borough-selection"
+              class="font-sans text-2xl font-bold text-teal-500"
+            >
+              Borough:
+            </label>
+            <div class="flex flex-wrap gap-2">
+              {unique_borough.map((el) => (
+                <div key={el} class="flex items-center">
+                  <input
+                    name="borough-selection"
+                    value={el.toString()}
+                    type="checkbox"
+                    onChange={() => handleBoroughChange(el)}
+                    checked={selectedBoroughs().has(el)}
+                  />
+                  <label htmlFor="borough-selection" class="ml-2 text-gray-700">
+                    {el.toString()}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Neighborhood Selection */}
+          {[...selectedBoroughs()].length > 0 && (
             <div
-              id="borough-selection-container"
-              class="w-full p-4 rounded-lg transition-all duration-500"
+              class="w-full p-4 rounded-lg transition-all duration-500 ease-in-out transform opacity-100 scale-100"
+              id="neighborhood-container"
             >
               <label
-                htmlFor="borough-selection"
+                htmlFor="neighborhood-selection"
                 class="font-sans text-2xl font-bold text-teal-500"
               >
-                Borough:
+                Neighborhood:
               </label>
-              <div class="flex flex-wrap gap-2">
-                {unique_borough.map((el) => (
-                  <div key={el} class="flex items-center">
-                    <input
-                      name="borough-selection"
-                      value={el.toString()}
-                      type="checkbox"
-                      onChange={() => handleBoroughChange(el)}
-                      checked={selectedBoroughs().has(el)}
-                    />
-                    <label
-                      htmlFor="borough-selection"
-                      class="ml-2 text-gray-700"
-                    >
-                      {el.toString()}
-                    </label>
+              <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md">
+                {getNeighborhoods([...selectedBoroughs()]).map((el) => (
+                  <div
+                    key={el}
+                    class={`p-2 cursor-pointer ${
+                      selectedNeighborhoods().has(el)
+                        ? "bg-teal-500 text-white"
+                        : "bg-white text-gray-700"
+                    }`}
+                    onClick={() => handleNeighborhoodChange(el)}
+                  >
+                    {el}
                   </div>
                 ))}
               </div>
             </div>
+          )}
 
-            {/* Neighborhood Selection */}
-            {[...selectedBoroughs()].length > 0 && (
+          {/* Advanced Filters Button */}
+          {selectedNeighborhoods().size > 0 && (
+            <button
+              class="mt-4 p-2 bg-teal-500 text-white rounded transition-all duration-500 ease-in-out transform"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}
+            >
+              {showAdvancedFilters()
+                ? "Hide Advanced Filters"
+                : "Show Advanced Filters"}
+            </button>
+          )}
+
+          {/* Advanced Filters */}
+          {showAdvancedFilters() && (
+            <div
+              class="w-full p-4 rounded-lg mt-4 flex flex-col transition-all duration-500 ease-in-out transform opacity-100 scale-100"
+              id="advanced-filters-container"
+            >
               <div
-                class="w-full p-4 rounded-lg transition-all duration-500 ease-in-out transform opacity-100 scale-100"
-                id="neighborhood-container"
+                class="flex flex-col items-center justify-center p-2 rounded-lg"
+                id="home-value-container"
               >
-                <label
-                  htmlFor="neighborhood-selection"
-                  class="font-sans text-2xl font-bold text-teal-500"
-                >
-                  Neighborhood:
-                </label>
-                <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md">
-                  {getNeighborhoods([...selectedBoroughs()]).map((el) => (
-                    <div
-                      key={el}
-                      class={`p-2 cursor-pointer ${
-                        selectedNeighborhoods().has(el)
-                          ? "bg-teal-500 text-white"
-                          : "bg-white text-gray-700"
-                      }`}
-                      onClick={() => handleNeighborhoodChange(el)}
-                    >
-                      {el}
+                <p class="font-sans text-2xl font-bold text-teal-500">
+                  Average Home Value
+                </p>
+                <div class="flex gap-2 w-full">
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-gray-700">Minimum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2"
+                      value={avgHomeValueRange()[0]}
+                      onChange={(e) =>
+                        setAvgHomeValueRange([
+                          Number(e.target.value),
+                          avgHomeValueRange()[1],
+                        ])
+                      }
+                    />
+                  </div>
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-gray-700">Maximum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2"
+                      value={avgHomeValueRange()[1]}
+                      onChange={(e) =>
+                        setAvgHomeValueRange([
+                          avgHomeValueRange()[0],
+                          Number(e.target.value),
+                        ])
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="flex flex-col items-center justify-center p-2 rounded-lg"
+                id="median-income-container"
+              >
+                <p class="font-sans text-2xl font-bold text-teal-500">
+                  Median Household Income
+                </p>
+                <div class="flex gap-2 w-full">
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-gray-700">Minimum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2"
+                      value={medianHouseholdIncomeRange()[0]}
+                      onChange={(e) =>
+                        setMedianHouseholdIncomeRange([
+                          Number(e.target.value),
+                          medianHouseholdIncomeRange()[1],
+                        ])
+                      }
+                    />
+                  </div>
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-gray-700">Maximum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2"
+                      value={medianHouseholdIncomeRange()[1]}
+                      onChange={(e) =>
+                        setMedianHouseholdIncomeRange([
+                          medianHouseholdIncomeRange()[0],
+                          Number(e.target.value),
+                        ])
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                id="amenities-container"
+                class="flex flex-col items-center justify-center p-2 rounded-lg"
+              >
+                <p class="font-sans text-2xl font-bold text-teal-500">
+                  Amenities
+                </p>
+                <div class="grid grid-cols-2 w-full gap-2">
+                  {uniqueAmenities().map((item) => (
+                    <div key={item} class="flex items-center">
+                      <input
+                        type="checkbox"
+                        class="border border-gray-300 rounded p-2"
+                        value={item}
+                        onChange={() => handleAmenityChange(item)}
+                        checked={selectedAmenities().has(item)}
+                      />
+                      <label htmlFor={item} class="ml-2 text-gray-700">
+                        {item}
+                      </label>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* Advanced Filters Button */}
-            {selectedNeighborhoods().size > 0 && (
-              <button
-                class="mt-4 p-2 bg-teal-500 text-white rounded transition-all duration-500 ease-in-out transform"
-                onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}
-              >
-                {showAdvancedFilters()
-                  ? "Hide Advanced Filters"
-                  : "Show Advanced Filters"}
-              </button>
-            )}
-
-            {/* Advanced Filters */}
-            {showAdvancedFilters() && (
-              <div
-                class="w-full p-4 rounded-lg mt-4 flex flex-col transition-all duration-500 ease-in-out transform opacity-100 scale-100"
-                id="advanced-filters-container"
-              >
-                <div
-                  class="flex flex-col items-center justify-center p-2 rounded-lg"
-                  id="home-value-container"
-                >
-                  <p class="font-sans text-2xl font-bold text-teal-500">
-                    Average Home Value
-                  </p>
-                  <div class="flex gap-2 w-full">
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Minimum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={avgHomeValueRange()[0]}
-                        onChange={(e) =>
-                          setAvgHomeValueRange([
-                            Number(e.target.value),
-                            avgHomeValueRange()[1],
-                          ])
-                        }
-                      />
-                    </div>
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Maximum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={avgHomeValueRange()[1]}
-                        onChange={(e) =>
-                          setAvgHomeValueRange([
-                            avgHomeValueRange()[0],
-                            Number(e.target.value),
-                          ])
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="flex flex-col items-center justify-center p-2 rounded-lg"
-                  id="median-income-container"
-                >
-                  <p class="font-sans text-2xl font-bold text-teal-500">
-                    Median Household Income
-                  </p>
-                  <div class="flex gap-2 w-full">
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Minimum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={medianHouseholdIncomeRange()[0]}
-                        onChange={(e) =>
-                          setMedianHouseholdIncomeRange([
-                            Number(e.target.value),
-                            medianHouseholdIncomeRange()[1],
-                          ])
-                        }
-                      />
-                    </div>
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Maximum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={medianHouseholdIncomeRange()[1]}
-                        onChange={(e) =>
-                          setMedianHouseholdIncomeRange([
-                            medianHouseholdIncomeRange()[0],
-                            Number(e.target.value),
-                          ])
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  id="amenities-container"
-                  class="flex flex-col items-center justify-center p-2 rounded-lg"
-                >
-                  <p class="font-sans text-2xl font-bold text-teal-500">
-                    Amenities
-                  </p>
-                  <div class="grid grid-cols-2 w-full gap-2">
-                    {uniqueAmenities().map((item) => (
-                      <div key={item} class="flex items-center">
-                        <input
-                          type="checkbox"
-                          class="border border-gray-300 rounded p-2"
-                          value={item}
-                          onChange={() => handleAmenityChange(item)}
-                          checked={selectedAmenities().has(item)}
-                        />
-                        <label htmlFor={item} class="ml-2 text-gray-700">
-                          {item}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Clear Button and Filter Results */}
-          <div
-            id="button-container"
-            class="items-center justify-center flex gap-4 bg-teal-500 text-white w-[100%] z-30 rounded-b-lg p-4 pointer-events-auto"
-            style="position: sticky; bottom: 0; height: 56px;"
-          >
-            <button
-              class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
-              onClick={() => {
-                setSelectedBoroughs(new Set());
-                setSelectedNeighborhoods(new Set());
-                setSelectedAmenities(new Set());
-                setFilteredZipCodes([]);
-                setShowAdvancedFilters(false);
-                setFilteredAmenities({});
-              }}
-            >
-              Clear all
-            </button>
-
-            {filteredZipCodesLocal().length === 0 ? (
-              <span class="text-red-500">Change filters</span>
-            ) : (
-              <div class="flex items-center gap-2">
-                <span>
-                  Filters result in {filteredZipCodesLocal().length} zipcodes
-                </span>
-                <button
-                  class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
-                  onClick={() =>
-                    highlightZipCodesOnMap(filteredZipCodesLocal())
-                  }
-                >
-                  See on Map
-                </button>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Clear Button and Filter Results */}
+        <div
+          id="button-container"
+          class="items-center justify-center flex gap-4 bg-teal-500 text-white w-[100%] z-30 rounded-b-lg p-4 pointer-events-auto"
+          style="position: sticky; bottom: 0; height: 56px;"
+        >
+          <button
+            class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
+            onClick={() => {
+              setSelectedBoroughs(new Set());
+              setSelectedNeighborhoods(new Set());
+              setSelectedAmenities(new Set());
+              setFilteredZipCodes([]);
+              setShowAdvancedFilters(false);
+              setFilteredAmenities({});
+            }}
+          >
+            Clear all
+          </button>
+
+          {filteredZipCodesLocal().length === 0 ? (
+            <span class="text-red-500">Change filters</span>
+          ) : (
+            <div class="flex items-center gap-2">
+              <span>
+                Filters result in {filteredZipCodesLocal().length} zipcodes
+              </span>
+              <button
+                class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
+                onClick={() => highlightZipCodesOnMap(filteredZipCodesLocal())}
+              >
+                See on Map
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      )
     </div>
   );
 };

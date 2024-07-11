@@ -31,6 +31,7 @@ export const Map = (props) => {
   // Limit is 7
   const [getComparedZip, setComparedZip] = createSignal([]);
   const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
+  const [showFilterBoard, setShowFilterBoard] = createSignal(false);
 
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
@@ -68,20 +69,16 @@ export const Map = (props) => {
               </div>
             }
           >
-            <Show
-              when={
-                !props.dataResources.realEstateData.loading &&
-                !props.dataResources.historicalRealEstateData.loading &&
-                !props.dataResources.amenitiesData.loading
-              }
-            >
+            <Show when={showFilterBoard()}>
               <Filter
-                realEstateData={props.dataResources.realEstateData()}
-                historicalRealEstateData={props.dataResources.historicalRealEstateData()}
-                amenitiesData={props.dataResources.amenitiesData()}
+                // realEstateData={props.dataResources.realEstateData()}
+                // historicalRealEstateData={props.dataResources.historicalRealEstateData()}
+                // amenitiesData={props.dataResources.amenitiesData()}
                 setFilteredZipCodes={setFilteredZipCodes} // Pass the setFilteredZipCodes function to Filter
+                setShowFilterBoard={setShowFilterBoard}
               />
             </Show>
+
             <Show
               when={
                 props.dataResources.borough_geojson() &&
@@ -106,6 +103,7 @@ export const Map = (props) => {
                 setFavorite={props.setFavorite}
                 favorite={props.favorite}
                 setShowRecommendBoard={setShowRecommendBoard}
+                setShowFilterBoard={setShowFilterBoard}
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart
