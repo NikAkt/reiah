@@ -26,6 +26,7 @@ export const Map = (props) => {
     createSignal(false);
 
   const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
+  const [recommendedZipcode, setRecommendedZipcode] = createSignal(null);
 
   // Limit is 7
   const [getComparedZip, setComparedZip] = createSignal([]);
@@ -169,7 +170,7 @@ export const Map = (props) => {
                 })}
               </MapComponent>
             </Show>
-            <RecommendZipcode />
+            <RecommendZipcode setRecommendedZipcode={setRecommendedZipcode} />
           </Suspense>
         </ErrorBoundary>
         <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>

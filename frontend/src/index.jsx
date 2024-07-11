@@ -1,7 +1,7 @@
 /* @refresh reload */
 import "./index.css";
 import { render } from "solid-js/web";
-import { createEffect, createResource, createSignal, } from "solid-js";
+import { createEffect, createResource, createSignal } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { Dashboard } from "./pages/Dashboard";
 import { Home } from "./pages/Home";
@@ -13,8 +13,12 @@ import { ErrorPage } from "./components/ErrorPage";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseProvider } from "solid-supabase";
 import { RouteGuard } from "./routeguard";
+import RecommendZipcode from "./components/RecommendZipcode";
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY);
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_KEY
+);
 
 const root = document.getElementById("root");
 
@@ -127,6 +131,7 @@ render(
             )}
           />
           <Route path="/settings" component={Settings} />
+          <Route path="/develop" component={RecommendZipcode} />
           <Route
             path="/dashboard"
             component={() => <Dashboard favorite={favorite} />}
