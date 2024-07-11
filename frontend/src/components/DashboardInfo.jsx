@@ -8,6 +8,24 @@ import {
 } from "solid-js";
 import Markers from "./Markers";
 import { DoughnutChart, BarChart } from "./Charts";
+import { Dialog, DialogTitle } from "@suid/material";
+
+const MarkerDialog = ({ type, bath, beds, price, propertysqf }) => {
+  return (
+    <div>
+      <Dialog>
+        <DialogTitle>Hello</DialogTitle>
+        <ul>
+          <li>type:{type}</li>
+          <li>bath:{bath} </li>
+          <li>beds:{beds}</li>
+          <li>price:{price} </li>
+          <li>propertysqf:{propertysqf}</li>
+        </ul>
+      </Dialog>
+    </div>
+  );
+};
 
 export const DashboardInfo = (props) => {
   let ref;

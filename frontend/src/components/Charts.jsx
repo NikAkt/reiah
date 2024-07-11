@@ -1,5 +1,8 @@
 import Chart from "chart.js/auto";
 import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
+import SearchIcon from "@suid/icons-material/Search";
+import ArrowDropDownIcon from "@suid/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@suid/icons-material/ArrowDropUp";
 
 const transformData = (historicpricesObject) => {
   if (historicpricesObject == undefined) {
@@ -343,42 +346,61 @@ const LineChart = (props) => {
             <div class="flex flex-col">
               <div class="flex flex-row gap-2">
                 <Show when={props.getSelectedZip()}>
-                  <input
-                    type="text"
-                    class="rounded-lg text-center w-[40%] relative"
-                    placeholder={`Compare To? ${props.getComparedZip()}`}
-                    id="compareSearchBar"
-                    onMouseOver={() => {
-                      setShowDropDown(true);
-                    }}
-                    onKeyUp={(event) => {
-                      if (event.key === "Enter") {
-                        if (uniqueZipcode.includes(event.target.value)) {
-                          props.setComparedZip((prev) => [
-                            ...prev,
-                            event.target.value * 1,
-                          ]);
-
-                          if (
-                            !document.getElementById(
-                              `compareCheckbox-${event.target.value}`
-                            ).checked
-                          ) {
-                            document.getElementById(
-                              `compareCheckbox-${event.target.value}`
-                            ).checked = true;
-                          }
-
-                          // event.target.placeholder = [
-                          //   ...new Set(props.getComparedZip()),
-                          // ];
-                          event.target.value = "";
-                        } else {
-                          alert("The zipcode you provided is not included.");
-                        }
+                  <div
+                    class="rounded-lg text-center w-[30%] 
+                  relative bg-[#ffffff]"
+                  >
+                    <Show
+                      when={showDropDown() === false}
+                      fallback={
+                        <ArrowDropUpIcon
+                          class="cursor-pointer"
+                          onClick={() => setShowDropDown(false)}
+                        />
                       }
-                    }}
-                  />
+                    >
+                      <ArrowDropDownIcon
+                        class="cursor-pointer"
+                        onClick={() => setShowDropDown(true)}
+                      />
+                    </Show>
+
+                    <SearchIcon />
+
+                    <input
+                      type="text"
+                      placeholder={`Compare To? ${props.getComparedZip()}`}
+                      id="compareSearchBar"
+                      onKeyUp={(event) => {
+                        if (event.key === "Enter") {
+                          if (uniqueZipcode.includes(event.target.value)) {
+                            props.setComparedZip((prev) => [
+                              ...prev,
+                              event.target.value * 1,
+                            ]);
+
+                            if (
+                              !document.getElementById(
+                                `compareCheckbox-${event.target.value}`
+                              ).checked
+                            ) {
+                              document.getElementById(
+                                `compareCheckbox-${event.target.value}`
+                              ).checked = true;
+                            }
+
+                            // event.target.placeholder = [
+                            //   ...new Set(props.getComparedZip()),
+                            // ];
+                            event.target.value = "";
+                          } else {
+                            alert("The zipcode you provided is not included.");
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+
                   <input
                     type="Submit"
                     class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer px-2"
@@ -399,10 +421,9 @@ const LineChart = (props) => {
 
               <div
                 class={`overflow-y-auto absolute w-[15vw] h-[20vh] mt-[3vh] bg-white 
-                  border rounded-lg mt-1 z-10 ${showDropDown() ? "block" : "hidden"
+                  border rounded-lg mt-1 z-10 ${
+                    showDropDown() ? "block" : "hidden"
                   }`}
-                onMouseOver={() => setShowDropDown(true)}
-                onMouseLeave={() => setShowDropDown(false)}
               >
                 <div>
                   <div>Zipcode</div>
@@ -514,7 +535,7 @@ const createDoughnutChart = (
     data: dataset,
     options: {
       responsive: true,
-      onClick: function(event, elements) {
+      onClick: function (event, elements) {
         console.log(event);
         // Actions to be performed
       },
