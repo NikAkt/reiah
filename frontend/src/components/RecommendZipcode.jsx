@@ -1,6 +1,7 @@
 import { createSignal, createEffect, onMount } from "solid-js";
 import ArrowBackIcon from "@suid/icons-material/ArrowBack";
 import ArrowForwardIcon from "@suid/icons-material/ArrowForward";
+import CloseIcon from "@suid/icons-material/Close";
 import { IconButton } from "@suid/material";
 
 // Debounce function to limit API calls
@@ -14,7 +15,7 @@ function debounce(func, timeout = 300) {
   };
 }
 
-const RecommendZipcode = ({ setRecommendedZipcode }) => {
+const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
   const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
   const neighbourhood_type = [
     "Quiet residential",
@@ -83,9 +84,18 @@ const RecommendZipcode = ({ setRecommendedZipcode }) => {
 
   return (
     <div
-      class="absolute z-30 top-[10vh] left-[20vw] h-[50vh] w-[60vw]
-     flex flex-row justify-center items-center bg-white shadow-md"
+      class="absolute z-30 top-[10vh] ml-[30%] h-[60%] w-[40%]
+     flex flex-row justify-center items-center bg-white shadow-md px-2"
     >
+      <div class="absolute top-[2%] left-[1%]">
+        <IconButton>
+          <CloseIcon
+            onClick={() => {
+              setShowRecommendBoard((prev) => !prev);
+            }}
+          />
+        </IconButton>
+      </div>
       <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
         <IconButton
           arial-label="back"

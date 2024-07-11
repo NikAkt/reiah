@@ -98,6 +98,9 @@ export const MapComponent = (props) => {
     recommendZipBtn.textContent = "Recommend Zipcode";
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+    recommendZipBtn.addEventListener("click", () => {
+      props.setShowRecommendBoard((prev) => !prev);
+    });
 
     // const filterBtn = document.createElement("button");
     // filterBtn.textContent = "Filter";
@@ -181,7 +184,6 @@ export const MapComponent = (props) => {
       };
 
       map.setCenter(newCenter);
-      console.log("mapcenter", map.center);
       setLastClickedZipCode(event.feature.getProperty("ZIPCODE"));
       map.data.revertStyle();
       event.feature.setProperty("isColorful", true);

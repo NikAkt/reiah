@@ -30,6 +30,7 @@ export const Map = (props) => {
 
   // Limit is 7
   const [getComparedZip, setComparedZip] = createSignal([]);
+  const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
 
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
@@ -104,6 +105,7 @@ export const Map = (props) => {
                 filteredZipCodes={filteredZipCodes} // Pass the filtered zip codes to MapComponent
                 setFavorite={props.setFavorite}
                 favorite={props.favorite}
+                setShowRecommendBoard={setShowRecommendBoard}
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart
@@ -170,7 +172,13 @@ export const Map = (props) => {
                 })}
               </MapComponent>
             </Show>
-            <RecommendZipcode setRecommendedZipcode={setRecommendedZipcode} />
+            <Show when={showRecommendBoard()}>
+              <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
+              <RecommendZipcode
+                setRecommendedZipcode={setRecommendedZipcode}
+                setShowRecommendBoard={setShowRecommendBoard}
+              />
+            </Show>
           </Suspense>
         </ErrorBoundary>
         <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>
