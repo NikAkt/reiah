@@ -38,6 +38,16 @@ services:
     ports:
       - "3000:3000"
 
+  python-microservice:
+    build:
+      context: ./recommendation_system
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./recommendation_system/models:/app/models
+      - ./recommendation_system/data:/app/data
+
 volumes:
   pgdata:
   pgadmin_data:
