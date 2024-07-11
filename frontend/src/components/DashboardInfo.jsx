@@ -43,6 +43,7 @@ export const DashboardInfo = (props) => {
   const [getPropertySQFT, setPropertySQFT] = createSignal([]);
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
+  const [bed, setBed] = createSignal(0);
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
