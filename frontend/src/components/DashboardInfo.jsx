@@ -6,23 +6,29 @@ import {
   Show,
   Suspense,
 } from "solid-js";
-import Markers from "./Markers";
-import { DoughnutChart, BarChart } from "./Charts";
-import { Dialog, DialogTitle } from "@suid/material";
+import { DoughnutChart } from "./Charts";
 
-const MarkerDialog = ({ type, bath, beds, price, propertysqf }) => {
+const MarkerDialog = ({ dialogInfo }) => {
   return (
-    <div>
-      <Dialog>
-        <DialogTitle>Hello</DialogTitle>
+    <div
+      class="absolute z-20 w-screen 
+    h-screen bg-black opacity-30 left-0 top-0"
+    >
+      <div
+        class="absolute z-30 w-[15vw] h-[25vh] 
+      border-2 border-solid border-black
+   bg-white left-[0] top-[35vh]"
+      >
         <ul>
-          <li>type:{type}</li>
-          <li>bath:{bath} </li>
-          <li>beds:{beds}</li>
-          <li>price:{price} </li>
-          <li>propertysqf:{propertysqf}</li>
+          <For each={Object.keys(dialogInfo)}>
+            {(item) => (
+              <div>
+                {item}:{dialogInfo[item]}
+              </div>
+            )}
+          </For>
         </ul>
-      </Dialog>
+      </div>
     </div>
   );
 };
@@ -43,7 +49,8 @@ export const DashboardInfo = (props) => {
   const [getPropertySQFT, setPropertySQFT] = createSignal([]);
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
-  const [bed, setBed] = createSignal(0);
+  const [showDialog, setShowDialog] = createSignal(true);
+  const [dialogInfo, setDialogInfo] = createSignal({});
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -109,7 +116,7 @@ export const DashboardInfo = (props) => {
                 bath: el["BATH"],
                 beds: el["BEDS"],
                 price: el["PRICE"],
-                propertysqf: ["PROPERTYSQFT"],
+                propertysqf: el["PROPERTYSQFT"],
                 animation: Animation.DROP,
                 map: props.map(),
                 icon: {
@@ -123,7 +130,14 @@ export const DashboardInfo = (props) => {
               });
               setPropertyOnMap((prev) => [...prev, marker]);
               marker.addListener("click", () => {
-                console.log("marker got clicked");
+                setDialogInfo({
+                  type: marker.type,
+                  bath: marker.bath,
+                  beds: marker.beds,
+                  price: marker.price,
+                  propertysqf: marker.propertysqf,
+                });
+                setShowDialog(true);
               });
             });
           });
@@ -286,6 +300,20 @@ export const DashboardInfo = (props) => {
     }
   });
 
+  createEffect(() => {
+    if (propertyOnMap()) {
+      if (!props.showHousesMarker) {
+        propertyOnMap().forEach((marker) => {
+          marker.setMap(null);
+        });
+      } else {
+        propertyOnMap().forEach((marker) => {
+          marker.setMap(props.map());
+        });
+      }
+    }
+  });
+
   onCleanup(() => {
     const markers = amenitiesOnMap();
     if (markers) {
@@ -302,6 +330,9 @@ export const DashboardInfo = (props) => {
     h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
       id={`dashboardDiv-${[props.zip]}`}
     >
+      {/* <Show when={showDialog() === true && dialogInfo()}>
+        <MarkerDialog dialogInfo={dialogInfo()} />
+      </Show> */}
       <div
         class="col-span-2 text-center justify-center 
         cursor-pointer

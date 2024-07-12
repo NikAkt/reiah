@@ -30,21 +30,22 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
     "$150,000-$200,000",
     "Over $200,000",
     "No preference",
+    "Prefer not to say",
   ];
 
   const business_environment = [
     "Mostly residential",
     "Mix of residential and commercial",
-    "Mostly commercial",
+    "Bustling commercial area",
     "No preference",
   ];
 
   const amenity = [
     "Parks and recreation",
-    "Shopping and restaurants",
+    "Health Services",
     "Schools and education",
     "Public transportation",
-    "Cultural attractions",
+    "Religious institutions",
     "No preference",
   ];
 
@@ -66,8 +67,18 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
 
   const handleSubmitForm = (event) => {
     event.preventDefault();
-    setRecommendedZipcode(10001);
-    console.log(event.target);
+    const data = new FormData(event.target);
+    const formValues = Object.fromEntries(data.entries());
+    const amenities = Array.from(data.getAll("amenity_preferences")).join(",");
+    formValues.amenity_preferences = amenities;
+    console.log(formValues);
+    let query = "http://localhost:5001/get_recommendations?";
+    for (let [key, value] of Object.entries(formValues)) {
+      query += `${key}=${value}&`;
+    }
+    fetch(query)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
   };
 
   let slider;
@@ -75,16 +86,18 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
   const [count, setCount] = createSignal(0);
 
   const handleNext = () => {
+    console.log(count());
     setCount((prev) => prev + 1);
   };
 
   const handleBack = () => {
+    console.log(count());
     setCount((prev) => prev - 1);
   };
 
   return (
     <div
-      class="absolute z-30 top-[10vh] ml-[30%] h-[60%] w-[40%]
+      class="absolute z-30 top-[10vh] ml-[30%] h-[60vh] max-w-[40vw]
      flex flex-row justify-center items-center bg-white shadow-md px-2"
     >
       <div class="absolute top-[2%] left-[1%]">
@@ -109,25 +122,29 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
       <form
         onSubmit={handleSubmitForm}
         class="bg-white h-full w-[97%]
-          flex items-center justify-items-center overflow-hidden"
+          flex items-center justify-items-center overflow-auto
+          border-2 border-solid border-black
+          "
+        action="http://localhost:5001/get_recommendations"
+        method="get"
       >
         <div>
           <ul
             ref={slider}
-            class={`flex translate-x-[-${count() * 100}%]
-            transition delay-50 w-full px-0 m-0`}
+            class="flex w-full px-0 m-0 transition-transform delay-50"
+            style={{ transform: `translateX(-${count() * 100}%)` }}
           >
-            <li class="min-w-[100%] p-[20px] transition delay-50">
+            <li
+              class="min-w-full
+              p-[10px]
+            border-2 border-solid border-indigo-600"
+            >
               <div>Get Started!</div>
             </li>
-            <li class="min-w-full p-[20px] transition delay-50">
+            <li class="min-w-full">
               <div class="flex flex-col">
-                <label for="neighborhood_preference">Borough Preference:</label>
-                <select
-                  id="neighborhood_preference"
-                  name="neighborhood_preference"
-                  required
-                >
+                <label for="borough">Borough Preference:</label>
+                <select id="borough" name="borough" required>
                   <For each={borough}>
                     {(item) => <option value={item}>{item}</option>}
                   </For>
@@ -160,17 +177,39 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
             <li class="min-w-full p-[20px] transition delay-50">
               <div class="flex flex-col">
                 <label for="sqft">Square Footage:</label>
-                <input type="number" id="sqft" name="sqft" required />
-                <label for="sqft">Beds:</label>
-                <input type="number" id="beds" name="beds" placeholder="1" />
-                <label for="sqft">Bath:</label>
-                <input type="number" id="bath" name="bath" placeholder="1" />
-                <label for="neighborhood_preference">Property Type:</label>
-                <select
-                  id="neighborhood_preference"
-                  name="neighborhood_preference"
+                <input
+                  type="number"
+                  id="sqft"
+                  name="sqft"
+                  placeholder="1000"
                   required
-                >
+                />
+                <label for="sqft">Beds:</label>
+                <input
+                  type="number"
+                  id="bedrooms"
+                  name="bedrooms"
+                  placeholder="1"
+                />
+                <label for="sqft">Bath:</label>
+                <input
+                  type="number"
+                  id="bathrooms"
+                  name="bathrooms"
+                  placeholder="1"
+                />
+
+                <label for="max_price">Max Price:</label>
+                <input
+                  type="number"
+                  id="max_price"
+                  name="max_price"
+                  placeholder="1000000"
+                />
+
+                <label for="neighborhood_preference">Property Type:</label>
+
+                <select id="house_type" name="house_type" required>
                   <For each={property_type}>
                     {(item) => <option value={item}>{item}</option>}
                   </For>
@@ -178,7 +217,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
               </div>
             </li>
             <li class="min-w-full p-[20px] transition delay-50">
-              <div class="flex flex-col">
+              <div class="flex flex-col w-[80%]">
                 <label for="income">Income:</label>
                 <select id="income" name="income" required>
                   <For each={income}>
@@ -203,7 +242,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                       <label for="public_transportation">{item}</label>
                       <input
                         type="checkbox"
-                        id="parks"
+                        id={item}
                         name="amenity_preferences"
                         value={item}
                       />

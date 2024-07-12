@@ -415,6 +415,9 @@ export const MapComponent = (props) => {
                   <BottomNavigationAction
                     label="Houses"
                     icon={<LocationOn />}
+                    onClick={() => {
+                      props.setShowHousesMarker((prev) => !prev);
+                    }}
                   />
                   <BottomNavigationAction
                     label="Amenities"

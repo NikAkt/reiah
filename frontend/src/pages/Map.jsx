@@ -33,6 +33,10 @@ export const Map = (props) => {
   const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
 
+  //constrol showing markers on the map
+  const [showHousesMarker, setShowHousesMarker] = createSignal(true);
+  const [showAmenityMarker, setShowAmenityMarker] = createSignal(false);
+
   async function fetchHistoricPrices(zip) {
     const response = await fetch(
       `http://localhost:8000/api/historic-prices?zipcode=${zip}`
@@ -104,6 +108,10 @@ export const Map = (props) => {
                 favorite={props.favorite}
                 setShowRecommendBoard={setShowRecommendBoard}
                 setShowFilterBoard={setShowFilterBoard}
+                showAmenityMarker={showAmenityMarker}
+                setShowAmenityMarker={setShowAmenityMarker}
+                showHousesMarker={showHousesMarker}
+                setShowHousesMarker={setShowHousesMarker}
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart
@@ -138,7 +146,14 @@ export const Map = (props) => {
                     </For>;
                   })}
                 </div>
-                <DashboardInfo map={props.mapObject} zip={getSelectedZip()} />
+                <DashboardInfo
+                  map={props.mapObject}
+                  zip={getSelectedZip()}
+                  showAmenityMarker={showAmenityMarker}
+                  setShowAmenityMarker={setShowAmenityMarker}
+                  showHousesMarker={showHousesMarker}
+                  setShowHousesMarker={setShowHousesMarker}
+                />
                 <Show when={createMoreDashboardInfo()}>
                   <For each={getComparedZip()} fallback={<div></div>}>
                     {(item, index) => (
