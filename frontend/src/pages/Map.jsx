@@ -112,6 +112,7 @@ export const Map = (props) => {
                 setShowAmenityMarker={setShowAmenityMarker}
                 showHousesMarker={showHousesMarker}
                 setShowHousesMarker={setShowHousesMarker}
+                recommendedZipcode={recommendedZipcode}
               >
                 <Show when={!historicPrices.loading}>
                   <LineChart

@@ -63,22 +63,23 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
     "Multi-family home",
   ];
 
-  const [formData, setFromData] = createSignal({});
-
   const handleSubmitForm = (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
     const formValues = Object.fromEntries(data.entries());
     const amenities = Array.from(data.getAll("amenity_preferences")).join(",");
     formValues.amenity_preferences = amenities;
-    console.log(formValues);
     let query = "http://localhost:5001/get_recommendations?";
     for (let [key, value] of Object.entries(formValues)) {
       query += `${key}=${value}&`;
     }
     fetch(query)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        console.log(data);
+        setRecommendedZipcode(data);
+        setShowRecommendBoard(false);
+      });
   };
 
   let slider;
@@ -86,12 +87,10 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
   const [count, setCount] = createSignal(0);
 
   const handleNext = () => {
-    console.log(count());
     setCount((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    console.log(count());
     setCount((prev) => prev - 1);
   };
 
@@ -122,11 +121,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
       <form
         onSubmit={handleSubmitForm}
         class="bg-white h-full w-[97%]
-          flex items-center justify-items-center overflow-auto
-          border-2 border-solid border-black
-          "
-        action="http://localhost:5001/get_recommendations"
-        method="get"
+          flex items-center justify-items-center overflow-hidden"
       >
         <div>
           <ul
@@ -137,7 +132,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
             <li
               class="min-w-full
               p-[10px]
-            border-2 border-solid border-indigo-600"
+            "
             >
               <div>Get Started!</div>
             </li>

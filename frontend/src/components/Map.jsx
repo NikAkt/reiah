@@ -53,6 +53,18 @@ export const MapComponent = (props) => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const zipcodes = props.dataResources.zipcodes();
   const zipcode_geojson = props.dataResources.zipcode_geojson();
+  let recommendedZipcode;
+  if (props.recommendedZipcode()) {
+    recommendedZipcode = [
+      ...props.recommendedZipcode().map((obj) => obj.zipcode),
+    ];
+  } else {
+    recommendedZipcode = [];
+  }
+
+  createEffect(() => {
+    console.log(props.recommendedZipcode());
+  });
 
   function createCenterControl() {
     // Create the main control container
@@ -151,7 +163,10 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
-      } else if (props.filteredZipCodes().includes(parseInt(zipCode))) {
+      } else if (
+        props.filteredZipCodes().includes(parseInt(zipCode)) ||
+        recommendedZipcode.includes(parseInt(zipCode))
+      ) {
         return {
           fillColor: colors.selected, // Orange for matched zip codes
           strokeColor: colors.selected,
@@ -204,7 +219,10 @@ export const MapComponent = (props) => {
             fillOpacity: 0.7,
             strokeWeight: 2,
           };
-        } else if (props.filteredZipCodes().includes(parseInt(zipCode))) {
+        } else if (
+          props.filteredZipCodes().includes(parseInt(zipCode)) ||
+          recommendedZipcode.includes(parseInt(zipCode))
+        ) {
           return {
             fillColor: colors.selected, // Orange for matched zip codes
             strokeColor: colors.selected,
@@ -252,7 +270,10 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
-      } else if (props.filteredZipCodes().includes(parseInt(zipCode))) {
+      } else if (
+        props.filteredZipCodes().includes(parseInt(zipCode)) ||
+        recommendedZipcode.includes(parseInt(zipCode))
+      ) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.selected, // Orange for selected
           strokeColor: colors.selected,
@@ -311,6 +332,12 @@ export const MapComponent = (props) => {
 
   createEffect(() => {
     if (props.mapObject() && props.filteredZipCodes().length > 0) {
+      insertDataLayer(zipcode_geojson, props.mapObject());
+    }
+  });
+
+  createEffect(() => {
+    if (props.mapObject() && recommendedZipcode.length > 0) {
       insertDataLayer(zipcode_geojson, props.mapObject());
     }
   });
@@ -417,6 +444,7 @@ export const MapComponent = (props) => {
                     icon={<LocationOn />}
                     onClick={() => {
                       props.setShowHousesMarker((prev) => !prev);
+                      console.log(props.showHousesMarker());
                     }}
                   />
                   <BottomNavigationAction
