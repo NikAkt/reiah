@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import joblib
 import pandas as pd
 from utilities.recommendation_system import get_recommendations, predict_price
 
 app = Flask(__name__)
+CORS(app) 
 
 # Load the models
 rf_model = joblib.load('models/rf_model.joblib')
