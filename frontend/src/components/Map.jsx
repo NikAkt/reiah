@@ -44,11 +44,6 @@ export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
-  // const [borough, setBorough] = createSignal(false);
-  // const [neighbourhood, setNeighbourhood] = createSignal(true);
-  // const borough_geojson = props.dataResources.borough_geojson();
-  // const neighbourhood_geojson = props.dataResources.neighbourhood_geojson();
-  // const [getLastClickedDataLayer, setLastClickedDataLayer] = createSignal("");
   const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const zipcodes = props.dataResources.zipcodes();
@@ -67,13 +62,11 @@ export const MapComponent = (props) => {
   });
 
   function createCenterControl() {
-    // Create the main control container
     const centerControlDiv = document.createElement("div");
     centerControlDiv.className = !sideBarOpen()
       ? "w-[80%] overflow-x-auto flex"
       : "w-[80%] overflow-x-auto flex flex-col";
 
-    // Create the button element
     const controlButton = document.createElement("button");
     controlButton.textContent = sideBarOpen() ? "Hide List" : "Show List";
     controlButton.title = "Click to show details";
@@ -81,16 +74,13 @@ export const MapComponent = (props) => {
     controlButton.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     controlButton.addEventListener("click", () => {
-      console.log("click!");
       setSidebarOpen(!sideBarOpen());
     });
 
-    // Create the hover location div
     const hoverLocationDiv = document.createElement("div");
     hoverLocationDiv.className =
       "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
-    // Create the inner div and span
     const innerDiv = document.createElement("div");
     innerDiv.textContent = "Location: ";
     innerDiv.className = "flex justify-center items-center";
@@ -99,13 +89,9 @@ export const MapComponent = (props) => {
     input.id = "hoverLocation-div";
     input.className = "relative w-[100%] bg-transparent text-center";
 
-    // Append the span to the inner div
     innerDiv.appendChild(input);
-
-    // Append the inner div to the hover location div
     hoverLocationDiv.appendChild(innerDiv);
 
-    //Create the Recommendation Button
     const recommendZipBtn = document.createElement("button");
     recommendZipBtn.textContent = "Recommend Zipcode";
     recommendZipBtn.className =
@@ -122,7 +108,6 @@ export const MapComponent = (props) => {
       props.setShowFilterBoard((prev) => !prev);
     });
 
-    // Append the button and hover location div to the main control container
     centerControlDiv.append(
       hoverLocationDiv,
       filterBtn,
@@ -134,8 +119,6 @@ export const MapComponent = (props) => {
   }
 
   function handleDataLayerClick(info) {
-    console.log("info", info);
-    //gonna add a zipcode level data layer later
     let level, area;
     if (props.getDataLayerLevel() === "borough") {
       level = "borough";
@@ -147,18 +130,17 @@ export const MapComponent = (props) => {
       level = "zipcode";
       area = null;
     }
-    console.log("level,area", level, area);
     return { level, area };
   }
 
   const insertDataLayer = (data, map) => {
-    clearDataLayer(map); // Clear existing layers before adding new ones
+    clearDataLayer(map);
     map.data.addGeoJson(data);
     map.data.setStyle((feature) => {
       const zipCode = feature.getProperty("ZIPCODE");
       if (zipCode === lastClickedZipCode()) {
         return {
-          fillColor: colors.clicked, // Blue for clicked
+          fillColor: colors.clicked,
           strokeColor: colors.clicked,
           fillOpacity: 0.7,
           strokeWeight: 2,
@@ -168,21 +150,21 @@ export const MapComponent = (props) => {
         recommendedZipcode.includes(parseInt(zipCode))
       ) {
         return {
-          fillColor: colors.selected, // Orange for matched zip codes
+          fillColor: colors.selected,
           strokeColor: colors.selected,
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
       } else if (props.getComparedZip().includes(parseInt(zipCode))) {
         return {
-          fillColor: colors.compared, // Orange for matched zip codes
+          fillColor: colors.compared,
           strokeColor: colors.compared,
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
       } else {
         return {
-          fillColor: colors.default, // Green for default
+          fillColor: colors.default,
           strokeColor: colors.default,
           fillOpacity: 0.1,
           strokeWeight: 2,
@@ -211,10 +193,7 @@ export const MapComponent = (props) => {
         const zipCode = feature.getProperty("ZIPCODE");
         if (zipCode === lastClickedZipCode()) {
           return {
-            //Yu Li's version:
-            // fillColor: colorsChartjs[0],
-            // strokeColor: colorsChartjs[0],
-            fillColor: colors.clicked, // Blue for clicked
+            fillColor: colors.clicked,
             strokeColor: colors.clicked,
             fillOpacity: 0.7,
             strokeWeight: 2,
@@ -224,21 +203,21 @@ export const MapComponent = (props) => {
           recommendedZipcode.includes(parseInt(zipCode))
         ) {
           return {
-            fillColor: colors.selected, // Orange for matched zip codes
+            fillColor: colors.selected,
             strokeColor: colors.selected,
             fillOpacity: 0.7,
             strokeWeight: 2,
           };
         } else if (props.getComparedZip().includes(parseInt(zipCode))) {
           return {
-            fillColor: colors.compared, // Orange for matched zip codes
+            fillColor: colors.compared,
             strokeColor: colors.compared,
             fillOpacity: 0.7,
             strokeWeight: 2,
           };
         } else {
           return {
-            fillColor: colors.default, // Green for default
+            fillColor: colors.default,
             strokeColor: colors.default,
             fillOpacity: 0.1,
             strokeWeight: 2,
@@ -250,7 +229,7 @@ export const MapComponent = (props) => {
     map.data.addListener("mouseover", (event) => {
       map.data.revertStyle();
       map.data.overrideStyle(event.feature, {
-        strokeColor: colors.highlight, // Purple for hover
+        strokeColor: colors.highlight,
         strokeWeight: 3,
         fillColor: colors.highlight,
         fillOpacity: 0.7,
@@ -265,7 +244,7 @@ export const MapComponent = (props) => {
       const zipCode = event.feature.getProperty("ZIPCODE");
       if (zipCode === lastClickedZipCode()) {
         map.data.overrideStyle(event.feature, {
-          fillColor: colors.clicked, // Blue for clicked
+          fillColor: colors.clicked,
           strokeColor: colors.clicked,
           fillOpacity: 0.7,
           strokeWeight: 2,
@@ -275,21 +254,21 @@ export const MapComponent = (props) => {
         recommendedZipcode.includes(parseInt(zipCode))
       ) {
         map.data.overrideStyle(event.feature, {
-          fillColor: colors.selected, // Orange for selected
+          fillColor: colors.selected,
           strokeColor: colors.selected,
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
       } else if (props.getComparedZip().includes(parseInt(zipCode))) {
         map.data.overrideStyle(event.feature, {
-          fillColor: colors.compared, // Orange for selected
+          fillColor: colors.compared,
           strokeColor: colors.compared,
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
       } else {
         map.data.overrideStyle(event.feature, {
-          fillColor: colors.default, // Green for default
+          fillColor: colors.default,
           strokeColor: colors.default,
           fillOpacity: 0.1,
           strokeWeight: 2,
@@ -307,13 +286,12 @@ export const MapComponent = (props) => {
   };
 
   onMount(() => {
-    // if (!props.mapObject()) {
-    loader.importLibrary("maps").then(({ Map }) => {
-      const mapInstance = new Map(ref, mapOptions);
+    loader.load().then(() => {
+      const mapInstance = new google.maps.Map(ref, mapOptions);
       props.setMapObject(mapInstance);
 
       mapInstance.addListener("zoom_changed", () => {
-        const mapZoom = mapInstance.zoom;
+        const mapZoom = mapInstance.getZoom();
         if (mapZoom <= 10) {
           props.setDataLayerLevel("borough");
         } else if (mapZoom > 10 && mapZoom <= 13) {
@@ -326,6 +304,7 @@ export const MapComponent = (props) => {
       mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
         createCenterControl()
       );
+
       insertDataLayer(zipcode_geojson, mapInstance);
     });
   });
@@ -376,7 +355,7 @@ export const MapComponent = (props) => {
   onCleanup(() => {
     const mapDiv = document.getElementById("map");
     if (mapDiv) {
-      mapDiv.innerHTML = ""; // Clear the div to prevent duplicate maps
+      mapDiv.innerHTML = "";
     }
   });
 
@@ -414,14 +393,7 @@ export const MapComponent = (props) => {
             </h1>
             <Show when={props.zipcodeOnCharts()}>
               <Box sx={{ width: 200 }}>
-                <BottomNavigation
-                  showLabels
-                  // value={value()}
-                  // onChange={(event, newValue) => {
-                  //   setValue(newValue);
-                  // }}
-                >
-                  {" "}
+                <BottomNavigation showLabels>
                   <Checkbox
                     {...label}
                     icon={<FavoriteBorder />}
@@ -454,8 +426,6 @@ export const MapComponent = (props) => {
                 </BottomNavigation>
               </Box>
             </Show>
-
-            {/* <h2 class="txt-neutral-500 text-sm">click for more information</h2> */}
           </div>
           <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
         </Show>
