@@ -508,3 +508,61 @@ func GetPropertyData(c echo.Context) error {
 	}
 	return GenericGetDataHandler[GetPropertyQueryParams, map[string][]Property](c, "public/data/property_data_by_zipcode.json", filterFunc)
 }
+
+// Zipcode scores
+
+type ZipcodeScore struct {
+	Zipcode         int     `json:"zipcode"`
+	Borough         string  `json:"borough"`
+	CurrentPrice    float64 `json:"current_price"`
+	OneYrROI        float64 `json:"1Yr_ROI"`
+	OneYrROILower   float64 `json:"1Yr_ROI_Lower"`
+	OneYrROIUpper   float64 `json:"1Yr_ROI_Upper"`
+	OneYrForecast   float64 `json:"1Yr_forecast_price"`
+	ThreeYrROI      float64 `json:"3Yr_ROI"`
+	ThreeYrROILower float64 `json:"3Yr_ROI_Lower"`
+	ThreeYrROIUpper float64 `json:"3Yr_ROI_Upper"`
+	ThreeYrForecast float64 `json:"3Yr_forecast_price"`
+	FiveYrROI       float64 `json:"5Yr_ROI"`
+	FiveYrROILower  float64 `json:"5Yr_ROI_Lower"`
+	FiveYrROIUpper  float64 `json:"5Yr_ROI_Upper"`
+	FiveYrForecast  float64 `json:"5Yr_forecast_price"`
+}
+
+type GetZipcodeScoreQueryParams struct {
+	Zipcodes []int   `query:"zipcode"`
+	Borough  string  `query:"borough"`
+	MinPrice float64 `query:"minprice"`
+	MaxPrice float64 `query:"maxprice"`
+}
+
+func filterZipcodeScores(data []ZipcodeScore, f *GetZipcodeScoreQueryParams) []ZipcodeScore {
+	var filtered []ZipcodeScore
+	zipSet := make(map[int]bool)
+	for _, zip := range f.Zipcodes {
+		zipSet[zip] = true
+	}
+
+	for _, score := range data {
+		if len(zipSet) > 0 {
+			if _, found := zipSet[score.Zipcode]; !found {
+				continue
+			}
+		}
+		if f.Borough != "" && score.Borough != f.Borough {
+			continue
+		}
+		if f.MinPrice != 0 && score.CurrentPrice < f.MinPrice {
+			continue
+		}
+		if f.MaxPrice != 0 && score.CurrentPrice > f.MaxPrice {
+			continue
+		}
+		filtered = append(filtered, score)
+	}
+	return filtered
+}
+
+func GetZipcodeScores(c echo.Context) error {
+	return GenericGetDataHandler(c, "public/data/zipcode_scores.json", filterZipcodeScores)
+}
