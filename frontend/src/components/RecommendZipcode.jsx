@@ -4,17 +4,6 @@ import ArrowForwardIcon from "@suid/icons-material/ArrowForward";
 import CloseIcon from "@suid/icons-material/Close";
 import { IconButton } from "@suid/material";
 
-// Debounce function to limit API calls
-function debounce(func, timeout = 300) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
-}
-
 const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
   const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
   const neighbourhood_type = [
@@ -76,8 +65,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
     fetch(query)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        setRecommendedZipcode(data);
+        setRecommendedZipcode([...data.map((el) => el.zipcode)]);
         setShowRecommendBoard(false);
       });
   };

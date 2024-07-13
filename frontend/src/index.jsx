@@ -13,7 +13,6 @@ import { ErrorPage } from "./components/ErrorPage";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseProvider } from "solid-supabase";
 import { RouteGuard } from "./routeguard";
-import RecommendZipcode from "./components/RecommendZipcode";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -58,7 +57,7 @@ render(
             )}
           />
           <Route path="/settings" component={Settings} />
-          <Route path="/develop" component={RecommendZipcode} />
+
           <Route
             path="/dashboard"
             component={() => <Dashboard favorite={favorite} />}

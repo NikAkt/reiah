@@ -10,7 +10,7 @@ import {
   createEffect,
   ErrorBoundary,
 } from "solid-js";
-import { BarChart, DoughnutChart, LineChart } from "../components/Charts";
+import { LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import Filter from "../components/Filter";
@@ -32,7 +32,7 @@ export const Map = (props) => {
     createSignal(false);
 
   const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
-  const [recommendedZipcode, setRecommendedZipcode] = createSignal(null);
+  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
 
   const [getComparedZip, setComparedZip] = createSignal([]);
   const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
@@ -40,6 +40,8 @@ export const Map = (props) => {
 
   const [showHousesMarker, setShowHousesMarker] = createSignal(true);
   const [showAmenityMarker, setShowAmenityMarker] = createSignal(false);
+  const [dialogInfo, setDialogInfo] = createSignal(null);
+  const [displayDialog, setDisplayDialog] = createSignal(false);
 
   const [realEstateData] = createResource(
     ["http://localhost:8000/api/prices"],
@@ -171,9 +173,7 @@ export const Map = (props) => {
                     getComparedZip={getComparedZip}
                     setComparedZip={setComparedZip}
                     getSelectedZip={getSelectedZip}
-                    historicalRealEstateData={
-                      dataResources.historicalRealEstateData()
-                    }
+                    historicalRealEstateData={dataResources.historicalRealEstateData()}
                     setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                   ></LineChart>
                 </Show>
@@ -205,11 +205,24 @@ export const Map = (props) => {
                   setShowAmenityMarker={setShowAmenityMarker}
                   showHousesMarker={showHousesMarker}
                   setShowHousesMarker={setShowHousesMarker}
+                  recommendedZipcode={recommendedZipcode}
+                  setDisplayDialog={setDisplayDialog}
+                  setDialogInfo={setDialogInfo}
                 />
                 <Show when={createMoreDashboardInfo()}>
                   <For each={getComparedZip()} fallback={<div></div>}>
                     {(item, index) => (
-                      <DashboardInfo map={props.mapObject} zip={item} />
+                      <DashboardInfo
+                        map={props.mapObject}
+                        zip={item}
+                        recommendedZipcode={recommendedZipcode}
+                        setDisplayDialog={setDisplayDialog}
+                        setDialogInfo={setDialogInfo}
+                        showAmenityMarker={showAmenityMarker}
+                        setShowAmenityMarker={setShowAmenityMarker}
+                        showHousesMarker={showHousesMarker}
+                        setShowHousesMarker={setShowHousesMarker}
+                      />
                     )}
                   </For>
                 </Show>
@@ -228,9 +241,7 @@ export const Map = (props) => {
                         zipcodes={dataResources.zipcodes()}
                         map={props.mapObject}
                         getDataLayerLevel={getDataLayerLevel}
-                        borough_neighbourhood={
-                          dataResources.borough_neighbourhood()
-                        }
+                        borough_neighbourhood={dataResources.borough_neighbourhood()}
                         realEstateData={dataResources.realEstateData()}
                       />
                       ;
@@ -245,6 +256,31 @@ export const Map = (props) => {
                 setRecommendedZipcode={setRecommendedZipcode}
                 setShowRecommendBoard={setShowRecommendBoard}
               />
+            </Show>
+            <Show when={displayDialog() == true}>
+              <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
+              <div
+                class="absolute w-[30vw] h-[30vh] bg-white rounded-lg shadow-md
+               z-30 m-auto text-center top-[35vh] left-[35vw] items-center justify-center flex flex-col"
+                onclick={() => setDisplayDialog(false)}
+              >
+                <For
+                  each={Object.keys(dialogInfo())}
+                  fallback={
+                    <div>
+                      Fail to load the detail information of this property
+                    </div>
+                  }
+                >
+                  {(item) => {
+                    return (
+                      <div>
+                        {item}:{dialogInfo()[item]}
+                      </div>
+                    );
+                  }}
+                </For>
+              </div>
             </Show>
           </Suspense>
         </ErrorBoundary>

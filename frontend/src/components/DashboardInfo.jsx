@@ -6,32 +6,7 @@ import {
   Show,
   Suspense,
 } from "solid-js";
-import { DoughnutChart } from "./Charts";
-
-const MarkerDialog = ({ dialogInfo }) => {
-  return (
-    <div
-      class="absolute z-20 w-screen 
-    h-screen bg-black opacity-30 left-0 top-0"
-    >
-      <div
-        class="absolute z-30 w-[15vw] h-[25vh] 
-      border-2 border-solid border-black
-   bg-white left-[0] top-[35vh]"
-      >
-        <ul>
-          <For each={Object.keys(dialogInfo)}>
-            {(item) => (
-              <div>
-                {item}:{dialogInfo[item]}
-              </div>
-            )}
-          </For>
-        </ul>
-      </div>
-    </div>
-  );
-};
+import { DoughnutChart, BarChart } from "./Charts";
 
 export const DashboardInfo = (props) => {
   let ref;
@@ -44,16 +19,70 @@ export const DashboardInfo = (props) => {
   const [show, setShow] = createSignal(true);
   const [race, setRace] = createSignal({});
   const [gender, setGender] = createSignal({});
-  const [getPropertyPrice, setPropertyPrice] = createSignal([]);
-  const [getPricePerSQFT, setPricePerSQFT] = createSignal([]);
-  const [getPropertySQFT, setPropertySQFT] = createSignal([]);
+  // const [getPropertyPrice, setPropertyPrice] = createSignal([]);
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
-  const [showDialog, setShowDialog] = createSignal(true);
-  const [dialogInfo, setDialogInfo] = createSignal({});
+  const [hoverType, setHoverType] = createSignal("");
+  const [typeAvg, setTypeAvg] = createSignal([]);
+
+  const colorsChartjs = [
+    "#36A2EB",
+    "#FF6384",
+    "#FF9F40",
+    "#FFCD56",
+    "#4BC0C0",
+    "#9966FF",
+    "#C9CBCF",
+  ];
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
+
+  function generateHouseTypeDetails(houseType, data) {
+    const filterArr = data.filter((obj) => obj.TYPE === houseType);
+    if (filterArr) {
+      let avgPrice = 0;
+      let avgSqft = 0;
+      let avgPricePerSqft = 0;
+      filterArr.forEach((el) => {
+        avgPrice += el["PRICE"];
+        avgSqft += el["PROPERTYSQFT"];
+        avgPricePerSqft += el["PRICE_PER_SQFT"];
+      });
+      avgPrice = (avgPrice / filterArr.length).toFixed(2);
+      avgPricePerSqft = (avgPricePerSqft / filterArr.length).toFixed(2);
+      avgSqft = (avgSqft / filterArr.length).toFixed(2);
+      return { avgPrice, avgSqft, avgPricePerSqft };
+    }
+    return null;
+  }
+
+  function highlighMarker(houseType) {
+    if (propertyOnMap()) {
+      propertyOnMap().forEach((marker) => {
+        if (marker.type == houseType) {
+          marker.setIcon({
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10, // Adjust the scale to make the circle smaller or larger
+            fillColor: "#ffffff", // Circle color
+            fillOpacity: 1, // Circle fill opacity
+            strokeWeight: 1, // Circle border thickness
+            strokeColor: "#000000", // Circle border color
+          });
+        } else {
+          marker.setIcon({
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 5, // Adjust the scale to make the circle smaller or larger
+            fillColor: "#ffffff", // Circle color
+            fillOpacity: 1, // Circle fill opacity
+            strokeWeight: 1, // Circle border thickness
+            strokeColor: "#000000", // Circle border color
+          });
+        }
+      });
+    }
+  }
+
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
@@ -61,12 +90,16 @@ export const DashboardInfo = (props) => {
         if (data) {
           // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
           const obj = data[0];
-          document.getElementById(
-            `borough-dashboardInfo-${props.zip}`
-          ).innerText = obj["borough"];
-          document.getElementById(
-            `neighbourhood-dashboardInfo-${props.zip}`
-          ).innerText = obj["neighbourhood"];
+          try {
+            document.getElementById(
+              `borough-dashboardInfo-${props.zip}`
+            ).innerText = obj["borough"];
+            document.getElementById(
+              `neighbourhood-dashboardInfo-${props.zip}`
+            ).innerText = obj["neighbourhood"];
+          } catch (error) {
+            console.log(error);
+          }
         }
       });
 
@@ -79,10 +112,14 @@ export const DashboardInfo = (props) => {
           let price_per_sqft = [];
           let propertysqft = [];
           let labels = [];
+          let count = 0;
+          let priceLabels = [];
           data[area].forEach((el) => {
             if (!type.hasOwnProperty(el.TYPE)) {
               type[el.TYPE] = 0;
             }
+            count += 1;
+            priceLabels.push(count);
             type[el.TYPE] += 1;
             price.push(el.PRICE);
             price_per_sqft.push(el["PRICE_PER_SQFT"]);
@@ -90,11 +127,18 @@ export const DashboardInfo = (props) => {
             labels.push(el["TYPE"]);
           });
 
-          const priceDatasets = {
-            labels: labels,
-            datasets: [{ label: "Property Price", data: price }],
-          };
-          setPropertyPrice(priceDatasets);
+          if (typeAvg()) {
+            setTypeAvg([]);
+          }
+          if (hoverType()) {
+            setHoverType("");
+          }
+
+          Object.keys(type).forEach((t) => {
+            const avg = generateHouseTypeDetails(t, data[area]);
+
+            setTypeAvg((prev) => [...prev, { [t]: avg }]);
+          });
 
           const datasets = {
             labels: Object.keys(type),
@@ -130,14 +174,14 @@ export const DashboardInfo = (props) => {
               });
               setPropertyOnMap((prev) => [...prev, marker]);
               marker.addListener("click", () => {
-                setDialogInfo({
+                props.setDialogInfo({
                   type: marker.type,
                   bath: marker.bath,
                   beds: marker.beds,
                   price: marker.price,
                   propertysqf: marker.propertysqf,
                 });
-                setShowDialog(true);
+                props.setDisplayDialog(true);
               });
             });
           });
@@ -183,15 +227,19 @@ export const DashboardInfo = (props) => {
           };
 
           setRace(race_datasets);
-          document.getElementById("familyHousehold").innerText =
-            obj["FamilyHousehold"];
-          document.getElementById("medianHouseholdIncome").innerText =
-            obj["MedianHouseholdIncome"];
-          document.getElementById("singleHousehold").innerText =
-            obj["SingleHousehold"];
-          document.getElementById("population").innerText = obj["Population"];
-          document.getElementById("populationDensity").innerText =
-            obj["PopulationDensity"];
+          try {
+            document.getElementById("familyHousehold").innerText =
+              obj["FamilyHousehold"];
+            document.getElementById("medianHouseholdIncome").innerText =
+              obj["MedianHouseholdIncome"];
+            document.getElementById("singleHousehold").innerText =
+              obj["SingleHousehold"];
+            document.getElementById("population").innerText = obj["Population"];
+            document.getElementById("populationDensity").innerText =
+              obj["PopulationDensity"];
+          } catch (error) {
+            console.log(error);
+          }
 
           // document.getElementById(
           //   `avgHomeValue-dashboardInfo-${props.zip}`
@@ -269,15 +317,15 @@ export const DashboardInfo = (props) => {
 
             setAmenities(datasets);
 
-            const footer = (tooltipItems) => {
-              const desc = Object.keys(amenities()[tooltipItems[0].label]);
-              let footer_string = "";
-              desc.forEach((d) => {
-                const arr = amenities()[tooltipItems[0].label][d];
-                footer_string += `${d}:${arr.length}\n`;
-              });
-              return footer_string;
-            };
+            // const footer = (tooltipItems) => {
+            //   const desc = Object.keys(amenities()[tooltipItems[0].label]);
+            //   let footer_string = "";
+            //   desc.forEach((d) => {
+            //     const arr = amenities()[tooltipItems[0].label][d];
+            //     footer_string += `${d}:${arr.length}\n`;
+            //   });
+            //   return footer_string;
+            // };
 
             // const facilityTypeUl = document.getElementById("facility_type_ul");
             // if (facilityTypeUl) {
@@ -314,13 +362,24 @@ export const DashboardInfo = (props) => {
     }
   });
 
+  createEffect(() => {
+    highlighMarker(hoverType());
+  });
+
   onCleanup(() => {
     const markers = amenitiesOnMap();
+    const propertymarkers = propertyOnMap();
     if (markers) {
       markers.forEach((marker) => {
         marker.setMap(null);
       });
       setAmenitiesOnMap([]);
+    }
+    if (propertymarkers) {
+      propertymarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+      setPropertyOnMap([]);
     }
   });
 
@@ -352,21 +411,75 @@ export const DashboardInfo = (props) => {
        ${show() ? "" : "hidden"}`}
       >
         <div>
-          <div>Real Estate Information</div>
-          <div class="flex flex-row">
-            {" "}
-            <Show when={getPropertyPrice()}>
-              {/* <BarChart datasets={getPropertyPrice()} /> */}
-              <div>Visualisation of Price Information</div>
-            </Show>
+          <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
+            Real Estate Information
+          </div>
+          <div class="flex flex-row place-content-between px-4 py-2">
             <Show when={getPropertyType()}>
               <div>
-                <DoughnutChart datasets={getPropertyType()} />
+                <DoughnutChart
+                  datasets={getPropertyType()}
+                  type="property"
+                  setHoverType={setHoverType}
+                />
+              </div>
+              <div>
+                <Show
+                  when={typeAvg()}
+                  fallback={<div>Cannot get detailed information...</div>}
+                >
+                  <For each={typeAvg()} fallback={<div>Loading...</div>}>
+                    {(item, index) => {
+                      return (
+                        <div>
+                          <p
+                            class="text-white rounded-lg"
+                            style={{
+                              "background-color": colorsChartjs[index()],
+                            }}
+                          >
+                            {Object.keys(item)}
+                          </p>
+                          <div>
+                            Average Price: {Object.values(item)[0].avgPrice}
+                          </div>
+                          <div>
+                            Average Square Foot:{" "}
+                            {Object.values(item)[0].avgSqft}
+                          </div>
+                          <div>
+                            Average Price Per Square Foot:
+                            {Object.values(item)[0].avgPricePerSqft}
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </For>
+                </Show>
               </div>
             </Show>
           </div>
+          <Show when={props.recommendedZipcode().includes(parseInt(props.zip))}>
+            <div>Future Prediction Information</div>
+          </Show>
         </div>
         <div>
+          <div>
+            <Suspense>
+              <Show when={amenities()}>
+                <p class="bg-teal-500 text-white text-center">Amenities:</p>
+                <div class="flex flex-row">
+                  <DoughnutChart
+                    datasets={amenities()}
+                    zip={props.zip}
+                    ref={(el) => (ref = el)}
+                    type="amenities"
+                  />
+                  <div>Details</div>
+                </div>
+              </Show>
+            </Suspense>
+          </div>
           <div class="basic-info ">
             <div
               class="bg-teal-500 text-white items-center
@@ -404,6 +517,7 @@ export const DashboardInfo = (props) => {
                           datasets={gender()}
                           zip={props.zip}
                           ref={(el) => (ref = el)}
+                          type="gender"
                         />
                       </Show>
                     </Suspense>
@@ -420,29 +534,15 @@ export const DashboardInfo = (props) => {
                             datasets={race()}
                             zip={props.zip}
                             ref={(el) => (ref = el)}
+                            type="race"
                           />
                         </Show>
                       </Suspense>
                     </div>
-                  </div>{" "}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div>
-            <Suspense>
-              <Show when={amenities()}>
-                <p class="bg-teal-500 text-white text-center">Amenities:</p>
-                <div class="flex flex-row">
-                  <DoughnutChart
-                    datasets={amenities()}
-                    zip={props.zip}
-                    ref={(el) => (ref = el)}
-                  />
-                  <div>Details</div>
-                </div>
-              </Show>
-            </Suspense>
           </div>
         </div>
       </div>

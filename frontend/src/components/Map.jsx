@@ -8,30 +8,12 @@ import {
   Show,
   Suspense,
 } from "solid-js";
-import Favorite from "@suid/icons-material/Favorite";
-import FavoriteBorder from "@suid/icons-material/FavoriteBorder";
-import {
-  Checkbox,
-  BottomNavigation,
-  BottomNavigationAction,
-  Box,
-} from "@suid/material";
-import { LocationOn } from "@suid/icons-material";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
   version: "weekly",
 });
 
-const colorsChartjs = [
-  "#4BC0C0",
-  "#36A2EB",
-  "#FF6384",
-  "#FF9F40",
-  "#FFCD56",
-  "#9966FF",
-  "#C9CBCF",
-];
 const colors = {
   default: "#10b981", // Green for default
   highlight: "#a888f1", // Purple for hover
@@ -45,21 +27,9 @@ export const MapComponent = (props) => {
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
   const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
   const zipcodes = props.dataResources.zipcodes();
   const zipcode_geojson = props.dataResources.zipcode_geojson();
-  let recommendedZipcode;
-  if (props.recommendedZipcode()) {
-    recommendedZipcode = [
-      ...props.recommendedZipcode().map((obj) => obj.zipcode),
-    ];
-  } else {
-    recommendedZipcode = [];
-  }
-
-  createEffect(() => {
-    console.log(props.recommendedZipcode());
-  });
 
   function createCenterControl() {
     const centerControlDiv = document.createElement("div");
@@ -147,7 +117,7 @@ export const MapComponent = (props) => {
         };
       } else if (
         props.filteredZipCodes().includes(parseInt(zipCode)) ||
-        recommendedZipcode.includes(parseInt(zipCode))
+        props.recommendedZipcode().includes(parseInt(zipCode))
       ) {
         return {
           fillColor: colors.selected,
@@ -200,7 +170,7 @@ export const MapComponent = (props) => {
           };
         } else if (
           props.filteredZipCodes().includes(parseInt(zipCode)) ||
-          recommendedZipcode.includes(parseInt(zipCode))
+          props.recommendedZipcode().includes(parseInt(zipCode))
         ) {
           return {
             fillColor: colors.selected,
@@ -251,7 +221,7 @@ export const MapComponent = (props) => {
         });
       } else if (
         props.filteredZipCodes().includes(parseInt(zipCode)) ||
-        recommendedZipcode.includes(parseInt(zipCode))
+        props.recommendedZipcode().includes(parseInt(zipCode))
       ) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.selected,
@@ -316,7 +286,7 @@ export const MapComponent = (props) => {
   });
 
   createEffect(() => {
-    if (props.mapObject() && recommendedZipcode.length > 0) {
+    if (props.mapObject() && props.recommendedZipcode().length > 0) {
       insertDataLayer(zipcode_geojson, props.mapObject());
     }
   });
@@ -392,39 +362,29 @@ export const MapComponent = (props) => {
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
             <Show when={props.zipcodeOnCharts()}>
-              <Box sx={{ width: 200 }}>
-                <BottomNavigation showLabels>
-                  <Checkbox
-                    {...label}
-                    icon={<FavoriteBorder />}
-                    checkedIcon={<Favorite />}
-                    checked={
-                      props.favorite().includes(props.zipcodeOnCharts())
-                        ? true
-                        : false
-                    }
-                    onChange={() => {
-                      props.setFavorite((prev) =>
-                        prev.includes(props.zipcodeOnCharts())
-                          ? prev.filter((el) => el !== props.zipcodeOnCharts())
-                          : [...prev, props.zipcodeOnCharts()]
-                      );
-                    }}
-                  />
-                  <BottomNavigationAction
-                    label="Houses"
-                    icon={<LocationOn />}
-                    onClick={() => {
-                      props.setShowHousesMarker((prev) => !prev);
-                      console.log(props.showHousesMarker());
-                    }}
-                  />
-                  <BottomNavigationAction
-                    label="Amenities"
-                    icon={<LocationOn />}
-                  />
-                </BottomNavigation>
-              </Box>
+              <input
+                type="checkbox"
+                clicked={
+                  props.favorite().includes(props.zipcodeOnCharts())
+                    ? true
+                    : false
+                }
+                onChange={() => {
+                  props.setFavorite((prev) =>
+                    prev.includes(props.zipcodeOnCharts())
+                      ? prev.filter((el) => el !== props.zipcodeOnCharts())
+                      : [...prev, props.zipcodeOnCharts()]
+                  );
+                }}
+              />
+              <button
+                onClick={() => {
+                  props.setShowHousesMarker((prev) => !prev);
+                  console.log(props.showHousesMarker());
+                }}
+              >
+                📍
+              </button>
             </Show>
           </div>
           <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>

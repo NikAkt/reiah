@@ -1,106 +1,5 @@
 import Chart from "chart.js/auto";
 import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
-import SearchIcon from "@suid/icons-material/Search";
-import ArrowDropDownIcon from "@suid/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@suid/icons-material/ArrowDropUp";
-
-const transformData = (historicpricesObject) => {
-  if (historicpricesObject == undefined) {
-    return [];
-  }
-  const chartDataList = [];
-  for (const [key, value] of Object.entries(historicpricesObject)) {
-    const newObject = { x: key, y: value };
-    chartDataList.push(newObject);
-  }
-
-  return chartDataList;
-};
-
-// <block:actions:2>
-const actions = [
-  {
-    name: "Add Dataset",
-    handler(chart) {
-      const data = chart.data;
-      const newDataset = {
-        label: "Dataset " + (data.datasets.length + 1),
-        backgroundColor: [],
-        data: [],
-      };
-
-      for (let i = 0; i < data.labels.length; i++) {
-        newDataset.data.push(Utils.numbers({ count: 1, min: 0, max: 100 }));
-
-        const colorIndex = i % Object.keys(Utils.CHART_COLORS).length;
-        newDataset.backgroundColor.push(
-          Object.values(Utils.CHART_COLORS)[colorIndex]
-        );
-      }
-
-      chart.data.datasets.push(newDataset);
-      chart.update();
-    },
-  },
-  {
-    name: "Add Data",
-    handler(chart) {
-      const data = chart.data;
-      if (data.datasets.length > 0) {
-        data.labels.push("data #" + (data.labels.length + 1));
-
-        for (let index = 0; index < data.datasets.length; ++index) {
-          data.datasets[index].data.push(Utils.rand(0, 100));
-        }
-
-        chart.update();
-      }
-    },
-  },
-  {
-    name: "Hide(0)",
-    handler(chart) {
-      chart.hide(0);
-    },
-  },
-  {
-    name: "Show(0)",
-    handler(chart) {
-      chart.show(0);
-    },
-  },
-  {
-    name: "Hide (0, 1)",
-    handler(chart) {
-      chart.hide(0, 1);
-    },
-  },
-  {
-    name: "Show (0, 1)",
-    handler(chart) {
-      chart.show(0, 1);
-    },
-  },
-  {
-    name: "Remove Dataset",
-    handler(chart) {
-      chart.data.datasets.pop();
-      chart.update();
-    },
-  },
-  {
-    name: "Remove Data",
-    handler(chart) {
-      chart.data.labels.splice(-1, 1); // remove the label first
-
-      chart.data.datasets.forEach((dataset) => {
-        dataset.data.pop();
-      });
-
-      chart.update();
-    },
-  },
-];
 
 const colors = [
   "rgb(75,192,192)",
@@ -120,9 +19,14 @@ const ChartLoadingIndicator = () => {
   );
 };
 
+let barchartInstance;
+
 const createBarChart = (ctx, data) => {
   if (ctx === undefined) {
     return;
+  }
+  if (barchartInstance) {
+    barchartInstance.destroy();
   }
 
   // let datasets = [];
@@ -132,7 +36,7 @@ const createBarChart = (ctx, data) => {
   //   });
   // }
 
-  new Chart(ctx, {
+  return new Chart(ctx, {
     type: "bar",
     data,
     options: {
@@ -151,12 +55,12 @@ const BarChart = (props) => {
   let ref;
 
   onMount(() => {
-    createBarChart(ref);
+    barchartInstance = createBarChart(ref);
   });
 
   createEffect(() => {
     if (props.datasets) {
-      createBarChart(ref, props.datasets);
+      barchartInstance = createBarChart(ref, props.datasets);
     }
   });
 
@@ -353,19 +257,13 @@ const LineChart = (props) => {
                     <Show
                       when={showDropDown() === false}
                       fallback={
-                        <ArrowDropUpIcon
-                          class="cursor-pointer"
-                          onClick={() => setShowDropDown(false)}
-                        />
+                        <button onClick={() => setShowDropDown(false)}>
+                          ⬆
+                        </button>
                       }
                     >
-                      <ArrowDropDownIcon
-                        class="cursor-pointer"
-                        onClick={() => setShowDropDown(true)}
-                      />
+                      <button onClick={() => setShowDropDown(true)}>⬇</button>
                     </Show>
-
-                    <SearchIcon />
 
                     <input
                       type="text"
@@ -485,18 +383,19 @@ const LineChart = (props) => {
 const DoughnutChart = (props) => {
   let ref2;
   let doughnutChartInstance;
-  onMount(() => {
-    doughnutChartInstance = createDoughnutChart(ref2, doughnutChartInstance);
-    // Chart.register(centerTextPlugin);
-  });
+  // onMount(() => {
+  //   doughnutChartInstance = createDoughnutChart(ref2, doughnutChartInstance);
+
+  // });
 
   createEffect(() => {
     if (props.datasets) {
       doughnutChartInstance = createDoughnutChart(
         ref2,
         props.datasets,
-        props.zip,
-        doughnutChartInstance
+        props.type,
+        doughnutChartInstance,
+        props
         // footer
       );
     }
@@ -518,8 +417,9 @@ const DoughnutChart = (props) => {
 const createDoughnutChart = (
   ctx,
   dataset,
-  title,
-  doughnutChartInstance
+  type,
+  doughnutChartInstance,
+  props
   // footer = null
 ) => {
   if (ctx === undefined) {
@@ -530,22 +430,76 @@ const createDoughnutChart = (
     doughnutChartInstance.destroy();
   }
 
-  return new Chart(ctx, {
-    type: "doughnut",
-    data: dataset,
-    options: {
-      responsive: true,
-      onClick: function (event, elements) {
-        console.log(event);
-        // Actions to be performed
+  if (type === "property") {
+    const doughnutLabel = {
+      id: "doughnutLabel",
+      beforeDatasetsDraw(chart, args, pluginOptions) {
+        const { ctx, data } = chart;
+        ctx.save();
+        const xCoor = chart.getDatasetMeta(0).data[0].x;
+        const yCoor = chart.getDatasetMeta(0).data[0].y;
+
+        //responsive text size
+        let newVal;
+        let val = 15;
+        const innerWidth = window.innerWidth;
+        if (innerWidth > 800) {
+          newVal = 15;
+        } else if (innerWidth <= 800 && innerWidth > 600) {
+          newVal = 7.5;
+        } else {
+          newVal = 5;
+        }
+
+        if (val !== newVal) {
+          val = newVal;
+          chart.update();
+        }
+
+        ctx.font = `bold ${val}px sans-serif`;
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        let sum = 0;
+        data.datasets[0].data.forEach((num) => (sum += num));
+
+        ctx.fillText(`Total:${sum}`, xCoor, yCoor);
       },
-      plugins: {
-        legend: {
-          position: "top",
+    };
+
+    return new Chart(ctx, {
+      type: "doughnut",
+      data: dataset,
+      options: {
+        responsive: true,
+        onClick: function (event) {
+          props.setHoverType(event.chart.tooltip.title[0]);
+          // Actions to be performed
+        },
+        plugins: {
+          legend: {
+            position: "top",
+          },
         },
       },
-    },
-  });
+      // plugins: [doughnutLabel],
+    });
+  } else {
+    return new Chart(ctx, {
+      type: "doughnut",
+      data: dataset,
+      options: {
+        responsive: true,
+
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    });
+  }
 };
 
 export { BarChart, LineChart, DoughnutChart };
