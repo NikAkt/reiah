@@ -485,6 +485,24 @@ const createDoughnutChart = (
       },
       // plugins: [doughnutLabel],
     });
+  } else if (type === "amenities") {
+    return new Chart(ctx, {
+      type: "doughnut",
+      data: dataset,
+      options: {
+        responsive: true,
+        onClick: function (event) {
+          props.setHoverAmenity(event.chart.tooltip.title[0]);
+          // Actions to be performed
+        },
+        plugins: {
+          legend: {
+            position: "top",
+          },
+        },
+      },
+      // plugins: [doughnutLabel],
+    });
   } else {
     return new Chart(ctx, {
       type: "doughnut",
@@ -494,7 +512,7 @@ const createDoughnutChart = (
 
         plugins: {
           legend: {
-            display: false,
+            display: true,
           },
         },
       },

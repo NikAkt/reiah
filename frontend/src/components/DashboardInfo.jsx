@@ -8,6 +8,30 @@ import {
 } from "solid-js";
 import { DoughnutChart, BarChart } from "./Charts";
 
+const AmenitiesDetailDropdown = ({ item }) => {
+  const [displayDropdown, setDisplayDropdown] = createSignal(false);
+
+  return (
+    <div class="relative w-full overflow-x-auto">
+      <div
+        id="detail-title"
+        class={`bg-teal-500 text-white rounded-lg cursor-pointer text-center 
+          ${displayDropdown() === true ? "" : "opacity-60"}`}
+        onClick={() => {
+          setDisplayDropdown((prev) => !prev);
+        }}
+      >
+        {`${item[0]} (${item[1].length})`}
+      </div>
+      <ul class={displayDropdown() === true ? "" : "hidden"}>
+        {item[1].map((el) => (
+          <li class="hover:bg-indigo-600 hover:text-white">{el}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 export const DashboardInfo = (props) => {
   let ref;
   const loader = new Loader({
@@ -16,6 +40,7 @@ export const DashboardInfo = (props) => {
   });
   const [amenitiesOnMap, setAmenitiesOnMap] = createSignal([]);
   const [amenities, setAmenities] = createSignal({});
+  const [amenitiesDetails, setAmenitiesDetails] = createSignal({});
   const [show, setShow] = createSignal(true);
   const [race, setRace] = createSignal({});
   const [gender, setGender] = createSignal({});
@@ -23,7 +48,17 @@ export const DashboardInfo = (props) => {
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
   const [hoverType, setHoverType] = createSignal("");
+  const [hoverAmenity, setHoverAmenity] = createSignal("");
   const [typeAvg, setTypeAvg] = createSignal([]);
+
+  const [Yr1_Price, setYr1Price] = createSignal(null);
+  const [Yr1_ROI, setYr1ROI] = createSignal(null);
+
+  const [Yr3_Price, setYr3Price] = createSignal(null);
+  const [Yr3_ROI, setYr3ROI] = createSignal(null);
+
+  const [Yr5_Price, setYr5Price] = createSignal(null);
+  const [Yr5_ROI, setYr5ROI] = createSignal(null);
 
   const colorsChartjs = [
     "#36A2EB",
@@ -57,27 +92,31 @@ export const DashboardInfo = (props) => {
     return null;
   }
 
-  function highlighMarker(houseType) {
-    if (propertyOnMap()) {
-      propertyOnMap().forEach((marker) => {
-        if (marker.type == houseType) {
+  function highlighMarker(type, markerArr, key, color) {
+    if (markerArr) {
+      markerArr.forEach((marker) => {
+        if (marker[key] == type) {
           marker.setIcon({
+            //scale up the markers
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10, // Adjust the scale to make the circle smaller or larger
-            fillColor: "#ffffff", // Circle color
+            fillColor: color, // Circle color
             fillOpacity: 1, // Circle fill opacity
             strokeWeight: 1, // Circle border thickness
             strokeColor: "#000000", // Circle border color
           });
+          marker.setZIndex(100);
         } else {
+          //recover to original icon
           marker.setIcon({
             path: google.maps.SymbolPath.CIRCLE,
             scale: 5, // Adjust the scale to make the circle smaller or larger
-            fillColor: "#ffffff", // Circle color
+            fillColor: color, // Circle color
             fillOpacity: 1, // Circle fill opacity
             strokeWeight: 1, // Circle border thickness
             strokeColor: "#000000", // Circle border color
           });
+          marker.setZIndex(10);
         }
       });
     }
@@ -256,6 +295,9 @@ export const DashboardInfo = (props) => {
       .then((response) => response.json())
       .then((data_amenities) => {
         if (data_amenities) {
+          if (hoverAmenity()) {
+            setHoverAmenity(null);
+          }
           loader.importLibrary("marker").then(({ Marker, Animation }) => {
             if (amenitiesOnMap()) {
               amenitiesOnMap().forEach((marker) => marker.setMap(null));
@@ -298,16 +340,18 @@ export const DashboardInfo = (props) => {
               setAmenitiesOnMap((prev) => [...prev, marker]);
             });
 
+            setAmenitiesDetails(amenitiesObj);
+
             const labels = Object.keys(amenitiesObj);
             let data = [];
             for (let key of labels) {
               const obj = amenitiesObj[key];
               let value = 0;
-              // console.log("obj in creating doughnut", obj);
+
               for (let desc of Object.keys(obj)) {
                 value += obj[desc].length;
               }
-              // console.log("value in doughnutchart", value);
+
               data.push(value);
             }
             const datasets = {
@@ -316,31 +360,30 @@ export const DashboardInfo = (props) => {
             };
 
             setAmenities(datasets);
-
-            // const footer = (tooltipItems) => {
-            //   const desc = Object.keys(amenities()[tooltipItems[0].label]);
-            //   let footer_string = "";
-            //   desc.forEach((d) => {
-            //     const arr = amenities()[tooltipItems[0].label][d];
-            //     footer_string += `${d}:${arr.length}\n`;
-            //   });
-            //   return footer_string;
-            // };
-
-            // const facilityTypeUl = document.getElementById("facility_type_ul");
-            // if (facilityTypeUl) {
-            //   Object.keys(amenities()).forEach((a) => {
-            //     const facilityDesc = Object.keys(amenities()[a])
-            //       .map((el) => `<li>${el}</li>`)
-            //       .join("");
-
-            //     facilityTypeUl.innerHTML += `<li><div class=" rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
-            //   });
-            // }
           });
         }
       });
   };
+
+  createEffect(() => {
+    if (props.recommendedZipcode().includes(parseInt(props.zip))) {
+      fetch(`http://localhost:8000/zipcode-scores?zipcode=${props.zip}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            const info = data[0];
+            setYr1Price(info["1Yr_forecast_price"]);
+            setYr1ROI(info["1Yr_ROI"]);
+
+            setYr3Price(info["3Yr_forecast_price"]);
+            setYr3ROI(info["3Yr_ROI"]);
+
+            setYr5Price(info["5Yr_forecast_price"]);
+            setYr5ROI(info["5Yr_ROI"]);
+          }
+        });
+    }
+  });
 
   createEffect(() => {
     if (props.zip !== "") {
@@ -363,7 +406,16 @@ export const DashboardInfo = (props) => {
   });
 
   createEffect(() => {
-    highlighMarker(hoverType());
+    highlighMarker(hoverType(), propertyOnMap(), "type", "#ffffff");
+  });
+
+  createEffect(() => {
+    highlighMarker(
+      hoverAmenity(),
+      amenitiesOnMap(),
+      "facility_type",
+      "#0145ac"
+    );
   });
 
   onCleanup(() => {
@@ -389,9 +441,6 @@ export const DashboardInfo = (props) => {
     h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
       id={`dashboardDiv-${[props.zip]}`}
     >
-      {/* <Show when={showDialog() === true && dialogInfo()}>
-        <MarkerDialog dialogInfo={dialogInfo()} />
-      </Show> */}
       <div
         class="col-span-2 text-center justify-center 
         cursor-pointer
@@ -410,7 +459,7 @@ export const DashboardInfo = (props) => {
       w-[100%] place-content-stretch
        ${show() ? "" : "hidden"}`}
       >
-        <div>
+        <div id="realEstate-info">
           <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
             Real Estate Information
           </div>
@@ -460,85 +509,135 @@ export const DashboardInfo = (props) => {
             </Show>
           </div>
           <Show when={props.recommendedZipcode().includes(parseInt(props.zip))}>
-            <div>Future Prediction Information</div>
+            <div>
+              <div>current price: </div>
+              <div>
+                <p>In the next year:</p>{" "}
+                <div>1 year forecast price: {Yr1_Price()}</div>
+                <div>1 year ROI: {Yr1_ROI()}</div>
+              </div>
+
+              <div>
+                <p>In the next 3 year:</p>{" "}
+                <div>3 year forecast price: {Yr3_Price()}</div>
+                <div>3 year ROI: {Yr3_ROI()}</div>
+              </div>
+
+              <div>
+                <p>In the next 5 year:</p>{" "}
+                <div>5 year forecast price: {Yr5_Price()}</div>
+                <div>5 year ROI: {Yr5_ROI()}</div>
+              </div>
+            </div>
           </Show>
         </div>
-        <div>
+        <div id="amenity-info">
           <div>
             <Suspense>
               <Show when={amenities()}>
                 <p class="bg-teal-500 text-white text-center">Amenities:</p>
-                <div class="flex flex-row">
+                <div class="flex flex-row place-content-between">
                   <DoughnutChart
                     datasets={amenities()}
                     zip={props.zip}
                     ref={(el) => (ref = el)}
                     type="amenities"
+                    setHoverAmenity={setHoverAmenity}
                   />
-                  <div>Details</div>
+                  <div class="relative w-[40%] overflow-x-auto flex flex-col gap-2 py-2">
+                    <Show
+                      when={hoverAmenity()}
+                      fallback={
+                        <div>Click the doughnutchart for more information</div>
+                      }
+                    >
+                      <div class="flex flex-col gap-2">
+                        <p
+                          class="text-white rounded-lg"
+                          style={{
+                            "background-color":
+                              colorsChartjs[
+                                Object.keys(amenitiesDetails()).indexOf(
+                                  hoverAmenity()
+                                )
+                              ],
+                          }}
+                        >
+                          {hoverAmenity()}
+                        </p>
+                        <For
+                          each={Object.entries(
+                            amenitiesDetails()[hoverAmenity()]
+                          )}
+                        >
+                          {(item) => {
+                            return <AmenitiesDetailDropdown item={item} />;
+                          }}
+                        </For>
+                      </div>
+                    </Show>
+                  </div>
                 </div>
               </Show>
             </Suspense>
           </div>
-          <div class="basic-info ">
-            <div
-              class="bg-teal-500 text-white items-center
+        </div>
+        <div class="demographic-info ">
+          <div
+            class="bg-teal-500 text-white items-center
            text-center justify-center items-center"
-            >
-              Demographic Information
-            </div>
-            <div class="grid grid-cols-1 divide-y gap-2">
-              <div class="grid grid-cols-1 divide-y">
+          >
+            Demographic Information
+          </div>
+          <div class="grid grid-cols-1 divide-y gap-2">
+            <div class="grid grid-cols-1 divide-y">
+              <div>
+                Family Household <span id="familyHousehold"></span>
+              </div>
+              <div>
+                Single Household <span id="singleHousehold"></span>
+              </div>
+              <div>
+                Population <span id="population"></span>
+              </div>
+              <div>
+                Population Density <span id="populationDensity"></span>
+              </div>
+              <div>
+                Median Household Income
+                <span id="medianHouseholdIncome"></span>
+              </div>
+              <div class="grid grid-cols-2">
                 <div>
-                  Family Household <span id="familyHousehold"></span>
+                  <Suspense>
+                    <Show when={gender()}>
+                      <p class="bg-teal-500 text-white text-center">Gender:</p>
+
+                      <DoughnutChart
+                        datasets={gender()}
+                        zip={props.zip}
+                        ref={(el) => (ref = el)}
+                        type="gender"
+                      />
+                    </Show>
+                  </Suspense>
                 </div>
                 <div>
-                  Single Household <span id="singleHousehold"></span>
-                </div>
-                <div>
-                  Population <span id="population"></span>
-                </div>
-                <div>
-                  Population Density <span id="populationDensity"></span>
-                </div>
-                <div>
-                  Median Household Income{" "}
-                  <span id="medianHouseholdIncome"></span>
-                </div>
-                <div class="grid grid-cols-2">
                   <div>
                     <Suspense>
-                      <Show when={gender()}>
+                      <Show when={race()}>
                         <p class="bg-teal-500 text-white text-center">
-                          Gender:
+                          Race Diveristy
                         </p>
 
                         <DoughnutChart
-                          datasets={gender()}
+                          datasets={race()}
                           zip={props.zip}
                           ref={(el) => (ref = el)}
-                          type="gender"
+                          type="race"
                         />
                       </Show>
                     </Suspense>
-                  </div>
-                  <div>
-                    <div>
-                      <Suspense>
-                        <Show when={race()}>
-                          <p class="bg-teal-500 text-white text-center">
-                            Race Diveristy
-                          </p>
-
-                          <DoughnutChart
-                            datasets={race()}
-                            zip={props.zip}
-                            ref={(el) => (ref = el)}
-                            type="race"
-                          />
-                        </Show>
-                      </Suspense>
-                    </div>
                   </div>
                 </div>
               </div>

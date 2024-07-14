@@ -136,7 +136,7 @@ export const MapComponent = (props) => {
         return {
           fillColor: colors.default,
           strokeColor: colors.default,
-          fillOpacity: 0.1,
+          fillOpacity: 0.3,
           strokeWeight: 2,
         };
       }
@@ -189,7 +189,7 @@ export const MapComponent = (props) => {
           return {
             fillColor: colors.default,
             strokeColor: colors.default,
-            fillOpacity: 0.1,
+            fillOpacity: 0.3,
             strokeWeight: 2,
           };
         }
@@ -240,7 +240,7 @@ export const MapComponent = (props) => {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.default,
           strokeColor: colors.default,
-          fillOpacity: 0.1,
+          fillOpacity: 0.3,
           strokeWeight: 2,
         });
       }
@@ -361,7 +361,7 @@ export const MapComponent = (props) => {
             >
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
-            <Show when={props.zipcodeOnCharts()}>
+            {/* <Show when={props.zipcodeOnCharts()}>
               <input
                 type="checkbox"
                 clicked={
@@ -385,7 +385,7 @@ export const MapComponent = (props) => {
               >
                 📍
               </button>
-            </Show>
+            </Show> */}
           </div>
           <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
         </Show>
