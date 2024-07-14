@@ -14,18 +14,9 @@ module.exports = {
         "secondary-color": "#bbf7d0",
         "accent-color": "#ac9d87",
         blue: "#0145ac",
-        green: "#81c7a5",
         black: "#1b212c",
         white: "#F3F4F6",
         grey: "#2F2F2F",
-        corvu: {
-          bg: "#f3f1fe",
-          100: "#e6e2fd",
-          200: "#d4cbfb",
-          300: "#bcacf6",
-          400: "#a888f1",
-          text: "#180f24",
-        },
       },
       animation: {
         "fade-down": "fade-down 0.2s ease-out forwards",

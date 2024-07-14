@@ -26,8 +26,6 @@ async function fetchData([url]) {
 export const Map = (props) => {
   const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
   const [getSelectedZip, setSelectedZip] = createSignal("");
-  const [getSelectedBorough, setSelectedBorough] = createSignal("");
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal("");
   const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
     createSignal(false);
 
@@ -53,23 +51,8 @@ export const Map = (props) => {
     fetchData
   );
 
-  const [amenitiesData] = createResource(
-    ["http://localhost:8000/api/amenities"],
-    fetchData
-  );
-
   const [zipcodes] = createResource(
     ["http://localhost:8000/api/zipcodes"],
-    fetchData
-  );
-
-  const [borough_geojson] = createResource(
-    ["http://localhost:8000/api/borough"],
-    fetchData
-  );
-
-  const [neighbourhood_geojson] = createResource(
-    ["http://localhost:8000/api/neighbourhoods"],
     fetchData
   );
 
@@ -86,10 +69,7 @@ export const Map = (props) => {
   const dataResources = {
     realEstateData,
     historicalRealEstateData,
-    amenitiesData,
     zipcodes,
-    borough_geojson,
-    neighbourhood_geojson,
     borough_neighbourhood,
     zipcode_geojson,
   };
@@ -114,10 +94,6 @@ export const Map = (props) => {
     fetchHistoricPrices
   );
 
-  createEffect(() => {
-    console.log("historicPrices", historicPrices);
-  });
-
   return (
     <MapView>
       <div class="h-screen flex relative">
@@ -138,8 +114,6 @@ export const Map = (props) => {
 
             <Show
               when={
-                dataResources.borough_geojson() &&
-                dataResources.neighbourhood_geojson() &&
                 dataResources.zipcodes() &&
                 dataResources.historicalRealEstateData() &&
                 dataResources.zipcode_geojson()
@@ -152,8 +126,6 @@ export const Map = (props) => {
                 mapObject={props.mapObject}
                 setMapObject={props.setMapObject}
                 zipcodeOnCharts={getSelectedZip}
-                boroughSetter={setSelectedBorough}
-                neighbourhoodSetter={setSelectedNeighbourhood}
                 zipcodeSetter={setSelectedZip}
                 getComparedZip={getComparedZip}
                 filteredZipCodes={filteredZipCodes}
@@ -167,7 +139,7 @@ export const Map = (props) => {
                 setShowHousesMarker={setShowHousesMarker}
                 recommendedZipcode={recommendedZipcode}
               >
-                <Show when={!historicPrices.loading}>
+                <Show when={!historicPrices.loading && getSelectedZip()}>
                   <LineChart
                     asyncData={historicPrices}
                     getComparedZip={getComparedZip}
@@ -177,7 +149,7 @@ export const Map = (props) => {
                     setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                   ></LineChart>
                 </Show>
-                <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
+
                 <div id="compared-dashboardinfo-button" class="flex gap-2">
                   <For each={getComparedZip()} fallback={<div></div>}>
                     {(item, index) => (
@@ -198,34 +170,39 @@ export const Map = (props) => {
                     )}
                   </For>
                 </div>
-                <DashboardInfo
-                  map={props.mapObject}
-                  zip={getSelectedZip()}
-                  showAmenityMarker={showAmenityMarker}
-                  setShowAmenityMarker={setShowAmenityMarker}
-                  showHousesMarker={showHousesMarker}
-                  setShowHousesMarker={setShowHousesMarker}
-                  recommendedZipcode={recommendedZipcode}
-                  setDisplayDialog={setDisplayDialog}
-                  setDialogInfo={setDialogInfo}
-                />
-                <Show when={createMoreDashboardInfo()}>
-                  <For each={getComparedZip()} fallback={<div></div>}>
-                    {(item, index) => (
-                      <DashboardInfo
-                        map={props.mapObject}
-                        zip={item}
-                        recommendedZipcode={recommendedZipcode}
-                        setDisplayDialog={setDisplayDialog}
-                        setDialogInfo={setDialogInfo}
-                        showAmenityMarker={showAmenityMarker}
-                        setShowAmenityMarker={setShowAmenityMarker}
-                        showHousesMarker={showHousesMarker}
-                        setShowHousesMarker={setShowHousesMarker}
-                      />
-                    )}
-                  </For>
-                </Show>
+                <div class="flex flex-col gap-2">
+                  <Show when={getSelectedZip()}>
+                    <DashboardInfo
+                      map={props.mapObject}
+                      zip={getSelectedZip()}
+                      showAmenityMarker={showAmenityMarker}
+                      setShowAmenityMarker={setShowAmenityMarker}
+                      showHousesMarker={showHousesMarker}
+                      setShowHousesMarker={setShowHousesMarker}
+                      recommendedZipcode={recommendedZipcode}
+                      setDisplayDialog={setDisplayDialog}
+                      setDialogInfo={setDialogInfo}
+                    />
+                  </Show>
+
+                  <Show when={createMoreDashboardInfo()}>
+                    <For each={getComparedZip()} fallback={<div></div>}>
+                      {(item, index) => (
+                        <DashboardInfo
+                          map={props.mapObject}
+                          zip={item}
+                          recommendedZipcode={recommendedZipcode}
+                          setDisplayDialog={setDisplayDialog}
+                          setDialogInfo={setDialogInfo}
+                          showAmenityMarker={showAmenityMarker}
+                          setShowAmenityMarker={setShowAmenityMarker}
+                          showHousesMarker={showHousesMarker}
+                          setShowHousesMarker={setShowHousesMarker}
+                        />
+                      )}
+                    </For>
+                  </Show>
+                </div>
 
                 {createEffect(() => {
                   if (props.mapObject()) {
@@ -240,7 +217,6 @@ export const Map = (props) => {
                       <Markers
                         zipcodes={dataResources.zipcodes()}
                         map={props.mapObject}
-                        getDataLayerLevel={getDataLayerLevel}
                         borough_neighbourhood={dataResources.borough_neighbourhood()}
                         realEstateData={dataResources.realEstateData()}
                       />

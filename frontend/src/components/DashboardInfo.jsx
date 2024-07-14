@@ -6,7 +6,17 @@ import {
   Show,
   Suspense,
 } from "solid-js";
-import { DoughnutChart, BarChart } from "./Charts";
+import { DoughnutChart } from "./Charts";
+
+const colorsChartjs = [
+  "#36A2EB",
+  "#FF6384",
+  "#FF9F40",
+  "#FFCD56",
+  "#4BC0C0",
+  "#9966FF",
+  "#C9CBCF",
+];
 
 const AmenitiesDetailDropdown = ({ item }) => {
   const [displayDropdown, setDisplayDropdown] = createSignal(false);
@@ -32,8 +42,224 @@ const AmenitiesDetailDropdown = ({ item }) => {
   );
 };
 
+const RealEstateInfo = ({
+  getPropertyType,
+  typeAvg,
+  recommendedZipcode,
+  Yr1_Price,
+  Yr1_ROI,
+  Yr3_Price,
+  Yr3_ROI,
+  Yr5_Price,
+  Yr5_ROI,
+  zip,
+  setHoverType,
+}) => {
+  return (
+    <div id="realEstate-info">
+      <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
+        Real Estate Information
+      </div>
+      <div class="flex flex-row place-content-between px-4 py-2">
+        <Show when={getPropertyType()}>
+          <div>
+            <DoughnutChart
+              datasets={getPropertyType()}
+              type="property"
+              setHoverType={setHoverType}
+            />
+          </div>
+          <div>
+            <Show
+              when={typeAvg()}
+              fallback={<div>Cannot get detailed information...</div>}
+            >
+              <For each={typeAvg()} fallback={<div>Loading...</div>}>
+                {(item, index) => {
+                  return (
+                    <div>
+                      <p
+                        class="text-white rounded-lg"
+                        style={{
+                          "background-color": colorsChartjs[index()],
+                        }}
+                      >
+                        {Object.keys(item)}
+                      </p>
+                      <div>
+                        Average Price: {Object.values(item)[0].avgPrice}
+                      </div>
+                      <div>
+                        Average Square Foot: {Object.values(item)[0].avgSqft}
+                      </div>
+                      <div>
+                        Average Price Per Square Foot:
+                        {Object.values(item)[0].avgPricePerSqft}
+                      </div>
+                    </div>
+                  );
+                }}
+              </For>
+            </Show>
+          </div>
+        </Show>
+      </div>
+      <Show when={recommendedZipcode().includes(parseInt(zip))}>
+        <div>
+          <div>current price: </div>
+          <div>
+            <p>In the next year:</p>
+            <div>1 year forecast price: {Yr1_Price()}</div>
+            <div>1 year ROI: {Yr1_ROI()}</div>
+          </div>
+
+          <div>
+            <p>In the next 3 year:</p>{" "}
+            <div>3 year forecast price: {Yr3_Price()}</div>
+            <div>3 year ROI: {Yr3_ROI()}</div>
+          </div>
+
+          <div>
+            <p>In the next 5 year:</p>
+            <div>5 year forecast price: {Yr5_Price()}</div>
+            <div>5 year ROI: {Yr5_ROI()}</div>
+          </div>
+        </div>
+      </Show>
+    </div>
+  );
+};
+
+const AmenitiesInfo = ({
+  amenities,
+  hoverAmenity,
+  amenitiesDetails,
+  zip,
+  setHoverAmenity,
+}) => {
+  return (
+    <div id="amenity-info">
+      <div>
+        <Suspense>
+          <Show when={amenities()}>
+            <p class="bg-teal-500 text-white text-center">
+              Amenities Information
+            </p>
+            <div class="flex flex-row place-content-between">
+              <DoughnutChart
+                datasets={amenities()}
+                zip={zip}
+                ref={(el) => (ref = el)}
+                type="amenities"
+                setHoverAmenity={setHoverAmenity}
+              />
+              <div class="relative w-[40%] overflow-x-auto flex flex-col gap-2 py-2">
+                <Show
+                  when={hoverAmenity()}
+                  fallback={
+                    <div>Click the doughnutchart for more information</div>
+                  }
+                >
+                  <div class="flex flex-col gap-2">
+                    <p
+                      class="text-white rounded-lg"
+                      style={{
+                        "background-color":
+                          colorsChartjs[
+                            Object.keys(amenitiesDetails()).indexOf(
+                              hoverAmenity()
+                            )
+                          ],
+                      }}
+                    >
+                      {hoverAmenity()}
+                    </p>
+                    <For
+                      each={Object.entries(amenitiesDetails()[hoverAmenity()])}
+                    >
+                      {(item) => {
+                        return <AmenitiesDetailDropdown item={item} />;
+                      }}
+                    </For>
+                  </div>
+                </Show>
+              </div>
+            </div>
+          </Show>
+        </Suspense>
+      </div>
+    </div>
+  );
+};
+
+const DemographicInfo = ({ gender, race, zip }) => {
+  return (
+    <div class="demographic-info ">
+      <div
+        class="bg-teal-500 text-white items-center
+           text-center justify-center items-center"
+      >
+        Demographic Information
+      </div>
+      <div class="grid grid-cols-1 divide-y gap-2">
+        <div class="grid grid-cols-1 divide-y">
+          <div>
+            Family Household <span id="familyHousehold"></span>
+          </div>
+          <div>
+            Single Household <span id="singleHousehold"></span>
+          </div>
+          <div>
+            Population <span id="population"></span>
+          </div>
+          <div>
+            Population Density <span id="populationDensity"></span>
+          </div>
+          <div>
+            Median Household Income
+            <span id="medianHouseholdIncome"></span>
+          </div>
+          <div class="grid grid-cols-2">
+            <div>
+              <Suspense>
+                <Show when={gender()}>
+                  <p class="bg-teal-500 text-white text-center">Gender:</p>
+
+                  <DoughnutChart
+                    datasets={gender()}
+                    zip={zip}
+                    ref={(el) => (ref = el)}
+                    type="gender"
+                  />
+                </Show>
+              </Suspense>
+            </div>
+            <div>
+              <div>
+                <Suspense>
+                  <Show when={race()}>
+                    <p class="bg-teal-500 text-white text-center">
+                      Race Diveristy
+                    </p>
+
+                    <DoughnutChart
+                      datasets={race()}
+                      zip={zip}
+                      ref={(el) => (ref = el)}
+                      type="race"
+                    />
+                  </Show>
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const DashboardInfo = (props) => {
-  let ref;
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
     version: "weekly",
@@ -60,15 +286,11 @@ export const DashboardInfo = (props) => {
   const [Yr5_Price, setYr5Price] = createSignal(null);
   const [Yr5_ROI, setYr5ROI] = createSignal(null);
 
-  const colorsChartjs = [
-    "#36A2EB",
-    "#FF6384",
-    "#FF9F40",
-    "#FFCD56",
-    "#4BC0C0",
-    "#9966FF",
-    "#C9CBCF",
-  ];
+  //show the dropdown menu for users to select the information on the board
+  const [displayDropdownMenu, setDisplayDropdownMenu] = createSignal(false);
+
+  //show the type of information on the board
+  const [displayContent, setDisplayContent] = createSignal("realEstate");
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
@@ -437,213 +659,108 @@ export const DashboardInfo = (props) => {
 
   return (
     <div
-      class="w-[100%] rounded-lg
-    h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
+      class="w-[100%] rounded-lg  border-2 border-teal-500 border-solid overflow-y-auto"
       id={`dashboardDiv-${[props.zip]}`}
     >
       <div
-        class="col-span-2 text-center justify-center 
+        class="
+        flex
+        gap-8
+        place-content-between
+        w-full
+        h-[30px]
+        text-center justify-center 
         cursor-pointer
         bg-teal-500 text-white"
         id="dashboard-title"
-        onClick={() => {
-          setShow((prev) => !prev);
-        }}
       >
-        ZIPCODE {props.zip},
-        <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>,
-        <span id={`borough-dashboardInfo-${props.zip}`}></span>
+        <div
+          onClick={() => {
+            setShow((prev) => !prev);
+          }}
+        >
+          ZIPCODE {props.zip},
+          <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>,
+          <span id={`borough-dashboardInfo-${props.zip}`}></span>
+        </div>
+        <div
+          class="absolute w-[15%]
+        flex flex-col rounded-lg shadow-md
+        text-black right-[10%] rounded-md z-30"
+        >
+          <div
+            class="relative h-[25%] hover:bg-indigo-600 hover:text-white bg-white"
+            onClick={() => {
+              setDisplayDropdownMenu((prev) => !prev);
+            }}
+          >
+            Select
+          </div>
+          <div class={displayDropdownMenu() ? "bg-white" : "hidden"}>
+            <ul class="grid grid-cols-1 divide-y">
+              <li
+                class="hover:bg-teal-500 hover:text-white"
+                onClick={() => {
+                  setDisplayContent("realEstate");
+                }}
+              >
+                Real Estate{" "}
+              </li>
+              <li
+                class="hover:bg-teal-500 hover:text-white"
+                onClick={() => {
+                  setDisplayContent("amenities");
+                }}
+              >
+                Amenities
+              </li>
+              <li
+                class="hover:bg-teal-500 hover:text-white"
+                onClick={() => {
+                  setDisplayContent("demographic");
+                }}
+              >
+                Demographic
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
+
       <div
         class={`flex flex-col relative 
       w-[100%] place-content-stretch
        ${show() ? "" : "hidden"}`}
       >
-        <div id="realEstate-info">
-          <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
-            Real Estate Information
-          </div>
-          <div class="flex flex-row place-content-between px-4 py-2">
-            <Show when={getPropertyType()}>
-              <div>
-                <DoughnutChart
-                  datasets={getPropertyType()}
-                  type="property"
-                  setHoverType={setHoverType}
-                />
-              </div>
-              <div>
-                <Show
-                  when={typeAvg()}
-                  fallback={<div>Cannot get detailed information...</div>}
-                >
-                  <For each={typeAvg()} fallback={<div>Loading...</div>}>
-                    {(item, index) => {
-                      return (
-                        <div>
-                          <p
-                            class="text-white rounded-lg"
-                            style={{
-                              "background-color": colorsChartjs[index()],
-                            }}
-                          >
-                            {Object.keys(item)}
-                          </p>
-                          <div>
-                            Average Price: {Object.values(item)[0].avgPrice}
-                          </div>
-                          <div>
-                            Average Square Foot:{" "}
-                            {Object.values(item)[0].avgSqft}
-                          </div>
-                          <div>
-                            Average Price Per Square Foot:
-                            {Object.values(item)[0].avgPricePerSqft}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </For>
-                </Show>
-              </div>
-            </Show>
-          </div>
-          <Show when={props.recommendedZipcode().includes(parseInt(props.zip))}>
-            <div>
-              <div>current price: </div>
-              <div>
-                <p>In the next year:</p>{" "}
-                <div>1 year forecast price: {Yr1_Price()}</div>
-                <div>1 year ROI: {Yr1_ROI()}</div>
-              </div>
+        <Show when={displayContent() === "realEstate"}>
+          <RealEstateInfo
+            getPropertyType={getPropertyType}
+            typeAvg={typeAvg}
+            recommendedZipcode={props.recommendedZipcode}
+            Yr1_Price={Yr1_Price}
+            Yr1_ROI={Yr1_ROI}
+            Yr3_Price={Yr3_Price}
+            Yr3_ROI={Yr3_ROI}
+            Yr5_Price={Yr5_Price}
+            Yr5_ROI={Yr5_ROI}
+            zip={props.zip}
+            setHoverType={setHoverType}
+          />
+        </Show>
 
-              <div>
-                <p>In the next 3 year:</p>{" "}
-                <div>3 year forecast price: {Yr3_Price()}</div>
-                <div>3 year ROI: {Yr3_ROI()}</div>
-              </div>
+        <Show when={displayContent() === "amenities"}>
+          <AmenitiesInfo
+            amenities={amenities}
+            hoverAmenity={hoverAmenity}
+            amenitiesDetails={amenitiesDetails}
+            zip={props.zip}
+            setHoverAmenity={setHoverAmenity}
+          />
+        </Show>
 
-              <div>
-                <p>In the next 5 year:</p>{" "}
-                <div>5 year forecast price: {Yr5_Price()}</div>
-                <div>5 year ROI: {Yr5_ROI()}</div>
-              </div>
-            </div>
-          </Show>
-        </div>
-        <div id="amenity-info">
-          <div>
-            <Suspense>
-              <Show when={amenities()}>
-                <p class="bg-teal-500 text-white text-center">Amenities:</p>
-                <div class="flex flex-row place-content-between">
-                  <DoughnutChart
-                    datasets={amenities()}
-                    zip={props.zip}
-                    ref={(el) => (ref = el)}
-                    type="amenities"
-                    setHoverAmenity={setHoverAmenity}
-                  />
-                  <div class="relative w-[40%] overflow-x-auto flex flex-col gap-2 py-2">
-                    <Show
-                      when={hoverAmenity()}
-                      fallback={
-                        <div>Click the doughnutchart for more information</div>
-                      }
-                    >
-                      <div class="flex flex-col gap-2">
-                        <p
-                          class="text-white rounded-lg"
-                          style={{
-                            "background-color":
-                              colorsChartjs[
-                                Object.keys(amenitiesDetails()).indexOf(
-                                  hoverAmenity()
-                                )
-                              ],
-                          }}
-                        >
-                          {hoverAmenity()}
-                        </p>
-                        <For
-                          each={Object.entries(
-                            amenitiesDetails()[hoverAmenity()]
-                          )}
-                        >
-                          {(item) => {
-                            return <AmenitiesDetailDropdown item={item} />;
-                          }}
-                        </For>
-                      </div>
-                    </Show>
-                  </div>
-                </div>
-              </Show>
-            </Suspense>
-          </div>
-        </div>
-        <div class="demographic-info ">
-          <div
-            class="bg-teal-500 text-white items-center
-           text-center justify-center items-center"
-          >
-            Demographic Information
-          </div>
-          <div class="grid grid-cols-1 divide-y gap-2">
-            <div class="grid grid-cols-1 divide-y">
-              <div>
-                Family Household <span id="familyHousehold"></span>
-              </div>
-              <div>
-                Single Household <span id="singleHousehold"></span>
-              </div>
-              <div>
-                Population <span id="population"></span>
-              </div>
-              <div>
-                Population Density <span id="populationDensity"></span>
-              </div>
-              <div>
-                Median Household Income
-                <span id="medianHouseholdIncome"></span>
-              </div>
-              <div class="grid grid-cols-2">
-                <div>
-                  <Suspense>
-                    <Show when={gender()}>
-                      <p class="bg-teal-500 text-white text-center">Gender:</p>
-
-                      <DoughnutChart
-                        datasets={gender()}
-                        zip={props.zip}
-                        ref={(el) => (ref = el)}
-                        type="gender"
-                      />
-                    </Show>
-                  </Suspense>
-                </div>
-                <div>
-                  <div>
-                    <Suspense>
-                      <Show when={race()}>
-                        <p class="bg-teal-500 text-white text-center">
-                          Race Diveristy
-                        </p>
-
-                        <DoughnutChart
-                          datasets={race()}
-                          zip={props.zip}
-                          ref={(el) => (ref = el)}
-                          type="race"
-                        />
-                      </Show>
-                    </Suspense>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Show when={displayContent() === "demographic"}>
+          <DemographicInfo gender={gender} race={race} zip={props.zip} />
+        </Show>
       </div>
     </div>
   );

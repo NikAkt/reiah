@@ -29,13 +29,6 @@ const createBarChart = (ctx, data) => {
     barchartInstance.destroy();
   }
 
-  // let datasets = [];
-  // if (data.length > 1) {
-  //   data.forEach((d) => {
-  //     datasets.push({ label: label, data: d, borderWidth: 1 });
-  //   });
-  // }
-
   return new Chart(ctx, {
     type: "bar",
     data,
@@ -430,44 +423,43 @@ const createDoughnutChart = (
     doughnutChartInstance.destroy();
   }
 
+  const doughnutLabel = {
+    id: "doughnutLabel",
+    beforeDatasetsDraw(chart, args, pluginOptions) {
+      const { ctx, data } = chart;
+      ctx.save();
+      const xCoor = chart.getDatasetMeta(0).data[0].x;
+      const yCoor = chart.getDatasetMeta(0).data[0].y;
+
+      //responsive text size
+      let newVal;
+      let val = 15;
+      const innerWidth = window.innerWidth;
+      if (innerWidth > 800) {
+        newVal = 15;
+      } else if (innerWidth <= 800 && innerWidth > 600) {
+        newVal = 7.5;
+      } else {
+        newVal = 5;
+      }
+
+      if (val !== newVal) {
+        val = newVal;
+        chart.update();
+      }
+
+      ctx.font = `bold ${val}px sans-serif`;
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      let sum = 0;
+      data.datasets[0].data.forEach((num) => (sum += num));
+
+      ctx.fillText(`Total:${sum}`, xCoor, yCoor);
+    },
+  };
   if (type === "property") {
-    const doughnutLabel = {
-      id: "doughnutLabel",
-      beforeDatasetsDraw(chart, args, pluginOptions) {
-        const { ctx, data } = chart;
-        ctx.save();
-        const xCoor = chart.getDatasetMeta(0).data[0].x;
-        const yCoor = chart.getDatasetMeta(0).data[0].y;
-
-        //responsive text size
-        let newVal;
-        let val = 15;
-        const innerWidth = window.innerWidth;
-        if (innerWidth > 800) {
-          newVal = 15;
-        } else if (innerWidth <= 800 && innerWidth > 600) {
-          newVal = 7.5;
-        } else {
-          newVal = 5;
-        }
-
-        if (val !== newVal) {
-          val = newVal;
-          chart.update();
-        }
-
-        ctx.font = `bold ${val}px sans-serif`;
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        let sum = 0;
-        data.datasets[0].data.forEach((num) => (sum += num));
-
-        ctx.fillText(`Total:${sum}`, xCoor, yCoor);
-      },
-    };
-
     return new Chart(ctx, {
       type: "doughnut",
       data: dataset,
@@ -479,7 +471,7 @@ const createDoughnutChart = (
         },
         plugins: {
           legend: {
-            position: "top",
+            position: "left",
           },
         },
       },
@@ -497,7 +489,7 @@ const createDoughnutChart = (
         },
         plugins: {
           legend: {
-            position: "top",
+            position: "left",
           },
         },
       },
@@ -513,6 +505,7 @@ const createDoughnutChart = (
         plugins: {
           legend: {
             display: true,
+            position: "left",
           },
         },
       },

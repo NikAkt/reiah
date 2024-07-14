@@ -9,6 +9,8 @@ import {
   Suspense,
 } from "solid-js";
 
+import search_icon from "../assets/search-svgrepo-com.svg";
+
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
   version: "weekly",
@@ -51,13 +53,26 @@ export const MapComponent = (props) => {
     hoverLocationDiv.className =
       "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
 
+    const svgImg = document.createElement("img");
+    svgImg.src = search_icon; // Replace with the actual SVG URL or data
+    svgImg.className = "w-4 h-4 mr-2"; // Adjust size and margin as needed
+
     const innerDiv = document.createElement("div");
-    innerDiv.textContent = "Location: ";
+    const textNode = document.createTextNode("Location: ");
+    innerDiv.appendChild(svgImg);
+    innerDiv.appendChild(textNode);
     innerDiv.className = "flex justify-center items-center";
     const input = document.createElement("input");
     input.type = "text";
     input.id = "hoverLocation-div";
-    input.className = "relative w-[100%] bg-transparent text-center";
+    input.className = "relative w-[100%] h-[80%] bg-transparent text-center";
+    input.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        console.log("Hi");
+      } else {
+        alert("The zipcode you provided is not included.");
+      }
+    });
 
     innerDiv.appendChild(input);
     hoverLocationDiv.appendChild(innerDiv);
@@ -86,21 +101,6 @@ export const MapComponent = (props) => {
     );
 
     return centerControlDiv;
-  }
-
-  function handleDataLayerClick(info) {
-    let level, area;
-    if (props.getDataLayerLevel() === "borough") {
-      level = "borough";
-      area = info["Fg"]["boro_name"];
-    } else if (props.getDataLayerLevel() === "neighbourhood") {
-      level = "cdta";
-      area = info["Fg"]["cdta2020"];
-    } else if (props.getDataLayerLevel() === "zipcode") {
-      level = "zipcode";
-      area = null;
-    }
-    return { level, area };
   }
 
   const insertDataLayer = (data, map) => {
@@ -205,8 +205,10 @@ export const MapComponent = (props) => {
         fillOpacity: 0.7,
         clickable: true,
       });
-      document.getElementById("hoverLocation-div").value =
-        event.feature.getProperty("ZIPCODE");
+      const hoverDiv = document.getElementById("hoverLocation-div");
+      if (hoverDiv) {
+        hoverDiv.value = event.feature.getProperty("ZIPCODE");
+      }
     });
 
     map.data.addListener("mouseout", (event) => {
@@ -291,37 +293,6 @@ export const MapComponent = (props) => {
     }
   });
 
-  //change data layer according to zoom
-  // createEffect(() => {
-  //   try {
-  //     if (props.getDataLayerLevel() === "borough") {
-  //       //if it has neighbourhood datalayer, clear the data layer
-  //       if (props.mapObject().data) {
-  //         // clearDataLayer(props.mapObject());
-  //         // setNeighbourhood(false);
-  //       }
-  //       //if not duplicated, insert the borough data layer
-  //       // if (!borough()) {
-  //       // insertDataLayer(borough_geojson, props.mapObject());
-  //       // setBorough(true);
-  //       // }
-  //     } else if (props.getDataLayerLevel() === "neighbourhood") {
-  //       //datalayer changed to neighbourhood level
-  //       // clearDataLayer(props.mapObject());
-  //       // setBorough(false);
-  //       //if not duplicated, insert the borough data layer
-  //       // if (!neighbourhood()) {
-  //       // insertDataLayer(neighbourhood_geojson, props.mapObject());
-  //       // setNeighbourhood(true);
-  //       // }
-  //     } else if (props.getDataLayerLevel() === "zipcode") {
-  //       // insertDataLayer(zipcode_geojson, props.mapObject());
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // });
-
   onCleanup(() => {
     const mapDiv = document.getElementById("map");
     if (mapDiv) {
@@ -332,14 +303,7 @@ export const MapComponent = (props) => {
   return (
     <>
       <Suspense>
-        <Show
-          when={
-            props.dataResources.borough_geojson() &&
-            props.dataResources.neighbourhood_geojson()
-          }
-        >
-          <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
-        </Show>
+        <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
       </Suspense>
 
       <div
@@ -361,31 +325,6 @@ export const MapComponent = (props) => {
             >
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
-            {/* <Show when={props.zipcodeOnCharts()}>
-              <input
-                type="checkbox"
-                clicked={
-                  props.favorite().includes(props.zipcodeOnCharts())
-                    ? true
-                    : false
-                }
-                onChange={() => {
-                  props.setFavorite((prev) =>
-                    prev.includes(props.zipcodeOnCharts())
-                      ? prev.filter((el) => el !== props.zipcodeOnCharts())
-                      : [...prev, props.zipcodeOnCharts()]
-                  );
-                }}
-              />
-              <button
-                onClick={() => {
-                  props.setShowHousesMarker((prev) => !prev);
-                  console.log(props.showHousesMarker());
-                }}
-              >
-                📍
-              </button>
-            </Show> */}
           </div>
           <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
         </Show>
