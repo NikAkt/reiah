@@ -458,23 +458,30 @@ type Property struct {
 }
 
 type GetPropertyQueryParams struct {
-	Zipcode      string  `query:"zipcode"`
-	Beds         float64 `query:"beds"`
-	Type         string  `query:"type"`
-	MinPrice     float64 `query:"minprice"`
-	MaxPrice     float64 `query:"maxprice"`
-	Neighborhood string  `query:"neighborhood"`
+	Zipcodes     []string `query:"zipcode"`
+	Beds         float64  `query:"beds"`
+	Type         string   `query:"type"`
+	MinPrice     float64  `query:"minprice"`
+	MaxPrice     float64  `query:"maxprice"`
+	Neighborhood string   `query:"neighborhood"`
 }
 
 func filterPropertyGetRequest(a map[string][]Property, f *GetPropertyQueryParams) []Property {
 	var filtered []Property
-	for zipcode, properties := range a {
-		for _, property := range properties {
-			property.Zipcode = zipcode
+	zipSet := make(map[string]bool)
 
-			if f.Zipcode != "" && property.Zipcode != f.Zipcode {
-				continue
-			}
+	for _, zip := range f.Zipcodes {
+		for _, z := range strings.Split(zip, ",") {
+			zipSet[z] = true
+		}
+	}
+
+	for zipcode, properties := range a {
+		if len(zipSet) > 0 && !zipSet[zipcode] {
+			continue
+		}
+
+		for _, property := range properties {
 			if f.Beds != 0 && property.Beds != f.Beds {
 				continue
 			}
@@ -497,6 +504,11 @@ func filterPropertyGetRequest(a map[string][]Property, f *GetPropertyQueryParams
 }
 
 func GetPropertyData(c echo.Context) error {
+	var params GetPropertyQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	filterFunc := func(a map[string][]Property, f *GetPropertyQueryParams) map[string][]Property {
 		filtered := filterPropertyGetRequest(a, f)
 		filteredMap := make(map[string][]Property)
