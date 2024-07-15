@@ -20,7 +20,7 @@ module.exports = {
       },
       animation: {
         "fade-down": "fade-down 0.2s ease-out forwards",
-        "fade-in": "fade-in 0.2s ease-out forwards",
+        "fade-in": "fade-in 0.3s ease-out forwards",
         "fade-out": "fade-out 0.2s ease-out backwards",
         slide: "slide 2s ease-in-out infinite",
         expand: "expand 250ms cubic-bezier(0.32,0.72,0,0.75)",
@@ -32,7 +32,7 @@ module.exports = {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
-          "0%": { opacity: "0", transform: "translateX(-2vw)" },
+          "0%": { opacity: "0", transform: "translateX(2vw)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
         "fade-out": {

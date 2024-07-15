@@ -28,64 +28,79 @@ export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
-  const [lastClickedZipCode, setLastClickedZipCode] = createSignal(null);
 
   const zipcodes = props.dataResources.zipcodes();
   const zipcode_geojson = props.dataResources.zipcode_geojson();
 
   function createCenterControl() {
     const centerControlDiv = document.createElement("div");
-    centerControlDiv.className = !sideBarOpen()
-      ? "w-[80%] overflow-x-auto flex"
-      : "w-[80%] overflow-x-auto flex flex-col";
-
     const controlButton = document.createElement("button");
-    controlButton.textContent = sideBarOpen() ? "Hide List" : "Show List";
+    const hoverLocationDiv = document.createElement("div");
+    const svgImg = document.createElement("img");
+    const innerDiv = document.createElement("div");
+    const textNode = document.createTextNode("Location: ");
+    const input = document.createElement("input");
+    const recommendZipBtn = document.createElement("button");
+    const filterBtn = document.createElement("button");
+
+    function updateButtonStyles() {
+      centerControlDiv.className = !sideBarOpen()
+        ? "w-[80%] overflow-x-auto flex"
+        : "w-[30%] overflow-x-auto flex flex-col";
+
+      controlButton.textContent = sideBarOpen()
+        ? "Hide Dashboard"
+        : "Show Dashboard";
+      hoverLocationDiv.className = sideBarOpen()
+        ? "w-[100%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center"
+        : "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+    }
+
+    createEffect(() => updateButtonStyles());
+
+    centerControlDiv.id = "centerControlDiv";
+
     controlButton.title = "Click to show details";
     controlButton.type = "button";
     controlButton.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     controlButton.addEventListener("click", () => {
       setSidebarOpen(!sideBarOpen());
+      updateButtonStyles();
     });
 
-    const hoverLocationDiv = document.createElement("div");
-    hoverLocationDiv.className =
-      "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+    svgImg.src = search_icon;
+    svgImg.className = "w-4 h-4 mr-2";
 
-    const svgImg = document.createElement("img");
-    svgImg.src = search_icon; // Replace with the actual SVG URL or data
-    svgImg.className = "w-4 h-4 mr-2"; // Adjust size and margin as needed
-
-    const innerDiv = document.createElement("div");
-    const textNode = document.createTextNode("Location: ");
     innerDiv.appendChild(svgImg);
     innerDiv.appendChild(textNode);
     innerDiv.className = "flex justify-center items-center";
-    const input = document.createElement("input");
     input.type = "text";
     input.id = "hoverLocation-div";
     input.className = "relative w-[100%] h-[80%] bg-transparent text-center";
+    const uniqueZipcode = Object.keys(
+      props.dataResources.historicalRealEstateData()
+    );
     input.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
-        console.log("Hi");
-      } else {
-        alert("The zipcode you provided is not included.");
+        if (uniqueZipcode.includes(event.target.value)) {
+          props.setSelectedZip(event.target.value);
+        } else {
+          alert("The zipcode you provided is not included.");
+        }
       }
     });
 
     innerDiv.appendChild(input);
     hoverLocationDiv.appendChild(innerDiv);
 
-    const recommendZipBtn = document.createElement("button");
-    recommendZipBtn.textContent = "Recommend Zipcode";
+    recommendZipBtn.textContent = "Recommend";
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     recommendZipBtn.addEventListener("click", () => {
       props.setShowRecommendBoard((prev) => !prev);
     });
 
-    const filterBtn = document.createElement("button");
     filterBtn.textContent = "Filter";
     filterBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
@@ -108,7 +123,7 @@ export const MapComponent = (props) => {
     map.data.addGeoJson(data);
     map.data.setStyle((feature) => {
       const zipCode = feature.getProperty("ZIPCODE");
-      if (zipCode === lastClickedZipCode()) {
+      if (zipCode === props.zipcodeOnCharts()) {
         return {
           fillColor: colors.clicked,
           strokeColor: colors.clicked,
@@ -143,57 +158,7 @@ export const MapComponent = (props) => {
     });
 
     map.data.addListener("click", (event) => {
-      const zipcode_obj = zipcodes.filter(
-        (el) => el["zip_code"] * 1 == event.feature.getProperty("ZIPCODE")
-      );
-
-      map.setZoom(14);
-      const newCenter = {
-        lng: zipcode_obj[0]["longitude"] * 1,
-        lat: zipcode_obj[0]["latitude"] * 1,
-      };
-
-      map.setCenter(newCenter);
-      setLastClickedZipCode(event.feature.getProperty("ZIPCODE"));
-      map.data.revertStyle();
-      event.feature.setProperty("isColorful", true);
-      const zipcode = event.feature.getProperty("ZIPCODE");
-      props.zipcodeSetter(zipcode);
-      map.data.setStyle((feature) => {
-        const zipCode = feature.getProperty("ZIPCODE");
-        if (zipCode === lastClickedZipCode()) {
-          return {
-            fillColor: colors.clicked,
-            strokeColor: colors.clicked,
-            fillOpacity: 0.7,
-            strokeWeight: 2,
-          };
-        } else if (
-          props.filteredZipCodes().includes(parseInt(zipCode)) ||
-          props.recommendedZipcode().includes(parseInt(zipCode))
-        ) {
-          return {
-            fillColor: colors.selected,
-            strokeColor: colors.selected,
-            fillOpacity: 0.7,
-            strokeWeight: 2,
-          };
-        } else if (props.getComparedZip().includes(parseInt(zipCode))) {
-          return {
-            fillColor: colors.compared,
-            strokeColor: colors.compared,
-            fillOpacity: 0.7,
-            strokeWeight: 2,
-          };
-        } else {
-          return {
-            fillColor: colors.default,
-            strokeColor: colors.default,
-            fillOpacity: 0.3,
-            strokeWeight: 2,
-          };
-        }
-      });
+      props.zipcodeSetter(event.feature.getProperty("ZIPCODE"));
     });
 
     map.data.addListener("mouseover", (event) => {
@@ -214,7 +179,7 @@ export const MapComponent = (props) => {
     map.data.addListener("mouseout", (event) => {
       map.data.revertStyle();
       const zipCode = event.feature.getProperty("ZIPCODE");
-      if (zipCode === lastClickedZipCode()) {
+      if (zipCode === props.zipcodeOnCharts()) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.clicked,
           strokeColor: colors.clicked,
@@ -264,13 +229,7 @@ export const MapComponent = (props) => {
 
       mapInstance.addListener("zoom_changed", () => {
         const mapZoom = mapInstance.getZoom();
-        if (mapZoom <= 10) {
-          props.setDataLayerLevel("borough");
-        } else if (mapZoom > 10 && mapZoom <= 13) {
-          props.setDataLayerLevel("neighbourhood");
-        } else {
-          props.setDataLayerLevel("zipcode");
-        }
+        props.setZoom(mapZoom);
       });
 
       mapInstance.controls[google.maps.ControlPosition.TOP_RIGHT].push(
@@ -293,10 +252,44 @@ export const MapComponent = (props) => {
     }
   });
 
+  createEffect(() => {
+    if (props.mapObject() && props.zipcodeOnCharts().length > 0) {
+      const zipcode_obj = zipcodes.filter(
+        (el) => el["zip_code"] * 1 == props.zipcodeOnCharts()
+      );
+
+      props.mapObject().setZoom(14);
+      const newCenter = {
+        lng: zipcode_obj[0]["longitude"] * 1,
+        lat: zipcode_obj[0]["latitude"] * 1,
+      };
+
+      props.mapObject().setCenter(newCenter);
+
+      insertDataLayer(zipcode_geojson, props.mapObject());
+    }
+  });
+
   onCleanup(() => {
     const mapDiv = document.getElementById("map");
     if (mapDiv) {
       mapDiv.innerHTML = "";
+    }
+  });
+
+  createEffect(() => {
+    if (props.zipcodeOnCharts()) {
+      setSidebarOpen(true);
+    }
+  });
+
+  createEffect(() => {
+    if (props.mapObject()) {
+      if (store.darkModeOn) {
+        props.mapObject().setOptions({ styles: store.mapStyles["dark"] });
+      } else {
+        props.mapObject().setOptions({ styles: store.mapStyles["light"] });
+      }
     }
   });
 

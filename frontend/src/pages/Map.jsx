@@ -24,7 +24,6 @@ async function fetchData([url]) {
 }
 
 export const Map = (props) => {
-  const [getDataLayerLevel, setDataLayerLevel] = createSignal("neighbourhood");
   const [getSelectedZip, setSelectedZip] = createSignal("");
   const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
     createSignal(false);
@@ -40,6 +39,8 @@ export const Map = (props) => {
   const [showAmenityMarker, setShowAmenityMarker] = createSignal(false);
   const [dialogInfo, setDialogInfo] = createSignal(null);
   const [displayDialog, setDisplayDialog] = createSignal(false);
+
+  const [zoom, setZoom] = createSignal(11);
 
   const [realEstateData] = createResource(
     ["http://localhost:8000/api/prices"],
@@ -120,8 +121,6 @@ export const Map = (props) => {
               }
             >
               <MapComponent
-                getDataLayerLevel={getDataLayerLevel}
-                setDataLayerLevel={setDataLayerLevel}
                 dataResources={dataResources}
                 mapObject={props.mapObject}
                 setMapObject={props.setMapObject}
@@ -138,8 +137,12 @@ export const Map = (props) => {
                 showHousesMarker={showHousesMarker}
                 setShowHousesMarker={setShowHousesMarker}
                 recommendedZipcode={recommendedZipcode}
+                setZoom={setZoom}
               >
-                <Show when={!historicPrices.loading && getSelectedZip()}>
+                <Show
+                  when={!historicPrices.loading}
+                  fallback={<div>Loading ... </div>}
+                >
                   <LineChart
                     asyncData={historicPrices}
                     getComparedZip={getComparedZip}
@@ -148,77 +151,59 @@ export const Map = (props) => {
                     historicalRealEstateData={dataResources.historicalRealEstateData()}
                     setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                   ></LineChart>
+
+                  <div class="flex flex-col gap-2">
+                    <Show
+                      when={getSelectedZip()}
+                      fallback={<div>Loading...</div>}
+                    >
+                      <DashboardInfo
+                        map={props.mapObject}
+                        zip={getSelectedZip()}
+                        historicalRealEstateData={dataResources.historicalRealEstateData()}
+                        showAmenityMarker={showAmenityMarker}
+                        setShowAmenityMarker={setShowAmenityMarker}
+                        showHousesMarker={showHousesMarker}
+                        setShowHousesMarker={setShowHousesMarker}
+                        recommendedZipcode={recommendedZipcode}
+                        setDisplayDialog={setDisplayDialog}
+                        setDialogInfo={setDialogInfo}
+                      />
+                    </Show>
+
+                    <Show when={createMoreDashboardInfo()}>
+                      <For each={getComparedZip()} fallback={<div></div>}>
+                        {(item, index) => (
+                          <DashboardInfo
+                            map={props.mapObject}
+                            zip={item}
+                            recommendedZipcode={recommendedZipcode}
+                            setDisplayDialog={setDisplayDialog}
+                            setDialogInfo={setDialogInfo}
+                            showAmenityMarker={showAmenityMarker}
+                            setShowAmenityMarker={setShowAmenityMarker}
+                            showHousesMarker={showHousesMarker}
+                            setShowHousesMarker={setShowHousesMarker}
+                          />
+                        )}
+                      </For>
+                    </Show>
+                  </div>
                 </Show>
-
-                <div id="compared-dashboardinfo-button" class="flex gap-2">
-                  <For each={getComparedZip()} fallback={<div></div>}>
-                    {(item, index) => (
-                      <button
-                        class="bg-black text-white active:bg-teal-500 rounded-lg"
-                        onClick={(event) => {
-                          const dashboardDiv = document.getElementById(
-                            `dashboardDiv-${item}`
-                          );
-                          if (dashboardDiv) {
-                            dashboardDiv.classList.toggle("hidden");
-                          }
-                          event.target.classList.toggle("opacity-50");
-                        }}
-                      >
-                        {item}
-                      </button>
-                    )}
-                  </For>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <Show when={getSelectedZip()}>
-                    <DashboardInfo
-                      map={props.mapObject}
-                      zip={getSelectedZip()}
-                      showAmenityMarker={showAmenityMarker}
-                      setShowAmenityMarker={setShowAmenityMarker}
-                      showHousesMarker={showHousesMarker}
-                      setShowHousesMarker={setShowHousesMarker}
-                      recommendedZipcode={recommendedZipcode}
-                      setDisplayDialog={setDisplayDialog}
-                      setDialogInfo={setDialogInfo}
-                    />
-                  </Show>
-
-                  <Show when={createMoreDashboardInfo()}>
-                    <For each={getComparedZip()} fallback={<div></div>}>
-                      {(item, index) => (
-                        <DashboardInfo
-                          map={props.mapObject}
-                          zip={item}
-                          recommendedZipcode={recommendedZipcode}
-                          setDisplayDialog={setDisplayDialog}
-                          setDialogInfo={setDialogInfo}
-                          showAmenityMarker={showAmenityMarker}
-                          setShowAmenityMarker={setShowAmenityMarker}
-                          showHousesMarker={showHousesMarker}
-                          setShowHousesMarker={setShowHousesMarker}
-                        />
-                      )}
-                    </For>
-                  </Show>
-                </div>
 
                 {createEffect(() => {
                   if (props.mapObject()) {
                     <Show
                       when={
                         !dataResources.zipcodes.loading &&
-                        !dataResources.borough_neighbourhood.loading &&
-                        !dataResources.realEstateData.loading
+                        !dataResources.borough_neighbourhood.loading
                       }
-                      fallback={dataResources.zipcodes.error}
                     >
                       <Markers
                         zipcodes={dataResources.zipcodes()}
                         map={props.mapObject}
                         borough_neighbourhood={dataResources.borough_neighbourhood()}
-                        realEstateData={dataResources.realEstateData()}
+                        zoom={zoom}
                       />
                       ;
                     </Show>;

@@ -1,5 +1,7 @@
 import Chart from "chart.js/auto";
 import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
+import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
+import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
 
 const colors = [
   "rgb(75,192,192)",
@@ -181,6 +183,11 @@ const LineChart = (props) => {
     if (comparedAsyncData) {
       const comparedNewData = comparedAsyncData;
       const transformedDataArr = [...Object.values(comparedNewData)];
+      transformedDataArr.forEach((obj) => {
+        Object.keys(obj).forEach((key) =>
+          obj[key] === 0 ? (obj[key] = null) : ""
+        );
+      });
 
       try {
         let datasets = [];
@@ -211,6 +218,12 @@ const LineChart = (props) => {
     if (!props.asyncData.loading) {
       let newData = props.asyncData();
       let transformedData = Object.values(newData)[0];
+      if (transformedData) {
+        Object.keys(transformedData).forEach((key) => {
+          transformedData[key] === 0 ? (transformedData[key] = null) : "";
+        });
+      }
+
       try {
         createLineChart(ref, [
           {
@@ -245,17 +258,26 @@ const LineChart = (props) => {
                 <Show when={props.getSelectedZip()}>
                   <div
                     class="rounded-lg text-center w-[30%] 
-                  relative bg-[#ffffff]"
+                  relative bg-[#ffffff] flex gap-2
+                  items-center justify-center"
                   >
                     <Show
                       when={showDropDown() === false}
                       fallback={
-                        <button onClick={() => setShowDropDown(false)}>
-                          ⬆
+                        <button
+                          onClick={() => setShowDropDown(false)}
+                          class="hover:bg-teal-500"
+                        >
+                          <img src={arrow_up} class="w-[15px] h-[15px]" />
                         </button>
                       }
                     >
-                      <button onClick={() => setShowDropDown(true)}>⬇</button>
+                      <button
+                        onClick={() => setShowDropDown(true)}
+                        class="hover:bg-teal-500"
+                      >
+                        <img src={arrow_down} class="w-[15px] h-[15px]" />
+                      </button>
                     </Show>
 
                     <input
@@ -317,7 +339,6 @@ const LineChart = (props) => {
                   }`}
               >
                 <div>
-                  <div>Zipcode</div>
                   <div>
                     {uniqueZipcode.map((zip) => (
                       <div key={zip} class="p-2">
@@ -354,14 +375,6 @@ const LineChart = (props) => {
                     ))}
                   </div>
                 </div>
-                <div>
-                  <div>Neighbourhood</div>
-                  <div></div>
-                </div>
-                <div>
-                  <div>Borough</div>
-                  <div></div>
-                </div>
               </div>
             </div>
           </div>
@@ -376,10 +389,9 @@ const LineChart = (props) => {
 const DoughnutChart = (props) => {
   let ref2;
   let doughnutChartInstance;
-  // onMount(() => {
-  //   doughnutChartInstance = createDoughnutChart(ref2, doughnutChartInstance);
-
-  // });
+  onMount(() => {
+    doughnutChartInstance = createDoughnutChart(ref2, doughnutChartInstance);
+  });
 
   createEffect(() => {
     if (props.datasets) {

@@ -3,6 +3,7 @@ import {
   createEffect,
   createSignal,
   onCleanup,
+  onMount,
   Show,
   Suspense,
 } from "solid-js";
@@ -192,7 +193,16 @@ const AmenitiesInfo = ({
   );
 };
 
-const DemographicInfo = ({ gender, race, zip }) => {
+const DemographicInfo = ({
+  gender,
+  race,
+  zip,
+  singleHousehold,
+  familyHousehold,
+  income,
+  population,
+  density,
+}) => {
   return (
     <div class="demographic-info ">
       <div
@@ -203,22 +213,11 @@ const DemographicInfo = ({ gender, race, zip }) => {
       </div>
       <div class="grid grid-cols-1 divide-y gap-2">
         <div class="grid grid-cols-1 divide-y">
-          <div>
-            Family Household <span id="familyHousehold"></span>
-          </div>
-          <div>
-            Single Household <span id="singleHousehold"></span>
-          </div>
-          <div>
-            Population <span id="population"></span>
-          </div>
-          <div>
-            Population Density <span id="populationDensity"></span>
-          </div>
-          <div>
-            Median Household Income
-            <span id="medianHouseholdIncome"></span>
-          </div>
+          <div>Family Household: {familyHousehold()}</div>
+          <div>Single Household: {singleHousehold()}</div>
+          <div>Population: {population()}</div>
+          <div>Population Density: {density()}</div>
+          <div>Median Household Income: {income()}</div>
           <div class="grid grid-cols-2">
             <div>
               <Suspense>
@@ -294,6 +293,13 @@ export const DashboardInfo = (props) => {
 
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
+
+  //demogrphic signals
+  const [familyHousehold, setFamilyHousehold] = createSignal(null);
+  const [singleHousehold, setSingleHousehold] = createSignal(null);
+  const [population, setPopulation] = createSignal(null);
+  const [density, setDensity] = createSignal(null);
+  const [income, setIncome] = createSignal(null);
 
   function generateHouseTypeDetails(houseType, data) {
     const filterArr = data.filter((obj) => obj.TYPE === houseType);
@@ -489,28 +495,14 @@ export const DashboardInfo = (props) => {
 
           setRace(race_datasets);
           try {
-            document.getElementById("familyHousehold").innerText =
-              obj["FamilyHousehold"];
-            document.getElementById("medianHouseholdIncome").innerText =
-              obj["MedianHouseholdIncome"];
-            document.getElementById("singleHousehold").innerText =
-              obj["SingleHousehold"];
-            document.getElementById("population").innerText = obj["Population"];
-            document.getElementById("populationDensity").innerText =
-              obj["PopulationDensity"];
+            setFamilyHousehold(obj["FamilyHousehold"]);
+            setIncome(obj["MedianHouseholdIncome"]);
+            setSingleHousehold(obj["SingleHousehold"]);
+            setPopulation(obj["Population"]);
+            setDensity(obj["PopulationDensity"]);
           } catch (error) {
             console.log(error);
           }
-
-          // document.getElementById(
-          //   `avgHomeValue-dashboardInfo-${props.zip}`
-          // ).innerText = obj["avg_home_value"];
-          // document.getElementById(
-          //   `medianHomeIncome-dashboardInfo-${props.zip}`
-          // ).innerText = obj["median_household_income"];
-          // document.getElementById(
-          //   `medianAge-dashboardInfo-${props.zip}`
-          // ).innerText = obj["median_age"];
         }
       });
     fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
@@ -759,7 +751,16 @@ export const DashboardInfo = (props) => {
         </Show>
 
         <Show when={displayContent() === "demographic"}>
-          <DemographicInfo gender={gender} race={race} zip={props.zip} />
+          <DemographicInfo
+            gender={gender}
+            race={race}
+            zip={props.zip}
+            singleHousehold={singleHousehold}
+            familyHousehold={familyHousehold}
+            population={population}
+            density={density}
+            income={income}
+          />
         </Show>
       </div>
     </div>

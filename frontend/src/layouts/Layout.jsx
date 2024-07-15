@@ -55,8 +55,6 @@ const MapView = (props) => {
         onMouseOver={() => setStore({ ...store, sidebarOpen: false })}
       >
         <div>{props.children}</div>
-        {/* <Filter /> */}
-        {/* <PropertySwitchBtn /> */}
       </main>
     </BaseLayout>
   );
