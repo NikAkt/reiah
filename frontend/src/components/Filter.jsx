@@ -265,40 +265,40 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
 
   return (
     <div
-      class={`fixed z-10 w-[50%] flex flex-col items-center left-1/2 transform -translate-x-1/2
-      gap-0.5 top-[10%] justify-center text-black transition-transform duration-500 scale-100 ${showFilterBoard() ? 'block' : 'hidden'}`}
+      class={`fixed z-10 w-[65%] flex flex-col items-center left-1/2 transform -translate-x-1/2
+      gap-0.5 top-[5%] justify-center text-black transition-transform duration-500 scale-100 ${showFilterBoard() ? 'block' : 'hidden'}`}
     >
       <div
         class="grid-cols-1 divide-y m-0 px-0 
-          mt-[-2vh] w-full max-h-[80vh] shadow-md z-20 
+          mt-[-2vh] w-full max-h-[90vh] shadow-lg z-20 
           items-center bg-white rounded-lg 
           overflow-y-auto relative"
       >
         {/* FILTER TITLE */}
         <div
           id="filter-dropdown-title"
-          class="items-center justify-center relative flex h-[8%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
-          style="position: sticky; top: 0; height: 56px;"
+          class="items-center justify-center relative flex h-[10%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
+          style="position: sticky; top: 0; height: 60px;"
         >
-          <button class="absolute rounded-full w-[20px] h-[20px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer" onClick={() => setShowFilterBoard(false)}>
+          <button class="absolute rounded-full w-[24px] h-[24px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer" onClick={() => setShowFilterBoard(false)}>
             <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <p>Filters for {filterTarget()}</p>
+          <p class="text-xl">Filters for {filterTarget()}</p>
         </div>
         {/* FILTER CONTENT */}
-        <div class="w-[100%] flex flex-col h-auto relative items-center py-4 px-[10%] gap-y-2.5 bg-white" id="filter-details-container">
+        <div class="w-[100%] flex flex-col h-auto relative items-center py-6 px-[12%] gap-y-4 bg-white" id="filter-details-container">
           {/* Borough Selection */}
           <div id="borough-selection-container" class="w-full p-4 rounded-lg transition-all duration-500">
             <label htmlFor="borough-selection" class="font-sans text-2xl font-bold text-teal-500">
               Borough:
             </label>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 mt-2">
               {unique_borough.map((el) => (
                 <div key={el} class="flex items-center">
                   <input name="borough-selection" value={el.toString()} type="checkbox" onChange={() => handleBoroughChange(el)} checked={selectedBoroughs().has(el)} />
-                  <label htmlFor="borough-selection" class="ml-2 text-gray-700">
+                  <label htmlFor="borough-selection" class="ml-2 text-lg text-gray-700">
                     {el.toString()}
                   </label>
                 </div>
@@ -312,7 +312,7 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
               <label htmlFor="neighborhood-selection" class="font-sans text-2xl font-bold text-teal-500">
                 Neighborhood:
               </label>
-              <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md">
+              <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md mt-2">
                 {getNeighborhoods([...selectedBoroughs()]).map((el) => (
                   <div key={el} class={`p-2 cursor-pointer ${selectedNeighborhoods().has(el) ? "bg-teal-500 text-white" : "bg-white text-gray-700"}`} onClick={() => handleNeighborhoodChange(el)}>
                     {el}
@@ -324,7 +324,7 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
 
           {/* Advanced Filters Button */}
           {selectedNeighborhoods().size > 0 && (
-            <button class="mt-4 p-2 bg-teal-500 text-white rounded transition-all duration-500 ease-in-out transform" onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}>
+            <button class="mt-4 p-3 bg-teal-500 text-white rounded transition-all duration-500 ease-in-out transform text-lg" onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}>
               {showAdvancedFilters() ? "Hide Advanced Filters" : "Show Advanced Filters"}
             </button>
           )}
@@ -332,13 +332,13 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
           {/* Advanced Filters */}
           {showAdvancedFilters() && (
             <div class="w-full p-4 rounded-lg mt-4 flex flex-col transition-all duration-500 ease-in-out transform opacity-100 scale-100" id="advanced-filters-container">
-              <div class="flex flex-col items-center justify-center p-2 rounded-lg" id="house-type-container">
+              <div class="flex flex-col items-center justify-center p-4 rounded-lg" id="house-type-container">
                 <p class="font-sans text-2xl font-bold text-teal-500">House Type</p>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2 mt-2">
                   {houseTypeOptions.map((type) => (
                     <div key={type} class="flex items-center">
                       <input type="radio" name="houseType" value={type} onChange={() => handleHouseTypeChange(type)} checked={houseType() === type} />
-                      <label htmlFor={type} class="ml-2 text-gray-700">
+                      <label htmlFor={type} class="ml-2 text-lg text-gray-700">
                         {type}
                       </label>
                     </div>
@@ -346,56 +346,65 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
                 </div>
               </div>
 
-              <div class="flex flex-col items-center justify-center p-2 rounded-lg" id="beds-container">
+              <div class="flex flex-col items-center justify-center p-4 rounded-lg" id="beds-container">
                 <p class="font-sans text-2xl font-bold text-teal-500">Beds</p>
-                <input type="number" class="border border-gray-300 rounded p-2" value={beds()} onInput={(e) => setBeds(Number(e.target.value))} onChange={handleFilterChange} />
+                <input type="number" class="border border-gray-300 rounded p-2 text-lg w-full mt-2" value={beds()} onInput={(e) => setBeds(Number(e.target.value))} onChange={handleFilterChange} />
               </div>
 
-              <div class="flex flex-col items-center justify-center p-2 rounded-lg" id="baths-container">
+              <div class="flex flex-col items-center justify-center p-4 rounded-lg" id="baths-container">
                 <p class="font-sans text-2xl font-bold text-teal-500">Baths</p>
-                <input type="number" class="border border-gray-300 rounded p-2" value={baths()} onInput={(e) => setBaths(Number(e.target.value))} onChange={handleFilterChange} />
+                <input type="number" class="border border-gray-300 rounded p-2 text-lg w-full mt-2" value={baths()} onInput={(e) => setBaths(Number(e.target.value))} onChange={handleFilterChange} />
               </div>
 
-              <div class="flex flex-col items-center justify-center p-2 rounded-lg" id="property-sqft-container">
+              <div class="flex flex-col items-center justify-center p-4 rounded-lg" id="property-sqft-container">
                 <p class="font-sans text-2xl font-bold text-teal-500">Property Sqft</p>
-                <div class="flex gap-2 w-full">
+                <div class="flex gap-2 w-full mt-2">
                   <div class="flex flex-col w-full rounded-lg p-2">
-                    <p class="text-gray-700">Minimum</p>
-                    <input type="number" class="border border-gray-300 rounded p-2" value={propertySqft()[0]} onInput={(e) => setPropertySqft([Number(e.target.value), propertySqft()[1]])} onChange={handleFilterChange} />
+                    <p class="text-lg text-gray-700">Minimum</p>
+                    <input type="number" class="border border-gray-300 rounded p-2 text-lg w-full mt-1" value={propertySqft()[0]} onInput={(e) => setPropertySqft([Number(e.target.value), propertySqft()[1]])} onChange={handleFilterChange} />
                   </div>
                   <div class="flex flex-col w-full rounded-lg p-2">
-                    <p class="text-gray-700">Maximum</p>
-                    <input type="number" class="border border-gray-300 rounded p-2" value={propertySqft()[1]} onInput={(e) => setPropertySqft([propertySqft()[0], Number(e.target.value)])} onChange={handleFilterChange} />
+                    <p class="text-lg text-gray-700">Maximum</p>
+                    <input type="number" class="border border-gray-300 rounded p-2 text-lg w-full mt-1" value={propertySqft()[1]} onInput={(e) => setPropertySqft([propertySqft()[0], Number(e.target.value)])} onChange={handleFilterChange} />
                   </div>
                 </div>
               </div>
 
-              <div class="flex flex-col items-center justify-center p-2 rounded-lg" id="property-price-container">
+              <div class="flex flex-col items-center justify-center p-4 rounded-lg" id="property-price-container">
                 <p class="font-sans text-2xl font-bold text-teal-500">Property Price</p>
-                <div class="flex gap-2 w-full">
+                <div class="flex gap-2 w-full mt-2">
                   <div class="flex flex-col w-full rounded-lg p-2">
-                    <p class="text-gray-700">Minimum</p>
-                    <input type="number" class="border border-gray-300 rounded p-2" value={propertyPrice()[0]} onInput={(e) => setPropertyPrice([Number(e.target.value), propertyPrice()[1]])} onChange={handleFilterChange} />
+                    <p class="text-lg text-gray-700">Minimum</p>
+                    <input type="number" class="border border-gray-300 rounded p-2 text-lg w-full mt-1" value={propertyPrice()[0]} onInput={(e) => setPropertyPrice([Number(e.target.value), propertyPrice()[1]])} onChange={handleFilterChange} />
                   </div>
                   <div class="flex flex-col w-full rounded-lg p-2">
-                    <p class="text-gray-700">Maximum</p>
-                    <input type="number" class="border border-gray-300 rounded p-2" value={propertyPrice()[1]} onInput={(e) => setPropertyPrice([propertyPrice()[0], Number(e.target.value)])} onChange={handleFilterChange} />
+                    <p class="text-lg text-gray-700">Maximum</p>
+                    <input type="number" class="border border-gray-300 rounded p-2 text-lg w-full mt-1" value={propertyPrice()[1]} onInput={(e) => setPropertyPrice([propertyPrice()[0], Number(e.target.value)])} onChange={handleFilterChange} />
                   </div>
                 </div>
               </div>
 
-              <div id="amenities-container" class="flex flex-col items-center justify-center p-2 rounded-lg">
-                <p class="font-sans text-2xl font-bold text-teal-500">Amenities</p>
+              <div id="amenities-container" class="flex flex-col items-center justify-center p-4 rounded-lg">
+                <p class="font-sans text-2xl font-bold text-teal-500 mb-2">Amenities</p>
                 {Object.entries(categorizedAmenities()).map(([category, amenities]) => (
-                  <div key={category} class="flex flex-col items-start w-full">
-                    <p class="font-sans text-xl font-semibold text-gray-700 cursor-pointer" onClick={() => handleCategoryToggle(category)}>
+                  <div key={category} class="flex flex-col items-start w-full mb-2">
+                    <p
+                      class="font-sans text-xl font-semibold text-gray-700 cursor-pointer mb-1 p-2 bg-gray-100 rounded-md w-full"
+                      onClick={() => handleCategoryToggle(category)}
+                    >
                       {category} {expandedCategories().has(category) ? "-" : "+"}
                     </p>
                     {expandedCategories().has(category) && (
-                      <div class="grid grid-cols-2 w-full gap-2">
+                      <div class="grid grid-cols-2 w-full gap-2 p-2 bg-gray-50 rounded-md">
                         {amenities.map((amenity) => (
-                          <div key={amenity} class="flex items-center">
-                            <input type="checkbox" class="border border-gray-300 rounded p-2" value={amenity} onChange={() => handleAmenityChange(amenity)} checked={selectedAmenities().has(amenity)} />
+                          <div key={amenity} class="flex items-center mb-2">
+                            <input
+                              type="checkbox"
+                              class="border border-gray-300 rounded p-2"
+                              value={amenity}
+                              onChange={() => handleAmenityChange(amenity)}
+                              checked={selectedAmenities().has(amenity)}
+                            />
                             <label htmlFor={amenity} class="ml-2 text-gray-700">
                               {amenity}
                             </label>
@@ -429,6 +438,7 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
         </div>
       </div>
     </div>
+
   );
 };
 
