@@ -8,7 +8,7 @@ import {
   Show,
   Suspense,
 } from "solid-js";
-
+import Filter from "./Filter";
 import search_icon from "../assets/search-svgrepo-com.svg";
 
 const loader = new Loader({
@@ -27,6 +27,8 @@ const colors = {
 export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
+  const [showFilterBoard, setShowFilterBoard] = createSignal(false);
+  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
@@ -52,8 +54,8 @@ export const MapComponent = (props) => {
         ? "Hide Dashboard"
         : "Show Dashboard";
       hoverLocationDiv.className = sideBarOpen()
-        ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
-        : "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
+        ? "w-[100%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
+        : "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
     }
 
     createEffect(() => updateButtonStyles());
@@ -77,8 +79,7 @@ export const MapComponent = (props) => {
     innerDiv.className = "flex justify-center items-center";
     input.type = "text";
     input.id = "hoverLocation-div";
-    input.className =
-      "relative w-[100%] h-[80%] bg-transparent text-center text-[#a888f1]";
+    input.className = "relative w-[100%] h-[80%] bg-transparent text-center";
     const uniqueZipcode = Object.keys(
       props.dataResources.historicalRealEstateData()
     );
@@ -99,7 +100,6 @@ export const MapComponent = (props) => {
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     recommendZipBtn.addEventListener("click", () => {
-      console.log("click");
       props.setShowRecommendBoard((prev) => !prev);
     });
 
@@ -107,7 +107,7 @@ export const MapComponent = (props) => {
     filterBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     filterBtn.addEventListener("click", () => {
-      props.setShowFilterBoard((prev) => !prev);
+      setShowFilterBoard((prev) => !prev);
     });
 
     centerControlDiv.append(
@@ -133,7 +133,7 @@ export const MapComponent = (props) => {
           strokeWeight: 2,
         };
       } else if (
-        props.filteredZipCodes().includes(parseInt(zipCode)) ||
+        filteredZipCodes().includes(parseInt(zipCode)) ||
         props.recommendedZipcode().includes(parseInt(zipCode))
       ) {
         return {
@@ -189,7 +189,7 @@ export const MapComponent = (props) => {
           strokeWeight: 2,
         });
       } else if (
-        props.filteredZipCodes().includes(parseInt(zipCode)) ||
+        filteredZipCodes().includes(parseInt(zipCode)) ||
         props.recommendedZipcode().includes(parseInt(zipCode))
       ) {
         map.data.overrideStyle(event.feature, {
@@ -238,13 +238,18 @@ export const MapComponent = (props) => {
         createCenterControl()
       );
 
+      // Insert all zipcodes initially
       insertDataLayer(zipcode_geojson, mapInstance);
     });
   });
 
   createEffect(() => {
-    if (props.mapObject() && props.filteredZipCodes().length > 0) {
-      insertDataLayer(zipcode_geojson, props.mapObject());
+    if (props.mapObject()) {
+      if (filteredZipCodes().length > 0) {
+        insertDataLayer(zipcode_geojson, props.mapObject());
+      } else {
+        insertDataLayer(zipcode_geojson, props.mapObject());
+      }
     }
   });
 
@@ -327,6 +332,12 @@ export const MapComponent = (props) => {
           <div class="flex flex-col">{props.children}</div>
         </div>
       </div>
+
+      <Filter
+        setFilteredZipCodes={setFilteredZipCodes}
+        showFilterBoard={showFilterBoard}
+        setShowFilterBoard={setShowFilterBoard}
+      />
     </>
   );
 };
