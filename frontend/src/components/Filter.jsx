@@ -19,7 +19,8 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
   const [showAdvancedFilters, setShowAdvancedFilters] = createSignal(false);
   const [selectedAmenities, setSelectedAmenities] = createSignal(new Set());
   const [filteredAmenities, setFilteredAmenities] = createSignal({});
-  const [houseTypes, setHouseTypes] = createSignal(new Set());
+  const [houseType, setHouseType] = createSignal("");
+  const [expandedCategories, setExpandedCategories] = createSignal(new Set());
   const [beds, setBeds] = createSignal(0);
   const [baths, setBaths] = createSignal(0);
   const [propertySqft, setPropertySqft] = createSignal([0, 0]);
@@ -28,6 +29,7 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
   const [realEstateData, setRealEstateData] = createSignal({});
 
   const unique_borough = ["Bronx", "Manhattan", "Queens", "Brooklyn", "Staten Island"];
+  const houseTypeOptions = ["Condo", "Townhouse", "Co-op", "Multi-family home", "House"];
 
   const fetchBoroughData = async () => {
     const response = await fetch("http://localhost:8000/api/borough-neighbourhood");
@@ -40,7 +42,7 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
     const response = await fetch(`http://localhost:8000/api/property-data?${query}`);
     const data = await response.json();
     setRealEstateData(data);
-    applyFilters();
+    applyFilters(); // Apply filters after fetching data
   };
 
   const fetchAmenities = debounce(async (neighborhoods) => {
@@ -94,20 +96,25 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
       }
       return newAmenities;
     });
-    applyFilters(realEstateData());
+    handleFilterChange();
   };
 
   const handleHouseTypeChange = (type) => {
-    setHouseTypes((prev) => {
-      const newTypes = new Set(prev);
-      if (newTypes.has(type)) {
-        newTypes.delete(type);
-      } else {
-        newTypes.add(type);
-      }
-      return newTypes;
-    });
+    setHouseType(type);
+    console.log(`Selected house type: ${type}`);
     handleFilterChange();
+  };
+
+  const handleCategoryToggle = (category) => {
+    setExpandedCategories((prev) => {
+      const newCategories = new Set(prev);
+      if (newCategories.has(category)) {
+        newCategories.delete(category);
+      } else {
+        newCategories.add(category);
+      }
+      return newCategories;
+    });
   };
 
   const getNeighborhoods = (boroughs) => {
@@ -139,47 +146,59 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
   };
 
   const applyFilters = () => {
+    console.log("Applying filters...");
+
     let zipCodes = getZipcodes([...selectedBoroughs()], [...selectedNeighborhoods()]);
+
+    console.log("Initial zipcodes:", zipCodes);
 
     zipCodes = zipCodes.filter((zip) => {
       const properties = realEstateData()[zip] || [];
-      return properties.some((property) => {
-        return (
-          ([...houseTypes()].length === 0 || houseTypes().has(property.TYPE)) &&
-          (beds() > 0 ? property.BEDS >= beds() : true) &&
-          (baths() > 0 ? property.BATH >= baths() : true) &&
-          (propertySqft()[0] > 0 ? property.PROPERTYSQFT >= propertySqft()[0] : true) &&
-          (propertySqft()[1] > 0 ? property.PROPERTYSQFT <= propertySqft()[1] : true) &&
-          (propertyPrice()[0] > 0 ? property.PRICE >= propertyPrice()[0] : true) &&
-          (propertyPrice()[1] > 0 ? property.PRICE <= propertyPrice()[1] : true)
-        );
+      console.log(`Properties in zip ${zip}:`, properties);
+
+      const matches = properties.some((property) => {
+        const typeMatch = houseType() === "" || houseType() === property.TYPE;
+        const bedsMatch = beds() > 0 ? property.BEDS >= beds() : true;
+        const bathsMatch = baths() > 0 ? property.BATH >= baths() : true;
+        const sqftMinMatch = propertySqft()[0] > 0 ? property.PROPERTYSQFT >= propertySqft()[0] : true;
+        const sqftMaxMatch = propertySqft()[1] > 0 ? property.PROPERTYSQFT <= propertySqft()[1] : true;
+        const priceMinMatch = propertyPrice()[0] > 0 ? property.PRICE >= propertyPrice()[0] : true;
+        const priceMaxMatch = propertyPrice()[1] > 0 ? property.PRICE <= propertyPrice()[1] : true;
+
+        const result = typeMatch && bedsMatch && bathsMatch && sqftMinMatch && sqftMaxMatch && priceMinMatch && priceMaxMatch;
+        console.log(`Property ${property.TYPE} in zip ${zip}: typeMatch=${typeMatch}, bedsMatch=${bedsMatch}, bathsMatch=${bathsMatch}, sqftMinMatch=${sqftMinMatch}, sqftMaxMatch=${sqftMaxMatch}, priceMinMatch=${priceMinMatch}, priceMaxMatch=${priceMaxMatch} => ${result}`);
+        return result;
       });
+
+      console.log(`Zip ${zip} matches: ${matches}`);
+      return matches;
     });
+
+    console.log("Zipcodes after type/attribute filtering:", zipCodes);
 
     if (selectedAmenities().size > 0) {
       zipCodes = zipCodes.filter((zip) => {
         const amenities = filteredAmenities()[zip] || [];
-        return [...selectedAmenities()].every((amenity) =>
+        const matches = [...selectedAmenities()].every((amenity) =>
           amenities.some((a) => a.FACILITY_DOMAIN_NAME === amenity)
         );
+        console.log(`Zip ${zip} amenities match: ${matches}`);
+        return matches;
       });
     }
 
+    console.log("Final filtered zipcodes:", zipCodes);
+
     setFilteredZipCodesLocal(zipCodes);
     setFilteredZipCodes(zipCodes);
-  };
-
-  const highlightZipCodesOnMap = (zipCodes) => {
-    setFilteredZipCodes(zipCodes);
-    setShowFilterBoard(false);
-    console.log("Highlighting zip codes on map:", zipCodes);
+    console.log("Updated filtered zipcodes in state:", zipCodes);
   };
 
   const handleFilterChange = debounce(() => {
     const filters = {
       beds: beds() > 0 ? beds() : null,
       baths: baths() > 0 ? baths() : null,
-      type: [...houseTypes()].length > 0 ? [...houseTypes()].join(",") : null,
+      type: houseType() ? houseType() : null,
       minprice: propertyPrice()[0] > 0 ? propertyPrice()[0] : null,
       maxprice: propertyPrice()[1] > 0 ? propertyPrice()[1] : null,
       minsqft: propertySqft()[0] > 0 ? propertySqft()[0] : null,
@@ -204,10 +223,23 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
     const amenitiesSet = new Set();
     Object.keys(filteredAmenities()).forEach((zipCode) => {
       filteredAmenities()[zipCode].forEach((item) => {
-        amenitiesSet.add(item.FACILITY_DOMAIN_NAME);
+        amenitiesSet.add(`${item.FACILITY_T}|${item.FACILITY_DOMAIN_NAME}`);
       });
     });
     return Array.from(amenitiesSet);
+  };
+
+  const categorizedAmenities = () => {
+    const amenities = uniqueAmenities();
+    const categorized = amenities.reduce((acc, item) => {
+      const [category, name] = item.split("|");
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(name);
+      return acc;
+    }, {});
+    return categorized;
   };
 
   const clearAllFilters = () => {
@@ -218,11 +250,17 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
     setFilteredZipCodesLocal([]);
     setShowAdvancedFilters(false);
     setFilteredAmenities({});
-    setHouseTypes(new Set());
+    setHouseType("");
     setBeds(0);
     setBaths(0);
     setPropertySqft([0, 0]);
     setPropertyPrice([0, 0]);
+  };
+
+  const highlightZipCodesOnMap = (zipCodes) => {
+    setFilteredZipCodes(zipCodes);
+    setShowFilterBoard(false);
+    console.log("Highlighting zip codes on map:", zipCodes);
   };
 
   return (
@@ -297,9 +335,9 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
               <div class="flex flex-col items-center justify-center p-2 rounded-lg" id="house-type-container">
                 <p class="font-sans text-2xl font-bold text-teal-500">House Type</p>
                 <div class="flex flex-wrap gap-2">
-                  {["Condo", "Townhouse", "Apartment", "Single Family"].map((type) => (
+                  {houseTypeOptions.map((type) => (
                     <div key={type} class="flex items-center">
-                      <input type="checkbox" value={type} onChange={() => handleHouseTypeChange(type)} checked={houseTypes().has(type)} />
+                      <input type="radio" name="houseType" value={type} onChange={() => handleHouseTypeChange(type)} checked={houseType() === type} />
                       <label htmlFor={type} class="ml-2 text-gray-700">
                         {type}
                       </label>
@@ -348,16 +386,25 @@ const Filter = ({ setFilteredZipCodes, showFilterBoard, setShowFilterBoard }) =>
 
               <div id="amenities-container" class="flex flex-col items-center justify-center p-2 rounded-lg">
                 <p class="font-sans text-2xl font-bold text-teal-500">Amenities</p>
-                <div class="grid grid-cols-2 w-full gap-2">
-                  {uniqueAmenities().map((item) => (
-                    <div key={item} class="flex items-center">
-                      <input type="checkbox" class="border border-gray-300 rounded p-2" value={item} onChange={() => handleAmenityChange(item)} checked={selectedAmenities().has(item)} />
-                      <label htmlFor={item} class="ml-2 text-gray-700">
-                        {item}
-                      </label>
-                    </div>
-                  ))}
-                </div>
+                {Object.entries(categorizedAmenities()).map(([category, amenities]) => (
+                  <div key={category} class="flex flex-col items-start w-full">
+                    <p class="font-sans text-xl font-semibold text-gray-700 cursor-pointer" onClick={() => handleCategoryToggle(category)}>
+                      {category} {expandedCategories().has(category) ? "-" : "+"}
+                    </p>
+                    {expandedCategories().has(category) && (
+                      <div class="grid grid-cols-2 w-full gap-2">
+                        {amenities.map((amenity) => (
+                          <div key={amenity} class="flex items-center">
+                            <input type="checkbox" class="border border-gray-300 rounded p-2" value={amenity} onChange={() => handleAmenityChange(amenity)} checked={selectedAmenities().has(amenity)} />
+                            <label htmlFor={amenity} class="ml-2 text-gray-700">
+                              {amenity}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}
