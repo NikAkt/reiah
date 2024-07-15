@@ -4,7 +4,12 @@ import arrow_left from "../assets/arrow-sm-left-svgrepo-com.svg";
 import arrow_right from "../assets/arrow-sm-right-svgrepo-com.svg";
 import close_icon from "../assets/close-svgrepo-com.svg";
 
-const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
+const RecommendZipcode = ({
+  setRecommendedZipcode,
+  setShowRecommendBoard,
+  setPredictedPrice,
+  setQuery,
+}) => {
   const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
   const neighbourhood_type = [
     "Quiet residential",
@@ -55,7 +60,9 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
   const handleSubmitForm = (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
+
     const formValues = Object.fromEntries(data.entries());
+    setQuery(formValues);
     const amenities = Array.from(data.getAll("amenity_preferences")).join(",");
     formValues.amenity_preferences = amenities;
     let query = "http://localhost:5001/get_recommendations?";
@@ -65,7 +72,15 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
     fetch(query)
       .then((response) => response.json())
       .then((data) => {
-        setRecommendedZipcode([...data.map((el) => el.zipcode)]);
+        console.log("prediction recommendation", data);
+        let recommendedZipcode = [];
+        let predictedPrice = {};
+        data.forEach((el) => {
+          recommendedZipcode.push(el.zipcode);
+          predictedPrice[el.zipcode] = el["predicted_price"];
+        });
+        setRecommendedZipcode(recommendedZipcode);
+        setPredictedPrice(predictedPrice);
         setShowRecommendBoard(false);
       });
   };

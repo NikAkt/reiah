@@ -99,6 +99,8 @@ const RealEstateInfo = ({
   Yr5_ROI,
   zip,
   setHoverType,
+  predictedPrice,
+  query,
 }) => {
   return (
     <div id="realEstate-info" class="dark:text-white">
@@ -159,25 +161,37 @@ const RealEstateInfo = ({
           <Show when={recommendedZipcode().includes(parseInt(zip))}>
             <div>
               <div>
-                <p class="bg-teal-500 text-white w-[30%]">In the next year:</p>
-                <div>1 year forecast price: {Yr1_Price()}</div>
-                <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
+                <span>For ZIPCODE {zip}:</span>
+                <div>
+                  <p class="bg-teal-500 text-white w-[30%]">
+                    In the next year:
+                  </p>
+                  <div>1 year forecast price: {Yr1_Price()}</div>
+                  <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
+                </div>
+                <div>
+                  <p class="bg-teal-500 text-white w-[30%]">
+                    In the next 3 year:
+                  </p>{" "}
+                  <div>3 year forecast price: {Yr3_Price()}</div>
+                  <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
+                </div>{" "}
+                <div>
+                  <p class="bg-teal-500 text-white w-[30%]">
+                    In the next 5 year:
+                  </p>
+                  <div>5 year forecast price: {Yr5_Price()}</div>
+                  <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
+                </div>
               </div>
-
               <div>
-                <p class="bg-teal-500 text-white w-[30%]">
-                  In the next 3 year:
-                </p>{" "}
-                <div>3 year forecast price: {Yr3_Price()}</div>
-                <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-              </div>
-
-              <div>
-                <p class="bg-teal-500 text-white w-[30%]">
-                  In the next 5 year:
-                </p>
-                <div>5 year forecast price: {Yr5_Price()}</div>
-                <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
+                For a {query()["house_type"]} that has:
+                <ul>
+                  <li>Size: {query()["sqft"]} square foot</li>
+                  <li>Bedrooms: {query()["bedrooms"]}</li>
+                  <li>Bathrooms: {query()["bathrooms"]}</li>
+                </ul>
+                the average predicted cost will be is {predictedPrice()[zip]}
               </div>
             </div>
           </Show>
@@ -829,6 +843,8 @@ export const DashboardInfo = (props) => {
             Yr5_ROI={Yr5_ROI}
             zip={props.zip}
             setHoverType={setHoverType}
+            predictedPrice={props.predictedPrice}
+            query={props.query}
           />
         </Show>
 

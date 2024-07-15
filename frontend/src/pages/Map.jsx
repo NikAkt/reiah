@@ -42,6 +42,9 @@ export const Map = (props) => {
 
   const [zoom, setZoom] = createSignal(11);
 
+  const [predictedPrice, setPredictedPrice] = createSignal([]);
+  const [query, setQuery] = createSignal({});
+
   const [historicalRealEstateData] = createResource(
     ["http://localhost:8000/api/historic-prices"],
     fetchData
@@ -116,6 +119,8 @@ export const Map = (props) => {
               <RecommendZipcode
                 setRecommendedZipcode={setRecommendedZipcode}
                 setShowRecommendBoard={setShowRecommendBoard}
+                setPredictedPrice={setPredictedPrice}
+                setQuery={setQuery}
               />
             </Show>
             <Show
@@ -173,6 +178,8 @@ export const Map = (props) => {
                         recommendedZipcode={recommendedZipcode}
                         setDisplayDialog={setDisplayDialog}
                         setDialogInfo={setDialogInfo}
+                        query={query}
+                        predictedPrice={predictedPrice}
                       />
                     </Show>
 
@@ -189,6 +196,8 @@ export const Map = (props) => {
                             setShowAmenityMarker={setShowAmenityMarker}
                             showHousesMarker={showHousesMarker}
                             setShowHousesMarker={setShowHousesMarker}
+                            query={query}
+                            predictedPrice={predictedPrice}
                           />
                         )}
                       </For>
