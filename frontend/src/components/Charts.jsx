@@ -90,7 +90,7 @@ const createLineChart = (ctx, datasets) => {
       plugins: {
         title: {
           display: true,
-          text: "Historic Home Prices",
+          text: "General Trend of Historic Home Values",
           padding: {
             top: 10,
             bottom: 30,

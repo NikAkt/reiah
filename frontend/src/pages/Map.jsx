@@ -42,11 +42,6 @@ export const Map = (props) => {
 
   const [zoom, setZoom] = createSignal(11);
 
-  const [realEstateData] = createResource(
-    ["http://localhost:8000/api/prices"],
-    fetchData
-  );
-
   const [historicalRealEstateData] = createResource(
     ["http://localhost:8000/api/historic-prices"],
     fetchData
@@ -68,7 +63,6 @@ export const Map = (props) => {
   );
 
   const dataResources = {
-    realEstateData,
     historicalRealEstateData,
     zipcodes,
     borough_neighbourhood,
