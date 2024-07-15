@@ -112,7 +112,18 @@ export const Map = (props) => {
                 setShowFilterBoard={setShowFilterBoard}
               />
             </Show>
-
+            <Show
+              when={showRecommendBoard()}
+              fallback={() => {
+                console.log("fail to load recommendzipcode");
+              }}
+            >
+              <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
+              <RecommendZipcode
+                setRecommendedZipcode={setRecommendedZipcode}
+                setShowRecommendBoard={setShowRecommendBoard}
+              />
+            </Show>
             <Show
               when={
                 dataResources.zipcodes() &&
@@ -211,13 +222,7 @@ export const Map = (props) => {
                 })}
               </MapComponent>
             </Show>
-            <Show when={showRecommendBoard()}>
-              <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
-              <RecommendZipcode
-                setRecommendedZipcode={setRecommendedZipcode}
-                setShowRecommendBoard={setShowRecommendBoard}
-              />
-            </Show>
+
             <Show when={displayDialog() == true}>
               <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
               <div

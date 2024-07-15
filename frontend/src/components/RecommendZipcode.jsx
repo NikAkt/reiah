@@ -1,8 +1,8 @@
 import { createSignal, createEffect, onMount } from "solid-js";
-import ArrowBackIcon from "@suid/icons-material/ArrowBack";
-import ArrowForwardIcon from "@suid/icons-material/ArrowForward";
-import CloseIcon from "@suid/icons-material/Close";
-import { IconButton } from "@suid/material";
+
+import arrow_left from "../assets/arrow-sm-left-svgrepo-com.svg";
+import arrow_right from "../assets/arrow-sm-right-svgrepo-com.svg";
+import close_icon from "../assets/close-svgrepo-com.svg";
 
 const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
   const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
@@ -88,23 +88,25 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
      flex flex-row justify-center items-center bg-white shadow-md px-2"
     >
       <div class="absolute top-[2%] left-[1%]">
-        <IconButton>
-          <CloseIcon
-            onClick={() => {
-              setShowRecommendBoard((prev) => !prev);
-            }}
-          />
-        </IconButton>
+        <button
+          onClick={() => {
+            setShowRecommendBoard((prev) => !prev);
+          }}
+          class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
+        >
+          <img src={close_icon} class="w-[20px] h-[20px]" />
+        </button>
       </div>
       <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
-        <IconButton
+        <button
           arial-label="back"
           id="btnBack"
           disabled={count() == 0 ? true : false}
           onClick={handleBack}
+          class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
-          <ArrowBackIcon />
-        </IconButton>
+          <img src={arrow_left} class="w-[20px] h-[20px]" />
+        </button>
       </div>
       <form
         onSubmit={handleSubmitForm}
@@ -270,14 +272,15 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
         </div>
       </form>
       <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
-        <IconButton
+        <button
           arial-label="next"
           id="btnNext"
           disabled={count() == 4 ? true : false}
           onClick={handleNext}
+          class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
-          <ArrowForwardIcon />
-        </IconButton>
+          <img src={arrow_right} class="w-[20px] h-[20px]" />
+        </button>
       </div>
     </div>
   );

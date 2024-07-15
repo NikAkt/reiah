@@ -105,72 +105,84 @@ const RealEstateInfo = ({
       <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
         Real Estate Information
       </div>
-      <div class="flex flex-row place-content-between px-4 py-2">
-        <Show when={getPropertyType()}>
-          <div>
-            <DoughnutChart
-              datasets={getPropertyType()}
-              type="property"
-              setHoverType={setHoverType}
-            />
-          </div>
-          <div>
-            <Show
-              when={typeAvg()}
-              fallback={<div>Cannot get detailed information...</div>}
-            >
-              <For each={typeAvg()} fallback={<div>Loading...</div>}>
-                {(item, index) => {
-                  return (
-                    <div>
-                      <p
-                        class="text-white rounded-lg"
-                        style={{
-                          "background-color": colorsChartjs[index()],
-                        }}
-                      >
-                        {Object.keys(item)}
-                      </p>
-                      <div>
-                        Average Price: ${Object.values(item)[0].avgPrice}
-                      </div>
-                      <div>
-                        Average Size: {Object.values(item)[0].avgSqft} sqft
-                      </div>
-                      <div>
-                        Average Price Per Square Foot: $
-                        {Object.values(item)[0].avgPricePerSqft}/sqft
-                      </div>
-                    </div>
-                  );
-                }}
-              </For>
+      <div class="flex flex-col ">
+        <div>
+          <p>Latest Information</p>
+          <div class="flex flex-row place-content-between px-4 py-2">
+            <Show when={getPropertyType()}>
+              <div>
+                <DoughnutChart
+                  datasets={getPropertyType()}
+                  type="property"
+                  setHoverType={setHoverType}
+                />
+              </div>
+              <div>
+                <Show
+                  when={typeAvg()}
+                  fallback={<div>Cannot get detailed information...</div>}
+                >
+                  <For each={typeAvg()} fallback={<div>Loading...</div>}>
+                    {(item, index) => {
+                      return (
+                        <div>
+                          <p
+                            class="text-white rounded-lg"
+                            style={{
+                              "background-color": colorsChartjs[index()],
+                            }}
+                          >
+                            {Object.keys(item)}
+                          </p>
+                          <div>
+                            Average Price: ${Object.values(item)[0].avgPrice}
+                          </div>
+                          <div>
+                            Average Size: {Object.values(item)[0].avgSqft} sqft
+                          </div>
+                          <div>
+                            Average Price Per Square Foot: $
+                            {Object.values(item)[0].avgPricePerSqft}/sqft
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </For>
+                </Show>
+              </div>
             </Show>
           </div>
-        </Show>
-      </div>
-      <Show when={recommendedZipcode().includes(parseInt(zip))}>
-        <div>
-          <div>current price: </div>
-          <div>
-            <p>In the next year:</p>
-            <div>1 year forecast price: {Yr1_Price()}</div>
-            <div>1 year ROI: {Yr1_ROI()}</div>
-          </div>
-
-          <div>
-            <p>In the next 3 year:</p>{" "}
-            <div>3 year forecast price: {Yr3_Price()}</div>
-            <div>3 year ROI: {Yr3_ROI()}</div>
-          </div>
-
-          <div>
-            <p>In the next 5 year:</p>
-            <div>5 year forecast price: {Yr5_Price()}</div>
-            <div>5 year ROI: {Yr5_ROI()}</div>
-          </div>
         </div>
-      </Show>
+
+        <div>
+          <p>Prediction</p>
+          <Show when={recommendedZipcode().includes(parseInt(zip))}>
+            <div>
+              <div>
+                <p class="bg-teal-500 text-white w-[30%]">In the next year:</p>
+                <div>1 year forecast price: {Yr1_Price()}</div>
+                <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
+              </div>
+
+              <div>
+                <p class="bg-teal-500 text-white w-[30%]">
+                  In the next 3 year:
+                </p>{" "}
+                <div>3 year forecast price: {Yr3_Price()}</div>
+                <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
+              </div>
+
+              <div>
+                <p class="bg-teal-500 text-white w-[30%]">
+                  In the next 5 year:
+                </p>
+                <div>5 year forecast price: {Yr5_Price()}</div>
+                <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
+              </div>
+            </div>
+          </Show>
+        </div>
+      </div>
     </div>
   );
 };
