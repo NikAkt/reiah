@@ -127,7 +127,12 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
             <li class="min-w-full">
               <div class="flex flex-col">
                 <label for="borough">Borough Preference:</label>
-                <select id="borough" name="borough" required>
+                <select
+                  id="borough"
+                  name="borough"
+                  required
+                  class="max-w-[300px]"
+                >
                   <For each={borough}>
                     {(item) => <option value={item}>{item}</option>}
                   </For>
@@ -140,6 +145,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                   id="neighborhood_preference"
                   name="neighborhood_preference"
                   required
+                  class="max-w-[300px]"
                 >
                   <For each={neighbourhood_type}>
                     {(item) => <option value={item}>{item}</option>}
@@ -150,6 +156,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                   id="business_environment"
                   name="business_environment"
                   required
+                  class="max-w-[300px]"
                 >
                   <For each={business_environment}>
                     {(item) => <option value={item}>{item}</option>}
@@ -166,6 +173,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                   name="sqft"
                   placeholder="1000"
                   required
+                  class="max-w-[300px]"
                 />
                 <label for="sqft">Beds:</label>
                 <input
@@ -173,6 +181,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                   id="bedrooms"
                   name="bedrooms"
                   placeholder="1"
+                  class="max-w-[300px]"
                 />
                 <label for="sqft">Bath:</label>
                 <input
@@ -180,6 +189,7 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                   id="bathrooms"
                   name="bathrooms"
                   placeholder="1"
+                  class="max-w-[300px]"
                 />
 
                 <label for="max_price">Max Price:</label>
@@ -188,11 +198,17 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
                   id="max_price"
                   name="max_price"
                   placeholder="1000000"
+                  class="max-w-[300px]"
                 />
 
                 <label for="neighborhood_preference">Property Type:</label>
 
-                <select id="house_type" name="house_type" required>
+                <select
+                  id="house_type"
+                  name="house_type"
+                  required
+                  class="max-w-[300px]"
+                >
                   <For each={property_type}>
                     {(item) => <option value={item}>{item}</option>}
                   </For>
@@ -200,15 +216,25 @@ const RecommendZipcode = ({ setRecommendedZipcode, setShowRecommendBoard }) => {
               </div>
             </li>
             <li class="min-w-full p-[20px] transition delay-50">
-              <div class="flex flex-col w-[80%]">
+              <div class="flex flex-col w-[80%] ">
                 <label for="income">Income:</label>
-                <select id="income" name="income" required>
+                <select
+                  id="income"
+                  name="income"
+                  required
+                  class="max-w-[300px]"
+                >
                   <For each={income}>
                     {(item) => <option value={item}>{item}</option>}
                   </For>
                 </select>
                 <label for="household_type">Household Type:</label>
-                <select id="household_type" name="household_type" required>
+                <select
+                  id="household_type"
+                  name="household_type"
+                  required
+                  class="max-w-[300px]"
+                >
                   <For each={household_type}>
                     {(item) => <option value={item}>{item}</option>}
                   </For>

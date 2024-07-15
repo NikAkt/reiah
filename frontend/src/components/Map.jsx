@@ -46,14 +46,14 @@ export const MapComponent = (props) => {
     function updateButtonStyles() {
       centerControlDiv.className = !sideBarOpen()
         ? "w-[80%] overflow-x-auto flex"
-        : "w-[30%] overflow-x-auto flex flex-col";
+        : "w-[30%] flex flex-col mr-4";
 
       controlButton.textContent = sideBarOpen()
         ? "Hide Dashboard"
         : "Show Dashboard";
       hoverLocationDiv.className = sideBarOpen()
-        ? "w-[100%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center"
-        : "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+        ? "w-[100%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
+        : "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
     }
 
     createEffect(() => updateButtonStyles());
@@ -84,7 +84,7 @@ export const MapComponent = (props) => {
     input.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
         if (uniqueZipcode.includes(event.target.value)) {
-          props.setSelectedZip(event.target.value);
+          props.zipcodeSetter(event.target.value);
         } else {
           alert("The zipcode you provided is not included.");
         }

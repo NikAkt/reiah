@@ -19,7 +19,35 @@ const colorsChartjs = [
   "#C9CBCF",
 ];
 
-const AmenitiesDetailDropdown = ({ item }) => {
+function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
+  if (markerArr) {
+    markerArr.forEach((marker) => {
+      if (marker[key] == type) {
+        marker.setIcon(newIcon);
+        marker.setZIndex(100);
+      } else {
+        //recover to original icon
+        marker.setIcon(originalIcon);
+        marker.setZIndex(10);
+      }
+    });
+  }
+}
+
+function revertMarkerIcon(markerArr, originalIcon) {
+  if (markerArr) {
+    markerArr.forEach((marker) => {
+      marker.setIcon(originalIcon);
+    });
+  }
+}
+
+const AmenitiesDetailDropdown = ({
+  item,
+  amenitiesOnMap,
+  newAmenitiesDetailedMarkerIcon,
+  amenitiesMarkerIcon,
+}) => {
   const [displayDropdown, setDisplayDropdown] = createSignal(false);
 
   return (
@@ -36,7 +64,23 @@ const AmenitiesDetailDropdown = ({ item }) => {
       </div>
       <ul class={displayDropdown() === true ? "" : "hidden"}>
         {item[1].map((el) => (
-          <li class="hover:bg-indigo-600 hover:text-white">{el}</li>
+          <li
+            class="hover:bg-indigo-600 hover:text-white"
+            onMouseOver={() => {
+              highlightMarker(
+                el,
+                amenitiesOnMap(),
+                amenitiesMarkerIcon,
+                newAmenitiesDetailedMarkerIcon,
+                "title"
+              );
+            }}
+            onMouseDown={() => {
+              revertMarkerIcon(amenitiesOnMap(), amenitiesMarkerIcon);
+            }}
+          >
+            {el}
+          </li>
         ))}
       </ul>
     </div>
@@ -57,7 +101,7 @@ const RealEstateInfo = ({
   setHoverType,
 }) => {
   return (
-    <div id="realEstate-info">
+    <div id="realEstate-info" class="dark:text-white">
       <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
         Real Estate Information
       </div>
@@ -88,14 +132,14 @@ const RealEstateInfo = ({
                         {Object.keys(item)}
                       </p>
                       <div>
-                        Average Price: {Object.values(item)[0].avgPrice}
+                        Average Price: ${Object.values(item)[0].avgPrice}
                       </div>
                       <div>
-                        Average Square Foot: {Object.values(item)[0].avgSqft}
+                        Average Size: {Object.values(item)[0].avgSqft} sqft
                       </div>
                       <div>
-                        Average Price Per Square Foot:
-                        {Object.values(item)[0].avgPricePerSqft}
+                        Average Price Per Square Foot: $
+                        {Object.values(item)[0].avgPricePerSqft}/sqft
                       </div>
                     </div>
                   );
@@ -137,9 +181,12 @@ const AmenitiesInfo = ({
   amenitiesDetails,
   zip,
   setHoverAmenity,
+  amenitiesOnMap,
+  newAmenitiesDetailedMarkerIcon,
+  amenitiesMarkerIcon,
 }) => {
   return (
-    <div id="amenity-info">
+    <div id="amenity-info" class="dark:text-white">
       <div>
         <Suspense>
           <Show when={amenities()}>
@@ -179,7 +226,16 @@ const AmenitiesInfo = ({
                       each={Object.entries(amenitiesDetails()[hoverAmenity()])}
                     >
                       {(item) => {
-                        return <AmenitiesDetailDropdown item={item} />;
+                        return (
+                          <AmenitiesDetailDropdown
+                            item={item}
+                            amenitiesOnMap={amenitiesOnMap}
+                            newAmenitiesDetailedMarkerIcon={
+                              newAmenitiesDetailedMarkerIcon
+                            }
+                            amenitiesMarkerIcon={amenitiesMarkerIcon}
+                          />
+                        );
                       }}
                     </For>
                   </div>
@@ -204,7 +260,7 @@ const DemographicInfo = ({
   density,
 }) => {
   return (
-    <div class="demographic-info ">
+    <div id="demographic-info" class="dark:text-white">
       <div
         class="bg-teal-500 text-white items-center
            text-center justify-center items-center"
@@ -320,35 +376,49 @@ export const DashboardInfo = (props) => {
     return null;
   }
 
-  function highlighMarker(type, markerArr, key, color) {
-    if (markerArr) {
-      markerArr.forEach((marker) => {
-        if (marker[key] == type) {
-          marker.setIcon({
-            //scale up the markers
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10, // Adjust the scale to make the circle smaller or larger
-            fillColor: color, // Circle color
-            fillOpacity: 1, // Circle fill opacity
-            strokeWeight: 1, // Circle border thickness
-            strokeColor: "#000000", // Circle border color
-          });
-          marker.setZIndex(100);
-        } else {
-          //recover to original icon
-          marker.setIcon({
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 5, // Adjust the scale to make the circle smaller or larger
-            fillColor: color, // Circle color
-            fillOpacity: 1, // Circle fill opacity
-            strokeWeight: 1, // Circle border thickness
-            strokeColor: "#000000", // Circle border color
-          });
-          marker.setZIndex(10);
-        }
-      });
-    }
-  }
+  const amenitiesMarkerIcon = {
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: 5, // Adjust the scale to make the circle smaller or larger
+    fillColor: "#0145ac", // Circle color
+    fillOpacity: 1, // Circle fill opacity
+    strokeWeight: 1, // Circle border thickness
+    strokeColor: "#000000", // Circle border color
+  };
+
+  const newAmenitiesMarkerIcon = {
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: 10, // Adjust the scale to make the circle smaller or larger
+    fillColor: "#0145ac", // Circle color
+    fillOpacity: 1, // Circle fill opacity
+    strokeWeight: 1, // Circle border thickness
+    strokeColor: "#000000", // Circle border color
+  };
+  const newAmenitiesDetailedMarkerIcon = {
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: 15, // Adjust the scale to make the circle smaller or larger
+    fillColor: "rgb(124 58 237)", // Circle color
+    fillOpacity: 1, // Circle fill opacity
+    strokeWeight: 1, // Circle border thickness
+    strokeColor: "#000000", // Circle border color
+  };
+
+  const propertyMarkerIcon = {
+    url: `data:image/svg+xml;base64,${window.btoa(`
+    <svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+   
+   <rect x="20" y="80" width="200" height="80" rx="20" ry="20" fill="#ffffff" />
+    </svg>`)}`,
+    scaledSize: new google.maps.Size(60, 60),
+  };
+
+  const newPropertyMarkerIcon = {
+    url: `data:image/svg+xml;base64,${window.btoa(`
+        <svg fill="${"#ffffff"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+       
+       <rect x="20" y="80" width="200" height="80" rx="20" ry="20" fill="#ffffff" />
+        </svg>`)}`,
+    scaledSize: new google.maps.Size(80, 80),
+  };
 
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
@@ -419,6 +489,14 @@ export const DashboardInfo = (props) => {
               setPropertyOnMap([]);
             }
 
+            let markers = [];
+
+            const color = "#ffffff";
+            const svg = window.btoa(`
+  <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+ 
+ <rect x="20" y="80" width="200" height="80" rx="20" ry="20" fill="${color}" />
+  </svg>`);
             data[area].forEach((el) => {
               const marker = new Marker({
                 position: { lat: el["LATITUDE"], lng: el["LONGITUDE"] },
@@ -430,27 +508,25 @@ export const DashboardInfo = (props) => {
                 propertysqf: el["PROPERTYSQFT"],
                 animation: Animation.DROP,
                 map: props.map(),
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 5, // Adjust the scale to make the circle smaller or larger
-                  fillColor: "#ffffff", // Circle color
-                  fillOpacity: 1, // Circle fill opacity
-                  strokeWeight: 1, // Circle border thickness
-                  strokeColor: "#000000", // Circle border color
+                label: {
+                  text: `\$${(el["PRICE"] / 1000).toFixed(0).toString()}k`,
+                  color: "black",
                 },
+                icon: propertyMarkerIcon,
               });
-              setPropertyOnMap((prev) => [...prev, marker]);
+              markers.push(marker);
               marker.addListener("click", () => {
                 props.setDialogInfo({
-                  type: marker.type,
-                  bath: marker.bath,
-                  beds: marker.beds,
-                  price: marker.price,
-                  propertysqf: marker.propertysqf,
+                  "House Type": marker.type,
+                  Bathroom: marker.bath,
+                  Bedroom: marker.beds,
+                  price: `\$${marker.price}`,
+                  size: `${marker.propertysqf} sqft`,
                 });
                 props.setDisplayDialog(true);
               });
             });
+            setPropertyOnMap(markers);
           });
         }
       });
@@ -542,14 +618,7 @@ export const DashboardInfo = (props) => {
                 facility_desc: el["FACILITY_DOMAIN_NAME"],
                 animation: Animation.DROP,
                 map: props.map(),
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 5, // Adjust the scale to make the circle smaller or larger
-                  fillColor: "#0145ac", // Circle color
-                  fillOpacity: 1, // Circle fill opacity
-                  strokeWeight: 1, // Circle border thickness
-                  strokeColor: "#000000", // Circle border color
-                },
+                icon: amenitiesMarkerIcon,
               });
               setAmenitiesOnMap((prev) => [...prev, marker]);
             });
@@ -620,15 +689,24 @@ export const DashboardInfo = (props) => {
   });
 
   createEffect(() => {
-    highlighMarker(hoverType(), propertyOnMap(), "type", "#ffffff");
+    if (hoverType()) {
+      highlightMarker(
+        hoverType(),
+        propertyOnMap(),
+        propertyMarkerIcon,
+        newPropertyMarkerIcon,
+        "type"
+      );
+    }
   });
 
   createEffect(() => {
-    highlighMarker(
+    highlightMarker(
       hoverAmenity(),
       amenitiesOnMap(),
-      "facility_type",
-      "#0145ac"
+      amenitiesMarkerIcon,
+      newAmenitiesMarkerIcon,
+      "facility_type"
     );
   });
 
@@ -651,7 +729,7 @@ export const DashboardInfo = (props) => {
 
   return (
     <div
-      class="w-[100%] rounded-lg  border-2 border-teal-500 border-solid overflow-y-auto"
+      class="w-[100%] rounded-lg  border-2 border-teal-500 border-solid overflow-y-auto dark:text-white"
       id={`dashboardDiv-${[props.zip]}`}
     >
       <div
@@ -694,6 +772,7 @@ export const DashboardInfo = (props) => {
                 class="hover:bg-teal-500 hover:text-white"
                 onClick={() => {
                   setDisplayContent("realEstate");
+                  revertMarkerIcon(amenitiesOnMap(), amenitiesMarkerIcon);
                 }}
               >
                 Real Estate{" "}
@@ -702,6 +781,7 @@ export const DashboardInfo = (props) => {
                 class="hover:bg-teal-500 hover:text-white"
                 onClick={() => {
                   setDisplayContent("amenities");
+                  revertMarkerIcon(propertyOnMap(), propertyMarkerIcon);
                 }}
               >
                 Amenities
@@ -747,6 +827,9 @@ export const DashboardInfo = (props) => {
             amenitiesDetails={amenitiesDetails}
             zip={props.zip}
             setHoverAmenity={setHoverAmenity}
+            amenitiesOnMap={amenitiesOnMap}
+            newAmenitiesDetailedMarkerIcon={newAmenitiesDetailedMarkerIcon}
+            amenitiesMarkerIcon={amenitiesMarkerIcon}
           />
         </Show>
 
