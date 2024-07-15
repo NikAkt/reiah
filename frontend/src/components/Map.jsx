@@ -52,8 +52,8 @@ export const MapComponent = (props) => {
         ? "Hide Dashboard"
         : "Show Dashboard";
       hoverLocationDiv.className = sideBarOpen()
-        ? "w-[100%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
-        : "w-[20%] rounded shadow-md color-zinc-900 bg-[#a888f1] text-base text-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
+        ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
+        : "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
     }
 
     createEffect(() => updateButtonStyles());
@@ -77,7 +77,8 @@ export const MapComponent = (props) => {
     innerDiv.className = "flex justify-center items-center";
     input.type = "text";
     input.id = "hoverLocation-div";
-    input.className = "relative w-[100%] h-[80%] bg-transparent text-center";
+    input.className =
+      "relative w-[100%] h-[80%] bg-transparent text-center text-[#a888f1]";
     const uniqueZipcode = Object.keys(
       props.dataResources.historicalRealEstateData()
     );
