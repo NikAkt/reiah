@@ -151,21 +151,26 @@ export const Map = (props) => {
               >
                 <Show
                   when={!historicPrices.loading}
-                  fallback={<div>Loading ... </div>}
+                  fallback={<div>Loading the line chart... </div>}
                 >
-                  <LineChart
+                  {/* <LineChart
                     asyncData={historicPrices}
                     getComparedZip={getComparedZip}
                     setComparedZip={setComparedZip}
                     getSelectedZip={getSelectedZip}
                     historicalRealEstateData={dataResources.historicalRealEstateData()}
                     setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
-                  ></LineChart>
+                  ></LineChart> */}
 
                   <div class="flex flex-col gap-2">
                     <Show
                       when={getSelectedZip()}
-                      fallback={<div>Loading...</div>}
+                      fallback={
+                        <div>
+                          Please search or click a zipcode layer to check the
+                          details
+                        </div>
+                      }
                     >
                       <DashboardInfo
                         map={props.mapObject}

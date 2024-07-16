@@ -7,7 +7,7 @@ import { Show } from "solid-js";
 const links = [
   { Href: "/map", Title: "Map" },
   { Href: "/settings", Title: "Settings" },
-  { Href: "/dashboard", Title: "Dashboard" },
+  // { Href: "/dashboard", Title: "Dashboard" },
 ];
 
 const BaseLayout = (props) => {
@@ -51,7 +51,7 @@ const MapView = (props) => {
     <BaseLayout>
       <Sidebar links={links} />
       <main
-        class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen"
+        class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen "
         onMouseOver={() => setStore({ ...store, sidebarOpen: false })}
       >
         <div>{props.children}</div>
@@ -75,7 +75,7 @@ const AuthLayout = (props) => {
             Join the 2 other investors using REIAH today!!
           </h2>
           <p class="text-white  text-center text-md mt-12">
-            wether you are looking for that next big investment or a place to
+            Whether you are looking for that next big investment or a place to
             call your own REIAH is here to guide you in the right direction.
           </p>
         </div>

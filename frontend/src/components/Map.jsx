@@ -50,11 +50,12 @@ export const MapComponent = (props) => {
         ? "w-[80%] overflow-x-auto flex"
         : "w-[30%] flex flex-col mr-4";
 
-      controlButton.textContent = sideBarOpen()
-        ? "Hide Dashboard"
-        : "Show Dashboard";
+      // controlButton.textContent = sideBarOpen()
+      //   ? "Hide Dashboard"
+      //   : "Show Dashboard";
+      controlButton.textContent = "Information";
       hoverLocationDiv.className = sideBarOpen()
-        ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
+        ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mr-10 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
         : "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
     }
 
@@ -304,7 +305,11 @@ export const MapComponent = (props) => {
   return (
     <>
       <Suspense>
-        <div ref={ref} id="map" class="h-full basis-2/5 grow"></div>
+        <div
+          ref={ref}
+          id="map"
+          class={`h-full basis-2/5 grow transition `}
+        ></div>
       </Suspense>
 
       <div
@@ -338,6 +343,7 @@ export const MapComponent = (props) => {
         setFilteredZipCodes={setFilteredZipCodes}
         showFilterBoard={showFilterBoard}
         setShowFilterBoard={setShowFilterBoard}
+        map={props.mapObject}
       />
     </>
   );
