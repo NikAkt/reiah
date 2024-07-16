@@ -45,7 +45,7 @@ type Amenity struct {
 // GetAmenityQueryParams struct definition
 type GetAmenityQueryParams struct {
 	Borough      string `query:"borough"`
-	Zipcode      int    `query:"zipcode"`
+	Zipcode      string `query:"zipcode"`
 	FacilityType string `query:"facilitytype"`
 	FacilityDesc string `query:"facilitydesc"`
 	Name         string `query:"name"`
@@ -58,7 +58,7 @@ func filterAmenitiesGetRequest(a []Amenity, f *GetAmenityQueryParams) []Amenity 
 		if f.Borough != "" && amenity.Borough != f.Borough {
 			continue
 		}
-		if f.Zipcode != 0 && amenity.Zipcode != strconv.Itoa(f.Zipcode) {
+		if f.Zipcode != "" && amenity.Zipcode != f.Zipcode {
 			continue
 		}
 		if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
