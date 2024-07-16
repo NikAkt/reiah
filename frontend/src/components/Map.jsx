@@ -308,7 +308,7 @@ export const MapComponent = (props) => {
         <div
           ref={ref}
           id="map"
-          class={`h-full basis-2/5 grow transition `}
+          class={`h-full basis-1/2 grow transition `}
         ></div>
       </Suspense>
 
@@ -317,14 +317,14 @@ export const MapComponent = (props) => {
       right-0 h-screen flex flex-col
           drop-shadow overflow-scroll p-6 ${sideBarOpen() ? "" : "hidden"}`}
       >
-        <Show when={props.isLoading}>
+        {/* <Show when={props.isLoading}>
           <div class="flex flex-col gap-2 animate-pulse">
             <div class="h-6 w-3/12 rounded-lg bg-neutral-300" />
             <div class="h-6 w-2/12 rounded-lg bg-neutral-300" />
           </div>
-        </Show>
+        </Show> */}
         <Show when={!props.isLoading}>
-          <div class="flex">
+          {/* <div class="flex">
             <h1
               class="font-medium w-[50%] place-content-between"
               id="dashboard_top"
@@ -332,7 +332,7 @@ export const MapComponent = (props) => {
               {`Information on ${props.zipcodeOnCharts()}`}
             </h1>
           </div>
-          <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div>
+          <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div> */}
         </Show>
         <div class="gap-6 mt-6 py-3 flex flex-col">
           <div class="flex flex-col">{props.children}</div>

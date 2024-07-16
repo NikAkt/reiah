@@ -1,7 +1,12 @@
 import Chart from "chart.js/auto";
-import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
-import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
-import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
+import {
+  createEffect,
+  onCleanup,
+  onMount,
+  Show,
+  createResource,
+  createSignal,
+} from "solid-js";
 
 const colors = [
   "rgb(75,192,192)",
@@ -100,8 +105,6 @@ const createLineChart = (ctx, datasets) => {
     },
   });
 };
-const [getZipOnCharts, setZipOnCharts] = createSignal([]);
-
 async function fetchMultipleHistoricPrices(zipArray) {
   if (zipArray.length > 1) {
     let query = "";
@@ -127,57 +130,60 @@ async function fetchMultipleHistoricPrices(zipArray) {
   }
 }
 
-const LineChart = (props) => {
-  const uniqueZipcode = Object.keys(props.historicalRealEstateData);
-  const [showDropDown, setShowDropDown] = createSignal(false);
+async function fetchHistoricPrices(zip) {
+  const response = await fetch(
+    `http://localhost:8000/api/historic-prices?zipcode=${zip}`
+  );
+  if (!response.ok) {
+    return [];
+  }
+  try {
+    const data = await response.json();
+    return data;
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
+const LineChart = ({
+  getSelectedZip,
+  updateLineChart,
+  setUpdateLineChart,
+  cleanLineChart,
+  setCleanLineChart,
+  getComparedZip,
+}) => {
   //whether the line chart is multiline or not
-  const [clean, setClean] = createSignal(false);
-
-  const handleCleanSubmit = () => {
-    chartInstance.data.datasets = [
-      chartInstance.data.datasets.filter(
-        (obj) => obj.label * 1 == props.getSelectedZip()
-      )[0],
-    ];
-
-    // chartInstance.data.datasets = null;
-    chartInstance.update();
-    props.setCreateMoreDashboardInfo(false);
-    for (let zip of props.getComparedZip()) {
-      const checkbox = document.getElementById(`compareCheckbox-${zip}`);
-      checkbox.checked = false;
-    }
-    props.setComparedZip([]);
-  };
-
   let ref;
-  const handleSubmit = () => {
-    const zipArray = [...new Set([...props.getComparedZip()])];
-    if (!zipArray.includes(props.getSelectedZip() * 1)) {
-      zipArray.unshift(props.getSelectedZip() * 1);
+
+  const [historicPrices] = createResource(
+    () => getSelectedZip(),
+    fetchHistoricPrices
+  );
+
+  const [hasData, setHasData] = createSignal(false);
+
+  createEffect(() => {
+    if (cleanLineChart() === true) {
+      chartInstance.data.datasets = [
+        chartInstance.data.datasets.filter(
+          (obj) => obj.label * 1 == getSelectedZip()
+        )[0],
+      ];
+      chartInstance.update();
+      setCleanLineChart(false);
     }
-    setZipOnCharts(zipArray);
-    if (zipArray.length > 1) {
-      let query = "";
-      for (let i = 0; i < zipArray.length; i++) {
-        if (i > 6) {
-          //limit is 7
-          break;
+  });
+
+  createEffect(() => {
+    if (updateLineChart()) {
+      fetchMultipleHistoricPrices(getComparedZip()).then(
+        (comparedAsyncData) => {
+          generateMultiLineChart(comparedAsyncData);
         }
-        // console.log(zipArray[i]);
-        if (i == 0) {
-          query += `?zipcode=${zipArray[i]}`;
-        } else {
-          query += `&zipcode=${zipArray[i]}`;
-        }
-      }
+      );
     }
-    fetchMultipleHistoricPrices(getZipOnCharts()).then((comparedAsyncData) => {
-      generateMultiLineChart(comparedAsyncData);
-      setClean(true);
-    });
-    props.setCreateMoreDashboardInfo(true);
-  };
+  });
 
   const generateMultiLineChart = (comparedAsyncData) => {
     if (comparedAsyncData) {
@@ -190,7 +196,6 @@ const LineChart = (props) => {
       });
 
       try {
-        let datasets = [];
         for (let i = 0; i < transformedDataArr.length; i++) {
           const obj = {
             label: Object.keys(comparedAsyncData)[i],
@@ -198,9 +203,10 @@ const LineChart = (props) => {
             fill: false,
             borderColor: colors[i % 7],
           };
-          datasets.push(obj);
+          chartInstance.data.datasets.push(obj);
         }
-        createLineChart(ref, datasets);
+        chartInstance.update();
+        setUpdateLineChart(false);
       } catch (error) {
         console.log(
           "error when creating compared async data line charts",
@@ -215,8 +221,8 @@ const LineChart = (props) => {
   });
 
   createEffect(() => {
-    if (!props.asyncData.loading) {
-      let newData = props.asyncData();
+    if (!historicPrices.loading) {
+      let newData = historicPrices();
       let transformedData = Object.values(newData)[0];
       if (transformedData) {
         Object.keys(transformedData).forEach((key) => {
@@ -247,138 +253,8 @@ const LineChart = (props) => {
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      <Show
-        when={!props.asyncData.loading}
-        fallback={<ChartLoadingIndicator />}
-      >
-        <div class="relative w-full h-[40vh]">
-          <div>
-            <div class="flex flex-col">
-              <div class="flex flex-row gap-2">
-                <Show when={props.getSelectedZip()}>
-                  <div
-                    class="rounded-lg text-center w-[30%] 
-                  relative bg-[#ffffff] flex gap-2
-                  items-center justify-center"
-                  >
-                    <Show
-                      when={showDropDown() === false}
-                      fallback={
-                        <button
-                          onClick={() => setShowDropDown(false)}
-                          class="hover:bg-teal-500"
-                        >
-                          <img src={arrow_up} class="w-[15px] h-[15px]" />
-                        </button>
-                      }
-                    >
-                      <button
-                        onClick={() => setShowDropDown(true)}
-                        class="hover:bg-teal-500"
-                      >
-                        <img src={arrow_down} class="w-[15px] h-[15px]" />
-                      </button>
-                    </Show>
-
-                    <input
-                      type="text"
-                      placeholder={`Compare To? ${props.getComparedZip()}`}
-                      id="compareSearchBar"
-                      onKeyUp={(event) => {
-                        if (event.key === "Enter") {
-                          if (uniqueZipcode.includes(event.target.value)) {
-                            props.setComparedZip((prev) => [
-                              ...prev,
-                              event.target.value * 1,
-                            ]);
-
-                            if (
-                              !document.getElementById(
-                                `compareCheckbox-${event.target.value}`
-                              ).checked
-                            ) {
-                              document.getElementById(
-                                `compareCheckbox-${event.target.value}`
-                              ).checked = true;
-                            }
-
-                            // event.target.placeholder = [
-                            //   ...new Set(props.getComparedZip()),
-                            // ];
-                            event.target.value = "";
-                          } else {
-                            alert("The zipcode you provided is not included.");
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <input
-                    type="Submit"
-                    class="relative ml-[2%] rounded-lg bg-black text-white w-[10%] cursor-pointer px-2"
-                    onClick={handleSubmit}
-                  />
-                  <button
-                    class={
-                      clean()
-                        ? "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-pointe r"
-                        : "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-not-allowed opacity-50"
-                    }
-                    onClick={handleCleanSubmit}
-                  >
-                    Clean Comparison
-                  </button>
-                </Show>
-              </div>
-
-              <div
-                class={`overflow-y-auto absolute w-[15vw] h-[20vh] mt-[3vh] bg-white 
-                  border rounded-lg mt-1 z-10 ${
-                    showDropDown() ? "block" : "hidden"
-                  }`}
-              >
-                <div>
-                  <div>
-                    {uniqueZipcode.map((zip) => (
-                      <div key={zip} class="p-2">
-                        <input
-                          type="checkbox"
-                          id={`compareCheckbox-${zip}`}
-                          value={zip}
-                          class="accent-teal-500 compareCheckbox"
-                          onClick={(event) => {
-                            if (event.target.checked) {
-                              props.setComparedZip((prev) => [
-                                ...prev,
-                                event.target.value * 1,
-                              ]);
-                              // document.getElementById(
-                              //   "compareSearchBar"
-                              // ).placeholder = props.getComparedZip();
-                            } else {
-                              props.setComparedZip((prev) =>
-                                prev.filter(
-                                  (el) => el != event.target.value * 1
-                                )
-                              );
-                              // document.getElementById(
-                              //   "compareSearchBar"
-                              // ).placeholder = props.getComparedZip();
-                            }
-                          }}
-                        />
-                        <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
-                          {zip}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+      <Show when={!historicPrices.loading} fallback={<ChartLoadingIndicator />}>
+        <div class="w-full h-full">
           <canvas ref={(el) => (ref = el)}></canvas>
         </div>
       </Show>

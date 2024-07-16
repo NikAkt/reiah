@@ -72,26 +72,6 @@ export const Map = (props) => {
     zipcode_geojson,
   };
 
-  async function fetchHistoricPrices(zip) {
-    const response = await fetch(
-      `http://localhost:8000/api/historic-prices?zipcode=${zip}`
-    );
-    if (!response.ok) {
-      return [];
-    }
-    try {
-      const data = await response.json();
-      return data;
-    } catch (e) {
-      throw new Error(e);
-    }
-  }
-
-  const [historicPrices] = createResource(
-    () => getSelectedZip(),
-    fetchHistoricPrices
-  );
-
   return (
     <MapView>
       <div class="h-screen flex relative">
@@ -149,66 +129,31 @@ export const Map = (props) => {
                 recommendedZipcode={recommendedZipcode}
                 setZoom={setZoom}
               >
-                <Show
-                  when={!historicPrices.loading}
-                  fallback={<div>Loading the line chart... </div>}
-                >
-                  {/* <LineChart
-                    asyncData={historicPrices}
-                    getComparedZip={getComparedZip}
-                    setComparedZip={setComparedZip}
-                    getSelectedZip={getSelectedZip}
-                    historicalRealEstateData={dataResources.historicalRealEstateData()}
-                    setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
-                  ></LineChart> */}
-
-                  <div class="flex flex-col gap-2">
-                    <Show
-                      when={getSelectedZip()}
-                      fallback={
-                        <div>
-                          Please search or click a zipcode layer to check the
-                          details
-                        </div>
-                      }
-                    >
-                      <DashboardInfo
-                        map={props.mapObject}
-                        zip={getSelectedZip()}
-                        historicalRealEstateData={dataResources.historicalRealEstateData()}
-                        showAmenityMarker={showAmenityMarker}
-                        setShowAmenityMarker={setShowAmenityMarker}
-                        showHousesMarker={showHousesMarker}
-                        setShowHousesMarker={setShowHousesMarker}
-                        recommendedZipcode={recommendedZipcode}
-                        setDisplayDialog={setDisplayDialog}
-                        setDialogInfo={setDialogInfo}
-                        query={query}
-                        predictedPrice={predictedPrice}
-                      />
-                    </Show>
-
-                    <Show when={createMoreDashboardInfo()}>
-                      <For each={getComparedZip()} fallback={<div></div>}>
-                        {(item, index) => (
-                          <DashboardInfo
-                            map={props.mapObject}
-                            zip={item}
-                            recommendedZipcode={recommendedZipcode}
-                            setDisplayDialog={setDisplayDialog}
-                            setDialogInfo={setDialogInfo}
-                            showAmenityMarker={showAmenityMarker}
-                            setShowAmenityMarker={setShowAmenityMarker}
-                            showHousesMarker={showHousesMarker}
-                            setShowHousesMarker={setShowHousesMarker}
-                            query={query}
-                            predictedPrice={predictedPrice}
-                          />
-                        )}
-                      </For>
-                    </Show>
-                  </div>
-                </Show>
+                <div class="flex flex-col gap-2">
+                  <Show
+                    when={getSelectedZip()}
+                    fallback={
+                      <div>
+                        Please search or click a zipcode layer to check the
+                        details
+                      </div>
+                    }
+                  >
+                    <DashboardInfo
+                      map={props.mapObject}
+                      historicalRealEstateData={dataResources.historicalRealEstateData()}
+                      recommendedZipcode={recommendedZipcode}
+                      setDisplayDialog={setDisplayDialog}
+                      setDialogInfo={setDialogInfo}
+                      query={query}
+                      predictedPrice={predictedPrice}
+                      getComparedZip={getComparedZip}
+                      setComparedZip={setComparedZip}
+                      getSelectedZip={getSelectedZip}
+                      setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
+                    />
+                  </Show>
+                </div>
 
                 {createEffect(() => {
                   if (props.mapObject()) {

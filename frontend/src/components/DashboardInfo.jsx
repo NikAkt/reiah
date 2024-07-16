@@ -3,11 +3,12 @@ import {
   createEffect,
   createSignal,
   onCleanup,
-  onMount,
   Show,
   Suspense,
 } from "solid-js";
-import { DoughnutChart } from "./Charts";
+import { DoughnutChart, LineChart } from "./Charts";
+import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
+import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
 
 const colorsChartjs = [
   "#36A2EB",
@@ -97,19 +98,18 @@ const RealEstateInfo = ({
   Yr3_ROI,
   Yr5_Price,
   Yr5_ROI,
-  zip,
+  getSelectedZip,
   setHoverType,
   predictedPrice,
   query,
 }) => {
   return (
     <div id="realEstate-info" class="dark:text-white">
-      <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
+      {/* <div class="w-full bg-teal-500 text-white text-center cursor-pointer border-solid border-t-2 border-white">
         Real Estate Information
-      </div>
+      </div> */}
       <div class="flex flex-col ">
         <div>
-          <p>Latest Information</p>
           <div class="flex flex-row place-content-between px-4 py-2">
             <Show when={getPropertyType()}>
               <div>
@@ -157,11 +157,13 @@ const RealEstateInfo = ({
         </div>
 
         <div>
-          <p>Prediction</p>
-          <Show when={recommendedZipcode().includes(parseInt(zip))}>
+          {/* <p>Prediction</p> */}
+          <Show
+            when={recommendedZipcode().includes(parseInt(getSelectedZip()))}
+          >
             <div>
               <div>
-                <span>For ZIPCODE {zip}:</span>
+                <span>For ZIPCODE {getSelectedZip()}:</span>
                 <div>
                   <p class="bg-teal-500 text-white w-[30%]">
                     In the next year:
@@ -191,7 +193,8 @@ const RealEstateInfo = ({
                   <li>Bedrooms: {query()["bedrooms"]}</li>
                   <li>Bathrooms: {query()["bathrooms"]}</li>
                 </ul>
-                the average predicted cost will be is {predictedPrice()[zip]}
+                the average predicted cost will be is{" "}
+                {predictedPrice()[getSelectedZip()]}
               </div>
             </div>
           </Show>
@@ -205,7 +208,7 @@ const AmenitiesInfo = ({
   amenities,
   hoverAmenity,
   amenitiesDetails,
-  zip,
+  getSelectedZip,
   setHoverAmenity,
   amenitiesOnMap,
   newAmenitiesDetailedMarkerIcon,
@@ -216,13 +219,12 @@ const AmenitiesInfo = ({
       <div>
         <Suspense>
           <Show when={amenities()}>
-            <p class="bg-teal-500 text-white text-center">
+            {/* <p class="bg-teal-500 text-white text-center">
               Amenities Information
-            </p>
+            </p> */}
             <div class="flex flex-row place-content-between">
               <DoughnutChart
                 datasets={amenities()}
-                zip={zip}
                 ref={(el) => (ref = el)}
                 type="amenities"
                 setHoverAmenity={setHoverAmenity}
@@ -278,7 +280,7 @@ const AmenitiesInfo = ({
 const DemographicInfo = ({
   gender,
   race,
-  zip,
+  getSelectedZip,
   singleHousehold,
   familyHousehold,
   income,
@@ -287,12 +289,12 @@ const DemographicInfo = ({
 }) => {
   return (
     <div id="demographic-info" class="dark:text-white">
-      <div
+      {/* <div
         class="bg-teal-500 text-white items-center
            text-center justify-center items-center"
       >
         Demographic Information
-      </div>
+      </div> */}
       <div class="grid grid-cols-1 divide-y gap-2">
         <div class="grid grid-cols-1 divide-y">
           <div>Family Household: {familyHousehold()}</div>
@@ -308,7 +310,6 @@ const DemographicInfo = ({
 
                   <DoughnutChart
                     datasets={gender()}
-                    zip={zip}
                     ref={(el) => (ref = el)}
                     type="gender"
                   />
@@ -325,7 +326,6 @@ const DemographicInfo = ({
 
                     <DoughnutChart
                       datasets={race()}
-                      zip={zip}
                       ref={(el) => (ref = el)}
                       type="race"
                     />
@@ -340,7 +340,19 @@ const DemographicInfo = ({
   );
 };
 
-export const DashboardInfo = (props) => {
+export const DashboardInfo = ({
+  map,
+  historicalRealEstateData,
+  recommendedZipcode,
+  setDisplayDialog,
+  setDialogInfo,
+  query,
+  predictedPrice,
+  getComparedZip,
+  setComparedZip,
+  getSelectedZip,
+  setCreateMoreDashboardInfo,
+}) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
     version: "weekly",
@@ -373,6 +385,10 @@ export const DashboardInfo = (props) => {
   //show the type of information on the board
   const [displayContent, setDisplayContent] = createSignal("realEstate");
 
+  const [clean, setClean] = createSignal(false);
+
+  const [showDropDown, setShowDropDown] = createSignal(false);
+
   //   level: borough/neighbourhood/zipcode
   //  area: "Bronx"/"Greenpoint"/11385
 
@@ -382,6 +398,13 @@ export const DashboardInfo = (props) => {
   const [population, setPopulation] = createSignal(null);
   const [density, setDensity] = createSignal(null);
   const [income, setIncome] = createSignal(null);
+
+  //control linecharts
+  const [updateLineChart, setUpdateLineChart] = createSignal(false);
+  const [cleanLineChart, setCleanLineChart] = createSignal(false);
+
+  //unique zipcodes that has historical information
+  const uniqueZipcode = Object.keys(historicalRealEstateData);
 
   function generateHouseTypeDetails(houseType, data) {
     const filterArr = data.filter((obj) => obj.TYPE === houseType);
@@ -455,10 +478,10 @@ export const DashboardInfo = (props) => {
           const obj = data[0];
           try {
             document.getElementById(
-              `borough-dashboardInfo-${props.zip}`
+              `borough-dashboardInfo-${getSelectedZip()}`
             ).innerText = obj["borough"];
             document.getElementById(
-              `neighbourhood-dashboardInfo-${props.zip}`
+              `neighbourhood-dashboardInfo-${getSelectedZip()}`
             ).innerText = obj["neighbourhood"];
           } catch (error) {
             console.log(error);
@@ -533,7 +556,7 @@ export const DashboardInfo = (props) => {
                 price: el["PRICE"],
                 propertysqf: el["PROPERTYSQFT"],
                 animation: Animation.DROP,
-                map: props.map(),
+                map: map(),
                 label: {
                   text: `\$${(el["PRICE"] / 1000).toFixed(0).toString()}k`,
                   color: "black",
@@ -542,14 +565,14 @@ export const DashboardInfo = (props) => {
               });
               markers.push(marker);
               marker.addListener("click", () => {
-                props.setDialogInfo({
+                setDialogInfo({
                   "House Type": marker.type,
                   Bathroom: marker.bath,
                   Bedroom: marker.beds,
                   price: `\$${marker.price}`,
                   size: `${marker.propertysqf} sqft`,
                 });
-                props.setDisplayDialog(true);
+                setDisplayDialog(true);
               });
             });
             setPropertyOnMap(markers);
@@ -643,7 +666,7 @@ export const DashboardInfo = (props) => {
                 facility_type: el["FACILITY_T"],
                 facility_desc: el["FACILITY_DOMAIN_NAME"],
                 animation: Animation.DROP,
-                map: props.map(),
+                map: map(),
                 icon: amenitiesMarkerIcon,
               });
               setAmenitiesOnMap((prev) => [...prev, marker]);
@@ -675,8 +698,8 @@ export const DashboardInfo = (props) => {
   };
 
   createEffect(() => {
-    if (props.recommendedZipcode().includes(parseInt(props.zip))) {
-      fetch(`http://localhost:8000/zipcode-scores?zipcode=${props.zip}`)
+    if (recommendedZipcode().includes(parseInt(getSelectedZip()))) {
+      fetch(`http://localhost:8000/zipcode-scores?zipcode=${getSelectedZip()}`)
         .then((response) => response.json())
         .then((data) => {
           if (data) {
@@ -695,22 +718,8 @@ export const DashboardInfo = (props) => {
   });
 
   createEffect(() => {
-    if (props.zip !== "") {
-      fetchDashboardInfoData("zipcode", props.zip);
-    }
-  });
-
-  createEffect(() => {
-    if (propertyOnMap()) {
-      if (!props.showHousesMarker) {
-        propertyOnMap().forEach((marker) => {
-          marker.setMap(null);
-        });
-      } else {
-        propertyOnMap().forEach((marker) => {
-          marker.setMap(props.map());
-        });
-      }
+    if (getSelectedZip() !== "") {
+      fetchDashboardInfoData("zipcode", getSelectedZip());
     }
   });
 
@@ -753,13 +762,188 @@ export const DashboardInfo = (props) => {
     }
   });
 
+  function handleSubmit() {
+    const zipArray = [...new Set([...getComparedZip()])];
+    if (zipArray.includes(getSelectedZip() * 1)) {
+      zipArray.pop(getSelectedZip() * 1);
+    }
+    if (zipArray.length > 1) {
+      let query = "";
+      for (let i = 0; i < zipArray.length; i++) {
+        if (i > 6) {
+          //limit is 7
+          break;
+        }
+        // console.log(zipArray[i]);
+        if (i == 0) {
+          query += `?zipcode=${zipArray[i]}`;
+        } else {
+          query += `&zipcode=${zipArray[i]}`;
+        }
+      }
+    }
+    setComparedZip(zipArray);
+    setUpdateLineChart(true);
+    setClean(true);
+  }
+
   return (
-    <div
-      class="w-[100%] rounded-lg  border-2 border-teal-500 border-solid overflow-y-auto dark:text-white"
-      id={`dashboardDiv-${[props.zip]}`}
-    >
+    <div id={`dashboardDiv-${[getSelectedZip()]}`}>
       <div
-        class="
+        class="absolute flex flex-col w-full top-[3vh]
+      dark:text-white"
+        id="header-dashboard"
+      >
+        <h1
+          class="font-medium w-[100%] place-content-between"
+          id="dashboard_top"
+        >
+          {`Information on ZIPCODE ${getSelectedZip()} `}
+          <span id={`neighbourhood-dashboardInfo-${getSelectedZip()}`}></span>,
+          <span id={`borough-dashboardInfo-${getSelectedZip()}`}></span>
+        </h1>
+
+        {/* input & dropdown */}
+        <div class="">
+          <Show when={getSelectedZip()}>
+            <div
+              class="flex
+            w-[50%] gap-2 my-2 min-h-[3vh]
+            "
+            >
+              <div id="search-box-dropdown" class="z-40 flex flex-col">
+                {/* search box */}
+                <div
+                  class="rounded-t-lg text-center
+                  relative bg-[#ffffff] flex gap-2
+                  max-h-[3vh] px-2
+                  items-center justify-center"
+                >
+                  {/* button svg */}
+                  <Show
+                    when={showDropDown() === false}
+                    fallback={
+                      <button
+                        onClick={() => setShowDropDown(false)}
+                        class="hover:bg-teal-500"
+                      >
+                        <img src={arrow_up} class="w-[15px] h-[15px]" />
+                      </button>
+                    }
+                  >
+                    <button
+                      onClick={() => setShowDropDown(true)}
+                      class="hover:bg-teal-500"
+                    >
+                      <img src={arrow_down} class="w-[15px] h-[15px]" />
+                    </button>
+                  </Show>
+
+                  {/* input box */}
+                  <input
+                    type="text"
+                    placeholder={`Compare To? ${getComparedZip()}`}
+                    id="compareSearchBar"
+                    onKeyUp={(event) => {
+                      if (event.key === "Enter") {
+                        if (uniqueZipcode.includes(event.target.value)) {
+                          setComparedZip((prev) => [
+                            ...new Set([...prev, event.target.value * 1]),
+                          ]);
+
+                          if (
+                            !document.getElementById(
+                              `compareCheckbox-${event.target.value}`
+                            ).checked
+                          ) {
+                            document.getElementById(
+                              `compareCheckbox-${event.target.value}`
+                            ).checked = true;
+                          }
+                          event.target.value = "";
+                        } else {
+                          alert("The zipcode you provided is not included.");
+                        }
+                      }
+                    }}
+                  />
+                </div>
+
+                {/* dropdown */}
+
+                <div
+                  class={`overflow-y-auto bg-[#ffffff] max-h-[20vh] w-full
+                     shadow-md
+                   z-40 ${showDropDown() ? "block" : "hidden"}`}
+                >
+                  <div>
+                    {uniqueZipcode.map((zip) => (
+                      <div key={zip} class="p-2">
+                        <input
+                          type="checkbox"
+                          id={`compareCheckbox-${zip}`}
+                          value={zip}
+                          class="accent-teal-500 compareCheckbox"
+                          onClick={(event) => {
+                            if (event.target.checked) {
+                              setComparedZip((prev) => [
+                                ...prev,
+                                event.target.value * 1,
+                              ]);
+                            } else {
+                              setComparedZip((prev) =>
+                                prev.filter(
+                                  (el) => el != event.target.value * 1
+                                )
+                              );
+                            }
+                          }}
+                        />
+
+                        <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
+                          {zip}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* submit button and clean button */}
+              <div class="flex max-h-[3vh] gap-[2px]">
+                <input
+                  type="Submit"
+                  class="relative ml-[2%] rounded-lg bg-black text-white cursor-pointer px-2"
+                  onClick={handleSubmit}
+                />
+                <button
+                  class={
+                    clean()
+                      ? "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-pointe r"
+                      : "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-not-allowed opacity-50"
+                  }
+                  onClick={() => {
+                    setCreateMoreDashboardInfo(false);
+                    for (let zip of getComparedZip()) {
+                      const checkbox = document.getElementById(
+                        `compareCheckbox-${zip}`
+                      );
+                      checkbox.checked = false;
+                    }
+                    setComparedZip([]);
+                    setCleanLineChart(true);
+                  }}
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </Show>
+        </div>
+      </div>
+      <div class="w-[95%] h-[1px] mt-[4vh] bg-[#E4E4E7]" id="main">
+        {/* <div
+          class="
         flex
         gap-8
         place-content-between
@@ -768,111 +952,147 @@ export const DashboardInfo = (props) => {
         text-center justify-center 
         cursor-pointer
         bg-teal-500 text-white"
-        id="dashboard-title"
-      >
-        <div
-          onClick={() => {
-            setShow((prev) => !prev);
-          }}
+          id="dashboard-title"
         >
-          ZIPCODE {props.zip},
-          <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>,
-          <span id={`borough-dashboardInfo-${props.zip}`}></span>
-        </div>
-        <div
-          class="absolute w-[15%]
-        flex flex-col rounded-lg shadow-md
-        text-black right-[10%] rounded-md z-30"
-        >
-          <div
-            class="relative h-[25%] hover:bg-indigo-600 hover:text-white bg-white"
+          {/* <div
             onClick={() => {
-              setDisplayDropdownMenu((prev) => !prev);
+              setShow((prev) => !prev);
             }}
           >
-            Select
-          </div>
-          <div class={displayDropdownMenu() ? "bg-white" : "hidden"}>
-            <ul class="grid grid-cols-1 divide-y">
-              <li
-                class="hover:bg-teal-500 hover:text-white"
-                onClick={() => {
-                  setDisplayContent("realEstate");
-                  revertMarkerIcon(amenitiesOnMap(), amenitiesMarkerIcon);
-                }}
-              >
-                Real Estate{" "}
-              </li>
-              <li
-                class="hover:bg-teal-500 hover:text-white"
-                onClick={() => {
-                  setDisplayContent("amenities");
-                  revertMarkerIcon(propertyOnMap(), propertyMarkerIcon);
-                }}
-              >
-                Amenities
-              </li>
-              <li
-                class="hover:bg-teal-500 hover:text-white"
-                onClick={() => {
-                  setDisplayContent("demographic");
-                }}
-              >
-                Demographic
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+          
+          </div> */}
+        {/* <div
+            class="absolute w-[15%]
+        flex flex-col rounded-lg shadow-md
+        text-black right-[10%] rounded-md z-30"
+          >
+            <div
+              class="relative h-[25%] hover:bg-indigo-600 hover:text-white bg-white"
+              onClick={() => {
+                setDisplayDropdownMenu((prev) => !prev);
+              }}
+            >
+              Select
+            </div>
+            <div class={displayDropdownMenu() ? "bg-white" : "hidden"}>
+              <ul class="grid grid-cols-1 divide-y">
+                <li
+                  class="hover:bg-teal-500 hover:text-white"
+                  onClick={() => {
+                    setDisplayContent("realEstate");
+                    revertMarkerIcon(amenitiesOnMap(), amenitiesMarkerIcon);
+                  }}
+                >
+                  Real Estate{" "}
+                </li>
+                <li
+                  class="hover:bg-teal-500 hover:text-white"
+                  onClick={() => {
+                    setDisplayContent("amenities");
+                    revertMarkerIcon(propertyOnMap(), propertyMarkerIcon);
+                  }}
+                >
+                  Amenities
+                </li>
+                <li
+                  class="hover:bg-teal-500 hover:text-white"
+                  onClick={() => {
+                    setDisplayContent("demographic");
+                  }}
+                >
+                  Demographic
+                </li>
+              </ul>
+            </div>
+          </div> */}
 
-      <div
-        class={`flex flex-col relative 
+        <div
+          class={`grid grid-row-1 divide-y relative 
       w-[100%] place-content-stretch
        ${show() ? "" : "hidden"}`}
-      >
-        <Show when={displayContent() === "realEstate"}>
-          <RealEstateInfo
-            getPropertyType={getPropertyType}
-            typeAvg={typeAvg}
-            recommendedZipcode={props.recommendedZipcode}
-            Yr1_Price={Yr1_Price}
-            Yr1_ROI={Yr1_ROI}
-            Yr3_Price={Yr3_Price}
-            Yr3_ROI={Yr3_ROI}
-            Yr5_Price={Yr5_Price}
-            Yr5_ROI={Yr5_ROI}
-            zip={props.zip}
-            setHoverType={setHoverType}
-            predictedPrice={props.predictedPrice}
-            query={props.query}
-          />
-        </Show>
+        >
+          <div>
+            <p class="text-lg">Real Estate Information</p>
+            <div
+              id="real-estate-content"
+              class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
+            >
+              <div id="historic-home-values" class="min-h-[40vh]">
+                <LineChart
+                  getComparedZip={getComparedZip}
+                  getSelectedZip={getSelectedZip}
+                  updateLineChart={updateLineChart}
+                  setUpdateLineChart={setUpdateLineChart}
+                  cleanLineChart={cleanLineChart}
+                  setCleanLineChart={setCleanLineChart}
+                ></LineChart>
+              </div>
+              <div id="sales-2023" class="relative w-full">
+                <p>
+                  Residential Property Sales(2023){" "}
+                  <span>Data Source: Zillow</span>
+                </p>
+                <RealEstateInfo
+                  getPropertyType={getPropertyType}
+                  typeAvg={typeAvg}
+                  recommendedZipcode={recommendedZipcode}
+                  Yr1_Price={Yr1_Price}
+                  Yr1_ROI={Yr1_ROI}
+                  Yr3_Price={Yr3_Price}
+                  Yr3_ROI={Yr3_ROI}
+                  Yr5_Price={Yr5_Price}
+                  Yr5_ROI={Yr5_ROI}
+                  getSelectedZip={getSelectedZip}
+                  setHoverType={setHoverType}
+                  predictedPrice={predictedPrice}
+                  query={query}
+                />
+              </div>
+              <div id="sales-2024">
+                <div
+                  class="hover:text-indigo-600 cursor-pointer w-[85%]
+                hover:border-b-2 hover:border-solid hover:border-indigo-600"
+                >
+                  Want to know the how much you gonna need to get a home in
+                  2024?
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <Show when={displayContent() === "amenities"}>
-          <AmenitiesInfo
-            amenities={amenities}
-            hoverAmenity={hoverAmenity}
-            amenitiesDetails={amenitiesDetails}
-            zip={props.zip}
-            setHoverAmenity={setHoverAmenity}
-            amenitiesOnMap={amenitiesOnMap}
-            newAmenitiesDetailedMarkerIcon={newAmenitiesDetailedMarkerIcon}
-            amenitiesMarkerIcon={amenitiesMarkerIcon}
-          />
-        </Show>
+          <div>
+            <p>Amenities Information</p>
+            <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
+              <AmenitiesInfo
+                amenities={amenities}
+                hoverAmenity={hoverAmenity}
+                amenitiesDetails={amenitiesDetails}
+                getSelectedZip={getSelectedZip}
+                setHoverAmenity={setHoverAmenity}
+                amenitiesOnMap={amenitiesOnMap}
+                newAmenitiesDetailedMarkerIcon={newAmenitiesDetailedMarkerIcon}
+                amenitiesMarkerIcon={amenitiesMarkerIcon}
+              />
+            </div>
+          </div>
 
-        <Show when={displayContent() === "demographic"}>
-          <DemographicInfo
-            gender={gender}
-            race={race}
-            zip={props.zip}
-            singleHousehold={singleHousehold}
-            familyHousehold={familyHousehold}
-            population={population}
-            density={density}
-            income={income}
-          />
-        </Show>
+          <div>
+            <p>Other Information</p>
+            <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
+              <p>Demographic</p>
+              <DemographicInfo
+                gender={gender}
+                race={race}
+                getSelectedZip={getSelectedZip}
+                singleHousehold={singleHousehold}
+                familyHousehold={familyHousehold}
+                population={population}
+                density={density}
+                income={income}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
