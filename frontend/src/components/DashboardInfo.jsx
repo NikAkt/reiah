@@ -3,9 +3,9 @@ import {
   createEffect,
   createSignal,
   onCleanup,
-  onMount,
   Show,
   Suspense,
+  For,
 } from "solid-js";
 import { DoughnutChart } from "./Charts";
 
@@ -126,6 +126,7 @@ const RealEstateInfo = ({
                 >
                   <For each={typeAvg()} fallback={<div>Loading...</div>}>
                     {(item, index) => {
+                      const avgDetails = Object.values(item)[0] || {};
                       return (
                         <div>
                           <p
@@ -137,14 +138,14 @@ const RealEstateInfo = ({
                             {Object.keys(item)}
                           </p>
                           <div>
-                            Average Price: ${Object.values(item)[0].avgPrice}
+                            Average Price: ${avgDetails.avgPrice || "N/A"}
                           </div>
                           <div>
-                            Average Size: {Object.values(item)[0].avgSqft} sqft
+                            Average Size: {avgDetails.avgSqft || "N/A"} sqft
                           </div>
                           <div>
                             Average Price Per Square Foot: $
-                            {Object.values(item)[0].avgPricePerSqft}/sqft
+                            {avgDetails.avgPricePerSqft || "N/A"}/sqft
                           </div>
                         </div>
                       );
@@ -166,22 +167,22 @@ const RealEstateInfo = ({
                   <p class="bg-teal-500 text-white w-[30%]">
                     In the next year:
                   </p>
-                  <div>1 year forecast price: {Yr1_Price()}</div>
-                  <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
+                  <div>1 year forecast price: {Yr1_Price() || "N/A"}</div>
+                  <div>1 year ROI: {(Yr1_ROI() * 100 || 0).toFixed(2)}%</div>
                 </div>
                 <div>
                   <p class="bg-teal-500 text-white w-[30%]">
                     In the next 3 year:
                   </p>{" "}
-                  <div>3 year forecast price: {Yr3_Price()}</div>
-                  <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
+                  <div>3 year forecast price: {Yr3_Price() || "N/A"}</div>
+                  <div>3 year ROI: {(Yr3_ROI() * 100 || 0).toFixed(2)}%</div>
                 </div>{" "}
                 <div>
                   <p class="bg-teal-500 text-white w-[30%]">
                     In the next 5 year:
                   </p>
-                  <div>5 year forecast price: {Yr5_Price()}</div>
-                  <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
+                  <div>5 year forecast price: {Yr5_Price() || "N/A"}</div>
+                  <div>5 year ROI: {(Yr5_ROI() * 100 || 0).toFixed(2)}%</div>
                 </div>
               </div>
               <div>
@@ -191,7 +192,7 @@ const RealEstateInfo = ({
                   <li>Bedrooms: {query()["bedrooms"]}</li>
                   <li>Bathrooms: {query()["bathrooms"]}</li>
                 </ul>
-                the average predicted cost will be is {predictedPrice()[zip]}
+                the average predicted cost will be {predictedPrice()[zip] || "N/A"}
               </div>
             </div>
           </Show>
@@ -249,7 +250,9 @@ const AmenitiesInfo = ({
                       {hoverAmenity()}
                     </p>
                     <For
-                      each={Object.entries(amenitiesDetails()[hoverAmenity()])}
+                      each={
+                        Object.entries(amenitiesDetails()[hoverAmenity()]) || []
+                      }
                     >
                       {(item) => {
                         return (
@@ -295,11 +298,11 @@ const DemographicInfo = ({
       </div>
       <div class="grid grid-cols-1 divide-y gap-2">
         <div class="grid grid-cols-1 divide-y">
-          <div>Family Household: {familyHousehold()}</div>
-          <div>Single Household: {singleHousehold()}</div>
-          <div>Population: {population()}</div>
-          <div>Population Density: {density()}</div>
-          <div>Median Household Income: {income()}</div>
+          <div>Family Household: {familyHousehold() || "N/A"}</div>
+          <div>Single Household: {singleHousehold() || "N/A"}</div>
+          <div>Population: {population() || "N/A"}</div>
+          <div>Population Density: {density() || "N/A"}</div>
+          <div>Median Household Income: {income() || "N/A"}</div>
           <div class="grid grid-cols-2">
             <div>
               <Suspense>
@@ -320,7 +323,7 @@ const DemographicInfo = ({
                 <Suspense>
                   <Show when={race()}>
                     <p class="bg-teal-500 text-white text-center">
-                      Race Diveristy
+                      Race Diversity
                     </p>
 
                     <DoughnutChart
@@ -447,11 +450,14 @@ export const DashboardInfo = (props) => {
   };
 
   const fetchDashboardInfoData = async (level, area) => {
+    console.log(`Fetching data for level: ${level}, area: ${area}`);
+  
+    // Fetch borough and neighbourhood data
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        if (data) {
-          // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
+        console.log("Borough-Neighbourhood data:", data);
+        if (data && data.length > 0) {
           const obj = data[0];
           try {
             document.getElementById(
@@ -463,67 +469,53 @@ export const DashboardInfo = (props) => {
           } catch (error) {
             console.log(error);
           }
+        } else {
+          console.log("No Borough-Neighbourhood data found.");
         }
       });
-
+  
+    // Fetch property data
     fetch(`http://localhost:8000/api/property-data?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        if (data) {
+        console.log("Property data:", data);
+        if (data && data.length > 0) {
           let type = {};
-          let price = [];
-          let price_per_sqft = [];
-          let propertysqft = [];
-          let labels = [];
           let count = 0;
-          let priceLabels = [];
-          data[area].forEach((el) => {
+          data.forEach((el) => {
             if (!type.hasOwnProperty(el.TYPE)) {
               type[el.TYPE] = 0;
             }
             count += 1;
-            priceLabels.push(count);
             type[el.TYPE] += 1;
-            price.push(el.PRICE);
-            price_per_sqft.push(el["PRICE_PER_SQFT"]);
-            propertysqft.push(el["PROPERTYSQFT"]);
-            labels.push(el["TYPE"]);
           });
-
+  
           if (typeAvg()) {
             setTypeAvg([]);
           }
           if (hoverType()) {
             setHoverType("");
           }
-
+  
           Object.keys(type).forEach((t) => {
-            const avg = generateHouseTypeDetails(t, data[area]);
-
+            const avg = generateHouseTypeDetails(t, data);
             setTypeAvg((prev) => [...prev, { [t]: avg }]);
           });
-
+  
           const datasets = {
             labels: Object.keys(type),
             datasets: [{ label: "Property Type", data: Object.values(type) }],
           };
           setPropertyType(datasets);
-
+  
           loader.importLibrary("marker").then(({ Marker, Animation }) => {
             if (propertyOnMap()) {
               propertyOnMap().forEach((marker) => marker.setMap(null));
               setPropertyOnMap([]);
             }
-
+  
             let markers = [];
-
-            const color = "#ffffff";
-            const svg = window.btoa(`
-  <svg fill="${color}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
- 
- <rect x="20" y="80" width="200" height="80" rx="20" ry="20" fill="${color}" />
-  </svg>`);
-            data[area].forEach((el) => {
+            data.forEach((el) => {
               const marker = new Marker({
                 position: { lat: el["LATITUDE"], lng: el["LONGITUDE"] },
                 level: "property-data",
@@ -554,25 +546,26 @@ export const DashboardInfo = (props) => {
             });
             setPropertyOnMap(markers);
           });
+        } else {
+          console.log("No property data found.");
         }
       });
-
+  
+    // Fetch demographic data
     fetch(`http://localhost:8000/api/demographic?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
-        if (data) {
+        console.log("Demographic data:", data);
+        if (data && data.length > 0) {
           const obj = data[0];
-
           const gender_labels = ["Male", "Female"];
           const gender_data = [obj["Male"], obj["Female"]];
-
           const gender_datasets = {
             labels: gender_labels,
             datasets: [{ label: "Gender", data: gender_data }],
           };
           setGender(gender_datasets);
-
+  
           const race_labels = [
             "white",
             "asian",
@@ -589,12 +582,12 @@ export const DashboardInfo = (props) => {
             obj["american_indian"],
             obj["other"],
           ];
-
+  
           const race_datasets = {
             labels: race_labels,
             datasets: [{ label: "Diversity", data: race_data }],
           };
-
+  
           setRace(race_datasets);
           try {
             setFamilyHousehold(obj["FamilyHousehold"]);
@@ -605,12 +598,17 @@ export const DashboardInfo = (props) => {
           } catch (error) {
             console.log(error);
           }
+        } else {
+          console.log("No demographic data found.");
         }
       });
+  
+    // Fetch amenities data
     fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
       .then((response) => response.json())
       .then((data_amenities) => {
-        if (data_amenities) {
+        console.log("Amenities data:", data_amenities);
+        if (data_amenities && data_amenities.length > 0) {
           if (hoverAmenity()) {
             setHoverAmenity(null);
           }
@@ -619,23 +617,17 @@ export const DashboardInfo = (props) => {
               amenitiesOnMap().forEach((marker) => marker.setMap(null));
               setAmenitiesOnMap([]);
             }
-
+  
             let amenitiesObj = {};
-
-            data_amenities[area].forEach((el) => {
+  
+            data_amenities.forEach((el) => {
               if (!amenitiesObj.hasOwnProperty(el["FACILITY_T"])) {
                 amenitiesObj[el["FACILITY_T"]] = {};
               }
-              if (
-                !amenitiesObj[el["FACILITY_T"]].hasOwnProperty(
-                  el["FACILITY_DOMAIN_NAME"]
-                )
-              ) {
+              if (!amenitiesObj[el["FACILITY_T"]].hasOwnProperty(el["FACILITY_DOMAIN_NAME"])) {
                 amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]] = [];
               }
-              amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]].push(
-                el["NAME"]
-              );
+              amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]].push(el["NAME"]);
               const marker = new Marker({
                 position: { lat: el["LAT"], lng: el["LNG"] },
                 title: el["NAME"],
@@ -648,31 +640,34 @@ export const DashboardInfo = (props) => {
               });
               setAmenitiesOnMap((prev) => [...prev, marker]);
             });
-
+  
             setAmenitiesDetails(amenitiesObj);
-
+  
             const labels = Object.keys(amenitiesObj);
             let data = [];
             for (let key of labels) {
               const obj = amenitiesObj[key];
               let value = 0;
-
+  
               for (let desc of Object.keys(obj)) {
                 value += obj[desc].length;
               }
-
+  
               data.push(value);
             }
             const datasets = {
               labels,
               datasets: [{ label: "Amenities DoughnutChart", data }],
             };
-
+  
             setAmenities(datasets);
           });
+        } else {
+          console.log("No amenities data found.");
         }
       });
   };
+  
 
   createEffect(() => {
     if (props.recommendedZipcode().includes(parseInt(props.zip))) {
@@ -680,7 +675,7 @@ export const DashboardInfo = (props) => {
         .then((response) => response.json())
         .then((data) => {
           if (data) {
-            const info = data[0];
+            const info = data[0] || {};
             setYr1Price(info["1Yr_forecast_price"]);
             setYr1ROI(info["1Yr_ROI"]);
 

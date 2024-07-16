@@ -679,18 +679,36 @@ func loadPropertiesFromDB() ([]Property, error) {
 }
 
 func GetPropertyData(c echo.Context) error {
-	var params GetPropertyQueryParams
-	if err := c.Bind(&params); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	zipcode := c.QueryParam("zipcode")
+	if zipcode == "" {
+		return c.JSON(http.StatusBadRequest, "zipcode is required")
 	}
 
-	properties, err := loadPropertiesFromDB()
+	var properties []Property
+	query := `
+		SELECT price, beds, type, bath, property_sqft, latitude, longitude, zipcode, borough, neighborhood, price_per_sqft
+		FROM properties
+		WHERE zipcode = $1
+	`
+	rows, err := db.Query(context.Background(), query, zipcode)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var p Property
+		if err := rows.Scan(&p.Price, &p.Beds, &p.Type, &p.Bath, &p.PropertySqft, &p.Latitude, &p.Longitude, &p.Zipcode, &p.Borough, &p.Neighborhood, &p.PricePerSqft); err != nil {
+			return err
+		}
+		properties = append(properties, p)
 	}
 
-	filtered := filterPropertyGetRequest(properties, &params)
-	return c.JSON(http.StatusOK, filtered)
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, properties)
 }
 
 // ---------------------------------------
