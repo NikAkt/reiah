@@ -72,6 +72,10 @@ export const Map = (props) => {
     zipcode_geojson,
   };
 
+  createEffect(() => {
+    console.log(recommendedZipcode());
+  });
+
   return (
     <MapView>
       <div class="h-screen flex relative">

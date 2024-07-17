@@ -69,6 +69,7 @@ const RecommendZipcode = ({
     for (let [key, value] of Object.entries(formValues)) {
       query += `${key}=${value}&`;
     }
+    console.log(formValues);
     fetch(query)
       .then((response) => response.json())
       .then((data) => {

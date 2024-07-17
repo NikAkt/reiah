@@ -7,6 +7,7 @@ import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
 import AmenitiesInfo from "./AmenitiesInfo";
 import RealEstateInfo from "./RealEstateInfo";
 import DemographicInfo from "./DemographicInfo";
+import MarkerLegend from "./MarkerLegend";
 
 function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
   if (markerArr) {
@@ -191,157 +192,168 @@ export const DashboardInfo = ({
   return (
     <div id={`dashboardDiv-${[getSelectedZip()]}`}>
       <div
-        class="absolute flex flex-col w-full top-[3vh]
-      dark:text-white"
-        id="header-dashboard"
+        class=" flex top-[4vh]
+      dark:text-white w-[100%] py-[2px] place-content-between
+    
+      "
       >
-        <h1
-          class="font-medium w-[100%] place-content-between"
-          id="dashboard_top"
-        >
-          {`Information on ZIPCODE ${getSelectedZip()}`},
-          <span>{neighbourhood()}</span>,<span>{borough()}</span>
-        </h1>
+        <div id="header-dashboard">
+          <h1
+            class="font-medium w-[100%] place-content-between"
+            id="dashboard_top"
+          >
+            {`Information on ZIPCODE ${getSelectedZip()}`},
+            <span>{neighbourhood()}</span>,<span>{borough()}</span>
+          </h1>
 
-        {/* input & dropdown */}
-        <div class="">
-          <Show when={getSelectedZip()}>
-            <div
-              class="flex
+          {/* input & dropdown */}
+          <div>
+            <Show when={getSelectedZip()}>
+              <div
+                class="flex
             w-[50%] gap-2 my-2 min-h-[3vh]
             "
-            >
-              <div id="search-box-dropdown" class="z-40 flex flex-col">
-                {/* search box */}
-                <div
-                  class="rounded-t-lg text-center
+              >
+                <div id="search-box-dropdown" class="z-40 flex flex-col">
+                  {/* search box */}
+                  <div
+                    class="rounded-t-lg text-center
                   relative bg-[#ffffff] flex gap-2
                   max-h-[3vh] px-2
                   items-center justify-center"
-                >
-                  {/* button svg */}
-                  <Show
-                    when={showDropDown() === false}
-                    fallback={
+                  >
+                    {/* button svg */}
+                    <Show
+                      when={showDropDown() === false}
+                      fallback={
+                        <button
+                          onClick={() => setShowDropDown(false)}
+                          class="hover:bg-teal-500"
+                        >
+                          <img src={arrow_up} class="w-[15px] h-[15px]" />
+                        </button>
+                      }
+                    >
                       <button
-                        onClick={() => setShowDropDown(false)}
+                        onClick={() => setShowDropDown(true)}
                         class="hover:bg-teal-500"
                       >
-                        <img src={arrow_up} class="w-[15px] h-[15px]" />
+                        <img src={arrow_down} class="w-[15px] h-[15px]" />
                       </button>
-                    }
-                  >
-                    <button
-                      onClick={() => setShowDropDown(true)}
-                      class="hover:bg-teal-500"
-                    >
-                      <img src={arrow_down} class="w-[15px] h-[15px]" />
-                    </button>
-                  </Show>
+                    </Show>
 
-                  {/* input box */}
-                  <input
-                    type="text"
-                    placeholder={`Compare To? ${getComparedZip()}`}
-                    id="compareSearchBar"
-                    onKeyUp={(event) => {
-                      if (event.key === "Enter") {
-                        if (uniqueZipcode.includes(event.target.value)) {
-                          setComparedZip((prev) => [
-                            ...new Set([...prev, event.target.value * 1]),
-                          ]);
+                    {/* input box */}
+                    <input
+                      type="text"
+                      placeholder={`Compare To? ${getComparedZip()}`}
+                      id="compareSearchBar"
+                      onKeyUp={(event) => {
+                        if (event.key === "Enter") {
+                          if (uniqueZipcode.includes(event.target.value)) {
+                            setComparedZip((prev) => [
+                              ...new Set([...prev, event.target.value * 1]),
+                            ]);
 
-                          if (
-                            !document.getElementById(
-                              `compareCheckbox-${event.target.value}`
-                            ).checked
-                          ) {
-                            document.getElementById(
-                              `compareCheckbox-${event.target.value}`
-                            ).checked = true;
+                            if (
+                              !document.getElementById(
+                                `compareCheckbox-${event.target.value}`
+                              ).checked
+                            ) {
+                              document.getElementById(
+                                `compareCheckbox-${event.target.value}`
+                              ).checked = true;
+                            }
+                            event.target.value = "";
+                          } else {
+                            alert("The zipcode you provided is not included.");
                           }
-                          event.target.value = "";
-                        } else {
-                          alert("The zipcode you provided is not included.");
                         }
-                      }
-                    }}
-                  />
-                </div>
+                      }}
+                    />
+                  </div>
 
-                {/* dropdown */}
+                  {/* dropdown */}
 
-                <div
-                  class={`overflow-y-auto bg-[#ffffff] max-h-[20vh] w-full
+                  <div
+                    class={`overflow-y-auto bg-[#ffffff] max-h-[20vh] w-full
                      shadow-md
                    z-40 ${showDropDown() ? "block" : "hidden"}`}
-                >
-                  <div>
-                    {uniqueZipcode.map((zip) => (
-                      <div key={zip} class="p-2">
-                        <input
-                          type="checkbox"
-                          id={`compareCheckbox-${zip}`}
-                          value={zip}
-                          class="accent-teal-500 compareCheckbox"
-                          onClick={(event) => {
-                            if (event.target.checked) {
-                              setComparedZip((prev) => [
-                                ...prev,
-                                event.target.value * 1,
-                              ]);
-                            } else {
-                              setComparedZip((prev) =>
-                                prev.filter(
-                                  (el) => el != event.target.value * 1
-                                )
-                              );
-                            }
-                          }}
-                        />
+                  >
+                    <div>
+                      {uniqueZipcode.map((zip) => (
+                        <div key={zip} class="p-2">
+                          <input
+                            type="checkbox"
+                            id={`compareCheckbox-${zip}`}
+                            value={zip}
+                            class="accent-teal-500 compareCheckbox"
+                            onClick={(event) => {
+                              if (event.target.checked) {
+                                setComparedZip((prev) => [
+                                  ...prev,
+                                  event.target.value * 1,
+                                ]);
+                              } else {
+                                setComparedZip((prev) =>
+                                  prev.filter(
+                                    (el) => el != event.target.value * 1
+                                  )
+                                );
+                              }
+                            }}
+                          />
 
-                        <label htmlFor={`compareCheckbox-${zip}`} class="ml-2">
-                          {zip}
-                        </label>
-                      </div>
-                    ))}
+                          <label
+                            htmlFor={`compareCheckbox-${zip}`}
+                            class="ml-2"
+                          >
+                            {zip}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* submit button and clean button */}
-              <div class="flex max-h-[3vh] gap-[2px]">
-                <input
-                  type="Submit"
-                  class="relative ml-[2%] rounded-lg bg-black text-white cursor-pointer px-2"
-                  onClick={handleSubmit}
-                />
-                <button
-                  class={
-                    clean()
-                      ? "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-pointe r"
-                      : "relative ml-[2%] bg-black px-[2%] rounded-lg text-center text-white cursor-not-allowed opacity-50"
-                  }
-                  onClick={() => {
-                    setCreateMoreDashboardInfo(false);
-                    for (let zip of getComparedZip()) {
-                      const checkbox = document.getElementById(
-                        `compareCheckbox-${zip}`
-                      );
-                      checkbox.checked = false;
+                {/* submit button and clean button */}
+                <div class="flex max-h-[3vh] gap-[2px]">
+                  <input
+                    type="Submit"
+                    class="relative ml-[2%] rounded-lg bg-black text-white cursor-pointer px-2"
+                    onClick={handleSubmit}
+                  />
+                  <button
+                    class={
+                      clean()
+                        ? "relative ml-[2%] bg-black px-2 rounded-lg text-center text-white cursor-pointe r"
+                        : "relative ml-[2%] bg-black px-2 rounded-lg text-center text-white cursor-not-allowed opacity-50"
                     }
-                    setComparedZip([]);
-                    setCleanLineChart(true);
-                    setUpdateInfo(false);
-                  }}
-                >
-                  Clear
-                </button>
+                    onClick={() => {
+                      setCreateMoreDashboardInfo(false);
+                      for (let zip of getComparedZip()) {
+                        const checkbox = document.getElementById(
+                          `compareCheckbox-${zip}`
+                        );
+                        checkbox.checked = false;
+                      }
+                      setComparedZip([]);
+                      setUpdateLineChart(false);
+                      setCleanLineChart(true);
+                      setUpdateInfo(false);
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
-            </div>
-          </Show>
+            </Show>
+          </div>
+        </div>
+        <div class="right-[4vw]">
+          <MarkerLegend />
         </div>
       </div>
+
       <div class="w-[95%] h-[1px] mt-[4vh] bg-[#E4E4E7]" id="main">
         {/* <div
           class="
