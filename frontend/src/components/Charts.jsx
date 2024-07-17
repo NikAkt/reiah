@@ -123,7 +123,7 @@ async function fetchMultipleHistoricPrices(zipArray) {
     }
     try {
       const data = await response.json();
-      if (data && data.length > 0) {
+      if (data) {
         return data;
       } else {
         return null;
@@ -135,15 +135,14 @@ async function fetchMultipleHistoricPrices(zipArray) {
 }
 
 async function fetchHistoricPrices(zip) {
-  fetch(`http://localhost:8000/api/historic-prices?zipcode=${zip}`)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data) {
-        return data;
-      } else {
-        return null;
-      }
-    });
+  const response = await fetch(
+    `http://localhost:8000/api/historic-prices?zipcode=${zip}`
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const data = await response.json();
+  return data;
 }
 
 const LineChart = ({
@@ -202,7 +201,12 @@ const LineChart = ({
             fill: false,
             borderColor: colors[i % 7],
           };
-          chartInstance.data.datasets.push(obj);
+          const existingZip = [
+            ...chartInstance.data.datasets.map((el) => el["label"]),
+          ];
+          if (!existingZip.includes(obj["label"])) {
+            chartInstance.data.datasets.push(obj);
+          }
         }
         chartInstance.update();
         setUpdateLineChart(false);
@@ -223,7 +227,6 @@ const LineChart = ({
     if (!historicPrices.loading) {
       try {
         let newData = historicPrices();
-        console.log(historicPrices());
         let transformedData = Object.values(newData)[0];
 
         if (transformedData) {
