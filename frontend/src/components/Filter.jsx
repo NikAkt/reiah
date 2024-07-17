@@ -33,7 +33,7 @@ const Filter = ({
   const [propertySqft, setPropertySqft] = createSignal([0, 0]);
   const [propertyPrice, setPropertyPrice] = createSignal([0, 0]);
   const [filteredZipCodesLocal, setFilteredZipCodesLocal] = createSignal([]);
-  const [realEstateData, setRealEstateData] = createSignal({});
+  const [realEstateData, setRealEstateData] = createSignal([]);
 
   const unique_borough = [
     "Bronx",
@@ -55,17 +55,32 @@ const Filter = ({
       "http://localhost:8000/api/borough-neighbourhood"
     );
     const data = await response.json();
+    console.log("Fetched borough data:", data); // Log the fetched data
     setBoroughData(data);
   };
 
   const fetchRealEstateData = async (filters) => {
     const query = new URLSearchParams(filters).toString();
-    const response = await fetch(
-      `http://localhost:8000/api/property-data?${query}`
-    );
-    const data = await response.json();
-    setRealEstateData(data);
-    applyFilters(); // Apply filters after fetching data
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/property-data?${query}`
+      );
+      const data = await response.json();
+      console.log("Fetched real estate data:", data); // Log the fetched data
+
+      // Handle null response
+      if (data === null) {
+        setRealEstateData([]);
+      } else {
+        setRealEstateData(data);
+      }
+
+      applyFilters(); // Apply filters after fetching data
+    } catch (error) {
+      console.error("Error fetching real estate data:", error);
+      setRealEstateData([]);
+      applyFilters(); // Still apply filters to handle empty data gracefully
+    }
   };
 
   const fetchAmenities = debounce(async (neighborhoods) => {
@@ -75,7 +90,14 @@ const Filter = ({
         `http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`
       );
       const data = await response.json();
-      setFilteredAmenities(data);
+      console.log("Fetched amenities data:", data); // Log fetched data
+      setFilteredAmenities(
+        data.reduce((acc, amenity) => {
+          if (!acc[amenity.ZIPCODE]) acc[amenity.ZIPCODE] = [];
+          acc[amenity.ZIPCODE].push(amenity);
+          return acc;
+        }, {})
+      );
     } else {
       setFilteredAmenities({});
     }
@@ -90,6 +112,7 @@ const Filter = ({
         newBoroughs.add(borough);
       }
       setSelectedNeighborhoods(new Set());
+      fetchBoroughData(); // Fetch borough data when borough changes
       return newBoroughs;
     });
     handleFilterChange();
@@ -172,6 +195,7 @@ const Filter = ({
   const applyFilters = () => {
     console.log("Applying filters...");
 
+    // Fetch initial zipcodes based on selected boroughs and neighborhoods
     let zipCodes = getZipcodes(
       [...selectedBoroughs()],
       [...selectedNeighborhoods()]
@@ -179,50 +203,90 @@ const Filter = ({
 
     console.log("Initial zipcodes:", zipCodes);
 
-    zipCodes = zipCodes.filter((zip) => {
-      const properties = realEstateData()[zip] || [];
-      console.log(`Properties in zip ${zip}:`, properties);
+    if (zipCodes.length === 0) {
+      setFilteredZipCodesLocal([]);
+      setFilteredZipCodes([]);
+      console.log("No zipcodes to filter.");
+      return;
+    }
 
-      const matches = properties.some((property) => {
-        const typeMatch = houseType() === "" || houseType() === property.TYPE;
-        const bedsMatch = beds() > 0 ? property.BEDS >= beds() : true;
-        const bathsMatch = baths() > 0 ? property.BATH >= baths() : true;
-        const sqftMinMatch =
-          propertySqft()[0] > 0
-            ? property.PROPERTYSQFT >= propertySqft()[0]
-            : true;
-        const sqftMaxMatch =
-          propertySqft()[1] > 0
-            ? property.PROPERTYSQFT <= propertySqft()[1]
-            : true;
-        const priceMinMatch =
-          propertyPrice()[0] > 0 ? property.PRICE >= propertyPrice()[0] : true;
-        const priceMaxMatch =
-          propertyPrice()[1] > 0 ? property.PRICE <= propertyPrice()[1] : true;
+    const hasPropertyFilters =
+      houseType() !== "" ||
+      beds() > 0 ||
+      baths() > 0 ||
+      propertySqft()[0] > 0 ||
+      propertySqft()[1] > 0 ||
+      propertyPrice()[0] > 0 ||
+      propertyPrice()[1] > 0;
 
-        const result =
-          typeMatch &&
-          bedsMatch &&
-          bathsMatch &&
-          sqftMinMatch &&
-          sqftMaxMatch &&
-          priceMinMatch &&
-          priceMaxMatch;
-        console.log(
-          `Property ${property.TYPE} in zip ${zip}: typeMatch=${typeMatch}, bedsMatch=${bedsMatch}, bathsMatch=${bathsMatch}, sqftMinMatch=${sqftMinMatch}, sqftMaxMatch=${sqftMaxMatch}, priceMinMatch=${priceMinMatch}, priceMaxMatch=${priceMaxMatch} => ${result}`
+    if (hasPropertyFilters) {
+      zipCodes = zipCodes.filter((zip) => {
+        const properties = realEstateData().filter(
+          (property) => property.ZIPCODE.toString() === zip.toString()
         );
-        return result;
+        console.log(`Properties in zip ${zip}:`, properties);
+
+        if (properties.length === 0) return false; // If no properties in the zip, skip it
+
+        const matches = properties.some((property) => {
+          // Ensure property attributes are valid numbers before comparison
+          const validPrice = property.PRICE != null && !isNaN(property.PRICE);
+          const validBeds = property.BEDS != null && !isNaN(property.BEDS);
+          const validBaths = property.BATH != null && !isNaN(property.BATH);
+          const validSqft =
+            property.PROPERTYSQFT != null && !isNaN(property.PROPERTYSQFT);
+
+          const typeMatch = houseType() === "" || houseType() === property.TYPE;
+          const bedsMatch =
+            beds() > 0 ? validBeds && property.BEDS >= beds() : true;
+          const bathsMatch =
+            baths() > 0 ? validBaths && property.BATH >= baths() : true;
+          const sqftMinMatch =
+            propertySqft()[0] > 0
+              ? validSqft && property.PROPERTYSQFT >= propertySqft()[0]
+              : true;
+          const sqftMaxMatch =
+            propertySqft()[1] > 0
+              ? validSqft && property.PROPERTYSQFT <= propertySqft()[1]
+              : true;
+          const priceMinMatch =
+            propertyPrice()[0] > 0
+              ? validPrice && property.PRICE >= propertyPrice()[0]
+              : true;
+          const priceMaxMatch =
+            propertyPrice()[1] > 0
+              ? validPrice && property.PRICE <= propertyPrice()[1]
+              : true;
+
+          return (
+            typeMatch &&
+            bedsMatch &&
+            bathsMatch &&
+            sqftMinMatch &&
+            sqftMaxMatch &&
+            priceMinMatch &&
+            priceMaxMatch
+          );
+        });
+
+        console.log(`Zip ${zip} matches: ${matches}`);
+        return matches;
       });
 
-      console.log(`Zip ${zip} matches: ${matches}`);
-      return matches;
-    });
+      if (zipCodes.length === 0) {
+        console.log("No properties match the filter criteria.");
+      }
+    }
 
     console.log("Zipcodes after type/attribute filtering:", zipCodes);
 
-    if (selectedAmenities().size > 0) {
+    const hasAmenityFilters = selectedAmenities().size > 0;
+
+    if (hasAmenityFilters) {
       zipCodes = zipCodes.filter((zip) => {
-        const amenities = filteredAmenities()[zip] || [];
+        const amenities = Array.isArray(filteredAmenities()[zip])
+          ? filteredAmenities()[zip]
+          : [];
         const matches = [...selectedAmenities()].every((amenity) =>
           amenities.some((a) => a.FACILITY_DOMAIN_NAME === amenity)
         );
@@ -265,27 +329,24 @@ const Filter = ({
     fetchRealEstateData({});
   });
 
-  const uniqueAmenities = () => {
-    const amenitiesSet = new Set();
-    Object.keys(filteredAmenities()).forEach((zipCode) => {
-      filteredAmenities()[zipCode].forEach((item) => {
-        amenitiesSet.add(`${item.FACILITY_T}|${item.FACILITY_DOMAIN_NAME}`);
+  const categorizedAmenities = () => {
+    const categories = {};
+    filteredZipCodesLocal().forEach((zipCode) => {
+      const amenities = Array.isArray(filteredAmenities()[zipCode])
+        ? filteredAmenities()[zipCode]
+        : [];
+      amenities.forEach((amenity) => {
+        if (!categories[amenity.FACILITY_T]) {
+          categories[amenity.FACILITY_T] = new Set();
+        }
+        categories[amenity.FACILITY_T].add(amenity.FACILITY_DOMAIN_NAME);
       });
     });
-    return Array.from(amenitiesSet);
-  };
-
-  const categorizedAmenities = () => {
-    const amenities = uniqueAmenities();
-    const categorized = amenities.reduce((acc, item) => {
-      const [category, name] = item.split("|");
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(name);
-      return acc;
-    }, {});
-    return categorized;
+    const result = {};
+    for (const [key, value] of Object.entries(categories)) {
+      result[key] = Array.from(value);
+    }
+    return result;
   };
 
   const clearAllFilters = () => {

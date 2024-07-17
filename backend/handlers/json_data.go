@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,8 +10,25 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/echo/v4"
 )
+
+var db *pgxpool.Pool
+
+func InitDB() {
+	var err error
+	connString := os.Getenv("DATABASE_URL")
+	config, err := pgxpool.ParseConfig(connString)
+	if err != nil {
+		log.Fatalf("Unable to parse database URL: %v\n", err)
+	}
+
+	db, err = pgxpool.ConnectConfig(context.Background(), config)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+}
 
 // Amenity struct definition
 type Amenity struct {
@@ -18,7 +36,7 @@ type Amenity struct {
 	Name               string  `json:"NAME"`
 	FacilityType       string  `json:"FACILITY_T"`
 	FacilityDesc       string  `json:"FACILITY_DOMAIN_NAME"`
-	Zipcode            string  `json:"-"`
+	Zipcode            string  `json:"ZIPCODE"`
 	Longitude          float64 `json:"LNG"`
 	Latitude           float64 `json:"LAT"`
 	DistanceToFacility float64 `json:"DISTANCE_TO_FACILITY"`
@@ -27,56 +45,73 @@ type Amenity struct {
 // GetAmenityQueryParams struct definition
 type GetAmenityQueryParams struct {
 	Borough      string `query:"borough"`
-	Zipcode      int    `query:"zipcode"`
+	Zipcode      string `query:"zipcode"`
 	FacilityType string `query:"facilitytype"`
 	FacilityDesc string `query:"facilitydesc"`
 	Name         string `query:"name"`
 }
 
 // filterAmenitiesGetRequest function
-func filterAmenitiesGetRequest(a map[string][]Amenity, f *GetAmenityQueryParams) []Amenity {
+func filterAmenitiesGetRequest(a []Amenity, f *GetAmenityQueryParams) []Amenity {
 	var filtered []Amenity
-	for zipcode, amenities := range a {
-		for _, amenity := range amenities {
-			// Populate Zipcode field for filtering
-			amenity.Zipcode = zipcode
-
-			if f.Borough != "" && amenity.Borough != f.Borough {
-				continue
-			}
-			if f.Zipcode != 0 && amenity.Zipcode != strconv.Itoa(f.Zipcode) {
-				continue
-			}
-			if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
-				continue
-			}
-			if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
-				continue
-			}
-			if f.Name != "" && amenity.Name != f.Name {
-				continue
-			}
-			filtered = append(filtered, amenity)
+	for _, amenity := range a {
+		if f.Borough != "" && amenity.Borough != f.Borough {
+			continue
 		}
+		if f.Zipcode != "" && amenity.Zipcode != f.Zipcode {
+			continue
+		}
+		if f.FacilityType != "" && amenity.FacilityType != f.FacilityType {
+			continue
+		}
+		if f.FacilityDesc != "" && amenity.FacilityDesc != f.FacilityDesc {
+			continue
+		}
+		if f.Name != "" && amenity.Name != f.Name {
+			continue
+		}
+		filtered = append(filtered, amenity)
 	}
 	return filtered
 }
 
-func GetAmenitiesData(c echo.Context) error {
-	filterFunc := func(a map[string][]Amenity, f *GetAmenityQueryParams) map[string][]Amenity {
-		filtered := filterAmenitiesGetRequest(a, f)
-		filteredMap := make(map[string][]Amenity)
-		for _, amenity := range filtered {
-			zipcode := amenity.Zipcode
-			filteredMap[zipcode] = append(filteredMap[zipcode], amenity)
-		}
-		return filteredMap
+func loadAmenitiesFromDB() ([]Amenity, error) {
+	rows, err := db.Query(context.Background(), "SELECT borough, name, facility_type, facility_desc, zipcode, longitude, latitude, distance_to_facility FROM amenities")
+	if err != nil {
+		return nil, err
 	}
-	return GenericGetDataHandler[GetAmenityQueryParams, map[string][]Amenity](c, "public/data/cleaned_amenities.json", filterFunc)
+	defer rows.Close()
+
+	var amenities []Amenity
+	for rows.Next() {
+		var a Amenity
+		err = rows.Scan(&a.Borough, &a.Name, &a.FacilityType, &a.FacilityDesc, &a.Zipcode, &a.Longitude, &a.Latitude, &a.DistanceToFacility)
+		if err != nil {
+			return nil, err
+		}
+		amenities = append(amenities, a)
+	}
+
+	return amenities, nil
 }
 
-// ---------------------------------------
-type Businesses struct {
+func GetAmenitiesData(c echo.Context) error {
+	var params GetAmenityQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	amenities, err := loadAmenitiesFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	filtered := filterAmenitiesGetRequest(amenities, &params)
+	return c.JSON(http.StatusOK, filtered)
+}
+
+// Business struct definition
+type Business struct {
 	TaxiZone     int     `json:"taxi_zone"`
 	BusinessType string  `json:"business_type"`
 	Zipcode      int     `json:"Zip Code"`
@@ -85,14 +120,15 @@ type Businesses struct {
 	Counts       int     `json:"Counts"`
 }
 
+// GetBusinessQueryParams struct definition
 type GetBusinessQueryParams struct {
 	TaxiZone     int    `query:"taxizone"`
 	BusinessType string `query:"businesstype"`
 	Zipcode      int    `query:"zipcode"`
 }
 
-func filterBusinessGetRequest(a []Businesses, f *GetBusinessQueryParams) []Businesses {
-	var filtered []Businesses
+func filterBusinessGetRequest(a []Business, f *GetBusinessQueryParams) []Business {
+	var filtered []Business
 	for _, business := range a {
 		if f.TaxiZone != 0 && business.TaxiZone != f.TaxiZone {
 			continue
@@ -108,11 +144,42 @@ func filterBusinessGetRequest(a []Businesses, f *GetBusinessQueryParams) []Busin
 	return filtered
 }
 
-func GetBusinessData(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/cleaned_business_data.json", filterBusinessGetRequest)
+func loadBusinessesFromDB() ([]Business, error) {
+	rows, err := db.Query(context.Background(), "SELECT taxi_zone, business_type, zipcode, longitude, latitude, counts FROM businesses")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var businesses []Business
+	for rows.Next() {
+		var b Business
+		err = rows.Scan(&b.TaxiZone, &b.BusinessType, &b.Zipcode, &b.Longitude, &b.Latitude, &b.Counts)
+		if err != nil {
+			return nil, err
+		}
+		businesses = append(businesses, b)
+	}
+
+	return businesses, nil
 }
 
-// ---------------------------------------
+func GetBusinessData(c echo.Context) error {
+	var params GetBusinessQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	businesses, err := loadBusinessesFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	filtered := filterBusinessGetRequest(businesses, &params)
+	return c.JSON(http.StatusOK, filtered)
+}
+
+// Prices struct definition
 type Prices struct {
 	Zipcode         json.Number `json:"zipcode"`
 	HomeValue       float64     `json:"avg_home_value"`
@@ -120,6 +187,7 @@ type Prices struct {
 	MedianAge       float64     `json:"median_age"`
 }
 
+// GetPricesQueryParams struct definition
 type GetPricesQueryParams struct {
 	Zipcodes     []int   `query:"zipcode"`
 	MinHomeValue float64 `query:"min_homevalue"`
@@ -171,67 +239,106 @@ func filterPricesGetRequest(a []Prices, f *GetPricesQueryParams) []Prices {
 	return filtered
 }
 
-func GetRealEstatePriceData(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/real_estate_price_data.json", filterPricesGetRequest)
+func loadPricesFromDB() ([]Prices, error) {
+	rows, err := db.Query(context.Background(), "SELECT zipcode, avg_home_value, median_household_income, median_age FROM prices")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var prices []Prices
+	for rows.Next() {
+		var p Prices
+		err = rows.Scan(&p.Zipcode, &p.HomeValue, &p.HouseholdIncome, &p.MedianAge)
+		if err != nil {
+			return nil, err
+		}
+		prices = append(prices, p)
+	}
+
+	return prices, nil
 }
 
-// ---------------------------------------
+func GetRealEstatePriceData(c echo.Context) error {
+	var params GetPricesQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	prices, err := loadPricesFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	filtered := filterPricesGetRequest(prices, &params)
+	return c.JSON(http.StatusOK, filtered)
+}
+
+// HistoricPrices struct definition
 type HistoricPrices struct {
 	Zipcode string                 `json:"zipcode"`
 	History map[string]json.Number `json:"historicprices"`
 }
 
+// NeighbourhoodMapping struct definition
 type NeighbourhoodMapping struct {
 	Neighbourhood string `json:"neighbourhood"`
 	Borough       string `json:"borough"`
 	Zipcodes      []int  `json:"zipcodes"`
 }
 
+// GetHistoricPricesQueryParam struct definition
 type GetHistoricPricesQueryParam struct {
-	Zipcodes         []string `query:"zipcode"` // Ive changed this to a slice to accept multiple zipcodes
+	Zipcodes         []string `query:"zipcode"`
 	Date             string   `query:"date"`
 	AggregateByMonth bool     `query:"aggregateByMonth"`
 	Neighbourhood    string   `query:"neighbourhood"`
 	Borough          string   `query:"borough"`
 }
 
-func loadNeighborhoodMappings(filePath string) ([]NeighbourhoodMapping, error) {
-	file, err := os.Open(filePath)
+func loadNeighborhoodMappings() ([]NeighbourhoodMapping, error) {
+	rows, err := db.Query(context.Background(), "SELECT neighbourhood, borough, zipcodes FROM neighbourhood_mappings")
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer rows.Close()
 
 	var mappings []NeighbourhoodMapping
-	if err := json.NewDecoder(file).Decode(&mappings); err != nil {
-		return nil, err
+	for rows.Next() {
+		var m NeighbourhoodMapping
+		var zipcodes string
+		err = rows.Scan(&m.Neighbourhood, &m.Borough, &zipcodes)
+		if err != nil {
+			return nil, err
+		}
+		json.Unmarshal([]byte(zipcodes), &m.Zipcodes)
+		mappings = append(mappings, m)
 	}
+
 	return mappings, nil
 }
 
 func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHistoricPricesQueryParam, mappings []NeighbourhoodMapping) map[string]map[string]float64 {
 	filtered := make(map[string]map[string]float64)
-	zipcodeSet := make(map[string]struct{}) // Map to store and look for zipcodes
+	zipcodeSet := make(map[string]struct{})
 	var aggregatedZipcodes []string
 
-	// This loop populates the map with the zipcodes from the query
 	for _, z := range f.Zipcodes {
 		zipcodeSet[z] = struct{}{}
 	}
 
-	// zipcode set with neighborhood zipcodes if there are
 	for _, mapping := range mappings {
 		if f.Neighbourhood != "" && f.Neighbourhood == mapping.Neighbourhood {
 			for _, z := range mapping.Zipcodes {
 				zipcodeStr := fmt.Sprintf("%d", z)
-				zipcodeSet[zipcodeStr] = struct{}{} // int to string
+				zipcodeSet[zipcodeStr] = struct{}{}
 				aggregatedZipcodes = append(aggregatedZipcodes, zipcodeStr)
 			}
 		}
 		if f.Borough != "" && f.Borough == mapping.Borough {
 			for _, z := range mapping.Zipcodes {
 				zipcodeStr := fmt.Sprintf("%d", z)
-				zipcodeSet[zipcodeStr] = struct{}{} // int to string
+				zipcodeSet[zipcodeStr] = struct{}{}
 				aggregatedZipcodes = append(aggregatedZipcodes, zipcodeStr)
 			}
 		}
@@ -241,7 +348,6 @@ func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHi
 		monthlyTotals := make(map[string]float64)
 		monthlyCounts := make(map[string]int)
 
-		// loop data and apply filters
 		for zipcode, history := range data {
 			if len(zipcodeSet) > 0 {
 				if _, ok := zipcodeSet[zipcode]; !ok {
@@ -249,58 +355,89 @@ func filterHistoricPricesGetRequest(data map[string]map[string]float64, f *GetHi
 				}
 			}
 
-			// loop for aggregating by month
 			for dateStr, price := range history {
-				month := dateStr[:7] //  slicing the month part from the date "2023-04"
+				month := dateStr[:7]
 				monthlyTotals[month] += price
 				monthlyCounts[month]++
 			}
 		}
 
-		// calculates the averages
 		averages := make(map[string]float64)
 		for month, total := range monthlyTotals {
 			averages[month] = total / float64(monthlyCounts[month])
 		}
 
-		// aggregated zipcodes as the key
 		aggregatedKey := "aggregated: " + strings.Join(aggregatedZipcodes, ",")
 		filtered[aggregatedKey] = averages
 	} else {
-		// If AggregateByMonth is not in the query loop data and apply filters
 		for zipcode, history := range data {
 			if len(zipcodeSet) > 0 {
 				if _, ok := zipcodeSet[zipcode]; !ok {
 					continue
 				}
 			}
-			// No date filter, include all data
 			filtered[zipcode] = history
 		}
 	}
 	return filtered
 }
 
+func loadHistoricPricesFromDB() (map[string]map[string]float64, error) {
+	rows, err := db.Query(context.Background(), "SELECT zipcode, history FROM historic_prices")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	data := make(map[string]map[string]float64)
+	for rows.Next() {
+		var zipcode string
+		var historyJSON string
+		err = rows.Scan(&zipcode, &historyJSON)
+		if err != nil {
+			return nil, err
+		}
+
+		history := make(map[string]float64)
+		err = json.Unmarshal([]byte(historyJSON), &history)
+		if err != nil {
+			return nil, err
+		}
+
+		data[zipcode] = history
+	}
+
+	return data, nil
+}
+
 func GetHistoricRealEstatePriceData(c echo.Context) error {
-	mappings, err := loadNeighborhoodMappings("public/data/borough_neighbourhood.json")
+	var params GetHistoricPricesQueryParam
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	mappings, err := loadNeighborhoodMappings()
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Could not load neighborhood mappings: "+err.Error())
 	}
 
-	filter := func(data map[string]map[string]float64, f *GetHistoricPricesQueryParam) map[string]map[string]float64 {
-		return filterHistoricPricesGetRequest(data, f, mappings)
+	data, err := loadHistoricPricesFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return GenericGetDataHandler(c, "public/data/historic_real_estate_prices_by_zipcode.json", filter)
+	filtered := filterHistoricPricesGetRequest(data, &params, mappings)
+	return c.JSON(http.StatusOK, filtered)
 }
 
-// ---------------------------------------
+// NeighbourhoodData struct definition
 type NeighbourhoodData struct {
 	Neighbourhood string `json:"neighbourhood"`
 	Borough       string `json:"borough"`
 	Zipcodes      []int  `json:"zipcodes"`
 }
 
+// GetNeighbourhoodQueryParams struct definition
 type GetNeighbourhoodQueryParams struct {
 	Neighbourhood string   `query:"neighbourhood"`
 	Borough       string   `query:"borough"`
@@ -343,58 +480,44 @@ func filterNeighbourhoodsGetRequest(a []NeighbourhoodData, f *GetNeighbourhoodQu
 	return filtered
 }
 
+func loadNeighbourhoodsFromDB() ([]NeighbourhoodData, error) {
+	rows, err := db.Query(context.Background(), "SELECT neighbourhood, borough, zipcodes FROM neighbourhood_mappings")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var neighbourhoods []NeighbourhoodData
+	for rows.Next() {
+		var n NeighbourhoodData
+		var zipcodes string
+		err = rows.Scan(&n.Neighbourhood, &n.Borough, &zipcodes)
+		if err != nil {
+			return nil, err
+		}
+		json.Unmarshal([]byte(zipcodes), &n.Zipcodes)
+		neighbourhoods = append(neighbourhoods, n)
+	}
+
+	return neighbourhoods, nil
+}
+
 func GetBoroughNeighbourhood(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/borough_neighbourhood.json", filterNeighbourhoodsGetRequest)
+	var params GetNeighbourhoodQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	neighbourhoods, err := loadNeighbourhoodsFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	filtered := filterNeighbourhoodsGetRequest(neighbourhoods, &params)
+	return c.JSON(http.StatusOK, filtered)
 }
 
-// ---------------------------------------
-type FeatureCollection struct {
-	Type     string    `json:"type"`
-	Features []Feature `json:"features"`
-}
-
-type Feature struct {
-	Type       string     `json:"type"`
-	Properties Properties `json:"properties"`
-	Geometry   Geometry   `json:"geometry"`
-}
-
-type Properties struct {
-	ShapeArea  string `json:"shape_area"`
-	Ntaname    string `json:"ntaname"`
-	Cdtaname   string `json:"cdtaname"`
-	ShapeLeng  string `json:"shape_leng"`
-	Boroname   string `json:"boroname"`
-	Ntatype    string `json:"ntatype"`
-	Nta2020    string `json:"nta2020"`
-	Borocode   string `json:"borocode"`
-	Countyfips string `json:"countyfips"`
-	Ntaabbrev  string `json:"ntaabbrev"`
-	Cdta2020   string `json:"cdta2020"`
-}
-
-type Geometry struct {
-	Type        string        `json:"type"`
-	Coordinates []interface{} `json:"coordinates"`
-}
-
-func GetNeighbourhoods(c echo.Context) error {
-	return c.File("public/data/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
-}
-
-func GetBoroughs(c echo.Context) error {
-	return c.File("public/data/borough.geojson")
-}
-
-func GetZipCodes(c echo.Context) error {
-	return c.File("public/data/us_zip_codes.json")
-}
-
-func GetZipCodeAreas(c echo.Context) error {
-	return c.File("public/data/nyc_zipcode_areas.geojson")
-}
-
-// ---------------------------------------
+// DemographicData struct definition
 type DemographicData struct {
 	ZipCode               int     `json:"ZipCode"`
 	Year                  int     `json:"Year"`
@@ -415,6 +538,7 @@ type DemographicData struct {
 	DiversityIndex        float64 `json:"DiversityIndex"`
 }
 
+// GetDemographicQueryParams struct definition
 type GetDemographicQueryParams struct {
 	Zipcodes []int `query:"zipcode"`
 }
@@ -437,12 +561,42 @@ func filterDemographicGetRequest(a []DemographicData, f *GetDemographicQueryPara
 	return filtered
 }
 
-func GetDemographicData(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/demographic_data.json", filterDemographicGetRequest)
+func loadDemographicDataFromDB() ([]DemographicData, error) {
+	rows, err := db.Query(context.Background(), "SELECT zipcode, year, population, population_density, median_household_income, travel_time_to_work_in_minutes, male, female, white, black, asian, american_indian, pacific_islander, other, family_household, single_household, diversity_index FROM demographic_data")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var data []DemographicData
+	for rows.Next() {
+		var d DemographicData
+		err = rows.Scan(&d.ZipCode, &d.Year, &d.Population, &d.PopulationDensity, &d.MedianHouseholdIncome, &d.TravelTimeToWork, &d.Male, &d.Female, &d.White, &d.Black, &d.Asian, &d.AmericanIndian, &d.PacificIslander, &d.Other, &d.FamilyHousehold, &d.SingleHousehold, &d.DiversityIndex)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, d)
+	}
+
+	return data, nil
 }
 
-// Property data
+func GetDemographicData(c echo.Context) error {
+	var params GetDemographicQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
 
+	data, err := loadDemographicDataFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	filtered := filterDemographicGetRequest(data, &params)
+	return c.JSON(http.StatusOK, filtered)
+}
+
+// Property struct definition
 type Property struct {
 	Price        float64 `json:"PRICE"`
 	Beds         float64 `json:"BEDS"`
@@ -457,6 +611,7 @@ type Property struct {
 	PricePerSqft float64 `json:"PRICE_PER_SQFT"`
 }
 
+// GetPropertyQueryParams struct definition
 type GetPropertyQueryParams struct {
 	Zipcodes     []string `query:"zipcode"`
 	Beds         float64  `query:"beds"`
@@ -466,7 +621,7 @@ type GetPropertyQueryParams struct {
 	Neighborhood string   `query:"neighborhood"`
 }
 
-func filterPropertyGetRequest(a map[string][]Property, f *GetPropertyQueryParams) []Property {
+func filterPropertyGetRequest(a []Property, f *GetPropertyQueryParams) []Property {
 	var filtered []Property
 	zipSet := make(map[string]bool)
 
@@ -476,31 +631,49 @@ func filterPropertyGetRequest(a map[string][]Property, f *GetPropertyQueryParams
 		}
 	}
 
-	for zipcode, properties := range a {
-		if len(zipSet) > 0 && !zipSet[zipcode] {
+	for _, property := range a {
+		if len(zipSet) > 0 && !zipSet[property.Zipcode] {
 			continue
 		}
 
-		for _, property := range properties {
-			if f.Beds != 0 && property.Beds != f.Beds {
-				continue
-			}
-			if f.Type != "" && property.Type != f.Type {
-				continue
-			}
-			if f.MinPrice != 0 && property.Price < f.MinPrice {
-				continue
-			}
-			if f.MaxPrice != 0 && property.Price > f.MaxPrice {
-				continue
-			}
-			if f.Neighborhood != "" && property.Neighborhood != f.Neighborhood {
-				continue
-			}
-			filtered = append(filtered, property)
+		if f.Beds != 0 && property.Beds != f.Beds {
+			continue
 		}
+		if f.Type != "" && property.Type != f.Type {
+			continue
+		}
+		if f.MinPrice != 0 && property.Price < f.MinPrice {
+			continue
+		}
+		if f.MaxPrice != 0 && property.Price > f.MaxPrice {
+			continue
+		}
+		if f.Neighborhood != "" && property.Neighborhood != f.Neighborhood {
+			continue
+		}
+		filtered = append(filtered, property)
 	}
 	return filtered
+}
+
+func loadPropertiesFromDB() ([]Property, error) {
+	rows, err := db.Query(context.Background(), "SELECT price, beds, type, bath, property_sqft, latitude, longitude, zipcode, borough, neighborhood, price_per_sqft FROM properties")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var properties []Property
+	for rows.Next() {
+		var p Property
+		err = rows.Scan(&p.Price, &p.Beds, &p.Type, &p.Bath, &p.PropertySqft, &p.Latitude, &p.Longitude, &p.Zipcode, &p.Borough, &p.Neighborhood, &p.PricePerSqft)
+		if err != nil {
+			return nil, err
+		}
+		properties = append(properties, p)
+	}
+
+	return properties, nil
 }
 
 func GetPropertyData(c echo.Context) error {
@@ -509,20 +682,16 @@ func GetPropertyData(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	filterFunc := func(a map[string][]Property, f *GetPropertyQueryParams) map[string][]Property {
-		filtered := filterPropertyGetRequest(a, f)
-		filteredMap := make(map[string][]Property)
-		for _, property := range filtered {
-			zipcode := property.Zipcode
-			filteredMap[zipcode] = append(filteredMap[zipcode], property)
-		}
-		return filteredMap
+	properties, err := loadPropertiesFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	return GenericGetDataHandler[GetPropertyQueryParams, map[string][]Property](c, "public/data/property_data_by_zipcode.json", filterFunc)
+
+	filtered := filterPropertyGetRequest(properties, &params)
+	return c.JSON(http.StatusOK, filtered)
 }
 
-// Zipcode scores
-
+// ZipcodeScore struct definition
 type ZipcodeScore struct {
 	Zipcode         int     `json:"zipcode"`
 	Borough         string  `json:"borough"`
@@ -541,6 +710,7 @@ type ZipcodeScore struct {
 	FiveYrForecast  float64 `json:"5Yr_forecast_price"`
 }
 
+// GetZipcodeScoreQueryParams struct definition
 type GetZipcodeScoreQueryParams struct {
 	Zipcodes []int   `query:"zipcode"`
 	Borough  string  `query:"borough"`
@@ -575,6 +745,54 @@ func filterZipcodeScores(data []ZipcodeScore, f *GetZipcodeScoreQueryParams) []Z
 	return filtered
 }
 
+func loadZipcodeScoresFromDB() ([]ZipcodeScore, error) {
+	rows, err := db.Query(context.Background(), "SELECT zipcode, borough, current_price, one_yr_roi, one_yr_roi_lower, one_yr_roi_upper, one_yr_forecast_price, three_yr_roi, three_yr_roi_lower, three_yr_roi_upper, three_yr_forecast_price, five_yr_roi, five_yr_roi_lower, five_yr_roi_upper, five_yr_forecast_price FROM zipcode_scores")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var scores []ZipcodeScore
+	for rows.Next() {
+		var s ZipcodeScore
+		err = rows.Scan(&s.Zipcode, &s.Borough, &s.CurrentPrice, &s.OneYrROI, &s.OneYrROILower, &s.OneYrROIUpper, &s.OneYrForecast, &s.ThreeYrROI, &s.ThreeYrROILower, &s.ThreeYrROIUpper, &s.ThreeYrForecast, &s.FiveYrROI, &s.FiveYrROILower, &s.FiveYrROIUpper, &s.FiveYrForecast)
+		if err != nil {
+			return nil, err
+		}
+		scores = append(scores, s)
+	}
+
+	return scores, nil
+}
+
 func GetZipcodeScores(c echo.Context) error {
-	return GenericGetDataHandler(c, "public/data/zipcode_scores.json", filterZipcodeScores)
+	var params GetZipcodeScoreQueryParams
+	if err := c.Bind(&params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	scores, err := loadZipcodeScoresFromDB()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	filtered := filterZipcodeScores(scores, &params)
+	return c.JSON(http.StatusOK, filtered)
+}
+
+// GeoJSON endpoints to serve static files
+func GetNeighbourhoods(c echo.Context) error {
+	return c.File("public/data/2020_Neighborhood_Tabulation_Areas(NTAs).geojson")
+}
+
+func GetBoroughs(c echo.Context) error {
+	return c.File("public/data/borough.geojson")
+}
+
+func GetZipCodes(c echo.Context) error {
+	return c.File("public/data/us_zip_codes.json")
+}
+
+func GetZipCodeAreas(c echo.Context) error {
+	return c.File("public/data/nyc_zipcode_areas.geojson")
 }

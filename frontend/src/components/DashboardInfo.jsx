@@ -95,8 +95,8 @@ export const DashboardInfo = ({
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        if (data) {
-          // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
+        console.log("Borough-Neighbourhood data:", data);
+        if (data && data.length > 0) {
           const obj = data[0];
           try {
             setBorough(obj["borough"]);
@@ -104,6 +104,8 @@ export const DashboardInfo = ({
           } catch (error) {
             console.log(error);
           }
+        } else {
+          console.log("No Borough-Neighbourhood data found.");
         }
       });
   };
