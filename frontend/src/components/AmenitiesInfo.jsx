@@ -97,7 +97,7 @@ const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
       );
       const data_amenities = await response.json();
 
-      if (data_amenities) {
+      if (data_amenities && data_amenities.length > 0) {
         setHoverAmenity(null);
 
         const { Marker, Animation } = await loader.importLibrary("marker");

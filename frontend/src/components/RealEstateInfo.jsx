@@ -84,7 +84,7 @@ const RealEstateInfo = ({
     }
     try {
       const data = await response.json();
-      if (data) {
+      if (data && data.length > 0) {
         let type = {};
         let count = 0;
         let labels = [];
@@ -195,7 +195,7 @@ const RealEstateInfo = ({
       fetch(`http://localhost:8000/zipcode-scores?zipcode=${zip}`)
         .then((response) => response.json())
         .then((data) => {
-          if (data) {
+          if (data && data.length) {
             const info = data[0];
             setYr1Price(info["1Yr_forecast_price"]);
             setYr1ROI(info["1Yr_ROI"]);

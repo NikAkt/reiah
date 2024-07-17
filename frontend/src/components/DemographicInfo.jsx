@@ -13,7 +13,7 @@ const DemographicInfo = ({ zip }) => {
     fetch(`http://localhost:8000/api/demographic?zipcode=${zip()}`)
       .then((response) => response.json())
       .then((data) => {
-        if (data) {
+        if (data && data.length > 0) {
           const obj = data[0];
 
           const gender_labels = ["Male", "Female"];

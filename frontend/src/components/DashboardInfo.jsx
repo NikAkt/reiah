@@ -95,7 +95,6 @@ export const DashboardInfo = ({
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("Borough-Neighbourhood data:", data);
         if (data && data.length > 0) {
           const obj = data[0];
           try {
@@ -125,7 +124,7 @@ export const DashboardInfo = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.hasOwnProperty("predicted_price")) {
+        if (data && data.length > 0 && data.hasOwnProperty("predicted_price")) {
           setPredictedCost(data["predicted_price"]);
         } else {
           return null;
