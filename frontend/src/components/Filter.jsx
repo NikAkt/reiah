@@ -11,8 +11,12 @@ function debounce(func, timeout = 300) {
   };
 }
 
-const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
-  const [filterDisplay, setFilterDisplay] = createSignal(false);
+const Filter = ({
+  setFilteredZipCodes,
+  showFilterBoard,
+  setShowFilterBoard,
+  map,
+}) => {
   const [filterTarget, setFilterTarget] = createSignal("Residential Property");
   const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
   const [selectedNeighborhoods, setSelectedNeighborhoods] = createSignal(
@@ -22,9 +26,12 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
   const [showAdvancedFilters, setShowAdvancedFilters] = createSignal(false);
   const [selectedAmenities, setSelectedAmenities] = createSignal(new Set());
   const [filteredAmenities, setFilteredAmenities] = createSignal({});
-  const [avgHomeValueRange, setAvgHomeValueRange] = createSignal([0, 0]);
-  const [medianHouseholdIncomeRange, setMedianHouseholdIncomeRange] =
-    createSignal([0, 0]);
+  const [houseType, setHouseType] = createSignal("");
+  const [expandedCategories, setExpandedCategories] = createSignal(new Set());
+  const [beds, setBeds] = createSignal(0);
+  const [baths, setBaths] = createSignal(0);
+  const [propertySqft, setPropertySqft] = createSignal([0, 0]);
+  const [propertyPrice, setPropertyPrice] = createSignal([0, 0]);
   const [filteredZipCodesLocal, setFilteredZipCodesLocal] = createSignal([]);
   const [realEstateData, setRealEstateData] = createSignal([]);
 
@@ -35,19 +42,45 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
     "Brooklyn",
     "Staten Island",
   ];
+  const houseTypeOptions = [
+    "Condo",
+    "Townhouse",
+    "Co-op",
+    "Multi-family home",
+    "House",
+  ];
 
   const fetchBoroughData = async () => {
     const response = await fetch(
       "http://localhost:8000/api/borough-neighbourhood"
     );
     const data = await response.json();
+    console.log("Fetched borough data:", data); // Log the fetched data
     setBoroughData(data);
   };
 
-  const fetchRealEstateData = async () => {
-    const response = await fetch("http://localhost:8000/api/prices");
-    const data = await response.json();
-    setRealEstateData(data);
+  const fetchRealEstateData = async (filters) => {
+    const query = new URLSearchParams(filters).toString();
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/property-data?${query}`
+      );
+      const data = await response.json();
+      console.log("Fetched real estate data:", data); // Log the fetched data
+
+      // Handle null response
+      if (data === null) {
+        setRealEstateData([]);
+      } else {
+        setRealEstateData(data);
+      }
+
+      applyFilters(); // Apply filters after fetching data
+    } catch (error) {
+      console.error("Error fetching real estate data:", error);
+      setRealEstateData([]);
+      applyFilters(); // Still apply filters to handle empty data gracefully
+    }
   };
 
   const fetchAmenities = debounce(async (neighborhoods) => {
@@ -57,15 +90,18 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
         `http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`
       );
       const data = await response.json();
-      setFilteredAmenities(data);
+      console.log("Fetched amenities data:", data); // Log fetched data
+      setFilteredAmenities(
+        data.reduce((acc, amenity) => {
+          if (!acc[amenity.ZIPCODE]) acc[amenity.ZIPCODE] = [];
+          acc[amenity.ZIPCODE].push(amenity);
+          return acc;
+        }, {})
+      );
     } else {
       setFilteredAmenities({});
     }
   }, 300);
-
-  const toggleFilter = () => {
-    setFilterDisplay(!filterDisplay());
-  };
 
   const handleBoroughChange = (borough) => {
     setSelectedBoroughs((prev) => {
@@ -75,9 +111,11 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
       } else {
         newBoroughs.add(borough);
       }
-      setSelectedNeighborhoods(new Set()); // Reset neighborhood selection when borough changes
+      setSelectedNeighborhoods(new Set());
+      fetchBoroughData(); // Fetch borough data when borough changes
       return newBoroughs;
     });
+    handleFilterChange();
   };
 
   const handleNeighborhoodChange = (neighborhood) => {
@@ -88,8 +126,10 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
       } else {
         newNeighborhoods.add(neighborhood);
       }
+      fetchAmenities([...newNeighborhoods]);
       return newNeighborhoods;
     });
+    handleFilterChange();
   };
 
   const handleAmenityChange = (amenity) => {
@@ -102,54 +142,26 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
       }
       return newAmenities;
     });
+    handleFilterChange();
   };
 
-  const applyFilters = () => {
-    let zipCodes = getZipcodes(
-      [...selectedBoroughs()],
-      [...selectedNeighborhoods()]
-    );
-
-    if (avgHomeValueRange()[0] > 0 || avgHomeValueRange()[1] > 0) {
-      zipCodes = zipCodes.filter((zip) => {
-        const homeValue = getHomeValue(zip);
-        return (
-          homeValue >= avgHomeValueRange()[0] &&
-          homeValue <= avgHomeValueRange()[1]
-        );
-      });
-    }
-
-    if (
-      medianHouseholdIncomeRange()[0] > 0 ||
-      medianHouseholdIncomeRange()[1] > 0
-    ) {
-      zipCodes = zipCodes.filter((zip) => {
-        const income = getMedianIncome(zip);
-        return (
-          income >= medianHouseholdIncomeRange()[0] &&
-          income <= medianHouseholdIncomeRange()[1]
-        );
-      });
-    }
-
-    if (selectedAmenities().size > 0) {
-      zipCodes = zipCodes.filter((zip) => {
-        const amenities = filteredAmenities()[zip] || [];
-        return [...selectedAmenities()].every((amenity) =>
-          amenities.some((a) => a.FACILITY_DOMAIN_NAME === amenity)
-        );
-      });
-    }
-
-    setFilteredZipCodesLocal(zipCodes);
-    setFilteredZipCodes(zipCodes); // Update the global filtered zip codes
-    fetchAmenities([...selectedNeighborhoods()]);
+  const handleHouseTypeChange = (type) => {
+    setHouseType(type);
+    console.log(`Selected house type: ${type}`);
+    handleFilterChange();
   };
 
-  createEffect(() => {
-    applyFilters();
-  });
+  const handleCategoryToggle = (category) => {
+    setExpandedCategories((prev) => {
+      const newCategories = new Set(prev);
+      if (newCategories.has(category)) {
+        newCategories.delete(category);
+      } else {
+        newCategories.add(category);
+      }
+      return newCategories;
+    });
+  };
 
   const getNeighborhoods = (boroughs) => {
     return [
@@ -180,314 +192,527 @@ const Filter = ({ realEstateDataProp, setFilteredZipCodes }) => {
     ];
   };
 
-  const getHomeValue = (zip) => {
-    const data = realEstateData().find((el) => el.zipcode === zip);
-    return data ? data.avg_home_value : 0;
+  const applyFilters = () => {
+    console.log("Applying filters...");
+
+    // Fetch initial zipcodes based on selected boroughs and neighborhoods
+    let zipCodes = getZipcodes(
+      [...selectedBoroughs()],
+      [...selectedNeighborhoods()]
+    );
+
+    console.log("Initial zipcodes:", zipCodes);
+
+    if (zipCodes.length === 0) {
+      setFilteredZipCodesLocal([]);
+      setFilteredZipCodes([]);
+      console.log("No zipcodes to filter.");
+      return;
+    }
+
+    const hasPropertyFilters =
+      houseType() !== "" ||
+      beds() > 0 ||
+      baths() > 0 ||
+      propertySqft()[0] > 0 ||
+      propertySqft()[1] > 0 ||
+      propertyPrice()[0] > 0 ||
+      propertyPrice()[1] > 0;
+
+    if (hasPropertyFilters) {
+      zipCodes = zipCodes.filter((zip) => {
+        const properties = realEstateData().filter(
+          (property) => property.ZIPCODE.toString() === zip.toString()
+        );
+        console.log(`Properties in zip ${zip}:`, properties);
+
+        if (properties.length === 0) return false; // If no properties in the zip, skip it
+
+        const matches = properties.some((property) => {
+          // Ensure property attributes are valid numbers before comparison
+          const validPrice = property.PRICE != null && !isNaN(property.PRICE);
+          const validBeds = property.BEDS != null && !isNaN(property.BEDS);
+          const validBaths = property.BATH != null && !isNaN(property.BATH);
+          const validSqft =
+            property.PROPERTYSQFT != null && !isNaN(property.PROPERTYSQFT);
+
+          const typeMatch = houseType() === "" || houseType() === property.TYPE;
+          const bedsMatch =
+            beds() > 0 ? validBeds && property.BEDS >= beds() : true;
+          const bathsMatch =
+            baths() > 0 ? validBaths && property.BATH >= baths() : true;
+          const sqftMinMatch =
+            propertySqft()[0] > 0
+              ? validSqft && property.PROPERTYSQFT >= propertySqft()[0]
+              : true;
+          const sqftMaxMatch =
+            propertySqft()[1] > 0
+              ? validSqft && property.PROPERTYSQFT <= propertySqft()[1]
+              : true;
+          const priceMinMatch =
+            propertyPrice()[0] > 0
+              ? validPrice && property.PRICE >= propertyPrice()[0]
+              : true;
+          const priceMaxMatch =
+            propertyPrice()[1] > 0
+              ? validPrice && property.PRICE <= propertyPrice()[1]
+              : true;
+
+          return (
+            typeMatch &&
+            bedsMatch &&
+            bathsMatch &&
+            sqftMinMatch &&
+            sqftMaxMatch &&
+            priceMinMatch &&
+            priceMaxMatch
+          );
+        });
+
+        console.log(`Zip ${zip} matches: ${matches}`);
+        return matches;
+      });
+
+      if (zipCodes.length === 0) {
+        console.log("No properties match the filter criteria.");
+      }
+    }
+
+    console.log("Zipcodes after type/attribute filtering:", zipCodes);
+
+    const hasAmenityFilters = selectedAmenities().size > 0;
+
+    if (hasAmenityFilters) {
+      zipCodes = zipCodes.filter((zip) => {
+        const amenities = Array.isArray(filteredAmenities()[zip])
+          ? filteredAmenities()[zip]
+          : [];
+        const matches = [...selectedAmenities()].every((amenity) =>
+          amenities.some((a) => a.FACILITY_DOMAIN_NAME === amenity)
+        );
+        console.log(`Zip ${zip} amenities match: ${matches}`);
+        return matches;
+      });
+    }
+
+    console.log("Final filtered zipcodes:", zipCodes);
+
+    setFilteredZipCodesLocal(zipCodes);
+    setFilteredZipCodes(zipCodes);
+    console.log("Updated filtered zipcodes in state:", zipCodes);
   };
 
-  const getMedianIncome = (zip) => {
-    const data = realEstateData().find((el) => el.zipcode === zip);
-    return data ? data.median_household_income : 0;
-  };
+  const handleFilterChange = debounce(() => {
+    const filters = {
+      beds: beds() > 0 ? beds() : null,
+      baths: baths() > 0 ? baths() : null,
+      type: houseType() ? houseType() : null,
+      minprice: propertyPrice()[0] > 0 ? propertyPrice()[0] : null,
+      maxprice: propertyPrice()[1] > 0 ? propertyPrice()[1] : null,
+      minsqft: propertySqft()[0] > 0 ? propertySqft()[0] : null,
+      maxsqft: propertySqft()[1] > 0 ? propertySqft()[1] : null,
+    };
 
-  const highlightZipCodesOnMap = (zipCodes) => {
-    setFilteredZipCodes(zipCodes); // Update the global filtered zip codes
-    console.log("Highlighting zip codes on map:", zipCodes);
-    toggleFilter();
-  };
+    Object.keys(filters).forEach(
+      (key) => filters[key] === null && delete filters[key]
+    );
+
+    fetchRealEstateData(filters);
+  }, 300);
+
+  createEffect(() => {
+    handleFilterChange();
+  });
 
   onMount(() => {
     fetchBoroughData();
-    fetchRealEstateData();
+    fetchRealEstateData({});
   });
 
-  const uniqueAmenities = () => {
-    const amenitiesSet = new Set();
-    Object.keys(filteredAmenities()).forEach((zipCode) => {
-      filteredAmenities()[zipCode].forEach((item) => {
-        amenitiesSet.add(item.FACILITY_DOMAIN_NAME);
+  const categorizedAmenities = () => {
+    const categories = {};
+    filteredZipCodesLocal().forEach((zipCode) => {
+      const amenities = Array.isArray(filteredAmenities()[zipCode])
+        ? filteredAmenities()[zipCode]
+        : [];
+      amenities.forEach((amenity) => {
+        if (!categories[amenity.FACILITY_T]) {
+          categories[amenity.FACILITY_T] = new Set();
+        }
+        categories[amenity.FACILITY_T].add(amenity.FACILITY_DOMAIN_NAME);
       });
     });
-    return Array.from(amenitiesSet);
+    const result = {};
+    for (const [key, value] of Object.entries(categories)) {
+      result[key] = Array.from(value);
+    }
+    return result;
+  };
+
+  const clearAllFilters = () => {
+    setSelectedBoroughs(new Set());
+    setSelectedNeighborhoods(new Set());
+    setSelectedAmenities(new Set());
+    setFilteredZipCodes([]);
+    setFilteredZipCodesLocal([]);
+    setShowAdvancedFilters(false);
+    setFilteredAmenities({});
+    setHouseType("");
+    setBeds(0);
+    setBaths(0);
+    setPropertySqft([0, 0]);
+    setPropertyPrice([0, 0]);
+  };
+
+  const highlightZipCodesOnMap = (zipCodes) => {
+    setFilteredZipCodes(zipCodes);
+    setShowFilterBoard(false);
+    console.log("Highlighting zip codes on map:", zipCodes);
   };
 
   return (
     <div
-      class="absolute z-10 w-[80vw] flex flex-col items-center left-[30vw]
-    gap-0.5 top-[0.5vh] justify-center text-black pointer-events-none"
+      class={`fixed z-10 w-[65%] flex flex-col items-center left-1/2 transform -translate-x-1/2
+      gap-0.5 top-[5%] justify-center text-black transition-transform duration-500 scale-100 ${
+        showFilterBoard() ? "block" : "hidden"
+      }`}
     >
-      <button
-        class="rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center pointer-events-auto"
-        onClick={toggleFilter}
+      <div
+        class="grid-cols-1 divide-y m-0 px-0 
+          mt-[-2vh] w-full max-h-[90vh] shadow-lg z-20 
+          items-center bg-white rounded-lg 
+          overflow-y-auto relative"
       >
-        <span>Filter</span>
-      </button>
-      {filterDisplay() && (
+        {/* FILTER TITLE */}
         <div
-          class="grid-cols-1 divide-y m-0 px-0 ml-[-10vw]
-        mt-[-2vh] w-full max-h-[80vh] shadow-md z-20 
-        items-center bg-white animate-fade-down rounded-lg t
-        ransition-all duration-500 overflow-y-auto relative pointer-events-auto"
+          id="filter-dropdown-title"
+          class="items-center justify-center relative flex h-[10%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
+          style="position: sticky; top: 0; height: 60px;"
         >
-          {/* FILTER TITLE */}
-          <div
-            id="filter-dropdown-title"
-            class="items-center justify-center relative flex h-[8%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
-            style="position: sticky; top: 0; height: 56px;"
+          <button
+            class="absolute rounded-full w-[24px] h-[24px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer"
+            onClick={() => setShowFilterBoard(false)}
           >
-            <button
-              class="absolute rounded-full w-[20px] h-[20px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer"
-              onClick={toggleFilter}
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
             >
-              <svg
-                class="h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <p>Filters for {filterTarget()}</p>
-          </div>
-          {/* FILTER CONTENT */}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <p class="text-xl">Filters for {filterTarget()}</p>
+        </div>
+        {/* FILTER CONTENT */}
+        <div
+          class="w-[100%] flex flex-col h-auto relative items-center py-6 px-[12%] gap-y-4 bg-white"
+          id="filter-details-container"
+        >
+          {/* Borough Selection */}
           <div
-            class="w-[100%] flex flex-col h-auto relative items-center py-4 px-[10%] gap-y-2.5 bg-white"
-            id="filter-details-container"
+            id="borough-selection-container"
+            class="w-full p-4 rounded-lg transition-all duration-500"
           >
-            {/* Borough Selection */}
+            <label
+              htmlFor="borough-selection"
+              class="font-sans text-2xl font-bold text-teal-500"
+            >
+              Borough:
+            </label>
+            <div class="flex flex-wrap gap-2 mt-2">
+              {unique_borough.map((el) => (
+                <div key={el} class="flex items-center">
+                  <input
+                    name="borough-selection"
+                    value={el.toString()}
+                    type="checkbox"
+                    onChange={() => handleBoroughChange(el)}
+                    checked={selectedBoroughs().has(el)}
+                  />
+                  <label
+                    htmlFor="borough-selection"
+                    class="ml-2 text-lg text-gray-700"
+                  >
+                    {el.toString()}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Neighborhood Selection */}
+          {[...selectedBoroughs()].length > 0 && (
             <div
-              id="borough-selection-container"
-              class="w-full p-4 rounded-lg transition-all duration-500"
+              class="w-full p-4 rounded-lg transition-all duration-500 ease-in-out transform opacity-100 scale-100"
+              id="neighborhood-container"
             >
               <label
-                htmlFor="borough-selection"
+                htmlFor="neighborhood-selection"
                 class="font-sans text-2xl font-bold text-teal-500"
               >
-                Borough:
+                Neighborhood:
               </label>
-              <div class="flex flex-wrap gap-2">
-                {unique_borough.map((el) => (
-                  <div key={el} class="flex items-center">
-                    <input
-                      name="borough-selection"
-                      value={el.toString()}
-                      type="checkbox"
-                      onChange={() => handleBoroughChange(el)}
-                      checked={selectedBoroughs().has(el)}
-                    />
-                    <label
-                      htmlFor="borough-selection"
-                      class="ml-2 text-gray-700"
-                    >
-                      {el.toString()}
-                    </label>
+              <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md mt-2">
+                {getNeighborhoods([...selectedBoroughs()]).map((el) => (
+                  <div
+                    key={el}
+                    class={`p-2 cursor-pointer ${
+                      selectedNeighborhoods().has(el)
+                        ? "bg-teal-500 text-white"
+                        : "bg-white text-gray-700"
+                    }`}
+                    onClick={() => handleNeighborhoodChange(el)}
+                  >
+                    {el}
                   </div>
                 ))}
               </div>
             </div>
+          )}
 
-            {/* Neighborhood Selection */}
-            {[...selectedBoroughs()].length > 0 && (
+          {/* Advanced Filters Button */}
+          {selectedNeighborhoods().size > 0 && (
+            <button
+              class="mt-4 p-3 bg-teal-500 text-white rounded transition-all duration-500 ease-in-out transform text-lg"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}
+            >
+              {showAdvancedFilters()
+                ? "Hide Advanced Filters"
+                : "Show Advanced Filters"}
+            </button>
+          )}
+
+          {/* Advanced Filters */}
+          {showAdvancedFilters() && (
+            <div
+              class="w-full p-4 rounded-lg mt-4 flex flex-col transition-all duration-500 ease-in-out transform opacity-100 scale-100"
+              id="advanced-filters-container"
+            >
               <div
-                class="w-full p-4 rounded-lg transition-all duration-500 ease-in-out transform opacity-100 scale-100"
-                id="neighborhood-container"
+                class="flex flex-col items-center justify-center p-4 rounded-lg"
+                id="house-type-container"
               >
-                <label
-                  htmlFor="neighborhood-selection"
-                  class="font-sans text-2xl font-bold text-teal-500"
-                >
-                  Neighborhood:
-                </label>
-                <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md">
-                  {getNeighborhoods([...selectedBoroughs()]).map((el) => (
-                    <div
-                      key={el}
-                      class={`p-2 cursor-pointer ${
-                        selectedNeighborhoods().has(el)
-                          ? "bg-teal-500 text-white"
-                          : "bg-white text-gray-700"
-                      }`}
-                      onClick={() => handleNeighborhoodChange(el)}
-                    >
-                      {el}
+                <p class="font-sans text-2xl font-bold text-teal-500">
+                  House Type
+                </p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  {houseTypeOptions.map((type) => (
+                    <div key={type} class="flex items-center">
+                      <input
+                        type="radio"
+                        name="houseType"
+                        value={type}
+                        onChange={() => handleHouseTypeChange(type)}
+                        checked={houseType() === type}
+                      />
+                      <label htmlFor={type} class="ml-2 text-lg text-gray-700">
+                        {type}
+                      </label>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
 
-            {/* Advanced Filters Button */}
-            {selectedNeighborhoods().size > 0 && (
-              <button
-                class="mt-4 p-2 bg-teal-500 text-white rounded transition-all duration-500 ease-in-out transform"
-                onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}
-              >
-                {showAdvancedFilters()
-                  ? "Hide Advanced Filters"
-                  : "Show Advanced Filters"}
-              </button>
-            )}
-
-            {/* Advanced Filters */}
-            {showAdvancedFilters() && (
               <div
-                class="w-full p-4 rounded-lg mt-4 flex flex-col transition-all duration-500 ease-in-out transform opacity-100 scale-100"
-                id="advanced-filters-container"
+                class="flex flex-col items-center justify-center p-4 rounded-lg"
+                id="beds-container"
               >
-                <div
-                  class="flex flex-col items-center justify-center p-2 rounded-lg"
-                  id="home-value-container"
-                >
-                  <p class="font-sans text-2xl font-bold text-teal-500">
-                    Average Home Value
-                  </p>
-                  <div class="flex gap-2 w-full">
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Minimum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={avgHomeValueRange()[0]}
-                        onChange={(e) =>
-                          setAvgHomeValueRange([
-                            Number(e.target.value),
-                            avgHomeValueRange()[1],
-                          ])
-                        }
-                      />
-                    </div>
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Maximum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={avgHomeValueRange()[1]}
-                        onChange={(e) =>
-                          setAvgHomeValueRange([
-                            avgHomeValueRange()[0],
-                            Number(e.target.value),
-                          ])
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
+                <p class="font-sans text-2xl font-bold text-teal-500">Beds</p>
+                <input
+                  type="number"
+                  class="border border-gray-300 rounded p-2 text-lg w-full mt-2"
+                  value={beds()}
+                  onInput={(e) => setBeds(Number(e.target.value))}
+                  onChange={handleFilterChange}
+                />
+              </div>
 
-                <div
-                  class="flex flex-col items-center justify-center p-2 rounded-lg"
-                  id="median-income-container"
-                >
-                  <p class="font-sans text-2xl font-bold text-teal-500">
-                    Median Household Income
-                  </p>
-                  <div class="flex gap-2 w-full">
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Minimum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={medianHouseholdIncomeRange()[0]}
-                        onChange={(e) =>
-                          setMedianHouseholdIncomeRange([
-                            Number(e.target.value),
-                            medianHouseholdIncomeRange()[1],
-                          ])
-                        }
-                      />
-                    </div>
-                    <div class="flex flex-col w-full rounded-lg p-2">
-                      <p class="text-gray-700">Maximum</p>
-                      <input
-                        type="number"
-                        class="border border-gray-300 rounded p-2"
-                        value={medianHouseholdIncomeRange()[1]}
-                        onChange={(e) =>
-                          setMedianHouseholdIncomeRange([
-                            medianHouseholdIncomeRange()[0],
-                            Number(e.target.value),
-                          ])
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
+              <div
+                class="flex flex-col items-center justify-center p-4 rounded-lg"
+                id="baths-container"
+              >
+                <p class="font-sans text-2xl font-bold text-teal-500">Baths</p>
+                <input
+                  type="number"
+                  class="border border-gray-300 rounded p-2 text-lg w-full mt-2"
+                  value={baths()}
+                  onInput={(e) => setBaths(Number(e.target.value))}
+                  onChange={handleFilterChange}
+                />
+              </div>
 
-                <div
-                  id="amenities-container"
-                  class="flex flex-col items-center justify-center p-2 rounded-lg"
-                >
-                  <p class="font-sans text-2xl font-bold text-teal-500">
-                    Amenities
-                  </p>
-                  <div class="grid grid-cols-2 w-full gap-2">
-                    {uniqueAmenities().map((item) => (
-                      <div key={item} class="flex items-center">
-                        <input
-                          type="checkbox"
-                          class="border border-gray-300 rounded p-2"
-                          value={item}
-                          onChange={() => handleAmenityChange(item)}
-                          checked={selectedAmenities().has(item)}
-                        />
-                        <label htmlFor={item} class="ml-2 text-gray-700">
-                          {item}
-                        </label>
-                      </div>
-                    ))}
+              <div
+                class="flex flex-col items-center justify-center p-4 rounded-lg"
+                id="property-sqft-container"
+              >
+                <p class="font-sans text-2xl font-bold text-teal-500">
+                  Property Sqft
+                </p>
+                <div class="flex gap-2 w-full mt-2">
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-lg text-gray-700">Minimum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2 text-lg w-full mt-1"
+                      value={propertySqft()[0]}
+                      onInput={(e) =>
+                        setPropertySqft([
+                          Number(e.target.value),
+                          propertySqft()[1],
+                        ])
+                      }
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-lg text-gray-700">Maximum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2 text-lg w-full mt-1"
+                      value={propertySqft()[1]}
+                      onInput={(e) =>
+                        setPropertySqft([
+                          propertySqft()[0],
+                          Number(e.target.value),
+                        ])
+                      }
+                      onChange={handleFilterChange}
+                    />
                   </div>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Clear Button and Filter Results */}
-          <div
-            id="button-container"
-            class="items-center justify-center flex gap-4 bg-teal-500 text-white w-[100%] z-30 rounded-b-lg p-4 pointer-events-auto"
-            style="position: sticky; bottom: 0; height: 56px;"
-          >
-            <button
-              class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
-              onClick={() => {
-                setSelectedBoroughs(new Set());
-                setSelectedNeighborhoods(new Set());
-                setSelectedAmenities(new Set());
-                setFilteredZipCodes([]);
-                setShowAdvancedFilters(false);
-                setFilteredAmenities({});
-              }}
-            >
-              Clear all
-            </button>
-
-            {filteredZipCodesLocal().length === 0 ? (
-              <span class="text-red-500">Change filters</span>
-            ) : (
-              <div class="flex items-center gap-2">
-                <span>
-                  Filters result in {filteredZipCodesLocal().length} zipcodes
-                </span>
-                <button
-                  class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
-                  onClick={() =>
-                    highlightZipCodesOnMap(filteredZipCodesLocal())
-                  }
-                >
-                  See on Map
-                </button>
+              <div
+                class="flex flex-col items-center justify-center p-4 rounded-lg"
+                id="property-price-container"
+              >
+                <p class="font-sans text-2xl font-bold text-teal-500">
+                  Property Price
+                </p>
+                <div class="flex gap-2 w-full mt-2">
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-lg text-gray-700">Minimum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2 text-lg w-full mt-1"
+                      value={propertyPrice()[0]}
+                      onInput={(e) =>
+                        setPropertyPrice([
+                          Number(e.target.value),
+                          propertyPrice()[1],
+                        ])
+                      }
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div class="flex flex-col w-full rounded-lg p-2">
+                    <p class="text-lg text-gray-700">Maximum</p>
+                    <input
+                      type="number"
+                      class="border border-gray-300 rounded p-2 text-lg w-full mt-1"
+                      value={propertyPrice()[1]}
+                      onInput={(e) =>
+                        setPropertyPrice([
+                          propertyPrice()[0],
+                          Number(e.target.value),
+                        ])
+                      }
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
+
+              <div
+                id="amenities-container"
+                class="flex flex-col items-center justify-center p-4 rounded-lg"
+              >
+                <p class="font-sans text-2xl font-bold text-teal-500 mb-2">
+                  Amenities
+                </p>
+                {Object.entries(categorizedAmenities()).map(
+                  ([category, amenities]) => (
+                    <div
+                      key={category}
+                      class="flex flex-col items-start w-full mb-2"
+                    >
+                      <p
+                        class="font-sans text-xl font-semibold text-gray-700 cursor-pointer mb-1 p-2 bg-gray-100 rounded-md w-full"
+                        onClick={() => handleCategoryToggle(category)}
+                      >
+                        {category}{" "}
+                        {expandedCategories().has(category) ? "-" : "+"}
+                      </p>
+                      {expandedCategories().has(category) && (
+                        <div class="grid grid-cols-2 w-full gap-2 p-2 bg-gray-50 rounded-md">
+                          {amenities.map((amenity) => (
+                            <div key={amenity} class="flex items-center mb-2">
+                              <input
+                                type="checkbox"
+                                class="border border-gray-300 rounded p-2"
+                                value={amenity}
+                                onChange={() => handleAmenityChange(amenity)}
+                                checked={selectedAmenities().has(amenity)}
+                              />
+                              <label
+                                htmlFor={amenity}
+                                class="ml-2 text-gray-700"
+                              >
+                                {amenity}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Clear Button and Filter Results */}
+        <div
+          id="button-container"
+          class="items-center justify-center flex gap-4 bg-teal-500 text-white w-[100%] z-30 rounded-b-lg p-4 pointer-events-auto"
+          style="position: sticky; bottom: 0; height: 56px;"
+        >
+          <button
+            class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
+            onClick={() => clearAllFilters()}
+          >
+            Clear all
+          </button>
+
+          {filteredZipCodesLocal().length === 0 ? (
+            <span class="text-red-500">Change filters</span>
+          ) : (
+            <div class="flex items-center gap-2">
+              <span>
+                Filters result in {filteredZipCodesLocal().length} zipcodes
+              </span>
+              <button
+                class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
+                onClick={() => {
+                  highlightZipCodesOnMap(filteredZipCodesLocal());
+                  map().setZoom(11);
+                }}
+              >
+                See on Map
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

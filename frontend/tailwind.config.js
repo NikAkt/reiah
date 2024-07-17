@@ -14,22 +14,13 @@ module.exports = {
         "secondary-color": "#bbf7d0",
         "accent-color": "#ac9d87",
         blue: "#0145ac",
-        green: "#81c7a5",
         black: "#1b212c",
         white: "#F3F4F6",
         grey: "#2F2F2F",
-        corvu: {
-          bg: "#f3f1fe",
-          100: "#e6e2fd",
-          200: "#d4cbfb",
-          300: "#bcacf6",
-          400: "#a888f1",
-          text: "#180f24",
-        },
       },
       animation: {
         "fade-down": "fade-down 0.2s ease-out forwards",
-        "fade-in": "fade-in 0.2s ease-out forwards",
+        "fade-in": "fade-in 0.3s ease-out forwards",
         "fade-out": "fade-out 0.2s ease-out backwards",
         slide: "slide 2s ease-in-out infinite",
         expand: "expand 250ms cubic-bezier(0.32,0.72,0,0.75)",
@@ -41,7 +32,7 @@ module.exports = {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
-          "0%": { opacity: "0", transform: "translateX(-2vw)" },
+          "0%": { opacity: "0", transform: "translateX(2vw)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
         "fade-out": {

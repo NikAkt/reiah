@@ -21,8 +21,6 @@
     "@googlemaps/js-api-loader": "^1.16.6",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@solidjs/router": "^0.13.6",
-    "@suid/icons-material": "^0.7.0",
-    "@suid/material": "^0.16.0",
     "@supabase/supabase-js": "^2.44.3",
     "chart.js": "^4.4.3",
     "react": "^18.3.1",

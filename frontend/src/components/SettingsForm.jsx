@@ -73,7 +73,6 @@ function SettingsForm({ userId, values, errors }) {
         />
       </InputGroup>
 
-
       <div class="mt-6 grid grid-cols-3 gap-2">
         <div class="col-start-3 grid gap-2">
           {editOn() ? (

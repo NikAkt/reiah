@@ -1,398 +1,550 @@
 import { Loader } from "@googlemaps/js-api-loader";
-import {
-  createEffect,
-  createSignal,
-  onCleanup,
-  Show,
-  Suspense,
-} from "solid-js";
-import Markers from "./Markers";
-import { DoughnutChart, BarChart } from "./Charts";
+import { createEffect, createSignal, onCleanup, Show } from "solid-js";
+import { LineChart } from "./Charts";
+import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
+import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
 
-export const DashboardInfo = (props) => {
-  let ref;
+import AmenitiesInfo from "./AmenitiesInfo";
+import RealEstateInfo from "./RealEstateInfo";
+import DemographicInfo from "./DemographicInfo";
+import MarkerLegend from "./MarkerLegend";
+
+function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
+  if (markerArr) {
+    markerArr.forEach((marker) => {
+      if (marker[key] == type) {
+        marker.setIcon(newIcon);
+        marker.setZIndex(100);
+      } else {
+        //recover to original icon
+        marker.setIcon(originalIcon);
+        marker.setZIndex(10);
+      }
+    });
+  }
+}
+
+function revertMarkerIcon(markerArr, originalIcon) {
+  if (markerArr) {
+    markerArr.forEach((marker) => {
+      marker.setIcon(originalIcon);
+    });
+  }
+}
+
+export const DashboardInfo = ({
+  map,
+  historicalRealEstateData,
+  recommendedZipcode,
+  setDisplayDialog,
+  setDialogInfo,
+  query,
+  predictedPrice,
+  getComparedZip,
+  setComparedZip,
+  getSelectedZip,
+  setCreateMoreDashboardInfo,
+}) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
     version: "weekly",
   });
-  const [amenitiesOnMap, setAmenitiesOnMap] = createSignal([]);
-  const [amenities, setAmenities] = createSignal({});
+  const [borough, setBorough] = createSignal("");
+  const [neighbourhood, setNeighbourhood] = createSignal("");
   const [show, setShow] = createSignal(true);
-  const [race, setRace] = createSignal({});
-  const [gender, setGender] = createSignal({});
-  const [getPropertyPrice, setPropertyPrice] = createSignal([]);
-  const [getPricePerSQFT, setPricePerSQFT] = createSignal([]);
-  const [getPropertySQFT, setPropertySQFT] = createSignal([]);
-  const [propertyOnMap, setPropertyOnMap] = createSignal([]);
-  const [getPropertyType, setPropertyType] = createSignal([]);
+  // const [getPropertyPrice, setPropertyPrice] = createSignal([]);
 
-  //   level: borough/neighbourhood/zipcode
-  //  area: "Bronx"/"Greenpoint"/11385
+  //show the dropdown menu for users to select the information on the board
+  const [displayDropdownMenu, setDisplayDropdownMenu] = createSignal(false);
+
+  //show the type of information on the board
+  const [displayContent, setDisplayContent] = createSignal("realEstate");
+
+  const [clean, setClean] = createSignal(false);
+
+  const [showDropDown, setShowDropDown] = createSignal(false);
+
+  //control linecharts
+  const [updateLineChart, setUpdateLineChart] = createSignal(false);
+  const [cleanLineChart, setCleanLineChart] = createSignal(false);
+
+  //control realestateinfo, amenitiesinfo ...
+  const [updateInfo, setUpdateInfo] = createSignal(false);
+  //control sliding the multiple information
+  const [showWhichRealEstate, setShowWhichRealEstate] = createSignal(
+    getSelectedZip()
+  );
+
+  const [draggableMarker, setDraggableMarker] = createSignal(null);
+  const [lat, setLat] = createSignal(0);
+  const [lon, setLon] = createSignal(0);
+  const [predictedCost, setPredictedCost] = createSignal(null);
+  //unique zipcodes that has historical information
+  const uniqueZipcode = Object.keys(historicalRealEstateData);
+
+  //unique house type of the zipcode
+  const [uniqueHouseType, setUniqueHouseType] = createSignal([]);
+
+  const [Yr1_Price, setYr1Price] = createSignal(null);
+
+  const [Yr3_Price, setYr3Price] = createSignal(null);
+
+  const [Yr5_Price, setYr5Price] = createSignal(null);
+
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
-        if (data) {
-          // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
+        if (data && data.length > 0) {
           const obj = data[0];
-          document.getElementById(
-            `borough-dashboardInfo-${props.zip}`
-          ).innerText = obj["borough"];
-          document.getElementById(
-            `neighbourhood-dashboardInfo-${props.zip}`
-          ).innerText = obj["neighbourhood"];
+          try {
+            setBorough(obj["borough"]);
+            setNeighbourhood(obj["neighbourhood"]);
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          console.log("No Borough-Neighbourhood data found.");
         }
       });
+  };
 
-    fetch(`http://localhost:8000/api/property-data?${level}=${area}`)
+  const fetchPredictedHomePrice = (
+    borough,
+    house_type,
+    beds,
+    baths,
+    sqft,
+    lat,
+    lng,
+    zip
+  ) => {
+    fetch(
+      `http://localhost:5001/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
+    )
       .then((response) => response.json())
       .then((data) => {
-        if (data) {
-          let type = {};
-          let price = [];
-          let price_per_sqft = [];
-          let propertysqft = [];
-          let labels = [];
-          data[area].forEach((el) => {
-            if (!type.hasOwnProperty(el.TYPE)) {
-              type[el.TYPE] = 0;
-            }
-            type[el.TYPE] += 1;
-            price.push(el.PRICE);
-            price_per_sqft.push(el["PRICE_PER_SQFT"]);
-            propertysqft.push(el["PROPERTYSQFT"]);
-            labels.push(el["TYPE"]);
-          });
-
-          const priceDatasets = {
-            labels: labels,
-            datasets: [{ label: "Property Price", data: price }],
-          };
-          setPropertyPrice(priceDatasets);
-
-          const datasets = {
-            labels: Object.keys(type),
-            datasets: [{ label: "Property Type", data: Object.values(type) }],
-          };
-          setPropertyType(datasets);
-
-          loader.importLibrary("marker").then(({ Marker, Animation }) => {
-            if (propertyOnMap()) {
-              propertyOnMap().forEach((marker) => marker.setMap(null));
-              setPropertyOnMap([]);
-            }
-
-            data[area].forEach((el) => {
-              const marker = new Marker({
-                position: { lat: el["LATITUDE"], lng: el["LONGITUDE"] },
-                level: "property-data",
-                type: el["TYPE"],
-                bath: el["BATH"],
-                beds: el["BEDS"],
-                price: el["PRICE"],
-                propertysqf: ["PROPERTYSQFT"],
-                animation: Animation.DROP,
-                map: props.map(),
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 5, // Adjust the scale to make the circle smaller or larger
-                  fillColor: "#ffffff", // Circle color
-                  fillOpacity: 1, // Circle fill opacity
-                  strokeWeight: 1, // Circle border thickness
-                  strokeColor: "#000000", // Circle border color
-                },
-              });
-              setPropertyOnMap((prev) => [...prev, marker]);
-              marker.addListener("click", () => {
-                console.log("marker got clicked");
-              });
-            });
-          });
-        }
-      });
-
-    fetch(`http://localhost:8000/api/demographic?${level}=${area}`)
-      .then((response) => response.json())
-      .then((data) => {
-        //[{"zipcode":11385,"avg_home_value":797132.8645251795,"median_household_income":77350,"median_age":36.2}]
-        if (data) {
-          const obj = data[0];
-
-          const gender_labels = ["Male", "Female"];
-          const gender_data = [obj["Male"], obj["Female"]];
-
-          const gender_datasets = {
-            labels: gender_labels,
-            datasets: [{ label: "Gender", data: gender_data }],
-          };
-          setGender(gender_datasets);
-
-          const race_labels = [
-            "white",
-            "asian",
-            "black",
-            "pacific_islander",
-            "american_indian",
-            "other",
-          ];
-          const race_data = [
-            obj["white"],
-            obj["asian"],
-            obj["black"],
-            obj["pacific_islander"],
-            obj["american_indian"],
-            obj["other"],
-          ];
-
-          const race_datasets = {
-            labels: race_labels,
-            datasets: [{ label: "Diversity", data: race_data }],
-          };
-
-          setRace(race_datasets);
-          document.getElementById("familyHousehold").innerText =
-            obj["FamilyHousehold"];
-          document.getElementById("medianHouseholdIncome").innerText =
-            obj["MedianHouseholdIncome"];
-          document.getElementById("singleHousehold").innerText =
-            obj["SingleHousehold"];
-          document.getElementById("population").innerText = obj["Population"];
-          document.getElementById("populationDensity").innerText =
-            obj["PopulationDensity"];
-
-          // document.getElementById(
-          //   `avgHomeValue-dashboardInfo-${props.zip}`
-          // ).innerText = obj["avg_home_value"];
-          // document.getElementById(
-          //   `medianHomeIncome-dashboardInfo-${props.zip}`
-          // ).innerText = obj["median_household_income"];
-          // document.getElementById(
-          //   `medianAge-dashboardInfo-${props.zip}`
-          // ).innerText = obj["median_age"];
-        }
-      });
-    fetch(`http://localhost:8000/api/amenities?${level}=${area}`)
-      .then((response) => response.json())
-      .then((data_amenities) => {
-        if (data_amenities) {
-          loader.importLibrary("marker").then(({ Marker, Animation }) => {
-            if (amenitiesOnMap()) {
-              amenitiesOnMap().forEach((marker) => marker.setMap(null));
-              setAmenitiesOnMap([]);
-            }
-
-            let amenitiesObj = {};
-
-            data_amenities[area].forEach((el) => {
-              if (!amenitiesObj.hasOwnProperty(el["FACILITY_T"])) {
-                amenitiesObj[el["FACILITY_T"]] = {};
-              }
-              if (
-                !amenitiesObj[el["FACILITY_T"]].hasOwnProperty(
-                  el["FACILITY_DOMAIN_NAME"]
-                )
-              ) {
-                amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]] = [];
-              }
-              amenitiesObj[el["FACILITY_T"]][el["FACILITY_DOMAIN_NAME"]].push(
-                el["NAME"]
-              );
-              const marker = new Marker({
-                position: { lat: el["LAT"], lng: el["LNG"] },
-                title: el["NAME"],
-                level: "amenties",
-                facility_type: el["FACILITY_T"],
-                facility_desc: el["FACILITY_DOMAIN_NAME"],
-                animation: Animation.DROP,
-                map: props.map(),
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 5, // Adjust the scale to make the circle smaller or larger
-                  fillColor: "#0145ac", // Circle color
-                  fillOpacity: 1, // Circle fill opacity
-                  strokeWeight: 1, // Circle border thickness
-                  strokeColor: "#000000", // Circle border color
-                },
-              });
-              setAmenitiesOnMap((prev) => [...prev, marker]);
-            });
-
-            const labels = Object.keys(amenitiesObj);
-            let data = [];
-            for (let key of labels) {
-              const obj = amenitiesObj[key];
-              let value = 0;
-              // console.log("obj in creating doughnut", obj);
-              for (let desc of Object.keys(obj)) {
-                value += obj[desc].length;
-              }
-              // console.log("value in doughnutchart", value);
-              data.push(value);
-            }
-            const datasets = {
-              labels,
-              datasets: [{ label: "Amenities DoughnutChart", data }],
-            };
-
-            setAmenities(datasets);
-
-            const footer = (tooltipItems) => {
-              const desc = Object.keys(amenities()[tooltipItems[0].label]);
-              let footer_string = "";
-              desc.forEach((d) => {
-                const arr = amenities()[tooltipItems[0].label][d];
-                footer_string += `${d}:${arr.length}\n`;
-              });
-              return footer_string;
-            };
-
-            // const facilityTypeUl = document.getElementById("facility_type_ul");
-            // if (facilityTypeUl) {
-            //   Object.keys(amenities()).forEach((a) => {
-            //     const facilityDesc = Object.keys(amenities()[a])
-            //       .map((el) => `<li>${el}</li>`)
-            //       .join("");
-
-            //     facilityTypeUl.innerHTML += `<li><div class=" rounded-lg text-white">${a}</div><ul>${facilityDesc}</ul></li>`;
-            //   });
-            // }
-          });
+        if (data && data.hasOwnProperty("predicted_price")) {
+          setPredictedCost(data["predicted_price"]);
+        } else {
+          return null;
         }
       });
   };
 
   createEffect(() => {
-    if (props.zip !== "") {
-      fetchDashboardInfoData("zipcode", props.zip);
+    if (getSelectedZip() !== "") {
+      fetchDashboardInfoData("zipcode", getSelectedZip());
     }
+  });
+
+  createEffect(() => {
+    console.log(predictedCost());
   });
 
   onCleanup(() => {
-    const markers = amenitiesOnMap();
-    if (markers) {
-      markers.forEach((marker) => {
-        marker.setMap(null);
-      });
-      setAmenitiesOnMap([]);
-    }
+    setComparedZip([]);
   });
 
+  function handleSubmit() {
+    const zipArray = [...new Set([...getComparedZip()])];
+    if (zipArray.includes(getSelectedZip() * 1)) {
+      zipArray.pop(getSelectedZip() * 1);
+    }
+    if (zipArray.length > 1) {
+      let query = "";
+      for (let i = 0; i < zipArray.length; i++) {
+        if (i > 6) {
+          //limit is 7
+          break;
+        }
+        // console.log(zipArray[i]);
+        if (i == 0) {
+          query += `?zipcode=${zipArray[i]}`;
+        } else {
+          query += `&zipcode=${zipArray[i]}`;
+        }
+      }
+    }
+    setComparedZip(zipArray);
+    setUpdateLineChart(true);
+    setUpdateInfo(true);
+    setShowWhichRealEstate(getSelectedZip());
+    setClean(true);
+  }
+
+  const handleSubmitPredictedPrice = () => {
+    const sqft = document.getElementById("size-p").value;
+    const beds = document.getElementById("bedrooms-p").value;
+    const baths = document.getElementById("bathrooms-p").value;
+    const house_type = document.getElementById("house_type-p").value;
+    fetchPredictedHomePrice(
+      borough(),
+      house_type,
+      beds,
+      baths,
+      sqft,
+      lat(),
+      lon(),
+      getSelectedZip()
+    );
+  };
+
   return (
-    <div
-      class="w-[100%] rounded-lg
-    h-[100%] border-2 border-teal-500 border-solid overflow-y-auto"
-      id={`dashboardDiv-${[props.zip]}`}
-    >
+    <div id={`dashboardDiv-${[getSelectedZip()]}`}>
       <div
-        class="col-span-2 text-center justify-center 
-        cursor-pointer
-        bg-teal-500 text-white"
-        id="dashboard-title"
-        onClick={() => {
-          setShow((prev) => !prev);
-        }}
+        class=" flex top-[4vh]
+      dark:text-white w-[100%] py-[2px] place-content-between
+    
+      "
       >
-        ZIPCODE {props.zip},
-        <span id={`neighbourhood-dashboardInfo-${props.zip}`}></span>,
-        <span id={`borough-dashboardInfo-${props.zip}`}></span>
-      </div>
-      <div
-        class={`flex flex-col relative 
-      w-[100%] place-content-stretch
-       ${show() ? "" : "hidden"}`}
-      >
-        <div>
-          <div>Real Estate Information</div>
-          <div class="flex flex-row">
-            {" "}
-            <Show when={getPropertyPrice()}>
-              {/* <BarChart datasets={getPropertyPrice()} /> */}
-              <div>Visualisation of Price Information</div>
-            </Show>
-            <Show when={getPropertyType()}>
-              <div>
-                <DoughnutChart datasets={getPropertyType()} />
+        <div id="header-dashboard">
+          <h1
+            class="font-medium w-[100%] place-content-between"
+            id="dashboard_top"
+          >
+            {`Information on ZIPCODE ${getSelectedZip()}`},
+            <span>{neighbourhood()}</span>,<span>{borough()}</span>
+          </h1>
+
+          {/* input & dropdown */}
+          <div>
+            <Show when={getSelectedZip()}>
+              <div
+                class="flex
+            w-[50%] gap-2 my-2 min-h-[3vh]
+            "
+              >
+                <div id="search-box-dropdown" class="z-40 flex flex-col">
+                  {/* search box */}
+                  <div
+                    class="rounded-t-lg text-center
+                  relative bg-[#ffffff] flex gap-2
+                  max-h-[3vh] px-2
+                  items-center justify-center"
+                  >
+                    {/* button svg */}
+                    <Show
+                      when={showDropDown() === false}
+                      fallback={
+                        <button
+                          onClick={() => setShowDropDown(false)}
+                          class="hover:bg-teal-500"
+                        >
+                          <img src={arrow_up} class="w-[15px] h-[15px]" />
+                        </button>
+                      }
+                    >
+                      <button
+                        onClick={() => setShowDropDown(true)}
+                        class="hover:bg-teal-500"
+                      >
+                        <img src={arrow_down} class="w-[15px] h-[15px]" />
+                      </button>
+                    </Show>
+
+                    {/* input box */}
+                    <input
+                      type="text"
+                      placeholder={`Compare To? ${getComparedZip()}`}
+                      id="compareSearchBar"
+                      class="min-w-[20px]"
+                      onKeyUp={(event) => {
+                        if (event.key === "Enter") {
+                          if (uniqueZipcode.includes(event.target.value)) {
+                            setComparedZip((prev) => [
+                              ...new Set([...prev, event.target.value * 1]),
+                            ]);
+
+                            if (
+                              !document.getElementById(
+                                `compareCheckbox-${event.target.value}`
+                              ).checked
+                            ) {
+                              document.getElementById(
+                                `compareCheckbox-${event.target.value}`
+                              ).checked = true;
+                            }
+                            event.target.value = "";
+                          } else {
+                            alert("The zipcode you provided is not included.");
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {/* dropdown */}
+
+                  <div
+                    class={`overflow-y-auto bg-[#ffffff] max-h-[20vh] w-full
+                     shadow-md
+                   z-40 ${showDropDown() ? "block" : "hidden"}`}
+                  >
+                    <div>
+                      {uniqueZipcode.map((zip) => (
+                        <div key={zip} class="p-2">
+                          <input
+                            type="checkbox"
+                            id={`compareCheckbox-${zip}`}
+                            value={zip}
+                            class="accent-teal-500 compareCheckbox"
+                            onClick={(event) => {
+                              if (event.target.checked) {
+                                setComparedZip((prev) => [
+                                  ...prev,
+                                  event.target.value * 1,
+                                ]);
+                              } else {
+                                setComparedZip((prev) =>
+                                  prev.filter(
+                                    (el) => el != event.target.value * 1
+                                  )
+                                );
+                              }
+                            }}
+                          />
+
+                          <label
+                            htmlFor={`compareCheckbox-${zip}`}
+                            class="ml-2"
+                          >
+                            {zip}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* submit button and clean button */}
+                <div class="flex max-h-[3vh] gap-[2px]">
+                  <input
+                    type="Submit"
+                    class="relative ml-[2%] rounded-lg bg-black text-white cursor-pointer px-2"
+                    onClick={handleSubmit}
+                  />
+                  <button
+                    class={
+                      clean()
+                        ? "relative ml-[2%] bg-black px-2 rounded-lg text-center text-white cursor-pointe r"
+                        : "relative ml-[2%] bg-black px-2 rounded-lg text-center text-white cursor-not-allowed opacity-50"
+                    }
+                    onClick={() => {
+                      setCreateMoreDashboardInfo(false);
+                      for (let zip of getComparedZip()) {
+                        const checkbox = document.getElementById(
+                          `compareCheckbox-${zip}`
+                        );
+                        checkbox.checked = false;
+                      }
+                      setComparedZip([]);
+                      setUpdateLineChart(false);
+                      setCleanLineChart(true);
+                      setUpdateInfo(false);
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
             </Show>
           </div>
         </div>
-        <div>
-          <div class="basic-info ">
+        <div class="right-[4vw]">
+          <MarkerLegend />
+        </div>
+      </div>
+
+      <div class="w-[95%] h-[1px] mt-[4vh] bg-[#E4E4E7]" id="main">
+        <div
+          class={`grid grid-row-1 divide-y relative 
+      w-[100%] place-content-stretch
+       ${show() ? "" : "hidden"}`}
+        >
+          <div>
+            <p class="text-lg">Real Estate Information</p>
             <div
-              class="bg-teal-500 text-white items-center
-           text-center justify-center items-center"
+              id="real-estate-content"
+              class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
             >
-              Demographic Information
-            </div>
-            <div class="grid grid-cols-1 divide-y gap-2">
-              <div class="grid grid-cols-1 divide-y">
-                <div>
-                  Family Household <span id="familyHousehold"></span>
-                </div>
-                <div>
-                  Single Household <span id="singleHousehold"></span>
-                </div>
-                <div>
-                  Population <span id="population"></span>
-                </div>
-                <div>
-                  Population Density <span id="populationDensity"></span>
-                </div>
-                <div>
-                  Median Household Income{" "}
-                  <span id="medianHouseholdIncome"></span>
-                </div>
-                <div class="grid grid-cols-2">
-                  <div>
-                    <Suspense>
-                      <Show when={gender()}>
-                        <p class="bg-teal-500 text-white text-center">
-                          Gender:
-                        </p>
+              <div id="historic-home-values" class="min-h-[40vh]">
+                <LineChart
+                  getComparedZip={getComparedZip}
+                  getSelectedZip={getSelectedZip}
+                  updateLineChart={updateLineChart}
+                  setUpdateLineChart={setUpdateLineChart}
+                  cleanLineChart={cleanLineChart}
+                  setCleanLineChart={setCleanLineChart}
+                ></LineChart>
+              </div>
 
-                        <DoughnutChart
-                          datasets={gender()}
-                          zip={props.zip}
-                          ref={(el) => (ref = el)}
-                        />
-                      </Show>
-                    </Suspense>
+              <div id="sales-2023" class="relative w-full">
+                <p>
+                  Residential Property Sales(2023)
+                  <span>Data Source: Zillow</span>
+                </p>
+                <Show when={updateInfo()}>
+                  <div class="flex gap-2">
+                    <button
+                      class={`bg-black text-white px-2 ${
+                        showWhichRealEstate() === getSelectedZip()
+                          ? ""
+                          : "opacity-30"
+                      }`}
+                      onClick={() => {
+                        setShowWhichRealEstate(getSelectedZip());
+                      }}
+                    >
+                      {getSelectedZip()}
+                    </button>
+                    <For each={getComparedZip()}>
+                      {(item, index) => {
+                        return (
+                          <button
+                            class={`bg-black text-white px-2 ${
+                              showWhichRealEstate() === item ? "" : "opacity-30"
+                            }`}
+                            onClick={() => {
+                              setShowWhichRealEstate(item);
+                            }}
+                          >
+                            {item}
+                          </button>
+                        );
+                      }}
+                    </For>
                   </div>
-                  <div>
-                    <div>
-                      <Suspense>
-                        <Show when={race()}>
-                          <p class="bg-teal-500 text-white text-center">
-                            Race Diveristy
-                          </p>
+                </Show>
 
-                          <DoughnutChart
-                            datasets={race()}
-                            zip={props.zip}
-                            ref={(el) => (ref = el)}
-                          />
-                        </Show>
-                      </Suspense>
-                    </div>
+                <div class="relative w-full">
+                  <div
+                    class={
+                      showWhichRealEstate() === getSelectedZip() ||
+                      !updateInfo()
+                        ? ""
+                        : "hidden"
+                    }
+                  >
+                    <RealEstateInfo
+                      map={map}
+                      setDialogInfo={setDialogInfo}
+                      setDisplayDialog={setDisplayDialog}
+                      highlightMarker={highlightMarker}
+                      recommendedZipcode={recommendedZipcode}
+                      getSelectedZip={getSelectedZip}
+                      predictedPrice={predictedPrice}
+                      query={query}
+                      loader={loader}
+                      loadCompared={false}
+                      setUniqueHouseType={setUniqueHouseType}
+                      setDraggableMarker={setDraggableMarker}
+                      draggableMarker={draggableMarker}
+                      setLat={setLat}
+                      setLon={setLon}
+                    />
                   </div>{" "}
+                  <Show when={updateInfo()}>
+                    <For each={getComparedZip()}>
+                      {(item, index) => (
+                        <div
+                          class={showWhichRealEstate() === item ? "" : "hidden"}
+                        >
+                          <RealEstateInfo
+                            map={map}
+                            setDialogInfo={setDialogInfo}
+                            setDisplayDialog={setDisplayDialog}
+                            highlightMarker={highlightMarker}
+                            recommendedZipcode={recommendedZipcode}
+                            getSelectedZip={item}
+                            predictedPrice={predictedPrice}
+                            query={query}
+                            loader={loader}
+                            loadCompared={true}
+                            setUniqueHouseType={null}
+                            setDraggableMarker={null}
+                          />
+                        </div>
+                      )}
+                    </For>
+                  </Show>
+                </div>
+              </div>
+              <div id="sales-2024">
+                <div
+                  class="hover:text-indigo-600 cursor-pointer w-[90%]
+                hover:border-b-2 hover:border-solid hover:border-indigo-600"
+                  onClick={() => {}}
+                >
+                  Want to know how much you gonna need to get a residential
+                  property at Zipcode {getSelectedZip()} in 2024?
+                </div>
+                <div>
+                  <Show when={uniqueHouseType() && draggableMarker()}>
+                    <div class="flex flex-col gap-2">
+                      <label for="sqft">Size(sqft):</label>
+                      <input
+                        type="number"
+                        id="size-p"
+                        name="size"
+                        placeholder="1000"
+                      />
+                      <label for="bedrooms">Beds:</label>
+                      <input
+                        type="number"
+                        id="bedrooms-p"
+                        name="bedrooms"
+                        placeholder="1"
+                      />
+                      <label for="bathrooms">Bath:</label>
+                      <input
+                        type="number"
+                        id="bathrooms-p"
+                        name="bathrooms"
+                        placeholder="1"
+                      />
+                      <label for="house_type">House Type:</label>
+                      <select id="house_type-p" name="house_type" required>
+                        <For each={uniqueHouseType()}>
+                          {(item) => <option value={item}>{item}</option>}
+                        </For>
+                      </select>
+                      <button
+                        class="bg-black text-white w-[30%]"
+                        onClick={handleSubmitPredictedPrice}
+                      >
+                        Submit
+                      </button>
+                      <Show when={predictedCost()}>
+                        <div>
+                          The predicted price will be: ${predictedCost()}
+                        </div>
+                      </Show>
+                    </div>
+                  </Show>
                 </div>
               </div>
             </div>
           </div>
+
           <div>
-            <Suspense>
-              <Show when={amenities()}>
-                <p class="bg-teal-500 text-white text-center">Amenities:</p>
-                <div class="flex flex-row">
-                  <DoughnutChart
-                    datasets={amenities()}
-                    zip={props.zip}
-                    ref={(el) => (ref = el)}
-                  />
-                  <div>Details</div>
-                </div>
-              </Show>
-            </Suspense>
+            <p>Amenities Information</p>
+            <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
+              <AmenitiesInfo
+                getSelectedZip={getSelectedZip}
+                loader={loader}
+                highlightMarker={highlightMarker}
+                map={map}
+              />
+            </div>
+          </div>
+
+          <div>
+            <p>Other Information</p>
+            <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
+              <p>Demographic</p>
+              <DemographicInfo zip={getSelectedZip} />
+            </div>
           </div>
         </div>
       </div>

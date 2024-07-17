@@ -1,6 +1,4 @@
 import { HomeScreenLayout } from "../layouts/Layout";
-import restaurantSVG from "../assets/restaurant.svg";
-import storeSVG from "../assets/store.svg";
 import houseSVG from "../assets/house-svgrepo-com.svg";
 import housemodernSVG from "../assets/house-modern.svg";
 import appLogo from "../assets/logo_v_small.png";
@@ -16,12 +14,12 @@ export const Home = () => {
             <img src={appLogo} alt="App Logo" class="w-48 h-auto" />
           </a>
           <ul class="flex gap-10">
-            <a
+            {/* <a
               class="font-poppins-regular-regular text-xl hover:text-gray-500 transition-colors duration-300"
               href="/dashboard"
             >
               Dashboard
-            </a>
+            </a> */}
             <a
               class="font-poppins-regular text-xl hover:text-gray-500 transition-colors duration-300"
               href="/map"
@@ -45,10 +43,9 @@ export const Home = () => {
               Pronounced "ray-ah"
             </span>
             <p class="font-poppins-regular mt-4 text-gray-700 text-2xl">
-              Reiah helps you discover the perfect ZIP code to invest in.
-              Whether it's for residential or commercial purposes, our platform
-              provides the insights and tools you need to accelerate your
-              investment journey.
+              Reiah helps you discover the perfect ZIP code to invest your
+              residential property. Our platform provides the insights and tools
+              you need to accelerate your investment journey.
             </p>
             <p class="font-poppins-regular mt-4 text-gray-700 text-2xl">
               Unlock the potential of your next real estate venture with Reiah!
@@ -71,11 +68,11 @@ export const Home = () => {
           <div class="flex flex-col justify-center items-center">
             <div class="flex justify-center items-center">
               <img src={houseSVG} alt="house svg yay!" class="h-72 mr-4 mb-4" />
-              <img src={restaurantSVG} alt="restaurant svg" class="h-72 mb-4" />
+              {/* <img src={restaurantSVG} alt="restaurant svg" class="h-72 mb-4" /> */}
+              <img src={housemodernSVG} alt="house modern svg" class="h-72" />
             </div>
             <div class="flex justify-center items-center">
-              <img src={storeSVG} alt="store svg" class="h-72 mr-4" />
-              <img src={housemodernSVG} alt="house modern svg" class="h-72" />
+              {/* <img src={storeSVG} alt="store svg" class="h-72 mr-4" /> */}
             </div>
           </div>
         </div>
