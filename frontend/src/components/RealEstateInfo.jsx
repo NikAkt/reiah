@@ -12,6 +12,11 @@ const RealEstateInfo = ({
   setDisplayDialog,
   highlightMarker,
   loadCompared,
+  setUniqueHouseType,
+  setDraggableMarker,
+  draggableMarker,
+  setLat,
+  setLon,
 }) => {
   const colorsChartjs = [
     "#36A2EB",
@@ -94,6 +99,9 @@ const RealEstateInfo = ({
 
         setTypeAvg([]);
         setHoverType("");
+        if (setUniqueHouseType) {
+          setUniqueHouseType(Object.keys(type));
+        }
 
         Object.keys(type).forEach((t) => {
           const avg = generateHouseTypeDetails(t, data[zip]);
@@ -111,6 +119,28 @@ const RealEstateInfo = ({
           setPropertyOnMap([]);
 
           let markers = [];
+          if (setDraggableMarker) {
+            if (draggableMarker()) {
+              draggableMarker().setMap(null);
+            }
+            const firstEle = data[zip][0];
+            const marker = new Marker({
+              position: { lat: firstEle.LATITUDE, lng: firstEle.LONGITUDE },
+              animation: Animation.DROP,
+              map: map(),
+              draggable: true,
+              title: "Drag me!",
+            });
+            marker.addListener("dragend", (event) => {
+              const lat = event.latLng.lat();
+              const lng = event.latLng.lng();
+              setLat(lat);
+              setLon(lng);
+              alert("New position: " + lat + ", " + lng);
+            });
+            marker.setZIndex(1000);
+            setDraggableMarker(marker);
+          }
 
           data[zip].forEach((el) => {
             const marker = new Marker({
@@ -129,6 +159,7 @@ const RealEstateInfo = ({
               },
               icon: propertyMarkerIcon,
             });
+
             markers.push(marker);
             marker.addListener("click", () => {
               setDialogInfo({
@@ -197,6 +228,10 @@ const RealEstateInfo = ({
       marker.setMap(null);
     });
     setPropertyOnMap([]);
+    if (setDraggableMarker) {
+      draggableMarker().setMap(null);
+      setDraggableMarker(null);
+    }
   });
 
   return (
@@ -244,6 +279,7 @@ const RealEstateInfo = ({
             </div>
           </Show>
         </div>
+
         <div>
           {loadCompared ? (
             <Show

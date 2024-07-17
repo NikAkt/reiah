@@ -254,8 +254,11 @@ const LineChart = ({
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
       <Show when={!historicPrices.loading} fallback={<ChartLoadingIndicator />}>
-        <div class="w-full h-full">
-          <canvas ref={(el) => (ref = el)}></canvas>
+        <div>
+          <canvas
+            ref={(el) => (ref = el)}
+            class="w-full h-full min-w-[500px] min-h-[400px]"
+          ></canvas>
         </div>
       </Show>
     </div>
@@ -289,7 +292,10 @@ const DoughnutChart = (props) => {
   });
 
   return (
-    <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
+    <div
+      class="relative min-h-[280px] max-w-[350px]
+    aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full"
+    >
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
   );
@@ -359,7 +365,7 @@ const createDoughnutChart = (
         },
         plugins: {
           legend: {
-            position: "left",
+            position: "top",
           },
         },
       },
@@ -393,7 +399,7 @@ const createDoughnutChart = (
         plugins: {
           legend: {
             display: true,
-            position: "left",
+            position: "top",
           },
         },
       },

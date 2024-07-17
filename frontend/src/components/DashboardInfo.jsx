@@ -48,6 +48,8 @@ export const DashboardInfo = ({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
     version: "weekly",
   });
+  const [borough, setBorough] = createSignal("");
+  const [neighbourhood, setNeighbourhood] = createSignal("");
   const [show, setShow] = createSignal(true);
   // const [getPropertyPrice, setPropertyPrice] = createSignal([]);
 
@@ -68,10 +70,18 @@ export const DashboardInfo = ({
   //control realestateinfo, amenitiesinfo ...
   const [updateInfo, setUpdateInfo] = createSignal(false);
   //control sliding the multiple information
-  const [realEstateCount, setRealEstateCount] = createSignal(0);
+  const [showWhichRealEstate, setShowWhichRealEstate] = createSignal(
+    getSelectedZip()
+  );
 
+  const [draggableMarker, setDraggableMarker] = createSignal(null);
+  const [lat, setLat] = createSignal(0);
+  const [lon, setLon] = createSignal(0);
   //unique zipcodes that has historical information
   const uniqueZipcode = Object.keys(historicalRealEstateData);
+
+  //unique house type of the zipcode
+  const [uniqueHouseType, setUniqueHouseType] = createSignal([]);
 
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
@@ -81,17 +91,32 @@ export const DashboardInfo = ({
           // [{"neighbourhood":"West Central Queens","borough":"Queens","zipcodes":[11374,11375,11379,11385]}]
           const obj = data[0];
           try {
-            document.getElementById(
-              `borough-dashboardInfo-${getSelectedZip()}`
-            ).innerText = obj["borough"];
-            document.getElementById(
-              `neighbourhood-dashboardInfo-${getSelectedZip()}`
-            ).innerText = obj["neighbourhood"];
+            setBorough(obj["borough"]);
+            setNeighbourhood(obj["neighbourhood"]);
           } catch (error) {
             console.log(error);
           }
         }
       });
+  };
+
+  const fetchPredictedHomePrice = async (
+    borough,
+    house_type,
+    beds,
+    baths,
+    sqft,
+    lat,
+    lng,
+    zip
+  ) => {
+    const response = await fetch(
+      `http://localhost:5001/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
+    );
+    const predictedPrice = await response.json();
+    if (predictedPrice.hasProperty("predicted_price")) {
+      return predictedPrice["predicted_price"];
+    }
   };
 
   createEffect(() => {
@@ -127,6 +152,7 @@ export const DashboardInfo = ({
     setComparedZip(zipArray);
     setUpdateLineChart(true);
     setUpdateInfo(true);
+    setShowWhichRealEstate(getSelectedZip());
     setClean(true);
   }
 
@@ -141,9 +167,8 @@ export const DashboardInfo = ({
           class="font-medium w-[100%] place-content-between"
           id="dashboard_top"
         >
-          {`Information on ZIPCODE ${getSelectedZip()} `}
-          <span id={`neighbourhood-dashboardInfo-${getSelectedZip()}`}></span>,
-          <span id={`borough-dashboardInfo-${getSelectedZip()}`}></span>
+          {`Information on ZIPCODE ${getSelectedZip()}`},
+          <span>{neighbourhood()}</span>,<span>{borough()}</span>
         </h1>
 
         {/* input & dropdown */}
@@ -371,35 +396,54 @@ export const DashboardInfo = ({
                   setCleanLineChart={setCleanLineChart}
                 ></LineChart>
               </div>
-              <ul
-                class="flex w-full px-0 m-0 transition-transform delay-50"
-                style={{
-                  transform: `translateX(-${realEstateCount() * 100}%)`,
-                }}
-              >
-                <li class="min-w-full">
-                  <div id="sales-2023" class="relative w-full">
-                    <p>
-                      Residential Property Sales(2023){" "}
-                      <span>Data Source: Zillow</span>
-                    </p>
-                    <Show when={updateInfo()}>
-                      <div class="flex gap-2">
-                        <button class="bg-black text-white px-2">
-                          {getSelectedZip()}
-                        </button>
-                        <For each={getComparedZip()}>
-                          {(item, index) => {
-                            return (
-                              <button class="bg-black text-white px-2">
-                                {item}
-                              </button>
-                            );
-                          }}
-                        </For>
-                      </div>
-                    </Show>
 
+              <div id="sales-2023" class="relative w-full">
+                <p>
+                  Residential Property Sales(2023)
+                  <span>Data Source: Zillow</span>
+                </p>
+                <Show when={updateInfo()}>
+                  <div class="flex gap-2">
+                    <button
+                      class={`bg-black text-white px-2 ${
+                        showWhichRealEstate() === getSelectedZip()
+                          ? ""
+                          : "opacity-30"
+                      }`}
+                      onClick={() => {
+                        setShowWhichRealEstate(getSelectedZip());
+                      }}
+                    >
+                      {getSelectedZip()}
+                    </button>
+                    <For each={getComparedZip()}>
+                      {(item, index) => {
+                        return (
+                          <button
+                            class={`bg-black text-white px-2 ${
+                              showWhichRealEstate() === item ? "" : "opacity-30"
+                            }`}
+                            onClick={() => {
+                              setShowWhichRealEstate(item);
+                            }}
+                          >
+                            {item}
+                          </button>
+                        );
+                      }}
+                    </For>
+                  </div>
+                </Show>
+
+                <div class="relative w-full">
+                  <div
+                    class={
+                      showWhichRealEstate() === getSelectedZip() ||
+                      !updateInfo()
+                        ? ""
+                        : "hidden"
+                    }
+                  >
                     <RealEstateInfo
                       map={map}
                       setDialogInfo={setDialogInfo}
@@ -411,39 +455,83 @@ export const DashboardInfo = ({
                       query={query}
                       loader={loader}
                       loadCompared={false}
+                      setUniqueHouseType={setUniqueHouseType}
+                      setDraggableMarker={setDraggableMarker}
+                      draggableMarker={draggableMarker}
+                      setLat={setLat}
+                      setLon={setLon}
                     />
-                  </div>
-                </li>
-                <Show when={updateInfo()}>
-                  <For each={getComparedZip()}>
-                    {(item, index) => (
-                      <RealEstateInfo
-                        map={map}
-                        setDialogInfo={setDialogInfo}
-                        setDisplayDialog={setDisplayDialog}
-                        highlightMarker={highlightMarker}
-                        recommendedZipcode={recommendedZipcode}
-                        getSelectedZip={item}
-                        predictedPrice={predictedPrice}
-                        query={query}
-                        loader={loader}
-                        loadCompared={true}
-                      />
-                    )}
-                  </For>
-                </Show>
-              </ul>
-
+                  </div>{" "}
+                  <Show when={updateInfo()}>
+                    <For each={getComparedZip()}>
+                      {(item, index) => (
+                        <div
+                          class={showWhichRealEstate() === item ? "" : "hidden"}
+                        >
+                          <RealEstateInfo
+                            map={map}
+                            setDialogInfo={setDialogInfo}
+                            setDisplayDialog={setDisplayDialog}
+                            highlightMarker={highlightMarker}
+                            recommendedZipcode={recommendedZipcode}
+                            getSelectedZip={item}
+                            predictedPrice={predictedPrice}
+                            query={query}
+                            loader={loader}
+                            loadCompared={true}
+                            setUniqueHouseType={null}
+                            setDraggableMarker={null}
+                          />
+                        </div>
+                      )}
+                    </For>
+                  </Show>
+                </div>
+              </div>
               <div id="sales-2024">
                 <div
-                  class="hover:text-indigo-600 cursor-pointer w-[85%]
+                  class="hover:text-indigo-600 cursor-pointer w-[90%]
                 hover:border-b-2 hover:border-solid hover:border-indigo-600"
                   onClick={() => {}}
                 >
-                  Want to know the how much you gonna need to get a home in
-                  2024?
+                  Want to know the how much you gonna need to get a residential
+                  property at Zipcode {getSelectedZip()} in 2024?
                 </div>
-                <div></div>
+                <div>
+                  borough=Brooklyn &zipcode=11233 &house_type=House &bedrooms=2
+                  &bathrooms=1 &sqft=1000 &latitude=40.6783 &longitude=-73.92
+                  <Show when={uniqueHouseType() && draggableMarker()}>
+                    <form class="flex flex-col gap-2">
+                      <label for="sqft">Size(sqft):</label>
+                      <input
+                        type="number"
+                        id="size"
+                        name="size"
+                        placeholder="1000"
+                      />
+                      <label for="bedrooms">Beds:</label>
+                      <input
+                        type="number"
+                        id="bedrooms"
+                        name="bedrooms"
+                        placeholder="1"
+                      />
+                      <label for="bathrooms">Bath:</label>
+                      <input
+                        type="number"
+                        id="bathrooms"
+                        name="bathrooms"
+                        placeholder="1"
+                      />
+                      <label for="bathrooms">House Type:</label>
+                      <select id="house_type" name="house_type" required>
+                        <For each={uniqueHouseType()}>
+                          {(item) => <option value={item}>{item}</option>}
+                        </For>
+                      </select>
+                    </form>
+                  </Show>
+                </div>
               </div>
             </div>
           </div>
