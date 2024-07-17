@@ -92,62 +92,62 @@ const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
 
   const fetchAmenitiesData = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/amenities?zipcode=${getSelectedZip()}`
-      );
-      const data_amenities = await response.json();
+      fetch(`http://localhost:8000/api/amenities?zipcode=${getSelectedZip()}`)
+        .then((response) => response.json())
+        .then((data_amenities) => {
+          if (data_amenities && data_amenities.length > 0) {
+            setHoverAmenity(null);
+            console.log("amenities", data_amenities);
 
-      if (data_amenities && data_amenities.length > 0) {
-        setHoverAmenity(null);
+            loader.importLibrary("marker").then(({ Marker, Animation }) => {
+              amenitiesOnMap().forEach((marker) => marker.setMap(null));
+              setAmenitiesOnMap([]);
 
-        const { Marker, Animation } = await loader.importLibrary("marker");
+              const amenitiesObj = {};
+              data_amenities.forEach((el) => {
+                if (!amenitiesObj[el.FACILITY_T]) {
+                  amenitiesObj[el.FACILITY_T] = {};
+                }
+                if (!amenitiesObj[el.FACILITY_T][el.FACILITY_DOMAIN_NAME]) {
+                  amenitiesObj[el.FACILITY_T][el.FACILITY_DOMAIN_NAME] = [];
+                }
+                amenitiesObj[el.FACILITY_T][el.FACILITY_DOMAIN_NAME].push(
+                  el.NAME
+                );
 
-        // Clear existing markers
-        amenitiesOnMap().forEach((marker) => marker.setMap(null));
-        setAmenitiesOnMap([]);
+                const marker = new Marker({
+                  position: { lat: el.LAT, lng: el.LNG },
+                  title: el.NAME,
+                  level: "amenties",
+                  facility_type: el.FACILITY_T,
+                  facility_desc: el.FACILITY_DOMAIN_NAME,
+                  animation: Animation.DROP,
+                  map: map(),
+                  icon: amenitiesMarkerIcon,
+                });
 
-        const amenitiesObj = {};
+                setAmenitiesOnMap((prev) => [...prev, marker]);
+              });
+              setAmenitiesDetails(amenitiesObj);
 
-        data_amenities[getSelectedZip()].forEach((el) => {
-          if (!amenitiesObj[el.FACILITY_T]) {
-            amenitiesObj[el.FACILITY_T] = {};
+              const labels = Object.keys(amenitiesObj);
+              const data = labels.map((key) => {
+                return Object.values(amenitiesObj[key]).reduce(
+                  (acc, curr) => acc + curr.length,
+                  0
+                );
+              });
+
+              const datasets = {
+                labels,
+                datasets: [{ label: "Amenities DoughnutChart", data }],
+              };
+
+              setAmenities(datasets);
+            });
+            // Clear existing markers
           }
-          if (!amenitiesObj[el.FACILITY_T][el.FACILITY_DOMAIN_NAME]) {
-            amenitiesObj[el.FACILITY_T][el.FACILITY_DOMAIN_NAME] = [];
-          }
-          amenitiesObj[el.FACILITY_T][el.FACILITY_DOMAIN_NAME].push(el.NAME);
-
-          const marker = new Marker({
-            position: { lat: el.LAT, lng: el.LNG },
-            title: el.NAME,
-            level: "amenties",
-            facility_type: el.FACILITY_T,
-            facility_desc: el.FACILITY_DOMAIN_NAME,
-            animation: Animation.DROP,
-            map: map(),
-            icon: amenitiesMarkerIcon,
-          });
-
-          setAmenitiesOnMap((prev) => [...prev, marker]);
         });
-
-        setAmenitiesDetails(amenitiesObj);
-
-        const labels = Object.keys(amenitiesObj);
-        const data = labels.map((key) => {
-          return Object.values(amenitiesObj[key]).reduce(
-            (acc, curr) => acc + curr.length,
-            0
-          );
-        });
-
-        const datasets = {
-          labels,
-          datasets: [{ label: "Amenities DoughnutChart", data }],
-        };
-
-        setAmenities(datasets);
-      }
     } catch (error) {
       console.error("Failed to fetch amenities data:", error);
     }
