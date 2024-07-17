@@ -247,6 +247,7 @@ export const DashboardInfo = ({
                       type="text"
                       placeholder={`Compare To? ${getComparedZip()}`}
                       id="compareSearchBar"
+                      class="min-w-[20px]"
                       onKeyUp={(event) => {
                         if (event.key === "Enter") {
                           if (uniqueZipcode.includes(event.target.value)) {
