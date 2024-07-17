@@ -88,7 +88,7 @@ const RealEstateInfo = ({
         let type = {};
         let count = 0;
         let labels = [];
-        data[zip].forEach((el) => {
+        data.forEach((el) => {
           if (!type.hasOwnProperty(el.TYPE)) {
             type[el.TYPE] = 0;
           }
@@ -104,7 +104,7 @@ const RealEstateInfo = ({
         }
 
         Object.keys(type).forEach((t) => {
-          const avg = generateHouseTypeDetails(t, data[zip]);
+          const avg = generateHouseTypeDetails(t, data);
           setTypeAvg((prev) => [...prev, { [t]: avg }]);
         });
 
@@ -123,7 +123,7 @@ const RealEstateInfo = ({
             if (draggableMarker()) {
               draggableMarker().setMap(null);
             }
-            const firstEle = data[zip][0];
+            const firstEle = data[0];
             const marker = new Marker({
               position: { lat: firstEle.LATITUDE, lng: firstEle.LONGITUDE },
               animation: Animation.DROP,
@@ -142,7 +142,7 @@ const RealEstateInfo = ({
             setDraggableMarker(marker);
           }
 
-          data[zip].forEach((el) => {
+          data.forEach((el) => {
             const marker = new Marker({
               position: { lat: el.LATITUDE, lng: el.LONGITUDE },
               level: "property-data",
@@ -228,7 +228,7 @@ const RealEstateInfo = ({
       marker.setMap(null);
     });
     setPropertyOnMap([]);
-    if (setDraggableMarker) {
+    if (setDraggableMarker && draggableMarker()) {
       draggableMarker().setMap(null);
       setDraggableMarker(null);
     }

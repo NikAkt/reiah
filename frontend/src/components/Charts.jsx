@@ -123,7 +123,11 @@ async function fetchMultipleHistoricPrices(zipArray) {
     }
     try {
       const data = await response.json();
-      return data;
+      if (data && data.length > 0) {
+        return data;
+      } else {
+        return null;
+      }
     } catch (e) {
       throw new Error(e);
     }
@@ -131,18 +135,15 @@ async function fetchMultipleHistoricPrices(zipArray) {
 }
 
 async function fetchHistoricPrices(zip) {
-  const response = await fetch(
-    `http://localhost:8000/api/historic-prices?zipcode=${zip}`
-  );
-  if (!response.ok) {
-    return [];
-  }
-  try {
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    throw new Error(e);
-  }
+  fetch(`http://localhost:8000/api/historic-prices?zipcode=${zip}`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        return null;
+      }
+    });
 }
 
 const LineChart = ({
@@ -160,8 +161,6 @@ const LineChart = ({
     () => getSelectedZip(),
     fetchHistoricPrices
   );
-
-  const [hasData, setHasData] = createSignal(false);
 
   createEffect(() => {
     if (cleanLineChart() === true) {
@@ -222,15 +221,16 @@ const LineChart = ({
 
   createEffect(() => {
     if (!historicPrices.loading) {
-      let newData = historicPrices();
-      let transformedData = Object.values(newData)[0];
-      if (transformedData) {
-        Object.keys(transformedData).forEach((key) => {
-          transformedData[key] === 0 ? (transformedData[key] = null) : "";
-        });
-      }
-
       try {
+        let newData = historicPrices();
+        console.log(historicPrices());
+        let transformedData = Object.values(newData)[0];
+
+        if (transformedData) {
+          Object.keys(transformedData).forEach((key) => {
+            transformedData[key] === 0 ? (transformedData[key] = null) : "";
+          });
+        }
         createLineChart(ref, [
           {
             label: Object.keys(newData)[0],
