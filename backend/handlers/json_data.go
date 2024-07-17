@@ -746,7 +746,7 @@ func filterZipcodeScores(data []ZipcodeScore, f *GetZipcodeScoreQueryParams) []Z
 }
 
 func loadZipcodeScoresFromDB() ([]ZipcodeScore, error) {
-	rows, err := db.Query(context.Background(), "SELECT zipcode, borough, current_price, one_yr_roi, one_yr_roi_lower, one_yr_roi_upper, one_yr_forecast_price, three_yr_roi, three_yr_roi_lower, three_yr_roi_upper, three_yr_forecast_price, five_yr_roi, five_yr_roi_lower, five_yr_roi_upper, five_yr_forecast_price FROM zipcode_scores")
+	rows, err := db.Query(context.Background(), "SELECT zipcode, borough, current_price, one_yr_roi, one_yr_roi_lower, one_yr_roi_upper, one_yr_forecast, three_yr_roi, three_yr_roi_lower, three_yr_roi_upper, three_yr_forecast, five_yr_roi, five_yr_roi_lower, five_yr_roi_upper, five_yr_forecast FROM zipcode_scores")
 	if err != nil {
 		return nil, err
 	}
