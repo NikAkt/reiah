@@ -53,6 +53,16 @@ services:
       DATABASE_URL: postgres://myuser:mypassword@db:5432/mydatabase?sslmode=disable
     entrypoint: ["sh", "-c", "until pg_isready -h db -U myuser; do sleep 1; done && /app/bin/app load_data"]
 
+  python-microservice:
+    build:
+      context: ./recommendation_system
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./recommendation_system/models:/app/models
+      - ./recommendation_system/data:/app/data
+      
 volumes:
   pgdata:
   pgadmin_data:
