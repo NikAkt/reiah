@@ -38,7 +38,7 @@ func main() {
 	e.GET("/api/zipcode-areas", handlers.GetZipCodeAreas)
 	e.GET("/api/demographic", handlers.GetDemographicData)
 	e.GET("/api/property-data", handlers.GetPropertyData)
-	e.GET("/zipcode-scores", handlers.GetZipcodeScores)
+	e.GET("/api/zipcode-scores", handlers.GetZipcodeScores)
 
 	// Mount the public folder at the public address for accessing css and static files
 	e.Static("/api", "public")
