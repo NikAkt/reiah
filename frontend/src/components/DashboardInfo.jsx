@@ -77,11 +77,18 @@ export const DashboardInfo = ({
   const [draggableMarker, setDraggableMarker] = createSignal(null);
   const [lat, setLat] = createSignal(0);
   const [lon, setLon] = createSignal(0);
+  const [predictedCost, setPredictedCost] = createSignal(null);
   //unique zipcodes that has historical information
   const uniqueZipcode = Object.keys(historicalRealEstateData);
 
   //unique house type of the zipcode
   const [uniqueHouseType, setUniqueHouseType] = createSignal([]);
+
+  const [Yr1_Price, setYr1Price] = createSignal(null);
+
+  const [Yr3_Price, setYr3Price] = createSignal(null);
+
+  const [Yr5_Price, setYr5Price] = createSignal(null);
 
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
@@ -100,7 +107,7 @@ export const DashboardInfo = ({
       });
   };
 
-  const fetchPredictedHomePrice = async (
+  const fetchPredictedHomePrice = (
     borough,
     house_type,
     beds,
@@ -110,19 +117,27 @@ export const DashboardInfo = ({
     lng,
     zip
   ) => {
-    const response = await fetch(
+    fetch(
       `http://localhost:5001/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
-    );
-    const predictedPrice = await response.json();
-    if (predictedPrice.hasProperty("predicted_price")) {
-      return predictedPrice["predicted_price"];
-    }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.hasOwnProperty("predicted_price")) {
+          setPredictedCost(data["predicted_price"]);
+        } else {
+          return null;
+        }
+      });
   };
 
   createEffect(() => {
     if (getSelectedZip() !== "") {
       fetchDashboardInfoData("zipcode", getSelectedZip());
     }
+  });
+
+  createEffect(() => {
+    console.log(predictedCost());
   });
 
   onCleanup(() => {
@@ -155,6 +170,23 @@ export const DashboardInfo = ({
     setShowWhichRealEstate(getSelectedZip());
     setClean(true);
   }
+
+  const handleSubmitPredictedPrice = () => {
+    const sqft = document.getElementById("size-p").value;
+    const beds = document.getElementById("bedrooms-p").value;
+    const baths = document.getElementById("bathrooms-p").value;
+    const house_type = document.getElementById("house_type-p").value;
+    fetchPredictedHomePrice(
+      borough(),
+      house_type,
+      beds,
+      baths,
+      sqft,
+      lat(),
+      lon(),
+      getSelectedZip()
+    );
+  };
 
   return (
     <div id={`dashboardDiv-${[getSelectedZip()]}`}>
@@ -494,42 +526,51 @@ export const DashboardInfo = ({
                 hover:border-b-2 hover:border-solid hover:border-indigo-600"
                   onClick={() => {}}
                 >
-                  Want to know the how much you gonna need to get a residential
+                  Want to know how much you gonna need to get a residential
                   property at Zipcode {getSelectedZip()} in 2024?
                 </div>
                 <div>
-                  borough=Brooklyn &zipcode=11233 &house_type=House &bedrooms=2
-                  &bathrooms=1 &sqft=1000 &latitude=40.6783 &longitude=-73.92
                   <Show when={uniqueHouseType() && draggableMarker()}>
-                    <form class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-2">
                       <label for="sqft">Size(sqft):</label>
                       <input
                         type="number"
-                        id="size"
+                        id="size-p"
                         name="size"
                         placeholder="1000"
                       />
                       <label for="bedrooms">Beds:</label>
                       <input
                         type="number"
-                        id="bedrooms"
+                        id="bedrooms-p"
                         name="bedrooms"
                         placeholder="1"
                       />
                       <label for="bathrooms">Bath:</label>
                       <input
                         type="number"
-                        id="bathrooms"
+                        id="bathrooms-p"
                         name="bathrooms"
                         placeholder="1"
                       />
-                      <label for="bathrooms">House Type:</label>
-                      <select id="house_type" name="house_type" required>
+                      <label for="house_type">House Type:</label>
+                      <select id="house_type-p" name="house_type" required>
                         <For each={uniqueHouseType()}>
                           {(item) => <option value={item}>{item}</option>}
                         </For>
                       </select>
-                    </form>
+                      <button
+                        class="bg-black text-white w-[30%]"
+                        onClick={handleSubmitPredictedPrice}
+                      >
+                        Submit
+                      </button>
+                      <Show when={predictedCost()}>
+                        <div>
+                          The predicted price will be: ${predictedCost()}
+                        </div>
+                      </Show>
+                    </div>
                   </Show>
                 </div>
               </div>

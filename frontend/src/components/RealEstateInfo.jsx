@@ -287,38 +287,27 @@ const RealEstateInfo = ({
             >
               <div>
                 <div>
-                  <span>For ZIPCODE {getSelectedZip}:</span>
                   <div>
-                    <p class="bg-teal-500 text-white w-[30%]">
+                    <p class="bg-teal-500 text-white w-full">
                       In the next year:
                     </p>
                     <div>1 year forecast price: {Yr1_Price()}</div>
                     <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
                   </div>
                   <div>
-                    <p class="bg-teal-500 text-white w-[30%]">
+                    <p class="bg-teal-500 text-white w-full">
                       In the next 3 years:
                     </p>
                     <div>3 year forecast price: {Yr3_Price()}</div>
                     <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
                   </div>
                   <div>
-                    <p class="bg-teal-500 text-white w-[30%]">
+                    <p class="bg-teal-500 text-white w-full">
                       In the next 5 years:
                     </p>
                     <div>5 year forecast price: {Yr5_Price()}</div>
                     <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
                   </div>
-                </div>
-                <div>
-                  For a {query().house_type} that has:
-                  <ul>
-                    <li>Size: {query().sqft} square foot</li>
-                    <li>Bedrooms: {query().bedrooms}</li>
-                    <li>Bathrooms: {query().bathrooms}</li>
-                  </ul>
-                  the average predicted cost will be{" "}
-                  {predictedPrice()[getSelectedZip]}
                 </div>
               </div>
             </Show>
@@ -327,39 +316,31 @@ const RealEstateInfo = ({
               when={recommendedZipcode().includes(parseInt(getSelectedZip()))}
             >
               <div>
+                <div class="bg-indigo-200 h-[1px] w-full"></div>
                 <div>
-                  <span>For ZIPCODE {getSelectedZip()}:</span>
+                  <p>Average Home Value Prediction</p>
+
                   <div>
-                    <p class="bg-teal-500 text-white w-[30%]">
+                    <p class="bg-teal-500 text-white w-full">
                       In the next year:
                     </p>
                     <div>1 year forecast price: {Yr1_Price()}</div>
                     <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
                   </div>
                   <div>
-                    <p class="bg-teal-500 text-white w-[30%]">
+                    <p class="bg-teal-500 text-white w-full">
                       In the next 3 years:
                     </p>
                     <div>3 year forecast price: {Yr3_Price()}</div>
                     <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
                   </div>
                   <div>
-                    <p class="bg-teal-500 text-white w-[30%]">
+                    <p class="bg-teal-500 text-white w-full">
                       In the next 5 years:
                     </p>
                     <div>5 year forecast price: {Yr5_Price()}</div>
                     <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
                   </div>
-                </div>
-                <div>
-                  For a {query().house_type} that has:
-                  <ul>
-                    <li>Size: {query().sqft} square foot</li>
-                    <li>Bedrooms: {query().bedrooms}</li>
-                    <li>Bathrooms: {query().bathrooms}</li>
-                  </ul>
-                  the average predicted cost will be{" "}
-                  {predictedPrice()[getSelectedZip()]}
                 </div>
               </div>
             </Show>
