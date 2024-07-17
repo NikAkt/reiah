@@ -124,7 +124,7 @@ export const DashboardInfo = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data && data.length > 0 && data.hasOwnProperty("predicted_price")) {
+        if (data && data.hasOwnProperty("predicted_price")) {
           setPredictedCost(data["predicted_price"]);
         } else {
           return null;
