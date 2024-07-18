@@ -10,6 +10,9 @@ import {
 } from "solid-js";
 import Filter from "./Filter";
 import search_icon from "../assets/search-svgrepo-com.svg";
+import filter_icon from "../assets/filter-list-svgrepo-com.svg";
+import dashboard_icon from "../assets/dashboard-svgrepo-com.svg";
+import recommend_icon from "../assets/idea-bulb-glow-svgrepo-com.svg";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -39,6 +42,9 @@ export const MapComponent = (props) => {
     const controlButton = document.createElement("button");
     const hoverLocationDiv = document.createElement("div");
     const svgImg = document.createElement("img");
+    const filtersvg = document.createElement("img");
+    const infosvg = document.createElement("img");
+    const ideasvg = document.createElement("img");
     const innerDiv = document.createElement("div");
     const textNode = document.createTextNode("Location: ");
     const input = document.createElement("input");
@@ -50,9 +56,6 @@ export const MapComponent = (props) => {
         ? "w-[80%] overflow-x-auto flex"
         : "w-[30%] flex flex-col mr-4";
 
-      // controlButton.textContent = sideBarOpen()
-      //   ? "Hide Dashboard"
-      //   : "Show Dashboard";
       controlButton.textContent = "Information";
       hoverLocationDiv.className = sideBarOpen()
         ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mr-10 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
@@ -74,6 +77,15 @@ export const MapComponent = (props) => {
 
     svgImg.src = search_icon;
     svgImg.className = "w-4 h-4 mr-2";
+
+    filtersvg.src = filter_icon;
+    filtersvg.className = "w-4 h-4 mr-2";
+
+    infosvg.src = dashboard_icon;
+    infosvg.className = "w-4 h-4 mr-2";
+
+    ideasvg.src = recommend_icon;
+    ideasvg.className = "w-4 h-4 mr-2";
 
     innerDiv.appendChild(svgImg);
     innerDiv.appendChild(textNode);

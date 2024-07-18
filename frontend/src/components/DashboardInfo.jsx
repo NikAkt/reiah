@@ -218,7 +218,7 @@ export const DashboardInfo = ({
                   <div
                     class="rounded-lg text-center
                   relative bg-[#ffffff] flex gap-2
-                  max-h-[3vh] px-2
+                  min-h-[3vh] px-2 border border-solid border-teal-500
                   items-center justify-center"
                   >
                     {/* button svg */}
@@ -244,9 +244,13 @@ export const DashboardInfo = ({
                     {/* input box */}
                     <input
                       type="text"
-                      placeholder={`Compare To? ${getComparedZip()}`}
+                      placeholder={
+                        getComparedZip().length === 0
+                          ? "Select other zipcodes"
+                          : getComparedZip()
+                      }
                       id="compareSearchBar"
-                      class="min-w-[20px]"
+                      class="relative min-w-[20px] h-full border-none"
                       onKeyUp={(event) => {
                         if (event.key === "Enter") {
                           if (uniqueZipcode.includes(event.target.value)) {
@@ -633,57 +637,89 @@ export const DashboardInfo = ({
                 </div>
               </div>
               <div id="sales-2024">
-                <a
-                  class="hover:text-indigo-600 cursor-pointer w-[90%]"
-                  onClick={() => {}}
-                >
-                  <p class="text-2xl">2024 Sales Price Prediction</p>
-                </a>
-                <p class="text-md">
-                  Want to know how much you gonna need to get a residential
-                  property at Zipcode {getSelectedZip()} in 2024?
-                </p>
                 <div>
+                  <p class="text-2xl">2024 Sales Price Prediction</p>
+                </div>
+                <div class="text-md cursor-pointer hover:text-teal-500">
+                  Want to know how much you gonna need to get a residential
+                  property at Zipcode {getSelectedZip()} in 2024?{" "}
+                  <span
+                    class="bg-teal-500 text-white rounded-md px-2"
+                    onClick={() => {
+                      draggableMarker().setMap(map());
+                    }}
+                  >
+                    Click here to choose your location!
+                  </span>
+                </div>
+                <div class="flex items-center justify-center">
                   <Show when={uniqueHouseType() && draggableMarker()}>
-                    <div class="flex flex-col gap-2">
-                      <label for="sqft">Size(sqft):</label>
-                      <input
-                        type="number"
-                        id="size-p"
-                        name="size"
-                        placeholder="1000"
-                      />
-                      <label for="bedrooms">Beds:</label>
-                      <input
-                        type="number"
-                        id="bedrooms-p"
-                        name="bedrooms"
-                        placeholder="1"
-                      />
-                      <label for="bathrooms">Bath:</label>
-                      <input
-                        type="number"
-                        id="bathrooms-p"
-                        name="bathrooms"
-                        placeholder="1"
-                      />
-                      <label for="house_type">House Type:</label>
-                      <select id="house_type-p" name="house_type" required>
-                        <For each={uniqueHouseType()}>
-                          {(item) => <option value={item}>{item}</option>}
-                        </For>
-                      </select>
-                      <button
-                        class="bg-teal-500 text-white w-[30%]"
-                        onClick={handleSubmitPredictedPrice}
-                      >
-                        Submit
-                      </button>
-                      <Show when={predictedCost()}>
-                        <div>
-                          The predicted price will be: ${predictedCost()}
+                    <div class="flex gap-2 place-content-between w-4/5 my-2">
+                      <div class="flex flex-col">
+                        <div class="flex flex-col">
+                          <p>Location</p>
+                          <div class="flex gap-2">
+                            <p class="bg-teal-500 text-white rounded-lg">
+                              Latitude: {lat()}
+                            </p>
+                            <p class="bg-teal-500 text-white rounded-lg">
+                              Longtitude: {lon()}
+                            </p>
+                          </div>
                         </div>
-                      </Show>
+                        <label for="house_type">House Type:</label>
+                        <select
+                          id="house_type-p"
+                          name="house_type"
+                          required
+                          class="rounded-md w-full"
+                        >
+                          <For each={uniqueHouseType()}>
+                            {(item) => <option value={item}>{item}</option>}
+                          </For>
+                        </select>
+                        <label for="sqft">Size(sqft):</label>
+                        <input
+                          type="number"
+                          id="size-p"
+                          name="size"
+                          placeholder="1000"
+                          required
+                          class="rounded-md w-full"
+                        />
+                        <label for="bedrooms">Beds:</label>
+                        <input
+                          type="number"
+                          id="bedrooms-p"
+                          name="bedrooms"
+                          placeholder="1"
+                          class="rounded-md w-full"
+                          required
+                        />
+                        <label for="bathrooms">Bath:</label>
+                        <input
+                          type="number"
+                          id="bathrooms-p"
+                          name="bathrooms"
+                          placeholder="1"
+                          required
+                          class="rounded-md w-full"
+                        />
+
+                        <button
+                          class="bg-teal-500 text-white w-[30%]"
+                          onClick={handleSubmitPredictedPrice}
+                        >
+                          Submit
+                        </button>
+                      </div>
+
+                      <div>
+                        The predicted price will be:{" "}
+                        <Show when={predictedCost()}>
+                          <span>${predictedCost()}</span>
+                        </Show>
+                      </div>
                     </div>
                   </Show>
                 </div>

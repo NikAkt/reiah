@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onMount } from "solid-js";
+import { createSignal, createEffect } from "solid-js";
 
 import arrow_left from "../assets/arrow-sm-left-svgrepo-com.svg";
 import arrow_right from "../assets/arrow-sm-right-svgrepo-com.svg";
@@ -23,7 +23,6 @@ const RecommendZipcode = ({
     "$100,000-$150,000",
     "$150,000-$200,000",
     "Over $200,000",
-    "No preference",
     "Prefer not to say",
   ];
 
@@ -47,6 +46,7 @@ const RecommendZipcode = ({
     "Mix of families and singles",
     "Mostly families",
     "Mostly singles",
+    "No preference",
   ];
 
   const property_type = [
@@ -55,6 +55,7 @@ const RecommendZipcode = ({
     "Co-op",
     "Townhouse",
     "Multi-family home",
+    "No preference",
   ];
 
   const handleSubmitForm = (event) => {
@@ -99,10 +100,13 @@ const RecommendZipcode = ({
   };
 
   return (
-    <div
-      class="absolute z-30 top-[10vh] ml-[30%] h-[60vh] max-w-[40vw]
-     flex flex-row justify-center items-center bg-white shadow-md px-2"
+    <form
+      class="absolute z-30 h-full w-[55vw] 
+     flex flex-row justify-center overflow-auto
+     items-center bg-white shadow-md px-2 translate-x-[45vw] transition delay-500"
+      onSubmit={handleSubmitForm}
     >
+      {/* close button */}
       <div class="absolute top-[2%] left-[1%]">
         <button
           onClick={() => {
@@ -110,10 +114,12 @@ const RecommendZipcode = ({
           }}
           class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
-          <img src={close_icon} class="w-[20px] h-[20px]" />
+          <img src={close_icon} class="w-[30px] h-[30px]" />
         </button>
       </div>
-      <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
+
+      {/* back button */}
+      {/* <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
         <button
           arial-label="back"
           id="btnBack"
@@ -123,172 +129,241 @@ const RecommendZipcode = ({
         >
           <img src={arrow_left} class="w-[20px] h-[20px]" />
         </button>
-      </div>
-      <form
-        onSubmit={handleSubmitForm}
-        class="bg-white h-full w-[97%]
-          flex items-center justify-items-center overflow-hidden"
-      >
-        <div>
-          <ul
+      </div> */}
+      {/* <form
+        class="relative bg-white h-full w-4/5 
+           gap-2 flex-col border overflow-auto
+          flex items-center justify-items-center"
+      > */}
+      <div class="absolute top-[10%] flex flex-col gap-10">
+        {/* <ul
             ref={slider}
-            class="flex w-full px-0 m-0 transition-transform delay-50"
+            class="relative flex w-full 
+            px-0 m-0 transition-transform delay-50"
             style={{ transform: `translateX(-${count() * 100}%)` }}
-          >
-            <li
-              class="min-w-full
-              p-[10px]
-            "
-            >
-              <div>Get Started!</div>
-            </li>
-            <li class="min-w-full">
-              <div class="flex flex-col">
-                <label for="borough">Borough Preference:</label>
-                <select
-                  id="borough"
-                  name="borough"
-                  required
-                  class="max-w-[300px]"
-                >
-                  <For each={borough}>
-                    {(item) => <option value={item}>{item}</option>}
-                  </For>
-                </select>
-
-                <label for="neighborhood_preference">
-                  Neighborhood Preference:
-                </label>
-                <select
-                  id="neighborhood_preference"
-                  name="neighborhood_preference"
-                  required
-                  class="max-w-[300px]"
-                >
-                  <For each={neighbourhood_type}>
-                    {(item) => <option value={item}>{item}</option>}
-                  </For>
-                </select>
-                <label for="business_environment">Business Environment:</label>
-                <select
-                  id="business_environment"
-                  name="business_environment"
-                  required
-                  class="max-w-[300px]"
-                >
-                  <For each={business_environment}>
-                    {(item) => <option value={item}>{item}</option>}
-                  </For>
-                </select>
-              </div>
-            </li>
-            <li class="min-w-full p-[20px] transition delay-50">
-              <div class="flex flex-col">
-                <label for="sqft">Square Footage:</label>
-                <input
-                  type="number"
-                  id="sqft"
-                  name="sqft"
-                  placeholder="1000"
-                  required
-                  class="max-w-[300px]"
-                />
-                <label for="sqft">Beds:</label>
-                <input
-                  type="number"
-                  id="bedrooms"
-                  name="bedrooms"
-                  placeholder="1"
-                  class="max-w-[300px]"
-                />
-                <label for="sqft">Bath:</label>
-                <input
-                  type="number"
-                  id="bathrooms"
-                  name="bathrooms"
-                  placeholder="1"
-                  class="max-w-[300px]"
-                />
-
-                <label for="max_price">Max Price:</label>
-                <input
-                  type="number"
-                  id="max_price"
-                  name="max_price"
-                  placeholder="1000000"
-                  class="max-w-[300px]"
-                />
-
-                <label for="neighborhood_preference">Property Type:</label>
-
-                <select
-                  id="house_type"
-                  name="house_type"
-                  required
-                  class="max-w-[300px]"
-                >
-                  <For each={property_type}>
-                    {(item) => <option value={item}>{item}</option>}
-                  </For>
-                </select>
-              </div>
-            </li>
-            <li class="min-w-full p-[20px] transition delay-50">
-              <div class="flex flex-col w-[80%] ">
-                <label for="income">Income:</label>
-                <select
-                  id="income"
-                  name="income"
-                  required
-                  class="max-w-[300px]"
-                >
-                  <For each={income}>
-                    {(item) => <option value={item}>{item}</option>}
-                  </For>
-                </select>
-                <label for="household_type">Household Type:</label>
-                <select
-                  id="household_type"
-                  name="household_type"
-                  required
-                  class="max-w-[300px]"
-                >
-                  <For each={household_type}>
-                    {(item) => <option value={item}>{item}</option>}
-                  </For>
-                </select>
-              </div>
-            </li>
-            <li class="min-w-full p-[20px] transition delay-50">
-              <div class="flex flex-col">
-                <label for="amenity_preferences">Amenity Preferences:</label>
-
-                <For each={amenity}>
-                  {(item) => (
-                    <div class="flex gap-2">
-                      <label for="public_transportation">{item}</label>
-                      <input
-                        type="checkbox"
-                        id={item}
-                        name="amenity_preferences"
-                        value={item}
-                      />
-                    </div>
-                  )}
-                </For>
-                <button
-                  type="submit"
-                  class="rounded-lg bg-black text-white w-[20%]"
-                >
-                  Submit
-                </button>
-              </div>
-            </li>
-          </ul>
+          > */}
+        <div>
+          <p class="text-2xl">Welcome to Reiah.</p>
+          <p class="text-xl">
+            Let's start our journey to find your best investment zipcodes!
+          </p>
         </div>
-      </form>
+        <div class="flex flex-col">
+          <p class="text-xl">
+            First, please tell us what environment you are looking for?
+          </p>
+          <div class="flex flex-col gap-2">
+            <label for="borough">
+              Which{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                Borough
+              </span>{" "}
+              you are looking for?
+            </label>
+            <select id="borough" name="borough" required class="w-4/5">
+              <For each={borough}>
+                {(item) => <option value={item}>{item}</option>}
+              </For>
+            </select>
+
+            <label for="neighborhood_preference">
+              What type of{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                Neighborhood
+              </span>{" "}
+              meets your expectation?
+            </label>
+            <select
+              id="neighborhood_preference"
+              name="neighborhood_preference"
+              required
+              class="max-w-[300px]"
+            >
+              <For each={neighbourhood_type}>
+                {(item) => <option value={item}>{item}</option>}
+              </For>
+            </select>
+            <label for="household_type">
+              What is the ideal{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                household type
+              </span>{" "}
+              of the community of your property?
+            </label>
+            <select
+              id="household_type"
+              name="household_type"
+              required
+              class="max-w-[300px]"
+            >
+              <For each={household_type}>
+                {(item) => <option value={item}>{item}</option>}
+              </For>
+            </select>
+            <label for="business_environment">
+              What kind of{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                Business Environment
+              </span>{" "}
+              should be around your dream place?
+            </label>
+            <select
+              id="business_environment"
+              name="business_environment"
+              required
+              class="max-w-[300px]"
+            >
+              <For each={business_environment}>
+                {(item) => <option value={item}>{item}</option>}
+              </For>
+            </select>
+          </div>
+        </div>
+        <div>
+          <p class="text-xl">
+            Next, please let us know what type of house you want.
+          </p>
+          <div class="flex flex-col gap-2">
+            <label for="house_type">
+              Which is the{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                Property Type
+              </span>{" "}
+              you are looking for?
+            </label>
+
+            <select
+              id="house_type"
+              name="house_type"
+              required
+              class="max-w-[300px]"
+            >
+              <For each={property_type}>
+                {(item) => <option value={item}>{item}</option>}
+              </For>
+            </select>
+            <label for="sqft">
+              What is the{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">size</span>{" "}
+              of your house?
+            </label>
+            <input
+              type="number"
+              id="sqft"
+              name="sqft"
+              placeholder="1000"
+              required
+              class="max-w-[300px]"
+            />
+            <label for="beds">
+              How many{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                bedrooms
+              </span>{" "}
+              your house has?
+            </label>
+            <input
+              type="number"
+              id="bedrooms"
+              name="bedrooms"
+              placeholder="1"
+              class="max-w-[300px]"
+            />
+            <label for="baths">
+              How many{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                bathrooms
+              </span>{" "}
+              your house has?
+            </label>
+            <input
+              type="number"
+              id="bathrooms"
+              name="bathrooms"
+              placeholder="1"
+              class="max-w-[300px]"
+            />
+
+            <label for="max_price">
+              What should be the{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                Maximum Price
+              </span>{" "}
+              for the properties you are looking for?
+            </label>
+            <input
+              type="number"
+              id="max_price"
+              name="max_price"
+              placeholder="1000000"
+              class="max-w-[300px]"
+            />
+          </div>
+        </div>
+        <div>
+          <p class="text-xl">
+            We are almost there. Please give us some personal information.
+          </p>
+          <div class="flex flex-col gap-2">
+            <label for="income">
+              What is the range of your{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                yearly income
+              </span>{" "}
+              ?
+            </label>
+            <select id="income" name="income" required class="max-w-[300px]">
+              <For each={income}>
+                {(item) => <option value={item}>{item}</option>}
+              </For>
+            </select>
+          </div>
+        </div>
+        <div>
+          <p class="text-xl">
+            Last but not least, please provide us some other information.
+          </p>
+          <div class="flex flex-col">
+            <label for="amenity_preferences">
+              Do you have preferences for{" "}
+              <span class="text-white bg-teal-500 rounded-lg px-2">
+                amenities
+              </span>{" "}
+              ?
+            </label>
+
+            <For each={amenity}>
+              {(item) => (
+                <div class="flex gap-2">
+                  <label for="public_transportation">{item}</label>
+                  <input
+                    type="checkbox"
+                    id={item}
+                    name="amenity_preferences"
+                    value={item}
+                  />
+                </div>
+              )}
+            </For>
+            <div class="flex gap-10 mt-[5%]">
+              <button
+                type="submit"
+                class="rounded-lg bg-teal-500 text-white w-[20%]"
+              >
+                Submit
+              </button>
+              <button class="rounded-lg bg-teal-500 text-white w-[20%]">
+                Clear all
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* </ul> */}
+      </div>
+      {/* </form> */}
       <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
-        <button
+        {/* next button */}
+        {/* <button
           arial-label="next"
           id="btnNext"
           disabled={count() == 4 ? true : false}
@@ -296,9 +371,9 @@ const RecommendZipcode = ({
           class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
           <img src={arrow_right} class="w-[20px] h-[20px]" />
-        </button>
+        </button> */}
       </div>
-    </div>
+    </form>
   );
 };
 

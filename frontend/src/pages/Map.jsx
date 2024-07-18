@@ -32,7 +32,7 @@ export const Map = (props) => {
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
 
   const [getComparedZip, setComparedZip] = createSignal([]);
-  const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
+  const [showRecommendBoard, setShowRecommendBoard] = createSignal(true);
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
 
   const [showHousesMarker, setShowHousesMarker] = createSignal(true);
