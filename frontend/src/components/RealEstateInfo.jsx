@@ -192,7 +192,7 @@ const RealEstateInfo = ({
   createEffect(() => {
     let zip = loadCompared ? getSelectedZip : getSelectedZip();
     if (recommendedZipcode().includes(parseInt(zip))) {
-      fetch(`http://localhost:8000/zipcode-scores?zipcode=${zip}`)
+      fetch(`http://localhost:8000/api/zipcode-scores?zipcode=${zip}`)
         .then((response) => response.json())
         .then((data) => {
           if (data && data.length) {
