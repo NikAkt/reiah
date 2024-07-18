@@ -216,7 +216,7 @@ export const DashboardInfo = ({
                 <div id="search-box-dropdown" class="z-40 flex flex-col">
                   {/* search box */}
                   <div
-                    class="rounded-t-lg text-center
+                    class="rounded-lg text-center
                   relative bg-[#ffffff] flex gap-2
                   max-h-[3vh] px-2
                   items-center justify-center"
@@ -319,14 +319,18 @@ export const DashboardInfo = ({
                 <div class="flex max-h-[3vh] gap-[2px]">
                   <input
                     type="Submit"
-                    class="relative ml-[2%] rounded-lg bg-black text-white cursor-pointer px-2"
+                    class={`relative ml-[2%] rounded-lg bg-teal-500 text-white px-2 ${
+                      getComparedZip().length > 0
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed opacity-50 disabled"
+                    }`}
                     onClick={handleSubmit}
                   />
                   <button
                     class={
-                      clean()
-                        ? "relative ml-[2%] bg-black px-2 rounded-lg text-center text-white cursor-pointe r"
-                        : "relative ml-[2%] bg-black px-2 rounded-lg text-center text-white cursor-not-allowed opacity-50"
+                      getComparedZip().length > 0
+                        ? "relative ml-[2%] bg-teal-500 px-2 rounded-lg text-center text-white"
+                        : "relative ml-[2%] bg-teal-500 px-2 rounded-lg text-center text-white cursor-not-allowed opacity-50 disabled"
                     }
                     onClick={() => {
                       setCreateMoreDashboardInfo(false);
@@ -357,13 +361,14 @@ export const DashboardInfo = ({
       <div class="w-[95%] h-[1px] mt-[4vh] py-[2vh]" id="main">
         <div
           class="rounded-lg shadow-lg w-[60%]
-        mx-auto grid grid-cols-3 divide-x h-[6vh]"
+        mx-auto grid grid-cols-3 divide-x h-[6vh] mb-[3vh]"
+          id="control-button"
         >
           <div
             class={`relative flex items-center justify-center
           ${
             mainInfo() === "realEstate"
-              ? "bg-black text-white"
+              ? "bg-teal-500 text-white"
               : "bg-white text-black"
           } rounded-l-lg cursor-pointer hover:border-2 hover:border-solid hover:border-black
           shadow-lg py-2 px-2 overflow-hidden`}
@@ -388,7 +393,7 @@ export const DashboardInfo = ({
             class={`relative flex items-center justify-center
               ${
                 mainInfo() === "amenities"
-                  ? "bg-black text-white"
+                  ? "bg-teal-500 text-white"
                   : "bg-white text-black"
               } cursor-pointer 
               hover:border-solid hover:border-black hover:border-2
@@ -459,7 +464,7 @@ export const DashboardInfo = ({
             class={`relative flex items-center justify-center
               ${
                 mainInfo() === "other"
-                  ? "bg-black text-white"
+                  ? "bg-teal-500 text-white"
                   : "bg-white text-black"
               } rounded-r-lg cursor-pointer hover:border-solid hover:border-black hover:border-2
               shadow-lg py-2 px-2 overflow-hidden`}
@@ -490,13 +495,44 @@ export const DashboardInfo = ({
        ${show() ? "" : "hidden"}`}
           id="main-info-section"
         >
-          <div class={mainInfo() === "realEstate" ? "" : "hidden"}>
-            <p class="text-lg">Real Estate Information</p>
+          <div
+            class={`grid grid-row-1 divide-y ${
+              mainInfo() === "realEstate" ? "" : "hidden"
+            }`}
+          >
+            {/* <p class="text-lg">Real Estate Information</p> */}
+            <div
+              class="relative grid grid-cols-3 mx-auto divide-x mb-[2vh]
+            w-5/6 items-center justify-center"
+            >
+              <a
+                class="text-gray-500 m-auto hover:text-teal-500"
+                href="#historic-home-values"
+              >
+                <p class="text-center">Historical Home Value</p>
+              </a>
+              <a
+                class="text-gray-500 m-auto hover:text-teal-500 
+                flex"
+                href="#sales-2023"
+              >
+                <p class="text-center">2023 Sales</p>
+              </a>
+              <a
+                class="text-gray-500 m-auto hover:text-teal-500"
+                href="#sales-2024"
+              >
+                <p class="text-center">Predict 2024 Sales Price</p>
+              </a>
+            </div>
             <div
               id="real-estate-content"
               class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
             >
               <div id="historic-home-values" class="min-h-[40vh]">
+                <p class="text-2xl">
+                  Historical Home Value of the entire Zipcode
+                </p>
                 <LineChart
                   getComparedZip={getComparedZip}
                   getSelectedZip={getSelectedZip}
@@ -508,10 +544,8 @@ export const DashboardInfo = ({
               </div>
 
               <div id="sales-2023" class="relative w-full">
-                <p>
-                  Residential Property Sales(2023)
-                  <span>Data Source: Zillow</span>
-                </p>
+                <a class="text-2xl">2023 Residential Property Sales</a>
+                <p class="text-sm">Data Source: Zillow</p>
                 <Show when={updateInfo()}>
                   <div class="flex gap-2">
                     <button
@@ -599,14 +633,16 @@ export const DashboardInfo = ({
                 </div>
               </div>
               <div id="sales-2024">
-                <div
-                  class="hover:text-indigo-600 cursor-pointer w-[90%]
-                hover:border-b-2 hover:border-solid hover:border-indigo-600"
+                <a
+                  class="hover:text-indigo-600 cursor-pointer w-[90%]"
                   onClick={() => {}}
                 >
+                  <p class="text-2xl">2024 Sales Price Prediction</p>
+                </a>
+                <p class="text-md">
                   Want to know how much you gonna need to get a residential
                   property at Zipcode {getSelectedZip()} in 2024?
-                </div>
+                </p>
                 <div>
                   <Show when={uniqueHouseType() && draggableMarker()}>
                     <div class="flex flex-col gap-2">
@@ -638,7 +674,7 @@ export const DashboardInfo = ({
                         </For>
                       </select>
                       <button
-                        class="bg-black text-white w-[30%]"
+                        class="bg-teal-500 text-white w-[30%]"
                         onClick={handleSubmitPredictedPrice}
                       >
                         Submit

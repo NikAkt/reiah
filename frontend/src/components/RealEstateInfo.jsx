@@ -127,7 +127,7 @@ const RealEstateInfo = ({
             const marker = new Marker({
               position: { lat: firstEle.LATITUDE, lng: firstEle.LONGITUDE },
               animation: Animation.DROP,
-              map: map(),
+              // map: map(),
               draggable: true,
               title: "Drag me!",
             });
