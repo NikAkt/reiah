@@ -1,7 +1,7 @@
 import { createSignal, createEffect } from "solid-js";
 
-import arrow_left from "../assets/arrow-sm-left-svgrepo-com.svg";
-import arrow_right from "../assets/arrow-sm-right-svgrepo-com.svg";
+// import arrow_left from "../assets/arrow-sm-left-svgrepo-com.svg";
+// import arrow_right from "../assets/arrow-sm-right-svgrepo-com.svg";
 import close_icon from "../assets/close-svgrepo-com.svg";
 
 const RecommendZipcode = ({
@@ -10,6 +10,22 @@ const RecommendZipcode = ({
   setPredictedPrice,
   setQuery,
 }) => {
+  //form inputs
+  const [getSelectedBorough, setSelectedBorough] = createSignal("Bronx");
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] =
+    createSignal("Quiet residential");
+  const [getSelectedIncome, setSelectedIncome] = createSignal("Under $50,000");
+  const [getSelectedBusiness, setSelectedBusiness] =
+    createSignal("Mostly residential");
+  const [getSelectedProperty, setSelectedProperty] = createSignal("Condo");
+  const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
+  const [getSelectedHousehold, setSelectedHousehold] = createSignal(
+    "Mix of families and singles"
+  );
+  const [getSelectedBeds, setSelectedBeds] = createSignal(1);
+  const [getSelectedBaths, setSelectedBaths] = createSignal(1);
+
+  //model inputs
   const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
   const neighbourhood_type = [
     "Quiet residential",
@@ -87,17 +103,17 @@ const RecommendZipcode = ({
       });
   };
 
-  let slider;
+  // let slider;
 
-  const [count, setCount] = createSignal(0);
+  // const [count, setCount] = createSignal(0);
 
-  const handleNext = () => {
-    setCount((prev) => prev + 1);
-  };
+  // const handleNext = () => {
+  //   setCount((prev) => prev + 1);
+  // };
 
-  const handleBack = () => {
-    setCount((prev) => prev - 1);
-  };
+  // const handleBack = () => {
+  //   setCount((prev) => prev - 1);
+  // };
 
   return (
     <form
@@ -135,7 +151,7 @@ const RecommendZipcode = ({
            gap-2 flex-col border overflow-auto
           flex items-center justify-items-center"
       > */}
-      <div class="absolute top-[10%] flex flex-col gap-10">
+      <div class="absolute top-[10%] grid grid-row-1 divide-y gap-10 ">
         {/* <ul
             ref={slider}
             class="relative flex w-full 
@@ -160,11 +176,23 @@ const RecommendZipcode = ({
               </span>{" "}
               you are looking for?
             </label>
-            <select id="borough" name="borough" required class="w-4/5">
+            {/* <select id="borough" name="borough" required class="w-4/5">
               <For each={borough}>
                 {(item) => <option value={item}>{item}</option>}
               </For>
-            </select>
+            </select> */}
+            <div class="flex">
+              <For each={borough}>
+                {(item) => (
+                  <button
+                    id={`select-borough-${item}`}
+                    class={`bg-teal-500 opacity-50 px-2 text-white`}
+                  >
+                    {item}
+                  </button>
+                )}
+              </For>
+            </div>
 
             <label for="neighborhood_preference">
               What type of{" "}
@@ -352,9 +380,10 @@ const RecommendZipcode = ({
               >
                 Submit
               </button>
-              <button class="rounded-lg bg-teal-500 text-white w-[20%]">
-                Clear all
-              </button>
+              <input
+                type="reset"
+                class="rounded-lg bg-teal-500 text-white w-[20%] cursor-pointer"
+              ></input>
             </div>
           </div>
         </div>

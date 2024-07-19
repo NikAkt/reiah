@@ -97,7 +97,6 @@ const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
         .then((data_amenities) => {
           if (data_amenities && data_amenities.length > 0) {
             setHoverAmenity(null);
-            console.log("amenities", data_amenities);
 
             loader.importLibrary("marker").then(({ Marker, Animation }) => {
               amenitiesOnMap().forEach((marker) => marker.setMap(null));

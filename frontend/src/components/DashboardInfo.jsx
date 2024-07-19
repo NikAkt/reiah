@@ -374,7 +374,7 @@ export const DashboardInfo = ({
             mainInfo() === "realEstate"
               ? "bg-teal-500 text-white"
               : "bg-white text-black"
-          } rounded-l-lg cursor-pointer hover:border-2 hover:border-solid hover:border-black
+          } rounded-l-lg cursor-pointer hover:border hover:border-solid 
           shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("realEstate");
@@ -400,7 +400,7 @@ export const DashboardInfo = ({
                   ? "bg-teal-500 text-white"
                   : "bg-white text-black"
               } cursor-pointer 
-              hover:border-solid hover:border-black hover:border-2
+              hover:border-solid hover:border
           shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("amenities");
@@ -470,7 +470,7 @@ export const DashboardInfo = ({
                 mainInfo() === "other"
                   ? "bg-teal-500 text-white"
                   : "bg-white text-black"
-              } rounded-r-lg cursor-pointer hover:border-solid hover:border-black hover:border-2
+              } rounded-r-lg cursor-pointer hover:border-solid hover:border hover:border
               shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("other");
@@ -640,11 +640,13 @@ export const DashboardInfo = ({
                 <div>
                   <p class="text-2xl">2024 Sales Price Prediction</p>
                 </div>
-                <div class="text-md cursor-pointer hover:text-teal-500">
+                <div class="text-md">
                   Want to know how much you gonna need to get a residential
                   property at Zipcode {getSelectedZip()} in 2024?{" "}
                   <span
-                    class="bg-teal-500 text-white rounded-md px-2"
+                    class="bg-teal-500 text-white rounded-md px-2 cursor-pointer
+                     hover:text-xl  hover:duration-300 ease-in-out
+                    hover:scale-100"
                     onClick={() => {
                       draggableMarker().setMap(map());
                     }}
@@ -654,57 +656,76 @@ export const DashboardInfo = ({
                 </div>
                 <div class="flex items-center justify-center">
                   <Show when={uniqueHouseType() && draggableMarker()}>
-                    <div class="flex gap-2 place-content-between w-4/5 my-2">
-                      <div class="flex flex-col">
-                        <div class="flex flex-col">
-                          <p>Location</p>
-                          <div class="flex gap-2">
-                            <p class="bg-teal-500 text-white rounded-lg">
-                              Latitude: {lat()}
+                    <div
+                      class="grid grid-cols-2 divide-x
+                    place-content-between w-[90%] my-2"
+                    >
+                      <div class="flex flex-col gap-2">
+                        <div class="grid grid-row-1 divide-y">
+                          <div>
+                            <p class="text-xl">Location{"   "}</p>
+                            <p class="text-sm">
+                              To change the location, please move the house icon
+                              on the map
                             </p>
-                            <p class="bg-teal-500 text-white rounded-lg">
-                              Longtitude: {lon()}
+                          </div>
+
+                          <div class="flex gap-2">
+                            <p>
+                              Latitude:{" "}
+                              <span class="bg-teal-500 text-white rounded-lg px-2">
+                                {lat().toFixed(3)}
+                              </span>
+                            </p>
+                            <p>
+                              Longtitude:{" "}
+                              <span class="bg-teal-500 text-white rounded-lg px-2">
+                                {lon().toFixed(3)}
+                              </span>
                             </p>
                           </div>
                         </div>
-                        <label for="house_type">House Type:</label>
-                        <select
-                          id="house_type-p"
-                          name="house_type"
-                          required
-                          class="rounded-md w-full"
-                        >
-                          <For each={uniqueHouseType()}>
-                            {(item) => <option value={item}>{item}</option>}
-                          </For>
-                        </select>
-                        <label for="sqft">Size(sqft):</label>
-                        <input
-                          type="number"
-                          id="size-p"
-                          name="size"
-                          placeholder="1000"
-                          required
-                          class="rounded-md w-full"
-                        />
-                        <label for="bedrooms">Beds:</label>
-                        <input
-                          type="number"
-                          id="bedrooms-p"
-                          name="bedrooms"
-                          placeholder="1"
-                          class="rounded-md w-full"
-                          required
-                        />
-                        <label for="bathrooms">Bath:</label>
-                        <input
-                          type="number"
-                          id="bathrooms-p"
-                          name="bathrooms"
-                          placeholder="1"
-                          required
-                          class="rounded-md w-full"
-                        />
+                        <div class="grid grid-row-1 divide-y">
+                          <p class="text-xl">House Details</p>
+                          <label for="house_type">House Type:</label>
+                          <select
+                            id="house_type-p"
+                            name="house_type"
+                            required
+                            class="rounded-md w-full"
+                          >
+                            <For each={uniqueHouseType()}>
+                              {(item) => <option value={item}>{item}</option>}
+                            </For>
+                          </select>
+                          <label for="sqft">Size(sqft):</label>
+                          <input
+                            type="number"
+                            id="size-p"
+                            name="size"
+                            placeholder="1000"
+                            required
+                            class="rounded-md w-full"
+                          />
+                          <label for="bedrooms">Beds:</label>
+                          <input
+                            type="number"
+                            id="bedrooms-p"
+                            name="bedrooms"
+                            placeholder="1"
+                            class="rounded-md w-full"
+                            required
+                          />
+                          <label for="bathrooms">Bath:</label>
+                          <input
+                            type="number"
+                            id="bathrooms-p"
+                            name="bathrooms"
+                            placeholder="1"
+                            required
+                            class="rounded-md w-full"
+                          />
+                        </div>
 
                         <button
                           class="bg-teal-500 text-white w-[30%]"
@@ -714,7 +735,7 @@ export const DashboardInfo = ({
                         </button>
                       </div>
 
-                      <div>
+                      <div class="text-xl">
                         The predicted price will be:{" "}
                         <Show when={predictedCost()}>
                           <span>${predictedCost()}</span>
