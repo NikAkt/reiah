@@ -24,6 +24,8 @@ const RecommendZipcode = ({
   );
   const [getSelectedBeds, setSelectedBeds] = createSignal(1);
   const [getSelectedBaths, setSelectedBaths] = createSignal(1);
+  const [getSelectedMaxPrice, setSelectedMaxPrice] = createSignal(1000000);
+  const [getSelectedSize, setSelectedSize] = createSignal(1000);
 
   //model inputs
   const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
@@ -116,7 +118,7 @@ const RecommendZipcode = ({
   // };
 
   return (
-    <form
+    <div
       class="absolute z-30 h-full w-[55vw] 
      flex flex-row justify-center overflow-auto
      items-center bg-white shadow-md px-2 translate-x-[45vw] transition delay-500"
@@ -169,6 +171,7 @@ const RecommendZipcode = ({
             First, please tell us what environment you are looking for?
           </p>
           <div class="flex flex-col gap-2">
+            {/* Borough */}
             <label for="borough">
               Which{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">
@@ -194,6 +197,7 @@ const RecommendZipcode = ({
               </For>
             </div>
 
+            {/* Household Type */}
             <label for="neighborhood_preference">
               What type of{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">
@@ -201,7 +205,7 @@ const RecommendZipcode = ({
               </span>{" "}
               meets your expectation?
             </label>
-            <select
+            {/* <select
               id="neighborhood_preference"
               name="neighborhood_preference"
               required
@@ -210,7 +214,16 @@ const RecommendZipcode = ({
               <For each={neighbourhood_type}>
                 {(item) => <option value={item}>{item}</option>}
               </For>
-            </select>
+            </select> */}
+
+            <For each={neighbourhood_type}>
+              {(item) => (
+                <button class="hover:bg-teal-500 hover:text-white">
+                  {item}
+                </button>
+              )}
+            </For>
+            {/* Household type */}
             <label for="household_type">
               What is the ideal{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">
@@ -218,7 +231,7 @@ const RecommendZipcode = ({
               </span>{" "}
               of the community of your property?
             </label>
-            <select
+            {/* <select
               id="household_type"
               name="household_type"
               required
@@ -227,7 +240,10 @@ const RecommendZipcode = ({
               <For each={household_type}>
                 {(item) => <option value={item}>{item}</option>}
               </For>
-            </select>
+            </select> */}
+            <For each={household_type}>{(item) => <button>{item}</button>}</For>
+
+            {/* Business Environment */}
             <label for="business_environment">
               What kind of{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">
@@ -235,7 +251,7 @@ const RecommendZipcode = ({
               </span>{" "}
               should be around your dream place?
             </label>
-            <select
+            {/* <select
               id="business_environment"
               name="business_environment"
               required
@@ -244,14 +260,20 @@ const RecommendZipcode = ({
               <For each={business_environment}>
                 {(item) => <option value={item}>{item}</option>}
               </For>
-            </select>
+            </select> */}
+            <For each={business_environment}>
+              {(item) => <button>{item}</button>}
+            </For>
           </div>
         </div>
+
+        {/* Second Part */}
         <div>
           <p class="text-xl">
             Next, please let us know what type of house you want.
           </p>
           <div class="flex flex-col gap-2">
+            {/* House Type */}
             <label for="house_type">
               Which is the{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">
@@ -260,7 +282,7 @@ const RecommendZipcode = ({
               you are looking for?
             </label>
 
-            <select
+            {/* <select
               id="house_type"
               name="house_type"
               required
@@ -269,20 +291,34 @@ const RecommendZipcode = ({
               <For each={property_type}>
                 {(item) => <option value={item}>{item}</option>}
               </For>
-            </select>
+            </select> */}
+            <For each={property_type}>{(item) => <button>{item}</button>}</For>
+
+            {/* Size */}
             <label for="sqft">
               What is the{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">size</span>{" "}
               of your house?
             </label>
-            <input
-              type="number"
-              id="sqft"
-              name="sqft"
-              placeholder="1000"
-              required
-              class="max-w-[300px]"
-            />
+            <div class="flex">
+              <input
+                type="range"
+                id="sqft"
+                name="sqft"
+                min="0"
+                max="10000"
+                step="1"
+                value={getSelectedSize().toString()}
+                required
+                class="w-full"
+                onChange={(event) => {
+                  setSelectedSize(event.target.value);
+                }}
+              />
+              <span>{getSelectedSize()}</span>
+            </div>
+
+            {/* Beds */}
             <label for="beds">
               How many{" "}
               <span class="text-white bg-teal-500 rounded-lg px-2">
@@ -402,7 +438,7 @@ const RecommendZipcode = ({
           <img src={arrow_right} class="w-[20px] h-[20px]" />
         </button> */}
       </div>
-    </form>
+    </div>
   );
 };
 
