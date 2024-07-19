@@ -46,22 +46,22 @@ export const Map = (props) => {
   const [query, setQuery] = createSignal({});
 
   const [historicalRealEstateData] = createResource(
-    ["http://localhost:8000/api/historic-prices"],
+    ["/api/historic-prices"],
     fetchData
   );
 
   const [zipcodes] = createResource(
-    ["http://localhost:8000/api/zipcodes"],
+    ["/api/zipcodes"],
     fetchData
   );
 
   const [borough_neighbourhood] = createResource(
-    ["http://localhost:8000/api/borough-neighbourhood"],
+    ["/api/borough-neighbourhood"],
     fetchData
   );
 
   const [zipcode_geojson] = createResource(
-    ["http://localhost:8000/api/zipcode-areas"],
+    ["/api/zipcode-areas"],
     fetchData
   );
 

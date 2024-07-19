@@ -52,7 +52,7 @@ const Filter = ({
 
   const fetchBoroughData = async () => {
     const response = await fetch(
-      "http://localhost:8000/api/borough-neighbourhood"
+      "/api/borough-neighbourhood"
     );
     const data = await response.json();
     console.log("Fetched borough data:", data); // Log the fetched data
@@ -63,7 +63,7 @@ const Filter = ({
     const query = new URLSearchParams(filters).toString();
     try {
       const response = await fetch(
-        `http://localhost:8000/api/property-data?${query}`
+        `/api/property-data?${query}`
       );
       const data = await response.json();
       console.log("Fetched real estate data:", data); // Log the fetched data
@@ -87,7 +87,7 @@ const Filter = ({
     if (neighborhoods.length > 0) {
       const neighborhoodParams = neighborhoods.join(",");
       const response = await fetch(
-        `http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`
+        `/api/amenities?neighborhoods=${neighborhoodParams}`
       );
       const data = await response.json();
       console.log("Fetched amenities data:", data); // Log fetched data

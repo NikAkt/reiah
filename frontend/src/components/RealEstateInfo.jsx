@@ -77,7 +77,7 @@ const RealEstateInfo = ({
 
   async function fetchPropertyData(zip) {
     const response = await fetch(
-      `http://localhost:8000/api/property-data?zipcode=${zip}`
+      `/api/property-data?zipcode=${zip}`
     );
     if (!response.ok) {
       return [];
@@ -192,7 +192,7 @@ const RealEstateInfo = ({
   createEffect(() => {
     let zip = loadCompared ? getSelectedZip : getSelectedZip();
     if (recommendedZipcode().includes(parseInt(zip))) {
-      fetch(`http://localhost:8000/zipcode-scores?zipcode=${zip}`)
+      fetch(`/zipcode-scores?zipcode=${zip}`)
         .then((response) => response.json())
         .then((data) => {
           if (data && data.length) {
