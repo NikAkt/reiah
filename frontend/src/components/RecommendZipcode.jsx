@@ -120,7 +120,7 @@ const RecommendZipcode = ({
       class="absolute z-30 h-full w-[55vw] 
      flex flex-row justify-center overflow-auto
      items-center bg-white shadow-md px-2 translate-x-[45vw] transition delay-500"
-      onSubmit={handleSubmitForm}
+      // onSubmit={handleSubmitForm}
     >
       {/* close button */}
       <div class="absolute top-[2%] left-[1%]">
@@ -181,12 +181,12 @@ const RecommendZipcode = ({
                 {(item) => <option value={item}>{item}</option>}
               </For>
             </select> */}
-            <div class="flex">
+            <div class="flex gap-2">
               <For each={borough}>
                 {(item) => (
                   <button
                     id={`select-borough-${item}`}
-                    class={`bg-teal-500 opacity-50 px-2 text-white`}
+                    class={`bg-teal-500 opacity-50 px-2 text-white text-xl`}
                   >
                     {item}
                   </button>
