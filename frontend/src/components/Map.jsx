@@ -327,9 +327,9 @@ export const MapComponent = (props) => {
           ref={ref}
           id="map"
           class={`h-full basis-1/2 grow transition
-             transform  transition-transform duration-500 scale-100 ${
-               sideBarOpen() ? "-translate-x-0" : "translate-x-0"
-             }`}
+            transform  transition-transform duration-500 scale-100 ${
+              sideBarOpen() ? "w-1/2" : "w-full"
+            }`}
         ></div>
       </Suspense>
 

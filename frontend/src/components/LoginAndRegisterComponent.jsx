@@ -1,6 +1,6 @@
 import { useSupabase } from "solid-supabase";
 import { useNavigate } from "@solidjs/router";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
 function InputGroup(props) {
   return <div class={`grid gap-2 grid-cols-${props.gs}`}>{props.children}</div>;
@@ -11,12 +11,13 @@ function LoginForm(props) {
   const [email, setEmail] = createSignal();
   const [password, setPassword] = createSignal();
   const navigate = useNavigate();
-
+  let passwordRef;
   const loginUser = async (e) => {
     e.preventDefault();
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email(),
-      password: password(),
+      password: passwordRef.value,
     });
 
     if (error) {
@@ -26,6 +27,14 @@ function LoginForm(props) {
 
     if (data) {
       navigate("/map");
+    }
+  };
+
+  const toggleShowPassword = () => {
+    if (passwordRef.type === "password") {
+      passwordRef.type = "text";
+    } else {
+      passwordRef.type = "password";
     }
   };
 
@@ -53,13 +62,18 @@ function LoginForm(props) {
             Password
           </span>
           <input
+            type="password"
             class={`shadow appearance-none border ${
               props.Error ? "border-red-500" : ""
             } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             placeholder="example1234"
             onchange={(e) => setPassword(e.target.value)}
+            ref={(el) => (passwordRef = el)}
           />
+          <input type="checkbox" onclick={toggleShowPassword} />
+          {"  "}Show Password
         </label>
+
         <div class="mt-6">
           <button
             class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -96,6 +110,7 @@ function RegisterForm(props) {
     e.preventDefault();
     const { data, error } = await supabase.auth.signUp({
       password: password(),
+      // password: passwordRef.value,
       email: email(),
       options: {
         data: {
