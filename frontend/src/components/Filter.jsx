@@ -16,6 +16,7 @@ const Filter = ({
   showFilterBoard,
   setShowFilterBoard,
   map,
+  setSideBarOpen,
 }) => {
   // const [filterTarget, setFilterTarget] = createSignal("Residential Property");
   const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
@@ -367,6 +368,7 @@ const Filter = ({
   const highlightZipCodesOnMap = (zipCodes) => {
     setFilteredZipCodes(zipCodes);
     setShowFilterBoard(false);
+    setSideBarOpen(false);
     console.log("Highlighting zip codes on map:", zipCodes);
   };
   // -translate-x-1/2
@@ -395,7 +397,10 @@ const Filter = ({
           <button
             class="absolute rounded-full w-[24px] h-[24px]
             left-[2%] text-black items-center flex hover:bg-white justify-center cursor-pointer"
-            onClick={() => setShowFilterBoard(false)}
+            onClick={() => {
+              setShowFilterBoard(false);
+              setSideBarOpen(false);
+            }}
           >
             <svg
               class="h-6 w-6"

@@ -13,7 +13,6 @@ import {
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import UserMenu from "../components/UserMenu";
-import RecommendZipcode from "../components/RecommendZipcode";
 
 async function fetchData([url]) {
   const response = await fetch(url);
@@ -30,8 +29,6 @@ export const Map = (props) => {
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
 
   const [getComparedZip, setComparedZip] = createSignal([]);
-  const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
-  const [showFilterBoard, setShowFilterBoard] = createSignal(false);
 
   const [showHousesMarker, setShowHousesMarker] = createSignal(true);
   const [showAmenityMarker, setShowAmenityMarker] = createSignal(false);
@@ -85,15 +82,16 @@ export const Map = (props) => {
               </div>
             }
           >
-            <Show when={showRecommendBoard()}>
+            {/* <Show when={showRecommendBoard()}>
               <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
               <RecommendZipcode
                 setRecommendedZipcode={setRecommendedZipcode}
                 setShowRecommendBoard={setShowRecommendBoard}
                 setPredictedPrice={setPredictedPrice}
                 setQuery={setQuery}
+                showRecommendBoard={showRecommendBoard}
               />
-            </Show>
+            </Show> */}
             <Show
               when={
                 dataResources.zipcodes() &&
@@ -111,14 +109,15 @@ export const Map = (props) => {
                 filteredZipCodes={filteredZipCodes}
                 setFavorite={props.setFavorite}
                 favorite={props.favorite}
-                setShowRecommendBoard={setShowRecommendBoard}
-                setShowFilterBoard={setShowFilterBoard}
                 showAmenityMarker={showAmenityMarker}
                 setShowAmenityMarker={setShowAmenityMarker}
                 showHousesMarker={showHousesMarker}
                 setShowHousesMarker={setShowHousesMarker}
                 recommendedZipcode={recommendedZipcode}
                 setZoom={setZoom}
+                setPredictedPrice={setPredictedPrice}
+                setQuery={setQuery}
+                setRecommendedZipcode={setRecommendedZipcode}
               >
                 <div class="flex flex-col gap-2">
                   <Show

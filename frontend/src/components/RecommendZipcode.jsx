@@ -9,15 +9,17 @@ const RecommendZipcode = ({
   setShowRecommendBoard,
   setPredictedPrice,
   setQuery,
+  showRecommendBoard,
+  setSidebarOpen,
 }) => {
   //form inputs
-  const [getSelectedBorough, setSelectedBorough] = createSignal("Bronx");
+  const [getSelectedBorough, setSelectedBorough] = createSignal(null);
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] =
-    createSignal("Quiet residential");
-  const [getSelectedIncome, setSelectedIncome] = createSignal("Under $50,000");
+    createSignal(null);
+  const [getSelectedIncome, setSelectedIncome] = createSignal(null);
   const [getSelectedBusiness, setSelectedBusiness] =
     createSignal("Mostly residential");
-  const [getSelectedProperty, setSelectedProperty] = createSignal("Condo");
+  const [getSelectedProperty, setSelectedProperty] = createSignal(null);
   const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
   const [getSelectedHousehold, setSelectedHousehold] = createSignal(
     "Mix of families and singles"
@@ -76,13 +78,32 @@ const RecommendZipcode = ({
     "No preference",
   ];
 
-  const handleSubmitForm = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.target);
-
-    const formValues = Object.fromEntries(data.entries());
+  const handleSubmitForm = () => {
+    //http://localhost:5001/get_recommendations?
+    //borough=Brooklyn
+    //&max_price=1000000
+    //&house_type=House
+    //&bedrooms=2&bathrooms=1&sqft=1000
+    //&income=Prefer%20not%20to%20say
+    //&neighborhood_preference=Balanced%20mix
+    //&household_type=Mix%20of%20families%20and%20singles
+    //&business_environment=Mix%20of%20residential%20and%20commercial
+    //&amenity_preferences=Parks%20and%20recreation,Public%20transportation
+    const formValues = {
+      borough: getSelectedBorough(),
+      max_price: getSelectedMaxPrice(),
+      house_type: getSelectedProperty(),
+      bedrooms: getSelectedBeds(),
+      bathrooms: getSelectedBaths(),
+      sqft: getSelectedSize(),
+      income: getSelectedIncome(),
+      neighborhood_preference: getSelectedNeighbourhood(),
+      household_type: getSelectedHousehold(),
+      business_environment: getSelectedBusiness(),
+      amenity_preferences: getSelectedAmenities(),
+    };
     setQuery(formValues);
-    const amenities = Array.from(data.getAll("amenity_preferences")).join(",");
+    const amenities = Array.from(formValues["amenity_preferences"]).join(",");
     formValues.amenity_preferences = amenities;
     let query = "http://localhost:5001/get_recommendations?";
     for (let [key, value] of Object.entries(formValues)) {
@@ -102,33 +123,26 @@ const RecommendZipcode = ({
         setRecommendedZipcode(recommendedZipcode);
         setPredictedPrice(predictedPrice);
         setShowRecommendBoard(false);
+        setSidebarOpen(false);
       });
   };
 
-  // let slider;
-
-  // const [count, setCount] = createSignal(0);
-
-  // const handleNext = () => {
-  //   setCount((prev) => prev + 1);
-  // };
-
-  // const handleBack = () => {
-  //   setCount((prev) => prev - 1);
-  // };
-
   return (
     <div
-      class="absolute z-30 h-full w-[55vw] 
-     flex flex-row justify-center overflow-auto
-     items-center bg-white shadow-md px-2 translate-x-[45vw] transition delay-500"
-      // onSubmit={handleSubmitForm}
+      class={`absolute z-40 h-full bg-white 
+        text-center flex w-[55vw] left-[45vw]
+      items-center overflow-y-auto
+   gap-0.5 justify-center text-black 
+   transform  transition-transform duration-500 scale-100 ${
+     showRecommendBoard() ? "translate-y-0" : "-translate-y-full"
+   }`}
     >
       {/* close button */}
       <div class="absolute top-[2%] left-[1%]">
         <button
           onClick={() => {
-            setShowRecommendBoard((prev) => !prev);
+            setShowRecommendBoard(false);
+            setSidebarOpen(false);
           }}
           class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
@@ -136,30 +150,10 @@ const RecommendZipcode = ({
         </button>
       </div>
 
-      {/* back button */}
-      {/* <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
-        <button
-          arial-label="back"
-          id="btnBack"
-          disabled={count() == 0 ? true : false}
-          onClick={handleBack}
-          class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
-        >
-          <img src={arrow_left} class="w-[20px] h-[20px]" />
-        </button>
-      </div> */}
-      {/* <form
-        class="relative bg-white h-full w-4/5 
-           gap-2 flex-col border overflow-auto
-          flex items-center justify-items-center"
-      > */}
-      <div class="absolute top-[10%] grid grid-row-1 divide-y gap-10 ">
-        {/* <ul
-            ref={slider}
-            class="relative flex w-full 
-            px-0 m-0 transition-transform delay-50"
-            style={{ transform: `translateX(-${count() * 100}%)` }}
-          > */}
+      <div
+        class={`m-auto top-[10%] grid grid-row-1 divide-y gap-10 place-items-center    
+        `}
+      >
         <div>
           <p class="text-2xl">Welcome to Reiah.</p>
           <p class="text-xl">
@@ -189,7 +183,15 @@ const RecommendZipcode = ({
                 {(item) => (
                   <button
                     id={`select-borough-${item}`}
-                    class={`bg-teal-500 opacity-50 px-2 text-white text-xl`}
+                    class={`hover:bg-teal-500 px-2 rounded-lg border-solid
+                      hover:text-white ${
+                        getSelectedBorough() !== item
+                          ? ""
+                          : "bg-teal-500 text-white"
+                      }`}
+                    onClick={() => {
+                      setSelectedBorough(item);
+                    }}
                   >
                     {item}
                   </button>
@@ -205,20 +207,21 @@ const RecommendZipcode = ({
               </span>{" "}
               meets your expectation?
             </label>
-            {/* <select
-              id="neighborhood_preference"
-              name="neighborhood_preference"
-              required
-              class="max-w-[300px]"
-            >
-              <For each={neighbourhood_type}>
-                {(item) => <option value={item}>{item}</option>}
-              </For>
-            </select> */}
 
             <For each={neighbourhood_type}>
               {(item) => (
-                <button class="hover:bg-teal-500 hover:text-white">
+                <button
+                  class={`
+                    w-[80%]
+                    hover:bg-teal-500 hover:text-white ${
+                      getSelectedNeighbourhood() === item
+                        ? "bg-teal-500 text-white"
+                        : ""
+                    }`}
+                  onClick={() => {
+                    setSelectedNeighbourhood(item);
+                  }}
+                >
                   {item}
                 </button>
               )}
@@ -231,17 +234,23 @@ const RecommendZipcode = ({
               </span>{" "}
               of the community of your property?
             </label>
-            {/* <select
-              id="household_type"
-              name="household_type"
-              required
-              class="max-w-[300px]"
-            >
-              <For each={household_type}>
-                {(item) => <option value={item}>{item}</option>}
-              </For>
-            </select> */}
-            <For each={household_type}>{(item) => <button>{item}</button>}</For>
+
+            <For each={household_type}>
+              {(item) => (
+                <button
+                  class={`
+              w-[80%]
+              hover:bg-teal-500 hover:text-white ${
+                getSelectedHousehold() === item ? "bg-teal-500 text-white" : ""
+              }`}
+                  onClick={() => {
+                    setSelectedHousehold(item);
+                  }}
+                >
+                  {item}
+                </button>
+              )}
+            </For>
 
             {/* Business Environment */}
             <label for="business_environment">
@@ -251,18 +260,22 @@ const RecommendZipcode = ({
               </span>{" "}
               should be around your dream place?
             </label>
-            {/* <select
-              id="business_environment"
-              name="business_environment"
-              required
-              class="max-w-[300px]"
-            >
-              <For each={business_environment}>
-                {(item) => <option value={item}>{item}</option>}
-              </For>
-            </select> */}
+
             <For each={business_environment}>
-              {(item) => <button>{item}</button>}
+              {(item) => (
+                <button
+                  class={`
+                w-[80%]
+                hover:bg-teal-500 hover:text-white ${
+                  getSelectedBusiness() === item ? "bg-teal-500 text-white" : ""
+                }`}
+                  onClick={() => {
+                    setSelectedBusiness(item);
+                  }}
+                >
+                  {item}
+                </button>
+              )}
             </For>
           </div>
         </div>
@@ -282,17 +295,22 @@ const RecommendZipcode = ({
               you are looking for?
             </label>
 
-            {/* <select
-              id="house_type"
-              name="house_type"
-              required
-              class="max-w-[300px]"
-            >
-              <For each={property_type}>
-                {(item) => <option value={item}>{item}</option>}
-              </For>
-            </select> */}
-            <For each={property_type}>{(item) => <button>{item}</button>}</For>
+            <For each={property_type}>
+              {(item) => (
+                <button
+                  class={`
+              w-[80%]
+              hover:bg-teal-500 hover:text-white ${
+                getSelectedProperty() === item ? "bg-teal-500 text-white" : ""
+              }`}
+                  onClick={() => {
+                    setSelectedProperty(item);
+                  }}
+                >
+                  {item}
+                </button>
+              )}
+            </For>
 
             {/* Size */}
             <label for="sqft">
@@ -302,11 +320,10 @@ const RecommendZipcode = ({
             </label>
             <div class="flex">
               <input
-                type="range"
+                type="number"
                 id="sqft"
                 name="sqft"
                 min="0"
-                max="10000"
                 step="1"
                 value={getSelectedSize().toString()}
                 required
@@ -315,7 +332,6 @@ const RecommendZipcode = ({
                   setSelectedSize(event.target.value);
                 }}
               />
-              <span>{getSelectedSize()}</span>
             </div>
 
             {/* Beds */}
@@ -332,6 +348,9 @@ const RecommendZipcode = ({
               name="bedrooms"
               placeholder="1"
               class="max-w-[300px]"
+              onChange={(event) => {
+                setSelectedBeds(event.target.value);
+              }}
             />
             <label for="baths">
               How many{" "}
@@ -346,6 +365,9 @@ const RecommendZipcode = ({
               name="bathrooms"
               placeholder="1"
               class="max-w-[300px]"
+              onChange={(event) => {
+                setSelectedBaths(event.target.value);
+              }}
             />
 
             <label for="max_price">
@@ -361,6 +383,9 @@ const RecommendZipcode = ({
               name="max_price"
               placeholder="1000000"
               class="max-w-[300px]"
+              onChange={(event) => {
+                setSelectedMaxPrice(event.target.value);
+              }}
             />
           </div>
         </div>
@@ -376,11 +401,23 @@ const RecommendZipcode = ({
               </span>{" "}
               ?
             </label>
-            <select id="income" name="income" required class="max-w-[300px]">
-              <For each={income}>
-                {(item) => <option value={item}>{item}</option>}
-              </For>
-            </select>
+
+            <For each={income}>
+              {(item) => (
+                <button
+                  class={`
+                  w-[80%]
+                  hover:bg-teal-500 hover:text-white ${
+                    getSelectedIncome() === item ? "bg-teal-500 text-white" : ""
+                  }`}
+                  onClick={() => {
+                    setSelectedIncome(item);
+                  }}
+                >
+                  {item}
+                </button>
+              )}
+            </For>
           </div>
         </div>
         <div>
@@ -405,6 +442,9 @@ const RecommendZipcode = ({
                     id={item}
                     name="amenity_preferences"
                     value={item}
+                    onChange={() => {
+                      setSelectedAmenities((prev) => [...prev, item]);
+                    }}
                   />
                 </div>
               )}
@@ -413,6 +453,7 @@ const RecommendZipcode = ({
               <button
                 type="submit"
                 class="rounded-lg bg-teal-500 text-white w-[20%]"
+                onClick={handleSubmitForm}
               >
                 Submit
               </button>
@@ -423,21 +464,9 @@ const RecommendZipcode = ({
             </div>
           </div>
         </div>
-        {/* </ul> */}
       </div>
-      {/* </form> */}
-      <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center">
-        {/* next button */}
-        {/* <button
-          arial-label="next"
-          id="btnNext"
-          disabled={count() == 4 ? true : false}
-          onClick={handleNext}
-          class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
-        >
-          <img src={arrow_right} class="w-[20px] h-[20px]" />
-        </button> */}
-      </div>
+
+      <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center"></div>
     </div>
   );
 };

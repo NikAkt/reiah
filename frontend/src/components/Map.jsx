@@ -14,6 +14,7 @@ import search_icon from "../assets/search-svgrepo-com.svg";
 import filter_icon from "../assets/filter-list-svgrepo-com.svg";
 import dashboard_icon from "../assets/dashboard-svgrepo-com.svg";
 import recommend_icon from "../assets/idea-bulb-glow-svgrepo-com.svg";
+import RecommendZipcode from "./RecommendZipcode";
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -31,8 +32,9 @@ const colors = {
 export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
-  const [showFilterBoard, setShowFilterBoard] = createSignal(true);
+  const [showFilterBoard, setShowFilterBoard] = createSignal(false);
   const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
+  const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
@@ -115,7 +117,7 @@ export const MapComponent = (props) => {
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     recommendZipBtn.addEventListener("click", () => {
-      props.setShowRecommendBoard((prev) => !prev);
+      setShowRecommendBoard((prev) => !prev);
       setSidebarOpen(true);
     });
 
@@ -324,14 +326,20 @@ export const MapComponent = (props) => {
         <div
           ref={ref}
           id="map"
-          class={`h-full basis-1/2 grow transition `}
+          class={`h-full basis-1/2 grow transition
+             transform  transition-transform duration-500 scale-100 ${
+               sideBarOpen() ? "-translate-x-0" : "translate-x-0"
+             }`}
         ></div>
       </Suspense>
 
       <div
         class={`bg-white dark:bg-gray-900 w-[60vw] gap-2 
       right-0 h-screen flex flex-col
-          drop-shadow overflow-scroll p-6 ${sideBarOpen() ? "" : "hidden"}`}
+          drop-shadow overflow-scroll p-6 
+          ${sideBarOpen() ? "" : "hidden"}
+          
+          `}
       >
         {/* <Show when={props.isLoading}>
           <div class="flex flex-col gap-2 animate-pulse">
@@ -339,17 +347,7 @@ export const MapComponent = (props) => {
             <div class="h-6 w-2/12 rounded-lg bg-neutral-300" />
           </div>
         </Show> */}
-        <Show when={!props.isLoading}>
-          {/* <div class="flex">
-            <h1
-              class="font-medium w-[50%] place-content-between"
-              id="dashboard_top"
-            >
-              {`Information on ${props.zipcodeOnCharts()}`}
-            </h1>
-          </div>
-          <div class="relative w-[95%] h-[1px] mt-[2%] bg-[#E4E4E7]"></div> */}
-        </Show>
+        <Show when={!props.isLoading}></Show>
         <div class="gap-6 mt-6 py-3 flex flex-col">
           <div class="flex flex-col">{props.children}</div>
         </div>
@@ -360,6 +358,15 @@ export const MapComponent = (props) => {
         showFilterBoard={showFilterBoard}
         setShowFilterBoard={setShowFilterBoard}
         map={props.mapObject}
+        setSidebarOpen={setSidebarOpen}
+      />
+      <RecommendZipcode
+        setRecommendedZipcode={props.setRecommendedZipcode}
+        setShowRecommendBoard={setShowRecommendBoard}
+        setPredictedPrice={props.setPredictedPrice}
+        setQuery={props.setQuery}
+        showRecommendBoard={showRecommendBoard}
+        setSidebarOpen={setSidebarOpen}
       />
     </>
   );
