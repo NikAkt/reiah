@@ -9,6 +9,7 @@ import {
   Suspense,
 } from "solid-js";
 import Filter from "./Filter";
+
 import search_icon from "../assets/search-svgrepo-com.svg";
 import filter_icon from "../assets/filter-list-svgrepo-com.svg";
 import dashboard_icon from "../assets/dashboard-svgrepo-com.svg";
@@ -30,7 +31,7 @@ const colors = {
 export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
-  const [showFilterBoard, setShowFilterBoard] = createSignal(false);
+  const [showFilterBoard, setShowFilterBoard] = createSignal(true);
   const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
@@ -115,6 +116,7 @@ export const MapComponent = (props) => {
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     recommendZipBtn.addEventListener("click", () => {
       props.setShowRecommendBoard((prev) => !prev);
+      setSidebarOpen(true);
     });
 
     filterBtn.textContent = "Filter";
@@ -122,6 +124,7 @@ export const MapComponent = (props) => {
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     filterBtn.addEventListener("click", () => {
       setShowFilterBoard((prev) => !prev);
+      setSidebarOpen(true);
     });
 
     centerControlDiv.append(
@@ -301,6 +304,7 @@ export const MapComponent = (props) => {
   createEffect(() => {
     if (props.zipcodeOnCharts()) {
       setSidebarOpen(true);
+      setShowFilterBoard(false);
     }
   });
 

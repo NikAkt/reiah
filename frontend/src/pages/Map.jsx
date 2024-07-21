@@ -10,10 +10,8 @@ import {
   createEffect,
   ErrorBoundary,
 } from "solid-js";
-import { LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
-import Filter from "../components/Filter";
 import UserMenu from "../components/UserMenu";
 import RecommendZipcode from "../components/RecommendZipcode";
 
@@ -32,7 +30,7 @@ export const Map = (props) => {
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
 
   const [getComparedZip, setComparedZip] = createSignal([]);
-  const [showRecommendBoard, setShowRecommendBoard] = createSignal(true);
+  const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
 
   const [showHousesMarker, setShowHousesMarker] = createSignal(true);
@@ -87,18 +85,7 @@ export const Map = (props) => {
               </div>
             }
           >
-            <Show when={showFilterBoard()}>
-              <Filter
-                setFilteredZipCodes={setFilteredZipCodes}
-                setShowFilterBoard={setShowFilterBoard}
-              />
-            </Show>
-            <Show
-              when={showRecommendBoard()}
-              fallback={() => {
-                console.log("fail to load recommendzipcode");
-              }}
-            >
+            <Show when={showRecommendBoard()}>
               <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
               <RecommendZipcode
                 setRecommendedZipcode={setRecommendedZipcode}

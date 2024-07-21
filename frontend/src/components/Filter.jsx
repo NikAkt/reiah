@@ -17,7 +17,7 @@ const Filter = ({
   setShowFilterBoard,
   map,
 }) => {
-  const [filterTarget, setFilterTarget] = createSignal("Residential Property");
+  // const [filterTarget, setFilterTarget] = createSignal("Residential Property");
   const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
   const [selectedNeighborhoods, setSelectedNeighborhoods] = createSignal(
     new Set()
@@ -369,28 +369,32 @@ const Filter = ({
     setShowFilterBoard(false);
     console.log("Highlighting zip codes on map:", zipCodes);
   };
-
+  // -translate-x-1/2
   return (
     <div
-      class={`fixed z-10 w-[65%] flex flex-col items-center left-1/2 transform -translate-x-1/2
-      gap-0.5 top-[5%] justify-center text-black transition-transform duration-500 scale-100 ${
-        showFilterBoard() ? "block" : "hidden"
+      class={`absolute z-40 h-full bg-white 
+         items-center transform left-[45vw] w-[55vw] border-black overflow-y-auto
+      gap-0.5 justify-center text-black transition-transform duration-500 scale-100 ${
+        showFilterBoard() ? "translate-y-0" : "-translate-y-full"
       }`}
     >
       <div
         class="grid-cols-1 divide-y m-0 px-0 
-          mt-[-2vh] w-full max-h-[90vh] shadow-lg z-20 
+          mt-[-2vh] w-full max-h-[100vh] shadow-lg z-20 
           items-center bg-white rounded-lg 
-          overflow-y-auto relative"
+           relative"
       >
         {/* FILTER TITLE */}
         <div
           id="filter-dropdown-title"
-          class="items-center justify-center relative flex h-[10%] bg-teal-500 text-white w-[100%] z-30 flex-row rounded-t-lg"
+          class="items-center justify-center 
+          relative flex h-[10%]  
+           text-white w-[100%] z-30 flex-row bg-teal-500"
           style="position: sticky; top: 0; height: 60px;"
         >
           <button
-            class="absolute rounded-full w-[24px] h-[24px] left-[2%] hover:bg-white text-white items-center flex hover:text-black justify-center cursor-pointer"
+            class="absolute rounded-full w-[24px] h-[24px]
+            left-[2%] text-black items-center flex hover:bg-white justify-center cursor-pointer"
             onClick={() => setShowFilterBoard(false)}
           >
             <svg
@@ -409,7 +413,7 @@ const Filter = ({
               />
             </svg>
           </button>
-          <p class="text-xl">Filters for {filterTarget()}</p>
+          <p class="text-xl">Filters </p>
         </div>
         {/* FILTER CONTENT */}
         <div
@@ -683,11 +687,13 @@ const Filter = ({
         {/* Clear Button and Filter Results */}
         <div
           id="button-container"
-          class="items-center justify-center flex gap-4 bg-teal-500 text-white w-[100%] z-30 rounded-b-lg p-4 pointer-events-auto"
+          class="items-center justify-center 
+          flex gap-4 bg-teal-500 text-white w-[100%] z-30  p-4 pointer-events-auto"
           style="position: sticky; bottom: 0; height: 56px;"
         >
           <button
-            class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
+            class="rounded-2xl z-20 cursor-pointer w-32 h-9 flex items-center 
+            justify-center gap-1.5 hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
             onClick={() => clearAllFilters()}
           >
             Clear all
