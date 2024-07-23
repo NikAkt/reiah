@@ -82,16 +82,6 @@ export const Map = (props) => {
               </div>
             }
           >
-            {/* <Show when={showRecommendBoard()}>
-              <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
-              <RecommendZipcode
-                setRecommendedZipcode={setRecommendedZipcode}
-                setShowRecommendBoard={setShowRecommendBoard}
-                setPredictedPrice={setPredictedPrice}
-                setQuery={setQuery}
-                showRecommendBoard={showRecommendBoard}
-              />
-            </Show> */}
             <Show
               when={
                 dataResources.zipcodes() &&

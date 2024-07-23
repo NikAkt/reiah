@@ -1,5 +1,14 @@
 import { createSignal, createEffect, Show, For, onCleanup } from "solid-js";
 import { DoughnutChart } from "./Charts"; // Assuming you have a DoughnutChart component
+import loading_svg from "../assets/spinning-circles.svg";
+
+const LoadingSvg = () => {
+  return (
+    <div>
+      <img src={loading_svg} />
+    </div>
+  );
+};
 
 const RealEstateInfo = ({
   recommendedZipcode,
@@ -263,7 +272,7 @@ const RealEstateInfo = ({
                 when={typeAvg().length}
                 fallback={<div>Cannot get detailed information...</div>}
               >
-                <For each={typeAvg()} fallback={<div>Loading...</div>}>
+                <For each={typeAvg()} fallback={<LoadingSvg />}>
                   {(item, index) => (
                     <div>
                       <p

@@ -7,7 +7,7 @@ import { Show } from "solid-js";
 const links = [
   { Href: "/map", Title: "Map" },
   { Href: "/settings", Title: "Settings" },
-  // { Href: "/dashboard", Title: "Dashboard" },
+  { Href: "/induction", Title: "Induction" },
 ];
 
 const BaseLayout = (props) => {
@@ -60,6 +60,20 @@ const MapView = (props) => {
   );
 };
 
+const InductionView = (props) => {
+  return (
+    <BaseLayout>
+      <Sidebar links={links} />
+      <main
+        class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen "
+        onMouseOver={() => setStore({ ...store, sidebarOpen: false })}
+      >
+        <div>{props.children}</div>
+      </main>
+    </BaseLayout>
+  );
+};
+
 const AuthLayout = (props) => {
   return (
     <BaseLayout>
@@ -84,4 +98,11 @@ const AuthLayout = (props) => {
   );
 };
 
-export { HomeScreenLayout, AuthLayout, MapView, DashboardView, BaseLayout };
+export {
+  HomeScreenLayout,
+  AuthLayout,
+  MapView,
+  DashboardView,
+  BaseLayout,
+  InductionView,
+};

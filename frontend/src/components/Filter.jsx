@@ -369,7 +369,7 @@ const Filter = ({
     setFilteredZipCodes(zipCodes);
     setShowFilterBoard(false);
     setSideBarOpen(false);
-    console.log("Highlighting zip codes on map:", zipCodes);
+    //  console.log("Highlighting zip codes on map:", zipCodes);
   };
   // -translate-x-1/2
   return (

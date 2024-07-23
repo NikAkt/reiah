@@ -7,6 +7,15 @@ import {
   createResource,
   createSignal,
 } from "solid-js";
+import loading_svg from "../assets/spinning-circles.svg";
+
+const LoadingSvg = () => {
+  return (
+    <div>
+      <img src={loading_svg} />
+    </div>
+  );
+};
 
 const colors = [
   "rgb(75,192,192)",
@@ -21,7 +30,9 @@ const colors = [
 const ChartLoadingIndicator = () => {
   return (
     <div class="w-full h-full flex justify-center items-center">
-      <h1 class="text-black">Loading ...</h1>
+      {/* <h1 class="text-black"> */}
+      <LoadingSvg />
+      {/* </h1> */}
     </div>
   );
 };

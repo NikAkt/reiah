@@ -13,6 +13,7 @@ import { ErrorPage } from "./components/ErrorPage";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseProvider } from "solid-supabase";
 import { RouteGuard } from "./routeguard";
+import { InductionPage } from "./pages/Induction";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -42,6 +43,7 @@ render(
       <Router root={App}>
         <Route path="/register" component={RegisterPage} />
         <Route path="/login" component={LoginPage} setFavorite={favorite} />
+        <Route path="/induction" component={InductionPage} />
         <Route path="/error" component={ErrorPage} />
         <Route path="/" component={() => <Home />} />
         <Route component={RouteGuard}>
