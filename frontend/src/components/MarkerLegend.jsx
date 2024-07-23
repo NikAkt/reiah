@@ -8,7 +8,7 @@ const MarkerLegend = () => {
         >
           $Price
         </button>
-        <span> House Sold</span>
+        <span> Property Sold</span>
       </div>
       <div class="flex justify-center items-center w-full gap-10">
         <button

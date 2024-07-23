@@ -56,7 +56,7 @@ const Filter = ({
       "http://localhost:8000/api/borough-neighbourhood"
     );
     const data = await response.json();
-    console.log("Fetched borough data:", data); // Log the fetched data
+    // console.log("Fetched borough data:", data); // Log the fetched data
     setBoroughData(data);
   };
 
@@ -67,7 +67,7 @@ const Filter = ({
         `http://localhost:8000/api/property-data?${query}`
       );
       const data = await response.json();
-      console.log("Fetched real estate data:", data); // Log the fetched data
+      // console.log("Fetched real estate data:", data); // Log the fetched data
 
       // Handle null response
       if (data === null) {
@@ -91,7 +91,7 @@ const Filter = ({
         `http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`
       );
       const data = await response.json();
-      console.log("Fetched amenities data:", data); // Log fetched data
+      // console.log("Fetched amenities data:", data); // Log fetched data
       setFilteredAmenities(
         data.reduce((acc, amenity) => {
           if (!acc[amenity.ZIPCODE]) acc[amenity.ZIPCODE] = [];
@@ -148,7 +148,7 @@ const Filter = ({
 
   const handleHouseTypeChange = (type) => {
     setHouseType(type);
-    console.log(`Selected house type: ${type}`);
+    // console.log(`Selected house type: ${type}`);
     handleFilterChange();
   };
 
@@ -194,7 +194,7 @@ const Filter = ({
   };
 
   const applyFilters = () => {
-    console.log("Applying filters...");
+    // console.log("Applying filters...");
 
     // Fetch initial zipcodes based on selected boroughs and neighborhoods
     let zipCodes = getZipcodes(
@@ -202,12 +202,12 @@ const Filter = ({
       [...selectedNeighborhoods()]
     );
 
-    console.log("Initial zipcodes:", zipCodes);
+    // console.log("Initial zipcodes:", zipCodes);
 
     if (zipCodes.length === 0) {
       setFilteredZipCodesLocal([]);
       setFilteredZipCodes([]);
-      console.log("No zipcodes to filter.");
+      // console.log("No zipcodes to filter.");
       return;
     }
 
@@ -225,7 +225,7 @@ const Filter = ({
         const properties = realEstateData().filter(
           (property) => property.ZIPCODE.toString() === zip.toString()
         );
-        console.log(`Properties in zip ${zip}:`, properties);
+        // console.log(`Properties in zip ${zip}:`, properties);
 
         if (properties.length === 0) return false; // If no properties in the zip, skip it
 
@@ -270,16 +270,16 @@ const Filter = ({
           );
         });
 
-        console.log(`Zip ${zip} matches: ${matches}`);
+        // console.log(`Zip ${zip} matches: ${matches}`);
         return matches;
       });
 
       if (zipCodes.length === 0) {
-        console.log("No properties match the filter criteria.");
+        // console.log("No properties match the filter criteria.");
       }
     }
 
-    console.log("Zipcodes after type/attribute filtering:", zipCodes);
+    // console.log("Zipcodes after type/attribute filtering:", zipCodes);
 
     const hasAmenityFilters = selectedAmenities().size > 0;
 
@@ -291,16 +291,16 @@ const Filter = ({
         const matches = [...selectedAmenities()].every((amenity) =>
           amenities.some((a) => a.FACILITY_DOMAIN_NAME === amenity)
         );
-        console.log(`Zip ${zip} amenities match: ${matches}`);
+        // console.log(`Zip ${zip} amenities match: ${matches}`);
         return matches;
       });
     }
 
-    console.log("Final filtered zipcodes:", zipCodes);
+    // console.log("Final filtered zipcodes:", zipCodes);
 
     setFilteredZipCodesLocal(zipCodes);
     setFilteredZipCodes(zipCodes);
-    console.log("Updated filtered zipcodes in state:", zipCodes);
+    // console.log("Updated filtered zipcodes in state:", zipCodes);
   };
 
   const handleFilterChange = debounce(() => {

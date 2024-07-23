@@ -65,10 +65,12 @@ const InductionView = (props) => {
     <BaseLayout>
       <Sidebar links={links} />
       <main
-        class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen "
+        class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen"
         onMouseOver={() => setStore({ ...store, sidebarOpen: false })}
       >
-        <div>{props.children}</div>
+        <div class="flex flex-col items-center justify-center dark:text-white">
+          {props.children}
+        </div>
       </main>
     </BaseLayout>
   );
