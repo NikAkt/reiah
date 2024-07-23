@@ -4,7 +4,7 @@ import joblib
 import json
 
 # rf model (price prediction)
-rf_model = joblib.load('recommendation_system/models/rf_model.joblib')
+xgb_model = joblib.load('recommendation_system/models/xgb_model_features.joblib')
 
 # KNN model
 knn_model = joblib.load('recommendation_system/models/knn_model.joblib')
@@ -21,12 +21,12 @@ with open('recommendation_system/data/processed_zipcode_data.json', 'r') as f:
 def translate_preferences(preferences):
     user_vector = np.zeros(len(features))
     
-    #  mapping dictionaries
+    # Mapping dictionaries
     neighborhood_types = {"Quiet residential": 0, "Balanced mix": 0.5, "Lively urban": 1}
     household_types = {"Mostly families": 1, "Mix of families and singles": 0.5, "Mostly singles": 0}
     business_env_types = {"Mostly residential": 0, "Mix of residential and commercial": 0.5, "Bustling commercial area": 1}
 
-    #  values based on preferences
+    # Assign values based on preferences
     if preferences['neighborhood_preference'] != "No preference":
         user_vector[features.index('LivelinessScore')] = neighborhood_types[preferences['neighborhood_preference']]
     
@@ -36,20 +36,20 @@ def translate_preferences(preferences):
     if preferences['business_environment'] != "No preference":
         user_vector[features.index('BusinessEnvironmentScore')] = business_env_types[preferences['business_environment']]
     
-    #  amenity preferences
-    for amenity, density_key in amenity_options.items():
-        if density_key in features:
-            user_vector[features.index(density_key)] = 1 if amenity in preferences['amenity_preferences'] else 0
+    # Assign amenity preferences
+    for amenity, feature_key in amenity_options.items():
+        if feature_key in features:
+            user_vector[features.index(feature_key)] = 1 if amenity in preferences['amenity_preferences'] else 0
 
-    #  income preference
-    if 'MedianHouseholdIncome' in features:
+    # Assign income preference
+    if 'IncomeCategory' in features:
         if preferences['income'] != "Prefer not to say":
             user_income_category = income_categories.index(preferences['income'])
-            user_vector[features.index('MedianHouseholdIncome')] = user_income_category / (len(income_categories) - 1)
+            user_vector[features.index('IncomeCategory')] = user_income_category / (len(income_categories) - 1)
         else:
-            user_vector[features.index('MedianHouseholdIncome')] = 0.5  
+            user_vector[features.index('IncomeCategory')] = 0.5   
 
-    # default values 
+    # Default values for safety and diversity
     if 'SafetyScore' in features:
         user_vector[features.index('SafetyScore')] = 1  
     if 'DiversityIndex' in features:
@@ -57,7 +57,7 @@ def translate_preferences(preferences):
     
     return user_vector
 
-def predict_price(borough, house_type, bedrooms, bathrooms, sqft, latitude, longitude, zipcode):
+def predict_price(borough, house_type, bedrooms, bathrooms, sqft, latitude, longitude, zipcode, population, liveliness_score, median_household_income, population_density):
     input_data = pd.DataFrame({
         'BEDS': [bedrooms],
         'BATH': [bathrooms],
@@ -66,23 +66,30 @@ def predict_price(borough, house_type, bedrooms, bathrooms, sqft, latitude, long
         'LONGITUDE': [longitude],
         'TYPE': [house_type],
         'ZIPCODE': [zipcode],
-        'BOROUGH': [borough]
+        'BOROUGH': [borough],
+        'Population': [population],
+        'LivelinessScore': [liveliness_score],
+        'MedianHouseholdIncome': [median_household_income],
+        'PopulationDensity': [population_density],
     })
     
-    prediction = rf_model.predict(input_data)[0]
+    prediction = xgb_model.predict(input_data)[0]
     return prediction
 
 def get_recommendations(preferences, n_recommendations=5):
     user_vector = translate_preferences(preferences)
     user_vector_scaled = knn_model.named_steps['scaler'].transform([user_vector])
 
-    distances, indices = knn_model.named_steps['knn'].kneighbors(user_vector_scaled, n_neighbors=n_recommendations)
+    distances, indices = knn_model.named_steps['knn'].kneighbors(user_vector_scaled, n_neighbors=len(data))
 
     recommended_areas = []
     for i, index in enumerate(indices[0]):
         zipcode = list(data.keys())[index]
         zipcode_data = data[zipcode]
         
+        if zipcode_data['BOROUGH'] != preferences['borough']:
+            continue
+
         price = predict_price(
             preferences['borough'],
             preferences['house_type'],
@@ -91,14 +98,17 @@ def get_recommendations(preferences, n_recommendations=5):
             preferences['sqft'],
             zipcode_data['Latitude'],
             zipcode_data['Longitude'],
-            zipcode
+            zipcode,
+            zipcode_data['Population'],
+            zipcode_data['LivelinessScore'],
+            zipcode_data['MedianHouseholdIncome'],
+            zipcode_data['PopulationDensity'],
         )
 
         if price is not None and price <= preferences['max_price']:
             recommendation = {
                 "zipcode": int(zipcode),
                 "predicted_price": float(price),
-                "median_household_income": float(zipcode_data['MedianHouseholdIncome']),
                 "income_category": zipcode_data.get('IncomeCategory', 'Unknown'),
                 "safety_score": float(zipcode_data['SafetyScore']),
                 "diversity_index": float(zipcode_data['DiversityIndex']),
@@ -108,10 +118,10 @@ def get_recommendations(preferences, n_recommendations=5):
                 "similarity_score": 1 - distances[0][i],
             }
             
-            # amenity scores
-            for amenity, density_key in amenity_options.items():
-                if density_key in zipcode_data:
-                    recommendation[f"{amenity.lower().replace(' ', '_')}_score"] = float(zipcode_data[density_key])
+            # Amenity scores
+            for amenity, feature_key in amenity_options.items():
+                if feature_key in zipcode_data:
+                    recommendation[f"{amenity.lower().replace(' ', '_')}_score"] = float(zipcode_data[feature_key])
             
             recommended_areas.append(recommendation)
     
@@ -119,14 +129,14 @@ def get_recommendations(preferences, n_recommendations=5):
     return recommended_areas[:n_recommendations]
 
 
-# Example 
+# Example
 preferences = {
     'borough': 'Brooklyn',
     'max_price': 1000000,
     'house_type': 'House',
     'bedrooms': 2,
     'bathrooms': 1,
-    'sqft': 1000,
+    'sqft': 800,
     'income': '$100,000-$150,000', 
     'neighborhood_preference': 'Balanced mix', 
     'household_type': 'Mix of families and singles',  
@@ -139,7 +149,6 @@ recommendations = get_recommendations(preferences)
 for i, rec in enumerate(recommendations, 1):
     print(f"{i}. Zipcode: {rec['zipcode']}")
     print(f"   Predicted Price: ${rec['predicted_price']:,.2f}")
-    print(f"   Median Household Income: ${rec['median_household_income']:,.2f}")
     print(f"   Income Category: {rec['income_category']}")
     print(f"   Safety Score: {rec['safety_score']:.2f}")
     print(f"   Diversity Index: {rec['diversity_index']:.2f}")
