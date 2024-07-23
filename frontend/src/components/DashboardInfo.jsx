@@ -513,7 +513,7 @@ export const DashboardInfo = ({
                 class="text-gray-500 m-auto hover:text-teal-500"
                 href="#historic-home-values"
               >
-                <p class="text-center">Historical Home Value</p>
+                <p class="text-center">Historical Property Value</p>
               </a>
               <a
                 class="text-gray-500 m-auto hover:text-teal-500 
@@ -534,9 +534,7 @@ export const DashboardInfo = ({
               class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
             >
               <div id="historic-home-values" class="min-h-[40vh]">
-                <p class="text-2xl">
-                  Historical Home Value of the entire Zipcode
-                </p>
+                <p class="text-2xl">Historical Property Value</p>
                 <LineChart
                   getComparedZip={getComparedZip}
                   getSelectedZip={getSelectedZip}

@@ -19,52 +19,95 @@ import induction_4 from "../assets/induction/step4.png";
 const InductionPage = () => {
   return (
     <InductionView>
-      <div
-        class="flex flex-col items-center justify-center 
-      border-2 border-solid border-black"
-      >
-        <div id="induction_step1">
-          <div>
-            <div class="text-2xl">
-              Step 1 Find the zip code you are interested in
-            </div>
-            <img src={induction_1} class="w-[60%] h-[60%]" />
+      <div className="mt-[2%] grid grid-row-1 divide-y justify-center w-4/5 min-h-screen text-center">
+        <h1 class="text-2xl">User Induction</h1>
+        <div
+          class="relative grid grid-cols-2 gap-10 mt-[2%]
+        mx-auto mb-[2vh] text-xl text-center
+             items-center justify-center"
+        >
+          <a href="#induction_step1">step 1</a>
+          <a href="#induction_step2">step 2</a>
+        </div>
+        <div id="induction_step1" className="flex flex-col items-center w-full">
+          <div className="text-2xl text-center mb-4">
+            Step 1 Find the zip code you are interested in
+          </div>
+          <div
+            class="relative grid grid-cols-3 mx-auto divide-x mb-[2vh]
+             items-center justify-center"
+          >
+            <a href="#search_bar">Search Bar</a>
+            <a href="#filter">Filter</a>
+            <a href="#recommend">Recommend</a>
+          </div>
+          <div className="w-full flex justify-center mb-4">
+            <img src={induction_1} className="w-[60%] h-auto" />
           </div>
 
-          <div class="flex flex-col gap-2">
-            <div>
-              <h2 class="text-xl">Search Bar</h2>
-              <img src={induction_1_2} class="w-[60%] h-[60%]" />
+          <div className="flex flex-col gap-4 items-center w-full">
+            <div className="w-full flex flex-col items-center" id="search_bar">
+              <h2 className="text-xl">Search Bar</h2>
+              <img src={induction_1_2} className="w-[60%] h-auto" />
             </div>
-            <div>
-              <h2 class="text-xl">Filter</h2>
-              <img src={induction_1_3} class="w-[60%] h-[60%]" />
+            <div className="w-full flex flex-col items-center" id="filter">
+              <h2 className="text-xl">Filter</h2>
+              <img src={induction_1_3} className="w-[60%] h-auto" />
             </div>
-            <div>
-              <h2 class="text-xl">Recommend</h2>
-              <img src={induction_1_4} class="w-[60%] h-[60%]" />
+            <div className="w-full flex flex-col items-center" id="recommend">
+              <h2 className="text-xl">Recommend</h2>
+              <img src={induction_1_4} className="w-[60%] h-auto" />
             </div>
           </div>
         </div>
-        <div id="induction_step2">
-          <div class="text-2xl">
+        <div
+          id="induction_step2"
+          className="flex flex-col items-center w-full mt-8"
+        >
+          <div className="text-2xl text-center mb-4">
             Step 2: Check the information in the dashboard
           </div>
-          <img src={induction_2} class="w-[60%] h-[60%]" />
-          <h2>Real Estate Information</h2>
-          <img src={induction_2_1} class="w-[60%] h-[60%]" />
-          <img src={induction_2_1_1} class="w-[60%] h-[60%]" />
-          <img src={induction_2_1_2} class="w-[60%] h-[60%]" />
-          <img src={induction_2_1_3} class="w-[60%] h-[60%]" />
+          <div
+            class="relative grid grid-cols-3 mx-auto gap-10 mb-[2vh]
+             items-center justify-center"
+          >
+            <a href="#realEstateInfo">real estate information</a>
+            <a href="#amenitiesInfo">amenities information</a>
+            <a href="#recommendInfo">other information</a>
+          </div>
+          <div className="w-full flex justify-center mb-4">
+            <img src={induction_2} className="w-[60%] h-auto" />
+          </div>
 
-          <h2>Amenities Information</h2>
-          <img src={induction_3} class="w-[60%] h-[60%]" />
-          <img src={induction_3_1} class="w-[60%] h-[60%]" />
-          <img src={induction_3_2} class="w-[60%] h-[60%]" />
-          <img src={induction_3_3} class="w-[60%] h-[60%]" />
+          <div
+            className="w-full flex flex-col items-center mb-8"
+            id="realEstateInfo"
+          >
+            <h2 className="text-xl">Real Estate Information</h2>
+            <img src={induction_2_1} className="w-[60%] h-auto mb-4" />
+            <h3>Historical Property Value Chart</h3>
+            <img src={induction_2_1_1} className="w-[60%] h-auto mb-4" />
+            <h3>2023 Sales</h3>
+            <img src={induction_2_1_2} className="w-[60%] h-auto mb-4" />
+            <h3>2024 Sales Prediction</h3>
+            <img src={induction_2_1_3} className="w-[60%] h-auto" />
+          </div>
 
-          <h2>Other Information</h2>
-          <img src={induction_4} class="w-[60%] h-[80%]" />
+          <div
+            className="w-full flex flex-col items-center mb-8"
+            id="amenitiesInfo"
+          >
+            <h2 className="text-xl">Amenities Information</h2>
+            <img src={induction_3} className="w-[60%] h-auto mb-4" />
+            <img src={induction_3_1} className="w-[60%] h-auto mb-4" />
+            <img src={induction_3_2} className="w-[60%] h-auto mb-4" />
+            <img src={induction_3_3} className="w-[60%] h-auto" />
+          </div>
+
+          <div className="w-full flex flex-col items-center" id="otherInfo">
+            <h2 className="text-xl">Other Information</h2>
+            <img src={induction_4} className="w-[60%] h-auto" />
+          </div>
         </div>
       </div>
     </InductionView>
