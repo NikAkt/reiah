@@ -3,12 +3,48 @@ import close_icon from "../assets/close-svgrepo-com.svg";
 
 // model inputs
 const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
-const neighbourhood_type = ["Quiet residential", "Balanced mix", "Lively urban", "No preference"];
-const income = ["Under $50,000", "$50,000-$100,000", "$100,000-$150,000", "$150,000-$200,000", "Over $200,000", "Prefer not to say"];
-const business_environment = ["Mostly residential", "Mix of residential and commercial", "Bustling commercial area", "No preference"];
-const amenity = ["Parks and recreation", "Health Services", "Schools and education", "Public transportation", "Religious institutions", "No preference"];
-const household_type = ["Mix of families and singles", "Mostly families", "Mostly singles", "No preference"];
-const property_type = ["Condo", "House", "Co-op", "Townhouse", "Multi-family home", "No preference"];
+const neighbourhood_type = [
+  "Quiet residential",
+  "Balanced mix",
+  "Lively urban",
+  "No preference",
+];
+const income = [
+  "Under $50,000",
+  "$50,000-$100,000",
+  "$100,000-$150,000",
+  "$150,000-$200,000",
+  "Over $200,000",
+  "Prefer not to say",
+];
+const business_environment = [
+  "Mostly residential",
+  "Mix of residential and commercial",
+  "Bustling commercial area",
+  "No preference",
+];
+const amenity = [
+  "Parks and recreation",
+  "Health Services",
+  "Schools and education",
+  "Public transportation",
+  "Religious institutions",
+  "No preference",
+];
+const household_type = [
+  "Mix of families and singles",
+  "Mostly families",
+  "Mostly singles",
+  "No preference",
+];
+const property_type = [
+  "Condo",
+  "House",
+  "Co-op",
+  "Townhouse",
+  "Multi-family home",
+  "No preference",
+];
 
 const RecommendZipcode = ({
   setRecommendedZipcode,
@@ -20,12 +56,20 @@ const RecommendZipcode = ({
 }) => {
   // form inputs with default values
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(neighbourhood_type[0]);
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
+    neighbourhood_type[0]
+  );
   const [getSelectedIncome, setSelectedIncome] = createSignal(income[0]);
-  const [getSelectedBusiness, setSelectedBusiness] = createSignal(business_environment[0]);
-  const [getSelectedProperty, setSelectedProperty] = createSignal(property_type[0]);
+  const [getSelectedBusiness, setSelectedBusiness] = createSignal(
+    business_environment[0]
+  );
+  const [getSelectedProperty, setSelectedProperty] = createSignal(
+    property_type[0]
+  );
   const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
-  const [getSelectedHousehold, setSelectedHousehold] = createSignal(household_type[0]);
+  const [getSelectedHousehold, setSelectedHousehold] = createSignal(
+    household_type[0]
+  );
   const [getSelectedBeds, setSelectedBeds] = createSignal(1);
   const [getSelectedBaths, setSelectedBaths] = createSignal(1);
   const [getSelectedMaxPrice, setSelectedMaxPrice] = createSignal(1000000);
@@ -44,10 +88,12 @@ const RecommendZipcode = ({
     setSelectedBaths(1);
     setSelectedMaxPrice(1000000);
     setSelectedSize(1000);
-    setRecommendedZipcode([]);  // Reset the highlight on the map
+    setRecommendedZipcode([]); // Reset the highlight on the map
     setNoZipcodesMessage("");
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false); // Clear all checkboxes
+    document
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((el) => (el.checked = false)); // Clear all checkboxes
   };
 
   const handleSubmitForm = () => {
@@ -98,6 +144,7 @@ const RecommendZipcode = ({
           setRecommendedZipcode([]);
           setPredictedPrice({});
         } else {
+          console.log(data);
           let recommendedZipcode = [];
           let predictedPrice = {};
           data.forEach((el) => {
@@ -138,7 +185,9 @@ const RecommendZipcode = ({
       <div class="m-auto top-[10%] grid grid-row-1 divide-y gap-10 place-items-center w-full p-6">
         <div class="mb-8 text-center">
           <p class="text-2xl mb-4">Welcome to Reiah.</p>
-          <p class="text-xl mb-8">Let's start our journey to find your best investment zipcodes!</p>
+          <p class="text-xl mb-8">
+            Let's start our journey to find your best investment zipcodes!
+          </p>
         </div>
 
         <div class="flex flex-col gap-8 mb-8">
@@ -146,7 +195,9 @@ const RecommendZipcode = ({
             <p class="text-xl">Environment Preferences</p>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="borough">Which borough are you looking for?</label>
+              <label class="block mb-2 text-lg font-semibold" for="borough">
+                Which borough are you looking for?
+              </label>
               <div class="flex gap-2 flex-wrap">
                 <For each={borough}>
                   {(item) => (
@@ -170,7 +221,12 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="neighborhood_preference">Preferred neighborhood type?</label>
+              <label
+                class="block mb-2 text-lg font-semibold"
+                for="neighborhood_preference"
+              >
+                Preferred neighborhood type?
+              </label>
               <div class="flex gap-2 flex-wrap">
                 <For each={neighbourhood_type}>
                   {(item) => (
@@ -193,7 +249,12 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="household_type">Preferred household type?</label>
+              <label
+                class="block mb-2 text-lg font-semibold"
+                for="household_type"
+              >
+                Preferred household type?
+              </label>
               <div class="flex gap-2 flex-wrap">
                 <For each={household_type}>
                   {(item) => (
@@ -216,7 +277,12 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="business_environment">Preferred business environment?</label>
+              <label
+                class="block mb-2 text-lg font-semibold"
+                for="business_environment"
+              >
+                Preferred business environment?
+              </label>
               <div class="flex gap-2 flex-wrap">
                 <For each={business_environment}>
                   {(item) => (
@@ -245,7 +311,9 @@ const RecommendZipcode = ({
             <p class="text-xl">House Preferences</p>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="house_type">Which property type are you looking for?</label>
+              <label class="block mb-2 text-lg font-semibold" for="house_type">
+                Which property type are you looking for?
+              </label>
               <div class="flex gap-2 flex-wrap">
                 <For each={property_type}>
                   {(item) => (
@@ -268,7 +336,9 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="sqft">House size (sqft)?</label>
+              <label class="block mb-2 text-lg font-semibold" for="sqft">
+                House size (sqft)?
+              </label>
               <input
                 type="number"
                 id="sqft"
@@ -285,7 +355,9 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="bedrooms">Number of bedrooms?</label>
+              <label class="block mb-2 text-lg font-semibold" for="bedrooms">
+                Number of bedrooms?
+              </label>
               <input
                 type="number"
                 id="bedrooms"
@@ -300,7 +372,9 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="bathrooms">Number of bathrooms?</label>
+              <label class="block mb-2 text-lg font-semibold" for="bathrooms">
+                Number of bathrooms?
+              </label>
               <input
                 type="number"
                 id="bathrooms"
@@ -315,7 +389,9 @@ const RecommendZipcode = ({
             </div>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="max_price">Maximum price?</label>
+              <label class="block mb-2 text-lg font-semibold" for="max_price">
+                Maximum price?
+              </label>
               <input
                 type="number"
                 id="max_price"
@@ -336,7 +412,9 @@ const RecommendZipcode = ({
             <p class="text-xl">Personal Information</p>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="income">Yearly income range?</label>
+              <label class="block mb-2 text-lg font-semibold" for="income">
+                Yearly income range?
+              </label>
               <div class="flex gap-2 flex-wrap">
                 <For each={income}>
                   {(item) => (
@@ -365,7 +443,12 @@ const RecommendZipcode = ({
             <p class="text-xl">Additional Information</p>
 
             <div class="text-left">
-              <label class="block mb-2 text-lg font-semibold" for="amenity_preferences">Preferred amenities?</label>
+              <label
+                class="block mb-2 text-lg font-semibold"
+                for="amenity_preferences"
+              >
+                Preferred amenities?
+              </label>
               <div class="flex flex-wrap gap-4">
                 <For each={amenity}>
                   {(item) => (
@@ -379,11 +462,15 @@ const RecommendZipcode = ({
                         onChange={(event) => {
                           const isChecked = event.target.checked;
                           setSelectedAmenities((prev) =>
-                            isChecked ? [...prev, item] : prev.filter((amenity) => amenity !== item)
+                            isChecked
+                              ? [...prev, item]
+                              : prev.filter((amenity) => amenity !== item)
                           );
                         }}
                       />
-                      <label for={item} class="text-lg">{item}</label>
+                      <label for={item} class="text-lg">
+                        {item}
+                      </label>
                     </div>
                   )}
                 </For>
@@ -392,7 +479,9 @@ const RecommendZipcode = ({
 
             <div class="flex flex-col items-center gap-4 mt-8">
               {noZipcodesMessage() && (
-                <div class="text-red-500 text-lg font-semibold">{noZipcodesMessage()}</div>
+                <div class="text-red-500 text-lg font-semibold">
+                  {noZipcodesMessage()}
+                </div>
               )}
               <div class="flex gap-4">
                 <button

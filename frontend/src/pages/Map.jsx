@@ -25,9 +25,6 @@ export const Map = (props) => {
   const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
     createSignal(false);
 
-  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
-  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
-
   const [getComparedZip, setComparedZip] = createSignal([]);
 
   const [showHousesMarker, setShowHousesMarker] = createSignal(true);
@@ -67,10 +64,6 @@ export const Map = (props) => {
     zipcode_geojson,
   };
 
-  createEffect(() => {
-    console.log(recommendedZipcode());
-  });
-
   return (
     <MapView>
       <div class="h-screen flex relative">
@@ -96,18 +89,15 @@ export const Map = (props) => {
                 zipcodeOnCharts={getSelectedZip}
                 zipcodeSetter={setSelectedZip}
                 getComparedZip={getComparedZip}
-                filteredZipCodes={filteredZipCodes}
                 setFavorite={props.setFavorite}
                 favorite={props.favorite}
                 showAmenityMarker={showAmenityMarker}
                 setShowAmenityMarker={setShowAmenityMarker}
                 showHousesMarker={showHousesMarker}
                 setShowHousesMarker={setShowHousesMarker}
-                recommendedZipcode={recommendedZipcode}
                 setZoom={setZoom}
                 setPredictedPrice={setPredictedPrice}
                 setQuery={setQuery}
-                setRecommendedZipcode={setRecommendedZipcode}
               >
                 <div class="flex flex-col gap-2">
                   <Show
@@ -122,7 +112,6 @@ export const Map = (props) => {
                     <DashboardInfo
                       map={props.mapObject}
                       historicalRealEstateData={dataResources.historicalRealEstateData()}
-                      recommendedZipcode={recommendedZipcode}
                       setDisplayDialog={setDisplayDialog}
                       setDialogInfo={setDialogInfo}
                       query={query}

@@ -31,6 +31,7 @@ export const MapComponent = (props) => {
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
   const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
   const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
+  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
@@ -138,7 +139,7 @@ export const MapComponent = (props) => {
         };
       } else if (
         filteredZipCodes().includes(parseInt(zipCode)) ||
-        props.recommendedZipcode().includes(parseInt(zipCode))
+        recommendedZipcode().includes(parseInt(zipCode))
       ) {
         return {
           fillColor: colors.selected,
@@ -194,7 +195,7 @@ export const MapComponent = (props) => {
         });
       } else if (
         filteredZipCodes().includes(parseInt(zipCode)) ||
-        props.recommendedZipcode().includes(parseInt(zipCode))
+        recommendedZipcode().includes(parseInt(zipCode))
       ) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.selected,
@@ -258,7 +259,7 @@ export const MapComponent = (props) => {
   });
 
   createEffect(() => {
-    if (props.mapObject() && props.recommendedZipcode().length > 0) {
+    if (props.mapObject() && recommendedZipcode().length > 0) {
       insertDataLayer(zipcode_geojson, props.mapObject());
     }
   });
@@ -346,7 +347,7 @@ export const MapComponent = (props) => {
         setSidebarOpen={setSidebarOpen}
       />
       <RecommendZipcode
-        setRecommendedZipcode={props.setRecommendedZipcode}
+        setRecommendedZipcode={setRecommendedZipcode}
         setShowRecommendBoard={setShowRecommendBoard}
         setPredictedPrice={props.setPredictedPrice}
         setQuery={props.setQuery}

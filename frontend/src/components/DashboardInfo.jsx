@@ -1,13 +1,15 @@
 import { Loader } from "@googlemaps/js-api-loader";
-import { createEffect, createSignal, onCleanup, Show } from "solid-js";
+import { createEffect, createSignal, onCleanup, Show, lazy } from "solid-js";
 import { LineChart } from "./Charts";
 import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
 import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
 
-import AmenitiesInfo from "./AmenitiesInfo";
-import RealEstateInfo from "./RealEstateInfo";
-import DemographicInfo from "./DemographicInfo";
+const AmenitiesInfo = lazy(() => import("./AmenitiesInfo"));
+// import RealEstateInfo from "./RealEstateInfo";
+const DemographicInfo = lazy(() => import("./DemographicInfo"));
 import MarkerLegend from "./MarkerLegend";
+
+const RealEstateInfo = lazy(() => import("./RealEstateInfo"));
 
 function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
   if (markerArr) {
@@ -85,7 +87,7 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
         <div>
           <div class="bg-indigo-200 h-[1px] w-full"></div>
           <div>
-            <p>Average Home Value Prediction</p>
+            {/* <p>Average Home Value Prediction</p> */}
 
             <div>
               <p class="bg-teal-500 text-white w-full">In the next year:</p>
@@ -112,7 +114,6 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
 export const DashboardInfo = ({
   map,
   historicalRealEstateData,
-  recommendedZipcode,
   setDisplayDialog,
   setDialogInfo,
   query,
@@ -638,7 +639,9 @@ export const DashboardInfo = ({
                   setNoHistoricData={setNoHistoricData}
                   noHistoricData={noHistoricData}
                 ></LineChart>
-                <p class="text-xl">Predicted Property Value in the Future</p>
+                <p class="text-xl">
+                  Predicted Average Property Value in the Future
+                </p>
                 <Show when={!noHistoricData()}>
                   <PredictedHomeValue
                     loadCompared={false}
@@ -697,7 +700,6 @@ export const DashboardInfo = ({
                       setDialogInfo={setDialogInfo}
                       setDisplayDialog={setDisplayDialog}
                       highlightMarker={highlightMarker}
-                      recommendedZipcode={recommendedZipcode}
                       getSelectedZip={getSelectedZip}
                       predictedPrice={predictedPrice}
                       query={query}
@@ -725,7 +727,6 @@ export const DashboardInfo = ({
                             setDialogInfo={setDialogInfo}
                             setDisplayDialog={setDisplayDialog}
                             highlightMarker={highlightMarker}
-                            recommendedZipcode={recommendedZipcode}
                             getSelectedZip={item}
                             predictedPrice={predictedPrice}
                             query={query}
