@@ -29,10 +29,9 @@ const DashboardView = (props) => {
     <BaseLayout>
       <Sidebar links={links} />
       <main
-        class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen"
+        class="py-16 z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen"
         onMouseOver={() => setStore({ ...store, sidebarOpen: false })}
       >
-        <Navbar />
         <Show when={props.sortableIsOn}>
           <SortableGroup class="p-8 grid grid-cols-3 gap-4">
             {props.children}
@@ -79,11 +78,11 @@ const InductionView = (props) => {
 const AuthLayout = (props) => {
   return (
     <BaseLayout>
-      <div class="h-screen grid grid-cols-2 gap-0 overflow-hidden">
+      <div class="h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden">
         <div class="h-full flex justify-center items-center bg-white dark:bg-slate-800">
           {props.children}
         </div>
-        <div class="h-full bg-gradient-to-br from-teal-500 to-green-200 dark:from-teal-300 dark:to-green-950 p-48 flex justify-center items-center flex-col">
+        <div class="hidden lg:flex justify-center items-center flex-col h-full bg-gradient-to-br from-teal-500 to-green-200 dark:from-teal-300 dark:to-green-950 p-48">
           <div class="fixed right-4 top-4">
             <DarkLightModeToggle />
           </div>

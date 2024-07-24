@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "babel-preset-solid": "^1.8.17",
-    "ejs": "^3.1.10",
-    "express": "^4.19.2",
-    "solid-js": "^1.8.17"
-  }
-}

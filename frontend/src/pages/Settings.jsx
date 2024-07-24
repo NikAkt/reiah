@@ -15,9 +15,9 @@ export const Settings = () => {
       <div class="absolute top-0 right-0 p-4">
         <UserMenu /> {/* Include UserMenu component */}
       </div>
-      <div class="p-8 shadow-md rounded bg-white dark:bg-slate-800 col-span-3">
+      <div class="w-full p-2 lg:p-8 rounded bg-white dark:bg-slate-800 col-span-3">
         <header>
-          <h1 class="text-2xl dark:text-white">User Settings</h1>
+          <h1 class="text-xl lg:text-2xl dark:text-white">User Settings</h1>
         </header>
         <main class="mt-4">
           <SettingsForm

@@ -15,9 +15,14 @@ import { SupabaseProvider } from "solid-supabase";
 import { RouteGuard } from "./routeguard";
 import { InductionPage } from "./pages/Induction";
 
+// const supabase = createClient(
+//   import.meta.env.VITE_SUPABASE_URL,
+//   import.meta.env.VITE_SUPABASE_KEY
+// );
+
 const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_KEY
+  "https://ythbzdzanxaevlriiewc.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0aGJ6ZHphbnhhZXZscmlpZXdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1NDI5OTIsImV4cCI6MjAzNjExODk5Mn0.z5IILiOoTJBU26Yg2MRgnWmMFl1VLMV5dkPsFOtM1Bg"
 );
 
 const root = document.getElementById("root");
