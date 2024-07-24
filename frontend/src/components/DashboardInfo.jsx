@@ -275,7 +275,7 @@ export const DashboardInfo = ({
         >
           <div>
             <h1 class="font-medium text-2xl mb-4" id="dashboard_top">
-              {`ZIPCODE ${getSelectedZip()}`},
+              {`${getSelectedZip()}`},
               <span>{neighbourhood()}</span>,<span>{borough()}</span>
             </h1>
             <Show when={getSelectedZip()}>
