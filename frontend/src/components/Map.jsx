@@ -150,6 +150,8 @@ export const MapComponent = (props) => {
   }
 
   const insertDataLayer = (data, map) => {
+    if (!map) return; // Ensure map is defined
+
     clearDataLayer(map);
     map.data.addGeoJson(data);
 
@@ -278,6 +280,15 @@ export const MapComponent = (props) => {
   createEffect(() => {
     if (props.zipcodeOnCharts().length > 0) {
       debounceFetch(props.zipcodeOnCharts());
+    }
+  });
+
+  createEffect(() => {
+    if (filteredZipCodes().length > 0) {
+      const map = props.mapObject();
+      if (map) {
+        insertDataLayer(zipcode_geojson, map);
+      }
     }
   });
 
