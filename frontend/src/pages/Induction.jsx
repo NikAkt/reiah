@@ -110,7 +110,11 @@ const InductionPage = () => {
             id="realEstateInfo"
           >
             <h2 className="text-xl">Real Estate Information</h2>
-            <img src={induction_2_1} className="w-[60%] h-auto mb-4" />
+            <img
+              src={induction_2_1}
+              className="w-[60%] h-auto mb-4"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
             <h3>Historical Property Value Chart</h3>
             <img
               src={induction_2_1_1}
