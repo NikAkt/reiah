@@ -1,4 +1,11 @@
-import { createSignal, createEffect, Show, For, onCleanup } from "solid-js";
+import {
+  createSignal,
+  createEffect,
+  Show,
+  For,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import { DoughnutChart } from "./Charts"; // Assuming you have a DoughnutChart component
 import loading_svg from "../assets/spinning-circles.svg";
 
