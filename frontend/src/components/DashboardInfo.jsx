@@ -131,7 +131,7 @@ export const DashboardInfo = ({
   const [hideAmenities, setHideAmenities] = createSignal(false);
   const [noHistoricData, setNoHistoricData] = createSignal(false);
   const [toggleState, setToggleState] = createSignal({
-    "average-property-value": true,
+    "property-value": true,
     "sales-2023": false,
     "sales-2024": false,
   });
@@ -560,11 +560,11 @@ export const DashboardInfo = ({
             >
               <a
                 class="text-gray-500 m-auto hover:text-teal-500 cursor-pointer flex items-center justify-center"
-                onClick={() => toggleSection("average-property-value")}
+                onClick={() => toggleSection("property-value")}
               >
-                <p class="text-center">Average Property Value</p>
+                <p class="text-center">Property Value</p>
                 <span class="ml-2">
-                  {toggleState()["average-property-value"] ? "-" : "+"}
+                  {toggleState()["property-value"] ? "-" : "+"}
                 </span>
               </a>
               <a
@@ -591,13 +591,12 @@ export const DashboardInfo = ({
               class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
             >
               <div
-                id="average-property-value"
+                id="property-value"
                 class={`min-h-[40vh] ${
-                  toggleState()["average-property-value"] ? "" : "hidden"
+                  toggleState()["property-value"] ? "" : "hidden"
                 }`}
               >
-                <p class="text-2xl">Average Property Value</p>
-                <p class="text-xl">Historical Property Value</p>
+                <p class="text-xl py-4">Historical Property Value</p>
                 <LineChart
                   getComparedZip={getComparedZip}
                   getSelectedZip={getSelectedZip}
@@ -608,7 +607,7 @@ export const DashboardInfo = ({
                   setNoHistoricData={setNoHistoricData}
                   noHistoricData={noHistoricData}
                 ></LineChart>
-                <p class="text-xl">Predicted Property Value in the Future</p>
+                <p class="text-xl py-4">Predicted Property Value</p>
                 <Show when={!noHistoricData()}>
                   <PredictedHomeValue
                     loadCompared={false}
@@ -623,7 +622,7 @@ export const DashboardInfo = ({
                   toggleState()["sales-2023"] ? "" : "hidden"
                 }`}
               >
-                <a class="text-2xl">2023 Residential Property Sales</a>
+                <a class="text-2xl py-4">2023 Residential Property Sales</a>
                 <p class="text-sm">Data Source: Zillow</p>
                 <Show when={updateInfo()}>
                   <div class="flex gap-2">
