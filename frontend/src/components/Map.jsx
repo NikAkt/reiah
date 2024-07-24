@@ -23,7 +23,9 @@ const colors = {
   clicked: "#36A2EB", // Blue for clicked
   selected: "#FFA500", // Orange for selected
   compared: "#FF6384",
+  recommended: "#FFD700" // Gold for recommended
 };
+
 
 export const MapComponent = (props) => {
   let ref;
@@ -136,10 +138,14 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
-      } else if (
-        filteredZipCodes().includes(parseInt(zipCode)) ||
-        props.recommendedZipcode().includes(parseInt(zipCode))
-      ) {
+      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+        return {
+          fillColor: colors.recommended,
+          strokeColor: colors.recommended,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        };
+      } else if (filteredZipCodes().includes(parseInt(zipCode))) {
         return {
           fillColor: colors.selected,
           strokeColor: colors.selected,
@@ -162,11 +168,11 @@ export const MapComponent = (props) => {
         };
       }
     });
-
+  
     map.data.addListener("click", (event) => {
       props.zipcodeSetter(event.feature.getProperty("ZIPCODE"));
     });
-
+  
     map.data.addListener("mouseover", (event) => {
       map.data.revertStyle();
       map.data.overrideStyle(event.feature, {
@@ -181,7 +187,7 @@ export const MapComponent = (props) => {
         hoverDiv.value = event.feature.getProperty("ZIPCODE");
       }
     });
-
+  
     map.data.addListener("mouseout", (event) => {
       map.data.revertStyle();
       const zipCode = event.feature.getProperty("ZIPCODE");
@@ -192,10 +198,14 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
-      } else if (
-        filteredZipCodes().includes(parseInt(zipCode)) ||
-        props.recommendedZipcode().includes(parseInt(zipCode))
-      ) {
+      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+        map.data.overrideStyle(event.feature, {
+          fillColor: colors.recommended,
+          strokeColor: colors.recommended,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        });
+      } else if (filteredZipCodes().includes(parseInt(zipCode))) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.selected,
           strokeColor: colors.selected,
@@ -219,6 +229,7 @@ export const MapComponent = (props) => {
       }
     });
   };
+  
 
   const clearDataLayer = (map) => {
     if (map) {
