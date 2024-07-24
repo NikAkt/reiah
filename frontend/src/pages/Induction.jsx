@@ -19,7 +19,10 @@ import induction_4 from "../assets/induction/step4.png";
 const InductionPage = () => {
   return (
     <InductionView>
-      <div className="mt-[2%] grid grid-row-1 divide-y justify-center w-4/5 min-h-screen text-center">
+      <div
+        className="mt-[2%] grid grid-row-1 divide-y justify-center 
+      w-4/5 min-h-screen text-center py-3"
+      >
         <h1 class="text-2xl">User Induction</h1>
         <div
           class="relative grid grid-cols-2 gap-10 mt-[2%]
@@ -29,7 +32,10 @@ const InductionPage = () => {
           <a href="#induction_step1">step 1</a>
           <a href="#induction_step2">step 2</a>
         </div>
-        <div id="induction_step1" className="flex flex-col items-center w-full">
+        <div
+          id="induction_step1"
+          className="flex flex-col items-center w-full py-3"
+        >
           <div className="text-2xl text-center mb-4">
             Step 1 Find the zip code you are interested in
           </div>
@@ -62,7 +68,7 @@ const InductionPage = () => {
         </div>
         <div
           id="induction_step2"
-          className="flex flex-col items-center w-full mt-8"
+          className="flex flex-col items-center w-full mt-8 py-3"
         >
           <div className="text-2xl text-center mb-4">
             Step 2: Check the information in the dashboard
