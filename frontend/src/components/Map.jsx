@@ -23,9 +23,8 @@ const colors = {
   clicked: "#36A2EB", // Blue for clicked
   selected: "#FFA500", // Orange for selected
   compared: "#FF6384",
-  recommended: "#FFD700" // Gold for recommended
+  recommended: "#FFD700", // Gold for recommended
 };
-
 
 export const MapComponent = (props) => {
   let ref;
@@ -41,6 +40,7 @@ export const MapComponent = (props) => {
     setShowInfoBoard(false);
   };
 
+  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
@@ -279,7 +279,7 @@ export const MapComponent = (props) => {
   });
 
   createEffect(() => {
-    if (props.mapObject() && props.recommendedZipcode().length > 0) {
+    if (props.mapObject() && recommendedZipcode().length > 0) {
       insertDataLayer(zipcode_geojson, props.mapObject());
     }
   });
@@ -361,7 +361,7 @@ export const MapComponent = (props) => {
         setSidebarOpen={setSidebarOpen}
       />
       <RecommendZipcode
-        setRecommendedZipcode={props.setRecommendedZipcode}
+        setRecommendedZipcode={setRecommendedZipcode}
         setShowRecommendBoard={setShowRecommendBoard}
         setPredictedPrice={props.setPredictedPrice}
         setQuery={props.setQuery}
