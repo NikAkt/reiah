@@ -502,12 +502,12 @@ const Filter = ({
               </div>
 
               {/* Amenities */}
-              <div class="flex flex-col gap-2 bg-white">
+              <div class="flex flex-col gap-2">
                 <label htmlFor="amenities" class="text-lg font-semibold">Amenities</label>
                 {Object.entries(categorizedAmenities()).map(([category, amenities]) => (
-                  <div key={category} class="flex flex-col gap-2 bg-white">
+                  <div key={category} class="flex flex-col gap-2">
                     <button
-                      class="font-semibold text-gray-700 text-left bg-white"
+                      class="font-semibold text-gray-700 text-left"
                       onClick={() => handleCategoryToggle(category)}
                     >
                       {category} {expandedCategories().has(category) ? "-" : "+"}
@@ -515,7 +515,7 @@ const Filter = ({
                     {expandedCategories().has(category) && (
                       <div class="grid grid-cols-2 gap-2 p-2 bg-gray-50 rounded-md">
                         {amenities.map((amenity) => (
-                          <div key={amenity} class="flex items-center bg-white">
+                          <div key={amenity} class="flex items-center">
                             <input
                               type="checkbox"
                               id={amenity}
@@ -523,7 +523,7 @@ const Filter = ({
                               onChange={() => handleAmenityChange(amenity)}
                               checked={selectedAmenities().has(amenity)}
                             />
-                            <label htmlFor={amenity} class="ml-2 text-gray-700 bg-white">
+                            <label htmlFor={amenity} class="ml-2 text-gray-700">
                               {amenity}
                             </label>
                           </div>
