@@ -439,7 +439,9 @@ export const DashboardInfo = ({
         </div>
         <div class="right-[4vw]">
           <MarkerLegend
+            hideProperty={hideProperty}
             setHideProperty={setHideProperty}
+            hideAmenities={hideAmenities}
             setHideAmenities={setHideAmenities}
           />
         </div>
