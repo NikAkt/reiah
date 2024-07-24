@@ -164,6 +164,8 @@ const LineChart = ({
   cleanLineChart,
   setCleanLineChart,
   getComparedZip,
+  noHistoricData,
+  setNoHistoricData,
 }) => {
   //whether the line chart is multiline or not
   let ref;
@@ -172,10 +174,9 @@ const LineChart = ({
     () => getSelectedZip(),
     fetchHistoricPrices
   );
-  const [empty, setEmpty] = createSignal(false);
 
   createEffect(() => {
-    if (cleanLineChart() === true) {
+    if (cleanLineChart() === true && !noHistoricData()) {
       chartInstance.data.datasets = [
         chartInstance.data.datasets.filter(
           (obj) => obj.label * 1 == getSelectedZip()
@@ -187,7 +188,7 @@ const LineChart = ({
   });
 
   createEffect(() => {
-    if (updateLineChart()) {
+    if (updateLineChart() && !noHistoricData()) {
       fetchMultipleHistoricPrices(getComparedZip()).then(
         (comparedAsyncData) => {
           generateMultiLineChart(comparedAsyncData);
@@ -258,9 +259,9 @@ const LineChart = ({
               tension: 0.1,
             },
           ]);
-          setEmpty(false);
+          setNoHistoricData(false);
         } else {
-          setEmpty(true);
+          setNoHistoricData(true);
         }
       } catch (error) {
         console.log(error);
@@ -275,7 +276,7 @@ const LineChart = ({
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
-      <Show when={empty()}>
+      <Show when={noHistoricData()}>
         <div class="text-center w-[80%] relative flex flex-col gap-2 max-h-[10%]">
           Sorry, we don't have the historical data for this zip code.
           <img
