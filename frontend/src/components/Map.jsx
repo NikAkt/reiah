@@ -23,6 +23,7 @@ const colors = {
   clicked: "#36A2EB", // Blue for clicked
   selected: "#FFA500", // Orange for selected
   compared: "#FF6384",
+  recommended: "#FFD700", // Gold for recommended
 };
 
 export const MapComponent = (props) => {
@@ -137,10 +138,14 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
-      } else if (
-        filteredZipCodes().includes(parseInt(zipCode)) ||
-        recommendedZipcode().includes(parseInt(zipCode))
-      ) {
+      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+        return {
+          fillColor: colors.recommended,
+          strokeColor: colors.recommended,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        };
+      } else if (filteredZipCodes().includes(parseInt(zipCode))) {
         return {
           fillColor: colors.selected,
           strokeColor: colors.selected,
@@ -193,10 +198,14 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
-      } else if (
-        filteredZipCodes().includes(parseInt(zipCode)) ||
-        recommendedZipcode().includes(parseInt(zipCode))
-      ) {
+      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+        map.data.overrideStyle(event.feature, {
+          fillColor: colors.recommended,
+          strokeColor: colors.recommended,
+          fillOpacity: 0.7,
+          strokeWeight: 2,
+        });
+      } else if (filteredZipCodes().includes(parseInt(zipCode))) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.selected,
           strokeColor: colors.selected,
