@@ -31,12 +31,19 @@ export const MapComponent = (props) => {
   let ref;
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
-  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
   const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
+  const [showInfoBoard, setShowInfoBoard] = createSignal(false);
+  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
+
+  const closeAllBoards = () => {
+    setShowFilterBoard(false);
+    setShowRecommendBoard(false);
+    setShowInfoBoard(false);
+  };
+
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
-
   const zipcode_geojson = props.dataResources.zipcode_geojson();
   const geojsonZipcode = [
     ...zipcode_geojson.features.map((el) => el["properties"]["ZIPCODE"] * 1),
@@ -76,6 +83,8 @@ export const MapComponent = (props) => {
     controlButton.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     controlButton.addEventListener("click", () => {
+      closeAllBoards();
+      setShowInfoBoard((prev) => !prev);
       setSidebarOpen((prev) => !prev);
       updateButtonStyles();
     });
@@ -104,6 +113,7 @@ export const MapComponent = (props) => {
     recommendZipBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     recommendZipBtn.addEventListener("click", () => {
+      closeAllBoards();
       setShowRecommendBoard((prev) => !prev);
       setSidebarOpen(true);
     });
@@ -112,6 +122,7 @@ export const MapComponent = (props) => {
     filterBtn.className =
       "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     filterBtn.addEventListener("click", () => {
+      closeAllBoards();
       setShowFilterBoard((prev) => !prev);
       setSidebarOpen(true);
     });
@@ -168,11 +179,11 @@ export const MapComponent = (props) => {
         };
       }
     });
-  
+
     map.data.addListener("click", (event) => {
       props.zipcodeSetter(event.feature.getProperty("ZIPCODE"));
     });
-  
+
     map.data.addListener("mouseover", (event) => {
       map.data.revertStyle();
       map.data.overrideStyle(event.feature, {
@@ -187,7 +198,7 @@ export const MapComponent = (props) => {
         hoverDiv.value = event.feature.getProperty("ZIPCODE");
       }
     });
-  
+
     map.data.addListener("mouseout", (event) => {
       map.data.revertStyle();
       const zipCode = event.feature.getProperty("ZIPCODE");
@@ -229,7 +240,6 @@ export const MapComponent = (props) => {
       }
     });
   };
-  
 
   const clearDataLayer = (map) => {
     if (map) {
@@ -337,12 +347,6 @@ export const MapComponent = (props) => {
           
           `}
       >
-        {/* <Show when={props.isLoading}>
-          <div class="flex flex-col gap-2 animate-pulse">
-            <div class="h-6 w-3/12 rounded-lg bg-neutral-300" />
-            <div class="h-6 w-2/12 rounded-lg bg-neutral-300" />
-          </div>
-        </Show> */}
         <Show when={!props.isLoading}></Show>
         <div class="gap-6 mt-6 py-3 flex flex-col">
           <div class="flex flex-col">{props.children}</div>
@@ -367,3 +371,4 @@ export const MapComponent = (props) => {
     </>
   );
 };
+
