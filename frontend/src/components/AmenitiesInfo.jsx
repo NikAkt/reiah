@@ -96,6 +96,11 @@ const AmenitiesInfo = ({
     strokeColor: "#000000",
   };
 
+  const cleanAmenitiesOnMap = () => {
+    amenitiesOnMap().forEach((marker) => marker.setMap(null));
+    setAmenitiesOnMap([]);
+  };
+
   const fetchAmenitiesData = async () => {
     try {
       fetch(`http://localhost:8000/api/amenities?zipcode=${getSelectedZip()}`)
@@ -103,11 +108,8 @@ const AmenitiesInfo = ({
         .then((data_amenities) => {
           if (data_amenities && data_amenities.length > 0) {
             setHoverAmenity(null);
-
+            cleanAmenitiesOnMap();
             loader.importLibrary("marker").then(({ Marker, Animation }) => {
-              amenitiesOnMap().forEach((marker) => marker.setMap(null));
-              setAmenitiesOnMap([]);
-
               const amenitiesObj = {};
               data_amenities.forEach((el) => {
                 if (!amenitiesObj[el.FACILITY_T]) {
@@ -151,6 +153,8 @@ const AmenitiesInfo = ({
               setAmenities(datasets);
             });
             // Clear existing markers
+          } else {
+            cleanAmenitiesOnMap();
           }
         });
     } catch (error) {

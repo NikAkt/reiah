@@ -164,6 +164,8 @@ export const DashboardInfo = ({
   const [hideProperty, setHideProperty] = createSignal(false);
   const [hideAmenities, setHideAmenities] = createSignal(false);
 
+  const [noHistoricData, setNoHistoricData] = createSignal(false);
+
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
@@ -624,12 +626,16 @@ export const DashboardInfo = ({
                   setUpdateLineChart={setUpdateLineChart}
                   cleanLineChart={cleanLineChart}
                   setCleanLineChart={setCleanLineChart}
+                  setNoHistoricData={setNoHistoricData}
+                  noHistoricData={noHistoricData}
                 ></LineChart>
                 <p class="text-xl">Predicted Property Value in the Future</p>
-                <PredictedHomeValue
-                  loadCompared={false}
-                  getSelectedZip={getSelectedZip}
-                />
+                <Show when={!noHistoricData()}>
+                  <PredictedHomeValue
+                    loadCompared={false}
+                    getSelectedZip={getSelectedZip}
+                  />
+                </Show>
               </div>
 
               <div id="sales-2023" class="relative w-full">
