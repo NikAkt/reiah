@@ -8,10 +8,6 @@ from utilities.recommendation_system import get_recommendations, predict_price
 app = Flask(__name__)
 CORS(app)
 
-# Load the models
-rf_model = joblib.load('models/rf_model.joblib')
-knn_model = joblib.load('models/knn_model.joblib')
-
 # Load JSON data
 with open('data/processed_zipcode_data.json', 'r') as f:
     zipcode_data = json.load(f)
