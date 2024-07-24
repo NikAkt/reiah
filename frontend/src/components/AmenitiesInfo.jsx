@@ -48,7 +48,13 @@ const AmenitiesDetailDropdown = ({
   );
 };
 
-const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
+const AmenitiesInfo = ({
+  getSelectedZip,
+  loader,
+  highlightMarker,
+  map,
+  hideAmenities,
+}) => {
   const [amenitiesOnMap, setAmenitiesOnMap] = createSignal([]);
   const [amenitiesDetails, setAmenitiesDetails] = createSignal({});
   const [amenities, setAmenities] = createSignal(null);
@@ -121,7 +127,7 @@ const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
                   facility_type: el.FACILITY_T,
                   facility_desc: el.FACILITY_DOMAIN_NAME,
                   animation: Animation.DROP,
-                  map: map(),
+                  // map: map(),
                   icon: amenitiesMarkerIcon,
                 });
 
@@ -151,6 +157,19 @@ const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
       console.error("Failed to fetch amenities data:", error);
     }
   };
+
+  const hideAmenitiesOnMap = () => {
+    if (amenitiesOnMap().length > 0) {
+      amenitiesOnMap().forEach((marker) => marker.setMap(null));
+    }
+  };
+
+  const putAmenitiesOnMap = () => {
+    if (amenitiesOnMap().length > 0) {
+      amenitiesOnMap().forEach((marker) => marker.setMap(map()));
+    }
+  };
+
   createEffect(() => {
     fetchAmenitiesData();
   });
@@ -165,6 +184,14 @@ const AmenitiesInfo = ({ getSelectedZip, loader, highlightMarker, map }) => {
         newAmenitiesMarkerIcon,
         "facility_type"
       );
+    }
+  });
+
+  createEffect(() => {
+    if (hideAmenities()) {
+      hideAmenitiesOnMap();
+    } else {
+      putAmenitiesOnMap();
     }
   });
 

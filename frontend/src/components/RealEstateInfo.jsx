@@ -25,6 +25,7 @@ const RealEstateInfo = ({
   setLon,
   noProperty,
   setNoProperty,
+  hideProperty,
 }) => {
   const colorsChartjs = [
     "#36A2EB",
@@ -80,6 +81,18 @@ const RealEstateInfo = ({
     if (propertyOnMap().length > 0) {
       propertyOnMap().forEach((marker) => marker.setMap(null));
       setPropertyOnMap([]);
+    }
+  };
+
+  const hidePropertyOnMap = () => {
+    if (propertyOnMap().length > 0) {
+      propertyOnMap().forEach((marker) => marker.setMap(null));
+    }
+  };
+
+  const putPropertyOnMap = () => {
+    if (propertyOnMap().length > 0) {
+      propertyOnMap().forEach((marker) => marker.setMap(map()));
     }
   };
 
@@ -172,7 +185,7 @@ const RealEstateInfo = ({
               price: el.PRICE,
               propertysqf: el.PROPERTYSQFT,
               animation: Animation.DROP,
-              map: map(),
+              // map: map(),
               label: {
                 text: `\$${(el.PRICE / 1000).toFixed(0)}k`,
                 color: "black",
@@ -210,6 +223,14 @@ const RealEstateInfo = ({
       fetchPropertyData(getSelectedZip());
     } else {
       fetchPropertyData(getSelectedZip);
+    }
+  });
+
+  createEffect(() => {
+    if (hideProperty()) {
+      hidePropertyOnMap();
+    } else {
+      putPropertyOnMap();
     }
   });
 

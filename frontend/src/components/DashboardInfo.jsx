@@ -160,6 +160,10 @@ export const DashboardInfo = ({
   //indicate whether having property data
   const [noProperty, setNoProperty] = createSignal(false);
 
+  //hide the markers on map
+  const [hideProperty, setHideProperty] = createSignal(false);
+  const [hideAmenities, setHideAmenities] = createSignal(false);
+
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
@@ -432,7 +436,10 @@ export const DashboardInfo = ({
           </div>
         </div>
         <div class="right-[4vw]">
-          <MarkerLegend />
+          <MarkerLegend
+            setHideProperty={setHideProperty}
+            setHideAmenities={setHideAmenities}
+          />
         </div>
       </div>
 
@@ -688,6 +695,7 @@ export const DashboardInfo = ({
                       setLon={setLon}
                       noProperty={noProperty}
                       setNoProperty={setNoProperty}
+                      hideProperty={hideProperty}
                     />
                   </div>{" "}
                   <Show when={updateInfo()}>
@@ -709,6 +717,9 @@ export const DashboardInfo = ({
                             loadCompared={true}
                             setUniqueHouseType={null}
                             setDraggableMarker={null}
+                            noProperty={noProperty}
+                            setNoProperty={setNoProperty}
+                            hideProperty={hideProperty}
                           />
                         </div>
                       )}
@@ -839,6 +850,7 @@ export const DashboardInfo = ({
                 loader={loader}
                 highlightMarker={highlightMarker}
                 map={map}
+                hideAmenities={hideAmenities}
               />
             </div>
           </div>
