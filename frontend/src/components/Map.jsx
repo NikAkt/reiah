@@ -82,6 +82,7 @@ export const MapComponent = (props) => {
         : "w-[30%] flex flex-col mr-4";
 
       controlButton.textContent = "Information";
+      controlButton.id = "information-button"; 
       hoverLocationDiv.className = sideBarOpen()
         ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mr-10 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
         : "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";

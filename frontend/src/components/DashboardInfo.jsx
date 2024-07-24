@@ -3,6 +3,7 @@ import { createEffect, createSignal, onCleanup, Show, lazy } from "solid-js";
 import { LineChart } from "./Charts";
 import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
 import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
+import close_icon from "../assets/close-svgrepo-com.svg";
 
 const AmenitiesInfo = lazy(() => import("./AmenitiesInfo"));
 const DemographicInfo = lazy(() => import("./DemographicInfo"));
@@ -100,6 +101,8 @@ export const DashboardInfo = ({
   setComparedZip,
   getSelectedZip,
   setCreateMoreDashboardInfo,
+  setShowRecommendBoard,
+  setSidebarOpen,
 }) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -249,6 +252,19 @@ export const DashboardInfo = ({
       id={`dashboardDiv-${[getSelectedZip()]}`}
       class="grid grid-row-1 divide-y"
     >
+<div class="absolute top-4 left-4">
+  <button
+    onClick={() => {
+      document.getElementById('information-button').click(); 
+    }}
+    class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
+  >
+    <img src={close_icon} class="w-8 h-8" />
+  </button>
+</div>
+
+
+
       <div
         class="flex top-[4vh]
       dark:text-white w-[100%] py-[2px] place-content-between"
