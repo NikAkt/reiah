@@ -214,6 +214,13 @@ export const DashboardInfo = ({
   });
 
   createEffect(() => {
+    if (getSelectedZip()) {
+      setHideProperty(false);
+      setHideAmenities(false);
+    }
+  });
+
+  createEffect(() => {
     console.log(predictedCost());
   });
 
@@ -704,6 +711,7 @@ export const DashboardInfo = ({
                       noProperty={noProperty}
                       setNoProperty={setNoProperty}
                       hideProperty={hideProperty}
+                      setHideProperty={setHideProperty}
                     />
                   </div>{" "}
                   <Show when={updateInfo()}>
@@ -728,6 +736,7 @@ export const DashboardInfo = ({
                             noProperty={noProperty}
                             setNoProperty={setNoProperty}
                             hideProperty={hideProperty}
+                            setHideProperty={setHideProperty}
                           />
                         </div>
                       )}
@@ -859,6 +868,7 @@ export const DashboardInfo = ({
                 highlightMarker={highlightMarker}
                 map={map}
                 hideAmenities={hideAmenities}
+                setHideAmenities={setHideAmenities}
               />
             </div>
           </div>
