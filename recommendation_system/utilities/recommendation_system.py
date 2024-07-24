@@ -5,7 +5,6 @@ import json
 
 # Load models
 xgb_model = joblib.load('models/xgb_model_features.joblib')
-rf_model = joblib.load('models/rf_model.joblib')
 knn_model = joblib.load('models/knn_model.joblib')
 
 # Extract features from the KNN model pipeline
