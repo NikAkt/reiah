@@ -48,21 +48,37 @@ const InductionPage = () => {
             <a href="#recommend">Recommend</a>
           </div>
           <div className="w-full flex justify-center mb-4">
-            <img src={induction_1} className="w-[60%] h-auto" />
+            <img
+              src={induction_1}
+              className="w-[60%] h-auto"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
           </div>
 
           <div className="flex flex-col gap-4 items-center w-full">
             <div className="w-full flex flex-col items-center" id="search_bar">
               <h2 className="text-xl">Search Bar</h2>
-              <img src={induction_1_2} className="w-[60%] h-auto" />
+              <img
+                src={induction_1_2}
+                className="w-[60%] h-auto"
+                class="hover:scale-150 duration-300 hover:z-10"
+              />
             </div>
             <div className="w-full flex flex-col items-center" id="filter">
               <h2 className="text-xl">Filter</h2>
-              <img src={induction_1_3} className="w-[60%] h-auto" />
+              <img
+                src={induction_1_3}
+                className="w-[60%] h-auto"
+                class="hover:scale-150 duration-300 hover:z-10"
+              />
             </div>
             <div className="w-full flex flex-col items-center" id="recommend">
               <h2 className="text-xl">Recommend</h2>
-              <img src={induction_1_4} className="w-[60%] h-auto" />
+              <img
+                src={induction_1_4}
+                className="w-[60%] h-auto"
+                class="hover:scale-150 duration-300 hover:z-10"
+              />
             </div>
           </div>
         </div>
@@ -82,7 +98,11 @@ const InductionPage = () => {
             <a href="#recommendInfo">other information</a>
           </div>
           <div className="w-full flex justify-center mb-4">
-            <img src={induction_2} className="w-[60%] h-auto" />
+            <img
+              src={induction_2}
+              className="w-[60%] h-auto"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
           </div>
 
           <div
@@ -92,11 +112,23 @@ const InductionPage = () => {
             <h2 className="text-xl">Real Estate Information</h2>
             <img src={induction_2_1} className="w-[60%] h-auto mb-4" />
             <h3>Historical Property Value Chart</h3>
-            <img src={induction_2_1_1} className="w-[60%] h-auto mb-4" />
+            <img
+              src={induction_2_1_1}
+              className="w-[60%] h-auto mb-4"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
             <h3>2023 Sales</h3>
-            <img src={induction_2_1_2} className="w-[60%] h-auto mb-4" />
+            <img
+              src={induction_2_1_2}
+              className="w-[60%] h-auto mb-4"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
             <h3>2024 Sales Prediction</h3>
-            <img src={induction_2_1_3} className="w-[60%] h-auto" />
+            <img
+              src={induction_2_1_3}
+              className="w-[60%] h-auto"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
           </div>
 
           <div
@@ -104,15 +136,35 @@ const InductionPage = () => {
             id="amenitiesInfo"
           >
             <h2 className="text-xl">Amenities Information</h2>
-            <img src={induction_3} className="w-[60%] h-auto mb-4" />
-            <img src={induction_3_1} className="w-[60%] h-auto mb-4" />
-            <img src={induction_3_2} className="w-[60%] h-auto mb-4" />
-            <img src={induction_3_3} className="w-[60%] h-auto" />
+            <img
+              src={induction_3}
+              className="w-[60%] h-auto mb-4"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
+            <img
+              src={induction_3_1}
+              className="w-[60%] h-auto mb-4"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
+            <img
+              src={induction_3_2}
+              className="w-[60%] h-auto mb-4"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
+            <img
+              src={induction_3_3}
+              className="w-[60%] h-auto"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
           </div>
 
           <div className="w-full flex flex-col items-center" id="otherInfo">
             <h2 className="text-xl">Other Information</h2>
-            <img src={induction_4} className="w-[60%] h-auto" />
+            <img
+              src={induction_4}
+              className="w-[60%] h-auto"
+              class="hover:scale-150 duration-300 hover:z-10"
+            />
           </div>
         </div>
       </div>

@@ -276,12 +276,14 @@ const LineChart = ({
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
       <Show when={empty()}>
-        <div>Sorry, we don't have the historical data for this zip code.</div>
-        <img
-          src={labradorDontCare}
-          alt="Dog fumbled the ball"
-          className="w-1/2 mx-auto mb-4"
-        />
+        <div class="text-center w-[80%] relative flex flex-col gap-2 max-h-[10%]">
+          Sorry, we don't have the historical data for this zip code.
+          <img
+            src={labradorDontCare}
+            alt="Dog fumbled the ball"
+            className="w-1/2 mx-auto"
+          />
+        </div>
       </Show>
       <Show when={!historicPrices.loading} fallback={<ChartLoadingIndicator />}>
         <div>
@@ -323,7 +325,7 @@ const DoughnutChart = (props) => {
 
   return (
     <div
-      class="relative min-h-[280px] max-w-[350px]
+      class="relative min-h-[300px] max-w-[350px]
     aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full"
     >
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
@@ -413,7 +415,7 @@ const createDoughnutChart = (
         },
         plugins: {
           legend: {
-            position: "left",
+            position: "top",
           },
         },
       },

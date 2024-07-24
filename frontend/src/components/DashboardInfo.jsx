@@ -759,9 +759,8 @@ export const DashboardInfo = ({
           </div>
 
           <div class={mainInfo() === "other" ? "" : "hidden"}>
-            <p>Other Information</p>
+            <p>Demographic Information</p>
             <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
-              <p>Demographic</p>
               <DemographicInfo zip={getSelectedZip} />
             </div>
           </div>

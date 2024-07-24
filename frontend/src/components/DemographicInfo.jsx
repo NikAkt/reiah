@@ -77,7 +77,7 @@ const DemographicInfo = ({ zip }) => {
           <div>Single Household: {singleHousehold()}</div>
           <div>Population: {population()}</div>
           <div>Population Density: {density()}</div>
-          <div>Median Household Income: {income()}</div>
+          <div>Median Household Income: ${income()}</div>
           <div class="grid grid-cols-2">
             <div>
               <Suspense>
