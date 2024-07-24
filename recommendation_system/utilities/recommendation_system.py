@@ -4,7 +4,7 @@ import joblib
 import json
 
 # Load models
-rf_model = joblib.load('models/rf_model.joblib')
+xgb_model = joblib.load('models/xgb_model_features.joblib')
 knn_model = joblib.load('models/knn_model.joblib')
 
 # Extract features from the KNN model pipeline
@@ -40,12 +40,12 @@ def translate_preferences(preferences):
             user_vector[features.index(density_key)] = 1 if amenity in preferences['amenity_preferences'] else 0
 
     # Income preference
-    if 'MedianHouseholdIncome' in features:
+    if 'IncomeCategory' in features:
         if preferences['income'] != "Prefer not to say":
             user_income_category = income_categories.index(preferences['income'])
-            user_vector[features.index('MedianHouseholdIncome')] = user_income_category / (len(income_categories) - 1)
+            user_vector[features.index('IncomeCategory')] = user_income_category / (len(income_categories) - 1)
         else:
-            user_vector[features.index('MedianHouseholdIncome')] = 0.5
+            user_vector[features.index('IncomeCategory')] = 0.5
 
     # Default values for features
     if 'SafetyScore' in features:
@@ -55,7 +55,7 @@ def translate_preferences(preferences):
 
     return user_vector
 
-def predict_price(borough, house_type, bedrooms, bathrooms, sqft, latitude, longitude, zipcode):
+def predict_price(borough, house_type, bedrooms, bathrooms, sqft, latitude, longitude, zipcode, population, liveliness_score, median_household_income, population_density):
     input_data = pd.DataFrame({
         'BEDS': [bedrooms],
         'BATH': [bathrooms],
@@ -64,10 +64,14 @@ def predict_price(borough, house_type, bedrooms, bathrooms, sqft, latitude, long
         'LONGITUDE': [longitude],
         'TYPE': [house_type],
         'ZIPCODE': [zipcode],
-        'BOROUGH': [borough]
+        'BOROUGH': [borough],
+        'Population': [population],
+        'LivelinessScore': [liveliness_score],
+        'MedianHouseholdIncome': [median_household_income],
+        'PopulationDensity': [population_density],
     })
 
-    prediction = rf_model.predict(input_data)[0]
+    prediction = xgb_model.predict(input_data)[0]
     return prediction
 
 def get_recommendations(preferences, n_recommendations=5):
@@ -81,6 +85,9 @@ def get_recommendations(preferences, n_recommendations=5):
         zipcode = list(data.keys())[index]
         zipcode_data = data[zipcode]
 
+        if zipcode_data['BOROUGH'] != preferences['borough']:
+            continue
+
         price = predict_price(
             preferences['borough'],
             preferences['house_type'],
@@ -89,14 +96,17 @@ def get_recommendations(preferences, n_recommendations=5):
             preferences['sqft'],
             zipcode_data['Latitude'],
             zipcode_data['Longitude'],
-            zipcode
+            zipcode,
+            zipcode_data['Population'],
+            zipcode_data['LivelinessScore'],
+            zipcode_data['MedianHouseholdIncome'],
+            zipcode_data['PopulationDensity'],
         )
 
         if price is not None and price <= preferences['max_price']:
             recommendation = {
                 "zipcode": int(zipcode),
                 "predicted_price": float(price),
-                "median_household_income": float(zipcode_data['MedianHouseholdIncome']),
                 "income_category": zipcode_data.get('IncomeCategory', 'Unknown'),
                 "safety_score": float(zipcode_data['SafetyScore']),
                 "diversity_index": float(zipcode_data['DiversityIndex']),
