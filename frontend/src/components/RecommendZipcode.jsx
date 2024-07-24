@@ -1,7 +1,6 @@
 import { createSignal } from "solid-js";
 import close_icon from "../assets/close-svgrepo-com.svg";
 
-// model inputs
 const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
 const neighbourhood_type = [
   "Quiet residential",
@@ -54,22 +53,13 @@ const RecommendZipcode = ({
   showRecommendBoard,
   setSidebarOpen,
 }) => {
-  // form inputs with default values
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
-    neighbourhood_type[0]
-  );
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(neighbourhood_type[0]);
   const [getSelectedIncome, setSelectedIncome] = createSignal(income[0]);
-  const [getSelectedBusiness, setSelectedBusiness] = createSignal(
-    business_environment[0]
-  );
-  const [getSelectedProperty, setSelectedProperty] = createSignal(
-    property_type[0]
-  );
+  const [getSelectedBusiness, setSelectedBusiness] = createSignal(business_environment[0]);
+  const [getSelectedProperty, setSelectedProperty] = createSignal(property_type[0]);
   const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
-  const [getSelectedHousehold, setSelectedHousehold] = createSignal(
-    household_type[0]
-  );
+  const [getSelectedHousehold, setSelectedHousehold] = createSignal(household_type[0]);
   const [getSelectedBeds, setSelectedBeds] = createSignal(1);
   const [getSelectedBaths, setSelectedBaths] = createSignal(1);
   const [getSelectedMaxPrice, setSelectedMaxPrice] = createSignal(1000000);
@@ -91,9 +81,7 @@ const RecommendZipcode = ({
     setRecommendedZipcode([]); // Reset the highlight on the map
     setNoZipcodesMessage("");
 
-    document
-      .querySelectorAll('input[type="checkbox"]')
-      .forEach((el) => (el.checked = false)); // Clear all checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach((el) => (el.checked = false)); // Clear all checkboxes
   };
 
   const handleSubmitForm = () => {

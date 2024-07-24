@@ -37,6 +37,8 @@ export const Map = (props) => {
   const [predictedPrice, setPredictedPrice] = createSignal([]);
   const [query, setQuery] = createSignal({});
 
+  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
+
   const [historicalRealEstateData] = createResource(
     ["http://localhost:8000/api/historic-prices"],
     fetchData
@@ -98,6 +100,8 @@ export const Map = (props) => {
                 setZoom={setZoom}
                 setPredictedPrice={setPredictedPrice}
                 setQuery={setQuery}
+                recommendedZipcode={recommendedZipcode()}
+                setRecommendedZipcode={setRecommendedZipcode} 
               >
                 <div class="flex flex-col gap-2">
                   <Show

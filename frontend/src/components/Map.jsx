@@ -1,15 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { store } from "../data/stores";
-import {
-  createEffect,
-  createSignal,
-  onCleanup,
-  onMount,
-  Show,
-  Suspense,
-} from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show, Suspense } from "solid-js";
 import Filter from "./Filter";
-
 import RecommendZipcode from "./RecommendZipcode";
 
 const loader = new Loader({
@@ -22,7 +14,7 @@ const colors = {
   highlight: "#a888f1", // Purple for hover
   clicked: "#36A2EB", // Blue for clicked
   selected: "#FFA500", // Orange for selected
-  compared: "#FF6384",
+  compared: "#FF6384", // Pink for compared
   recommended: "#FFD700", // Gold for recommended
 };
 
@@ -40,7 +32,6 @@ export const MapComponent = (props) => {
     setShowInfoBoard(false);
   };
 
-  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
@@ -52,11 +43,7 @@ export const MapComponent = (props) => {
   function createCenterControl() {
     const centerControlDiv = document.createElement("div");
     const controlButton = document.createElement("button");
-
     const hoverLocationDiv = document.createElement("div");
-
-    const svgImg = document.createElement("img");
-
     const innerDiv = document.createElement("div");
     const textNode = document.createTextNode("Location: ");
     const input = document.createElement("input");
@@ -89,7 +76,6 @@ export const MapComponent = (props) => {
       updateButtonStyles();
     });
 
-    innerDiv.appendChild(svgImg);
     innerDiv.appendChild(textNode);
     innerDiv.className = "flex justify-center items-center";
     input.type = "text";
@@ -149,7 +135,7 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
-      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+      } else if (props.recommendedZipcode && Array.isArray(props.recommendedZipcode) && props.recommendedZipcode.includes(parseInt(zipCode))) {
         return {
           fillColor: colors.recommended,
           strokeColor: colors.recommended,
@@ -209,7 +195,7 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
-      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+      } else if (props.recommendedZipcode && Array.isArray(props.recommendedZipcode) && props.recommendedZipcode.includes(parseInt(zipCode))) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.recommended,
           strokeColor: colors.recommended,
@@ -279,7 +265,7 @@ export const MapComponent = (props) => {
   });
 
   createEffect(() => {
-    if (props.mapObject() && recommendedZipcode().length > 0) {
+    if (props.mapObject() && Array.isArray(props.recommendedZipcode) && props.recommendedZipcode.length > 0) {
       insertDataLayer(zipcode_geojson, props.mapObject());
     }
   });
@@ -361,7 +347,7 @@ export const MapComponent = (props) => {
         setSidebarOpen={setSidebarOpen}
       />
       <RecommendZipcode
-        setRecommendedZipcode={setRecommendedZipcode}
+        setRecommendedZipcode={props.setRecommendedZipcode} // Ensure this line is added
         setShowRecommendBoard={setShowRecommendBoard}
         setPredictedPrice={props.setPredictedPrice}
         setQuery={props.setQuery}
@@ -371,4 +357,3 @@ export const MapComponent = (props) => {
     </>
   );
 };
-
