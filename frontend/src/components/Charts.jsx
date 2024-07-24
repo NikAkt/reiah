@@ -8,6 +8,7 @@ import {
   createSignal,
 } from "solid-js";
 import loading_svg from "../assets/spinning-circles.svg";
+import labradorDontCare from "../assets/labrador_dont_care.gif";
 
 const LoadingSvg = () => {
   return (
@@ -171,6 +172,7 @@ const LineChart = ({
     () => getSelectedZip(),
     fetchHistoricPrices
   );
+  const [empty, setEmpty] = createSignal(false);
 
   createEffect(() => {
     if (cleanLineChart() === true) {
@@ -237,23 +239,29 @@ const LineChart = ({
   createEffect(() => {
     if (!historicPrices.loading) {
       try {
-        let newData = historicPrices();
-        let transformedData = Object.values(newData)[0];
+        if (Object.keys(historicPrices()).length > 0) {
+          console.log("triggered", historicPrices());
+          let newData = historicPrices();
+          let transformedData = Object.values(newData)[0];
 
-        if (transformedData) {
-          Object.keys(transformedData).forEach((key) => {
-            transformedData[key] === 0 ? (transformedData[key] = null) : "";
-          });
+          if (transformedData) {
+            Object.keys(transformedData).forEach((key) => {
+              transformedData[key] === 0 ? (transformedData[key] = null) : "";
+            });
+          }
+          createLineChart(ref, [
+            {
+              label: Object.keys(newData)[0],
+              data: transformedData,
+              fill: false,
+              borderColor: "rgb(75, 192, 192)",
+              tension: 0.1,
+            },
+          ]);
+          setEmpty(false);
+        } else {
+          setEmpty(true);
         }
-        createLineChart(ref, [
-          {
-            label: Object.keys(newData)[0],
-            data: transformedData,
-            fill: false,
-            borderColor: "rgb(75, 192, 192)",
-            tension: 0.1,
-          },
-        ]);
       } catch (error) {
         console.log(error);
       }
@@ -267,6 +275,14 @@ const LineChart = ({
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
+      <Show when={empty()}>
+        <div>Sorry, we don't have the historical data for this zip code.</div>
+        <img
+          src={labradorDontCare}
+          alt="Dog fumbled the ball"
+          className="w-1/2 mx-auto mb-4"
+        />
+      </Show>
       <Show when={!historicPrices.loading} fallback={<ChartLoadingIndicator />}>
         <div>
           <canvas

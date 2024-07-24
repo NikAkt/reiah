@@ -34,7 +34,11 @@ export const MapComponent = (props) => {
   const mapOptions = JSON.parse(JSON.stringify(store.mapOptions));
 
   const zipcodes = props.dataResources.zipcodes();
+
   const zipcode_geojson = props.dataResources.zipcode_geojson();
+  const geojsonZipcode = [
+    ...zipcode_geojson.features.map((el) => el["properties"]["ZIPCODE"] * 1),
+  ];
 
   function createCenterControl() {
     const centerControlDiv = document.createElement("div");
@@ -81,12 +85,9 @@ export const MapComponent = (props) => {
     input.id = "hoverLocation-div";
     input.className =
       "relative w-[100%] h-[80%] bg-transparent text-center text-[#a888f1]";
-    const uniqueZipcode = Object.keys(
-      props.dataResources.historicalRealEstateData()
-    );
     input.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
-        if (uniqueZipcode.includes(event.target.value)) {
+        if (geojsonZipcode.includes(event.target.value * 1)) {
           props.zipcodeSetter(event.target.value);
         } else {
           alert("The zipcode you provided is not included.");
