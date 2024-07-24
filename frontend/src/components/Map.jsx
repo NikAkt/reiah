@@ -235,7 +235,7 @@ export const MapComponent = (props) => {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
       worker.postMessage({ zipcode });
-    }, 300);
+    }, 100);
   }
 
   onMount(() => {
