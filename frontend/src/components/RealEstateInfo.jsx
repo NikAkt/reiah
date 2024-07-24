@@ -11,11 +11,8 @@ const LoadingSvg = () => {
 };
 
 const RealEstateInfo = ({
-  recommendedZipcode,
   getSelectedZip,
   loader,
-  query,
-  predictedPrice,
   map,
   setDialogInfo,
   setDisplayDialog,
@@ -26,6 +23,8 @@ const RealEstateInfo = ({
   draggableMarker,
   setLat,
   setLon,
+  noProperty,
+  setNoProperty,
 }) => {
   const colorsChartjs = [
     "#36A2EB",
@@ -38,14 +37,7 @@ const RealEstateInfo = ({
   ];
   const [typeAvg, setTypeAvg] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
-  const [Yr1_Price, setYr1Price] = createSignal(null);
-  const [Yr1_ROI, setYr1ROI] = createSignal(null);
 
-  const [Yr3_Price, setYr3Price] = createSignal(null);
-  const [Yr3_ROI, setYr3ROI] = createSignal(null);
-
-  const [Yr5_Price, setYr5Price] = createSignal(null);
-  const [Yr5_ROI, setYr5ROI] = createSignal(null);
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [hoverType, setHoverType] = createSignal(null);
 
@@ -84,11 +76,19 @@ const RealEstateInfo = ({
     scaledSize: new google.maps.Size(80, 80),
   };
 
+  const cleanPropertyOnMap = () => {
+    if (propertyOnMap().length > 0) {
+      propertyOnMap().forEach((marker) => marker.setMap(null));
+      setPropertyOnMap([]);
+    }
+  };
+
   async function fetchPropertyData(zip) {
     const response = await fetch(
       `http://localhost:8000/api/property-data?zipcode=${zip}`
     );
     if (!response.ok) {
+      setNoProperty(true);
       return [];
     }
     try {
@@ -124,8 +124,7 @@ const RealEstateInfo = ({
         setPropertyType(datasets);
 
         loader.importLibrary("marker").then(({ Marker, Animation }) => {
-          propertyOnMap().forEach((marker) => marker.setMap(null));
-          setPropertyOnMap([]);
+          cleanPropertyOnMap();
 
           let markers = [];
 
@@ -195,7 +194,11 @@ const RealEstateInfo = ({
           });
           setPropertyOnMap(markers);
         });
+        setNoProperty(false);
         return true;
+      } else {
+        cleanPropertyOnMap();
+        setNoProperty(true);
       }
     } catch (e) {
       throw new Error(e);
@@ -208,25 +211,6 @@ const RealEstateInfo = ({
     } else {
       fetchPropertyData(getSelectedZip);
     }
-  });
-
-  createEffect(() => {
-    let zip = loadCompared ? getSelectedZip : getSelectedZip();
-    fetch(`http://localhost:8000/api/zipcode-scores?zipcode=${zip}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.length) {
-          const info = data[0];
-          setYr1Price(info["1Yr_forecast_price"]);
-          setYr1ROI(info["1Yr_ROI"]);
-
-          setYr3Price(info["3Yr_forecast_price"]);
-          setYr3ROI(info["3Yr_ROI"]);
-
-          setYr5Price(info["5Yr_forecast_price"]);
-          setYr5ROI(info["5Yr_ROI"]);
-        }
-      });
   });
 
   createEffect(() => {
@@ -257,7 +241,15 @@ const RealEstateInfo = ({
     <div id="realEstate-info" class="dark:text-white">
       <div class="flex flex-col">
         <div class="flex flex-row place-content-between px-4 py-2">
-          <Show when={getPropertyType()}>
+          <Show
+            when={getPropertyType() && !noProperty()}
+            fallback={
+              <div class="text-center">
+                Sorry. We don't have records for the 2023 sales of this zip
+                code.
+              </div>
+            }
+          >
             <div>
               <DoughnutChart
                 datasets={getPropertyType()}
@@ -266,10 +258,7 @@ const RealEstateInfo = ({
               />
             </div>
             <div>
-              <Show
-                when={typeAvg().length}
-                fallback={<div>Cannot get detailed information...</div>}
-              >
+              <Show when={typeAvg().length}>
                 <For each={typeAvg()} fallback={<LoadingSvg />}>
                   {(item, index) => (
                     <div>
@@ -297,75 +286,6 @@ const RealEstateInfo = ({
               </Show>
             </div>
           </Show>
-        </div>
-
-        <div>
-          {loadCompared ? (
-            // <Show
-            // // when={recommendedZipcode().includes(parseInt(getSelectedZip))}
-            // >
-            <div>
-              <div>
-                <div>
-                  <p class="bg-teal-500 text-white w-full">In the next year:</p>
-                  <div>1 year forecast price: {Yr1_Price()}</div>
-                  <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
-                </div>
-                <div>
-                  <p class="bg-teal-500 text-white w-full">
-                    In the next 3 years:
-                  </p>
-                  <div>3 year forecast price: {Yr3_Price()}</div>
-                  <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-                </div>
-                <div>
-                  <p class="bg-teal-500 text-white w-full">
-                    In the next 5 years:
-                  </p>
-                  <div>5 year forecast price: {Yr5_Price()}</div>
-                  <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            // </Show>
-            // <Show
-            // // when={recommendedZipcode().includes(parseInt(getSelectedZip()))}
-            // >
-            <div>
-              <div class="bg-indigo-200 h-[1px] w-full"></div>
-              <div>
-                <p>Average Home Value Prediction</p>
-
-                <div>
-                  <p class="bg-teal-500 text-white w-full">In the next year:</p>
-                  <div>
-                    1 year forecast price: ${(Yr1_Price() * 1).toFixed(0)}
-                  </div>
-                  <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
-                </div>
-                <div>
-                  <p class="bg-teal-500 text-white w-full">
-                    In the next 3 years:
-                  </p>
-                  <div>
-                    3 year forecast price: ${(Yr3_Price() * 1).toFixed(0)}
-                  </div>
-                  <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-                </div>
-                <div>
-                  <p class="bg-teal-500 text-white w-full">
-                    In the next 5 years:
-                  </p>
-                  <div>
-                    5 year forecast price: ${(Yr5_Price() * 1).toFixed(0)}
-                  </div>
-                  <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
-                </div>
-              </div>
-            </div>
-            // </Show>
-          )}
         </div>
       </div>
     </div>
