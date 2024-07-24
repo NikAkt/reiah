@@ -1,8 +1,14 @@
-import { createSignal, createEffect } from "solid-js";
-
-// import arrow_left from "../assets/arrow-sm-left-svgrepo-com.svg";
-// import arrow_right from "../assets/arrow-sm-right-svgrepo-com.svg";
+import { createSignal } from "solid-js";
 import close_icon from "../assets/close-svgrepo-com.svg";
+
+// model inputs
+const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
+const neighbourhood_type = ["Quiet residential", "Balanced mix", "Lively urban", "No preference"];
+const income = ["Under $50,000", "$50,000-$100,000", "$100,000-$150,000", "$150,000-$200,000", "Over $200,000", "Prefer not to say"];
+const business_environment = ["Mostly residential", "Mix of residential and commercial", "Bustling commercial area", "No preference"];
+const amenity = ["Parks and recreation", "Health Services", "Schools and education", "Public transportation", "Religious institutions", "No preference"];
+const household_type = ["Mix of families and singles", "Mostly families", "Mostly singles", "No preference"];
+const property_type = ["Condo", "House", "Co-op", "Townhouse", "Multi-family home", "No preference"];
 
 const RecommendZipcode = ({
   setRecommendedZipcode,
@@ -12,83 +18,56 @@ const RecommendZipcode = ({
   showRecommendBoard,
   setSidebarOpen,
 }) => {
-  //form inputs
-  const [getSelectedBorough, setSelectedBorough] = createSignal(null);
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] =
-    createSignal(null);
-  const [getSelectedIncome, setSelectedIncome] = createSignal(null);
-  const [getSelectedBusiness, setSelectedBusiness] =
-    createSignal("Mostly residential");
-  const [getSelectedProperty, setSelectedProperty] = createSignal(null);
+  // form inputs with default values
+  const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(neighbourhood_type[0]);
+  const [getSelectedIncome, setSelectedIncome] = createSignal(income[0]);
+  const [getSelectedBusiness, setSelectedBusiness] = createSignal(business_environment[0]);
+  const [getSelectedProperty, setSelectedProperty] = createSignal(property_type[0]);
   const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
-  const [getSelectedHousehold, setSelectedHousehold] = createSignal(
-    "Mix of families and singles"
-  );
+  const [getSelectedHousehold, setSelectedHousehold] = createSignal(household_type[0]);
   const [getSelectedBeds, setSelectedBeds] = createSignal(1);
   const [getSelectedBaths, setSelectedBaths] = createSignal(1);
   const [getSelectedMaxPrice, setSelectedMaxPrice] = createSignal(1000000);
   const [getSelectedSize, setSelectedSize] = createSignal(1000);
+  const [noZipcodesMessage, setNoZipcodesMessage] = createSignal("");
 
-  //model inputs
-  const borough = ["Bronx", "Manhattan", "Brooklyn", "Queens", "Staten Island"];
-  const neighbourhood_type = [
-    "Quiet residential",
-    "Balanced mix",
-    "Lively urban",
-    "No preference",
-  ];
-  const income = [
-    "Under $50,000",
-    "$50,000-$100,000",
-    "$100,000-$150,000",
-    "$150,000-$200,000",
-    "Over $200,000",
-    "Prefer not to say",
-  ];
+  const resetForm = () => {
+    setSelectedBorough(borough[0]);
+    setSelectedNeighbourhood(neighbourhood_type[0]);
+    setSelectedIncome(income[0]);
+    setSelectedBusiness(business_environment[0]);
+    setSelectedProperty(property_type[0]);
+    setSelectedAmenities([]);
+    setSelectedHousehold(household_type[0]);
+    setSelectedBeds(1);
+    setSelectedBaths(1);
+    setSelectedMaxPrice(1000000);
+    setSelectedSize(1000);
+    setRecommendedZipcode([]);  // Reset the highlight on the map
+    setNoZipcodesMessage("");
 
-  const business_environment = [
-    "Mostly residential",
-    "Mix of residential and commercial",
-    "Bustling commercial area",
-    "No preference",
-  ];
-
-  const amenity = [
-    "Parks and recreation",
-    "Health Services",
-    "Schools and education",
-    "Public transportation",
-    "Religious institutions",
-    "No preference",
-  ];
-
-  const household_type = [
-    "Mix of families and singles",
-    "Mostly families",
-    "Mostly singles",
-    "No preference",
-  ];
-
-  const property_type = [
-    "Condo",
-    "House",
-    "Co-op",
-    "Townhouse",
-    "Multi-family home",
-    "No preference",
-  ];
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false); // Clear all checkboxes
+  };
 
   const handleSubmitForm = () => {
-    //http://localhost:5001/get_recommendations?
-    //borough=Brooklyn
-    //&max_price=1000000
-    //&house_type=House
-    //&bedrooms=2&bathrooms=1&sqft=1000
-    //&income=Prefer%20not%20to%20say
-    //&neighborhood_preference=Balanced%20mix
-    //&household_type=Mix%20of%20families%20and%20singles
-    //&business_environment=Mix%20of%20residential%20and%20commercial
-    //&amenity_preferences=Parks%20and%20recreation,Public%20transportation
+    if (
+      !getSelectedBorough() ||
+      !getSelectedNeighbourhood() ||
+      !getSelectedIncome() ||
+      !getSelectedBusiness() ||
+      !getSelectedProperty() ||
+      getSelectedAmenities().length === 0 ||
+      !getSelectedHousehold() ||
+      !getSelectedBeds() ||
+      !getSelectedBaths() ||
+      !getSelectedMaxPrice() ||
+      !getSelectedSize()
+    ) {
+      alert("Please fill in all the required fields.");
+      return;
+    }
+
     const formValues = {
       borough: getSelectedBorough(),
       max_price: getSelectedMaxPrice(),
@@ -114,16 +93,23 @@ const RecommendZipcode = ({
       .then((response) => response.json())
       .then((data) => {
         console.log("prediction recommendation", data);
-        let recommendedZipcode = [];
-        let predictedPrice = {};
-        data.forEach((el) => {
-          recommendedZipcode.push(el.zipcode);
-          predictedPrice[el.zipcode] = el["predicted_price"];
-        });
-        setRecommendedZipcode(recommendedZipcode);
-        setPredictedPrice(predictedPrice);
-        setShowRecommendBoard(false);
-        setSidebarOpen(false);
+        if (data.length === 0) {
+          setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
+          setRecommendedZipcode([]);
+          setPredictedPrice({});
+        } else {
+          let recommendedZipcode = [];
+          let predictedPrice = {};
+          data.forEach((el) => {
+            recommendedZipcode.push(el.zipcode);
+            predictedPrice[el.zipcode] = el["predicted_price"];
+          });
+          setRecommendedZipcode(recommendedZipcode);
+          setPredictedPrice(predictedPrice);
+          setShowRecommendBoard(false);
+          setSidebarOpen(false);
+          setNoZipcodesMessage("");
+        }
       });
   };
 
@@ -137,8 +123,7 @@ const RecommendZipcode = ({
      showRecommendBoard() ? "translate-y-0" : "-translate-y-full"
    }`}
     >
-      {/* close button */}
-      <div class="absolute top-[2%] left-[1%]">
+      <div class="absolute top-4 left-4">
         <button
           onClick={() => {
             setShowRecommendBoard(false);
@@ -146,327 +131,289 @@ const RecommendZipcode = ({
           }}
           class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
-          <img src={close_icon} class="w-[30px] h-[30px]" />
+          <img src={close_icon} class="w-8 h-8" />
         </button>
       </div>
 
-      <div
-        class={`m-auto top-[10%] grid grid-row-1 divide-y gap-10 place-items-center    
-        `}
-      >
-        <div>
-          <p class="text-2xl">Welcome to Reiah.</p>
-          <p class="text-xl">
-            Let's start our journey to find your best investment zipcodes!
-          </p>
+      <div class="m-auto top-[10%] grid grid-row-1 divide-y gap-10 place-items-center w-full p-6">
+        <div class="mb-8 text-center">
+          <p class="text-2xl mb-4">Welcome to Reiah.</p>
+          <p class="text-xl mb-8">Let's start our journey to find your best investment zipcodes!</p>
         </div>
-        <div class="flex flex-col">
-          <p class="text-xl">
-            First, please tell us what environment you are looking for?
-          </p>
-          <div class="flex flex-col gap-2">
-            {/* Borough */}
-            <label for="borough">
-              Which{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                Borough
-              </span>{" "}
-              you are looking for?
-            </label>
-            {/* <select id="borough" name="borough" required class="w-4/5">
-              <For each={borough}>
-                {(item) => <option value={item}>{item}</option>}
-              </For>
-            </select> */}
-            <div class="flex gap-2">
-              <For each={borough}>
-                {(item) => (
-                  <button
-                    id={`select-borough-${item}`}
-                    class={`hover:bg-teal-500 px-2 rounded-lg border-solid
-                      hover:text-white ${
-                        getSelectedBorough() !== item
-                          ? ""
-                          : "bg-teal-500 text-white"
-                      }`}
-                    onClick={() => {
-                      setSelectedBorough(item);
-                    }}
-                  >
-                    {item}
-                  </button>
-                )}
-              </For>
+
+        <div class="flex flex-col gap-8 mb-8">
+          <div class="flex flex-col gap-4">
+            <p class="text-xl">Environment Preferences</p>
+
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="borough">Which borough are you looking for?</label>
+              <div class="flex gap-2 flex-wrap">
+                <For each={borough}>
+                  {(item) => (
+                    <button
+                      id={`select-borough-${item}`}
+                      class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
+                        hover:text-white ${
+                          getSelectedBorough() !== item
+                            ? ""
+                            : "bg-teal-500 text-white"
+                        }`}
+                      onClick={() => {
+                        setSelectedBorough(item);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )}
+                </For>
+              </div>
             </div>
 
-            {/* Household Type */}
-            <label for="neighborhood_preference">
-              What type of{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                Neighborhood
-              </span>{" "}
-              meets your expectation?
-            </label>
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="neighborhood_preference">Preferred neighborhood type?</label>
+              <div class="flex gap-2 flex-wrap">
+                <For each={neighbourhood_type}>
+                  {(item) => (
+                    <button
+                      class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
+                        hover:text-white ${
+                          getSelectedNeighbourhood() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
+                        }`}
+                      onClick={() => {
+                        setSelectedNeighbourhood(item);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )}
+                </For>
+              </div>
+            </div>
 
-            <For each={neighbourhood_type}>
-              {(item) => (
-                <button
-                  class={`
-                    w-[80%]
-                    hover:bg-teal-500 hover:text-white ${
-                      getSelectedNeighbourhood() === item
-                        ? "bg-teal-500 text-white"
-                        : ""
-                    }`}
-                  onClick={() => {
-                    setSelectedNeighbourhood(item);
-                  }}
-                >
-                  {item}
-                </button>
-              )}
-            </For>
-            {/* Household type */}
-            <label for="household_type">
-              What is the ideal{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                household type
-              </span>{" "}
-              of the community of your property?
-            </label>
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="household_type">Preferred household type?</label>
+              <div class="flex gap-2 flex-wrap">
+                <For each={household_type}>
+                  {(item) => (
+                    <button
+                      class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
+                        hover:text-white ${
+                          getSelectedHousehold() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
+                        }`}
+                      onClick={() => {
+                        setSelectedHousehold(item);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )}
+                </For>
+              </div>
+            </div>
 
-            <For each={household_type}>
-              {(item) => (
-                <button
-                  class={`
-              w-[80%]
-              hover:bg-teal-500 hover:text-white ${
-                getSelectedHousehold() === item ? "bg-teal-500 text-white" : ""
-              }`}
-                  onClick={() => {
-                    setSelectedHousehold(item);
-                  }}
-                >
-                  {item}
-                </button>
-              )}
-            </For>
-
-            {/* Business Environment */}
-            <label for="business_environment">
-              What kind of{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                Business Environment
-              </span>{" "}
-              should be around your dream place?
-            </label>
-
-            <For each={business_environment}>
-              {(item) => (
-                <button
-                  class={`
-                w-[80%]
-                hover:bg-teal-500 hover:text-white ${
-                  getSelectedBusiness() === item ? "bg-teal-500 text-white" : ""
-                }`}
-                  onClick={() => {
-                    setSelectedBusiness(item);
-                  }}
-                >
-                  {item}
-                </button>
-              )}
-            </For>
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="business_environment">Preferred business environment?</label>
+              <div class="flex gap-2 flex-wrap">
+                <For each={business_environment}>
+                  {(item) => (
+                    <button
+                      class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
+                        hover:text-white ${
+                          getSelectedBusiness() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
+                        }`}
+                      onClick={() => {
+                        setSelectedBusiness(item);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )}
+                </For>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Second Part */}
-        <div>
-          <p class="text-xl">
-            Next, please let us know what type of house you want.
-          </p>
-          <div class="flex flex-col gap-2">
-            {/* House Type */}
-            <label for="house_type">
-              Which is the{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                Property Type
-              </span>{" "}
-              you are looking for?
-            </label>
+        <div class="flex flex-col gap-8 mb-8">
+          <div class="flex flex-col gap-4">
+            <p class="text-xl">House Preferences</p>
 
-            <For each={property_type}>
-              {(item) => (
-                <button
-                  class={`
-              w-[80%]
-              hover:bg-teal-500 hover:text-white ${
-                getSelectedProperty() === item ? "bg-teal-500 text-white" : ""
-              }`}
-                  onClick={() => {
-                    setSelectedProperty(item);
-                  }}
-                >
-                  {item}
-                </button>
-              )}
-            </For>
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="house_type">Which property type are you looking for?</label>
+              <div class="flex gap-2 flex-wrap">
+                <For each={property_type}>
+                  {(item) => (
+                    <button
+                      class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
+                        hover:text-white ${
+                          getSelectedProperty() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
+                        }`}
+                      onClick={() => {
+                        setSelectedProperty(item);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )}
+                </For>
+              </div>
+            </div>
 
-            {/* Size */}
-            <label for="sqft">
-              What is the{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">size</span>{" "}
-              of your house?
-            </label>
-            <div class="flex">
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="sqft">House size (sqft)?</label>
               <input
                 type="number"
                 id="sqft"
                 name="sqft"
                 min="0"
                 step="1"
-                value={getSelectedSize().toString()}
+                value={getSelectedSize()}
                 required
-                class="w-full"
-                onChange={(event) => {
+                class="w-32 p-2 border border-gray-300 rounded"
+                onInput={(event) => {
                   setSelectedSize(event.target.value);
                 }}
               />
             </div>
 
-            {/* Beds */}
-            <label for="beds">
-              How many{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                bedrooms
-              </span>{" "}
-              your house has?
-            </label>
-            <input
-              type="number"
-              id="bedrooms"
-              name="bedrooms"
-              placeholder="1"
-              class="max-w-[300px]"
-              onChange={(event) => {
-                setSelectedBeds(event.target.value);
-              }}
-            />
-            <label for="baths">
-              How many{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                bathrooms
-              </span>{" "}
-              your house has?
-            </label>
-            <input
-              type="number"
-              id="bathrooms"
-              name="bathrooms"
-              placeholder="1"
-              class="max-w-[300px]"
-              onChange={(event) => {
-                setSelectedBaths(event.target.value);
-              }}
-            />
-
-            <label for="max_price">
-              What should be the{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                Maximum Price
-              </span>{" "}
-              for the properties you are looking for?
-            </label>
-            <input
-              type="number"
-              id="max_price"
-              name="max_price"
-              placeholder="1000000"
-              class="max-w-[300px]"
-              onChange={(event) => {
-                setSelectedMaxPrice(event.target.value);
-              }}
-            />
-          </div>
-        </div>
-        <div>
-          <p class="text-xl">
-            We are almost there. Please give us some personal information.
-          </p>
-          <div class="flex flex-col gap-2">
-            <label for="income">
-              What is the range of your{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                yearly income
-              </span>{" "}
-              ?
-            </label>
-
-            <For each={income}>
-              {(item) => (
-                <button
-                  class={`
-                  w-[80%]
-                  hover:bg-teal-500 hover:text-white ${
-                    getSelectedIncome() === item ? "bg-teal-500 text-white" : ""
-                  }`}
-                  onClick={() => {
-                    setSelectedIncome(item);
-                  }}
-                >
-                  {item}
-                </button>
-              )}
-            </For>
-          </div>
-        </div>
-        <div>
-          <p class="text-xl">
-            Last but not least, please provide us some other information.
-          </p>
-          <div class="flex flex-col">
-            <label for="amenity_preferences">
-              Do you have preferences for{" "}
-              <span class="text-white bg-teal-500 rounded-lg px-2">
-                amenities
-              </span>{" "}
-              ?
-            </label>
-
-            <For each={amenity}>
-              {(item) => (
-                <div class="flex gap-2">
-                  <label for="public_transportation">{item}</label>
-                  <input
-                    type="checkbox"
-                    id={item}
-                    name="amenity_preferences"
-                    value={item}
-                    onChange={() => {
-                      setSelectedAmenities((prev) => [...prev, item]);
-                    }}
-                  />
-                </div>
-              )}
-            </For>
-            <div class="flex gap-10 mt-[5%]">
-              <button
-                type="submit"
-                class="rounded-lg bg-teal-500 text-white w-[20%]"
-                onClick={handleSubmitForm}
-              >
-                Submit
-              </button>
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="bedrooms">Number of bedrooms?</label>
               <input
-                type="reset"
-                class="rounded-lg bg-teal-500 text-white w-[20%] cursor-pointer"
-              ></input>
+                type="number"
+                id="bedrooms"
+                name="bedrooms"
+                placeholder="1"
+                value={getSelectedBeds()}
+                class="w-32 p-2 border border-gray-300 rounded"
+                onInput={(event) => {
+                  setSelectedBeds(event.target.value);
+                }}
+              />
+            </div>
+
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="bathrooms">Number of bathrooms?</label>
+              <input
+                type="number"
+                id="bathrooms"
+                name="bathrooms"
+                placeholder="1"
+                value={getSelectedBaths()}
+                class="w-32 p-2 border border-gray-300 rounded"
+                onInput={(event) => {
+                  setSelectedBaths(event.target.value);
+                }}
+              />
+            </div>
+
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="max_price">Maximum price?</label>
+              <input
+                type="number"
+                id="max_price"
+                name="max_price"
+                placeholder="1000000"
+                value={getSelectedMaxPrice()}
+                class="w-48 p-2 border border-gray-300 rounded"
+                onInput={(event) => {
+                  setSelectedMaxPrice(event.target.value);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-8 mb-8">
+          <div class="flex flex-col gap-4">
+            <p class="text-xl">Personal Information</p>
+
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="income">Yearly income range?</label>
+              <div class="flex gap-2 flex-wrap">
+                <For each={income}>
+                  {(item) => (
+                    <button
+                      class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
+                        hover:text-white ${
+                          getSelectedIncome() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
+                        }`}
+                      onClick={() => {
+                        setSelectedIncome(item);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )}
+                </For>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-8">
+          <div class="flex flex-col gap-4">
+            <p class="text-xl">Additional Information</p>
+
+            <div class="text-left">
+              <label class="block mb-2 text-lg font-semibold" for="amenity_preferences">Preferred amenities?</label>
+              <div class="flex flex-wrap gap-4">
+                <For each={amenity}>
+                  {(item) => (
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={item}
+                        name="amenity_preferences"
+                        value={item}
+                        class="w-4 h-4 border border-gray-300"
+                        onChange={(event) => {
+                          const isChecked = event.target.checked;
+                          setSelectedAmenities((prev) =>
+                            isChecked ? [...prev, item] : prev.filter((amenity) => amenity !== item)
+                          );
+                        }}
+                      />
+                      <label for={item} class="text-lg">{item}</label>
+                    </div>
+                  )}
+                </For>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-center gap-4 mt-8">
+              {noZipcodesMessage() && (
+                <div class="text-red-500 text-lg font-semibold">{noZipcodesMessage()}</div>
+              )}
+              <div class="flex gap-4">
+                <button
+                  type="submit"
+                  class="rounded-lg bg-teal-500 text-white w-32 py-2"
+                  onClick={handleSubmitForm}
+                >
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg bg-teal-500 text-white w-32 py-2 cursor-pointer"
+                  onClick={resetForm}
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="rounded-full w-[30px] h-[30px] bg-green flex items-center justify-center"></div>
     </div>
   );
 };
