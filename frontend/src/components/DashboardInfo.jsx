@@ -32,6 +32,83 @@ function revertMarkerIcon(markerArr, originalIcon) {
   }
 }
 
+const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
+  const [Yr1_Price, setYr1Price] = createSignal(null);
+  const [Yr1_ROI, setYr1ROI] = createSignal(null);
+
+  const [Yr3_Price, setYr3Price] = createSignal(null);
+  const [Yr3_ROI, setYr3ROI] = createSignal(null);
+
+  const [Yr5_Price, setYr5Price] = createSignal(null);
+  const [Yr5_ROI, setYr5ROI] = createSignal(null);
+  createEffect(() => {
+    let zip = loadCompared ? getSelectedZip : getSelectedZip();
+    fetch(`http://localhost:8000/api/zipcode-scores?zipcode=${zip}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.length) {
+          const info = data[0];
+          setYr1Price(info["1Yr_forecast_price"]);
+          setYr1ROI(info["1Yr_ROI"]);
+
+          setYr3Price(info["3Yr_forecast_price"]);
+          setYr3ROI(info["3Yr_ROI"]);
+
+          setYr5Price(info["5Yr_forecast_price"]);
+          setYr5ROI(info["5Yr_ROI"]);
+        }
+      });
+  });
+  return (
+    <div>
+      {loadCompared ? (
+        <div>
+          <div>
+            <div>
+              <p class="bg-teal-500 text-white w-full">In the next year:</p>
+              <div>1 year forecast price: {Yr1_Price()}</div>
+              <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
+            </div>
+            <div>
+              <p class="bg-teal-500 text-white w-full">In the next 3 years:</p>
+              <div>3 year forecast price: {Yr3_Price()}</div>
+              <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
+            </div>
+            <div>
+              <p class="bg-teal-500 text-white w-full">In the next 5 years:</p>
+              <div>5 year forecast price: {Yr5_Price()}</div>
+              <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div class="bg-indigo-200 h-[1px] w-full"></div>
+          <div>
+            <p>Average Home Value Prediction</p>
+
+            <div>
+              <p class="bg-teal-500 text-white w-full">In the next year:</p>
+              <div>1 year forecast price: ${(Yr1_Price() * 1).toFixed(0)}</div>
+              <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
+            </div>
+            <div>
+              <p class="bg-teal-500 text-white w-full">In the next 3 years:</p>
+              <div>3 year forecast price: ${(Yr3_Price() * 1).toFixed(0)}</div>
+              <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
+            </div>
+            <div>
+              <p class="bg-teal-500 text-white w-full">In the next 5 years:</p>
+              <div>5 year forecast price: ${(Yr5_Price() * 1).toFixed(0)}</div>
+              <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
+            </div>
+          </div>
+        </div>
+        // </Show>
+      )}
+    </div>
+  );
+};
 export const DashboardInfo = ({
   map,
   historicalRealEstateData,
@@ -77,14 +154,15 @@ export const DashboardInfo = ({
   //unique house type of the zipcode
   const [uniqueHouseType, setUniqueHouseType] = createSignal([]);
 
-  const [Yr1_Price, setYr1Price] = createSignal(null);
-
-  const [Yr3_Price, setYr3Price] = createSignal(null);
-
-  const [Yr5_Price, setYr5Price] = createSignal(null);
-
   //show the type of information on the board
   const [mainInfo, setMainInfo] = createSignal("realEstate");
+
+  //indicate whether having property data
+  const [noProperty, setNoProperty] = createSignal(false);
+
+  //hide the markers on map
+  const [hideProperty, setHideProperty] = createSignal(false);
+  const [hideAmenities, setHideAmenities] = createSignal(false);
 
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
@@ -358,7 +436,10 @@ export const DashboardInfo = ({
           </div>
         </div>
         <div class="right-[4vw]">
-          <MarkerLegend />
+          <MarkerLegend
+            setHideProperty={setHideProperty}
+            setHideAmenities={setHideAmenities}
+          />
         </div>
       </div>
 
@@ -513,7 +594,7 @@ export const DashboardInfo = ({
                 class="text-gray-500 m-auto hover:text-teal-500"
                 href="#historic-home-values"
               >
-                <p class="text-center">Historical Property Value</p>
+                <p class="text-center">Average Property Value</p>
               </a>
               <a
                 class="text-gray-500 m-auto hover:text-teal-500 
@@ -534,7 +615,8 @@ export const DashboardInfo = ({
               class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
             >
               <div id="historic-home-values" class="min-h-[40vh]">
-                <p class="text-2xl">Historical Property Value</p>
+                <p class="text-2xl">Average Property Value</p>
+                <p class="text-xl">Historical Property Value</p>
                 <LineChart
                   getComparedZip={getComparedZip}
                   getSelectedZip={getSelectedZip}
@@ -543,6 +625,11 @@ export const DashboardInfo = ({
                   cleanLineChart={cleanLineChart}
                   setCleanLineChart={setCleanLineChart}
                 ></LineChart>
+                <p class="text-xl">Predicted Property Value in the Future</p>
+                <PredictedHomeValue
+                  loadCompared={false}
+                  getSelectedZip={getSelectedZip}
+                />
               </div>
 
               <div id="sales-2023" class="relative w-full">
@@ -606,6 +693,9 @@ export const DashboardInfo = ({
                       draggableMarker={draggableMarker}
                       setLat={setLat}
                       setLon={setLon}
+                      noProperty={noProperty}
+                      setNoProperty={setNoProperty}
+                      hideProperty={hideProperty}
                     />
                   </div>{" "}
                   <Show when={updateInfo()}>
@@ -627,6 +717,9 @@ export const DashboardInfo = ({
                             loadCompared={true}
                             setUniqueHouseType={null}
                             setDraggableMarker={null}
+                            noProperty={noProperty}
+                            setNoProperty={setNoProperty}
+                            hideProperty={hideProperty}
                           />
                         </div>
                       )}
@@ -634,114 +727,117 @@ export const DashboardInfo = ({
                   </Show>
                 </div>
               </div>
+
               <div id="sales-2024">
-                <div>
-                  <p class="text-2xl">2024 Sales Price Prediction</p>
-                </div>
-                <div class="text-md">
-                  Want to know how much you gonna need to get a residential
-                  property at Zipcode {getSelectedZip()} in 2024?{" "}
-                  <span
-                    class="bg-teal-500 text-white rounded-md px-2 cursor-pointer
+                <Show when={!noProperty()}>
+                  <div>
+                    <p class="text-2xl">2024 Sales Price Prediction</p>
+                  </div>
+                  <div class="text-md">
+                    Want to know how much you gonna need to get a residential
+                    property at Zipcode {getSelectedZip()} in 2024?{" "}
+                    <span
+                      class="bg-teal-500 text-white rounded-md px-2 cursor-pointer
                      hover:text-xl  hover:duration-300 ease-in-out
                     hover:scale-100"
-                    onClick={() => {
-                      draggableMarker().setMap(map());
-                    }}
-                  >
-                    Click here to choose your location!
-                  </span>
-                </div>
-                <div class="flex items-center justify-center">
-                  <Show when={uniqueHouseType() && draggableMarker()}>
-                    <div
-                      class="grid grid-cols-2 divide-x
-                    place-content-between w-[90%] my-2"
+                      onClick={() => {
+                        draggableMarker().setMap(map());
+                      }}
                     >
-                      <div class="flex flex-col gap-2">
-                        <div class="grid grid-row-1 divide-y">
-                          <div>
-                            <p class="text-xl">Location{"   "}</p>
-                            <p class="text-sm">
-                              To change the location, please move the house icon
-                              on the map
-                            </p>
+                      Click here to choose your location!
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-center">
+                    <Show when={uniqueHouseType() && draggableMarker()}>
+                      <div
+                        class="grid grid-cols-2 divide-x
+                    place-content-between w-[90%] my-2"
+                      >
+                        <div class="flex flex-col gap-2">
+                          <div class="grid grid-row-1 divide-y">
+                            <div>
+                              <p class="text-xl">Location{"   "}</p>
+                              <p class="text-sm">
+                                To change the location, please move the house
+                                icon on the map
+                              </p>
+                            </div>
+
+                            <div class="flex gap-2">
+                              <p>
+                                Latitude:{" "}
+                                <span class="bg-teal-500 text-white rounded-lg px-2">
+                                  {lat().toFixed(3)}
+                                </span>
+                              </p>
+                              <p>
+                                Longtitude:{" "}
+                                <span class="bg-teal-500 text-white rounded-lg px-2">
+                                  {lon().toFixed(3)}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                          <div class="grid grid-row-1 divide-y">
+                            <p class="text-xl">House Details</p>
+                            <label for="house_type">House Type:</label>
+                            <select
+                              id="house_type-p"
+                              name="house_type"
+                              required
+                              class="rounded-md w-full"
+                            >
+                              <For each={uniqueHouseType()}>
+                                {(item) => <option value={item}>{item}</option>}
+                              </For>
+                            </select>
+                            <label for="sqft">Size(sqft):</label>
+                            <input
+                              type="number"
+                              id="size-p"
+                              name="size"
+                              placeholder="1000"
+                              required
+                              class="rounded-md w-full"
+                            />
+                            <label for="bedrooms">Beds:</label>
+                            <input
+                              type="number"
+                              id="bedrooms-p"
+                              name="bedrooms"
+                              placeholder="1"
+                              class="rounded-md w-full"
+                              required
+                            />
+                            <label for="bathrooms">Bath:</label>
+                            <input
+                              type="number"
+                              id="bathrooms-p"
+                              name="bathrooms"
+                              placeholder="1"
+                              required
+                              class="rounded-md w-full"
+                            />
                           </div>
 
-                          <div class="flex gap-2">
-                            <p>
-                              Latitude:{" "}
-                              <span class="bg-teal-500 text-white rounded-lg px-2">
-                                {lat().toFixed(3)}
-                              </span>
-                            </p>
-                            <p>
-                              Longtitude:{" "}
-                              <span class="bg-teal-500 text-white rounded-lg px-2">
-                                {lon().toFixed(3)}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-                        <div class="grid grid-row-1 divide-y">
-                          <p class="text-xl">House Details</p>
-                          <label for="house_type">House Type:</label>
-                          <select
-                            id="house_type-p"
-                            name="house_type"
-                            required
-                            class="rounded-md w-full"
+                          <button
+                            class="bg-teal-500 text-white w-[30%]"
+                            onClick={handleSubmitPredictedPrice}
                           >
-                            <For each={uniqueHouseType()}>
-                              {(item) => <option value={item}>{item}</option>}
-                            </For>
-                          </select>
-                          <label for="sqft">Size(sqft):</label>
-                          <input
-                            type="number"
-                            id="size-p"
-                            name="size"
-                            placeholder="1000"
-                            required
-                            class="rounded-md w-full"
-                          />
-                          <label for="bedrooms">Beds:</label>
-                          <input
-                            type="number"
-                            id="bedrooms-p"
-                            name="bedrooms"
-                            placeholder="1"
-                            class="rounded-md w-full"
-                            required
-                          />
-                          <label for="bathrooms">Bath:</label>
-                          <input
-                            type="number"
-                            id="bathrooms-p"
-                            name="bathrooms"
-                            placeholder="1"
-                            required
-                            class="rounded-md w-full"
-                          />
+                            Submit
+                          </button>
                         </div>
 
-                        <button
-                          class="bg-teal-500 text-white w-[30%]"
-                          onClick={handleSubmitPredictedPrice}
-                        >
-                          Submit
-                        </button>
+                        <div class="text-xl">
+                          The predicted price will be:{" "}
+                          <Show when={predictedCost()}>
+                            <span>${predictedCost()}</span>
+                          </Show>
+                        </div>
                       </div>
-
-                      <div class="text-xl">
-                        The predicted price will be:{" "}
-                        <Show when={predictedCost()}>
-                          <span>${predictedCost()}</span>
-                        </Show>
-                      </div>
-                    </div>
-                  </Show>
-                </div>
+                    </Show>
+                  </div>{" "}
+                </Show>
               </div>
             </div>
           </div>
@@ -754,6 +850,7 @@ export const DashboardInfo = ({
                 loader={loader}
                 highlightMarker={highlightMarker}
                 map={map}
+                hideAmenities={hideAmenities}
               />
             </div>
           </div>
