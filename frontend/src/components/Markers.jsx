@@ -3,8 +3,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 
 const [zipcode_markers, setZipcodeMarkers] = createSignal([]);
-// const [borough_markers, setBoroughMarkers] = createSignal([]);
-// const [neighbourhood_markers, setNeighbourhoodMarkers] = createSignal([]);
+const [markerOnMap, setMarkerOnMap] = createSignal(false);
 
 const loader = new Loader({
   apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -89,6 +88,14 @@ const Markers = async (props) => {
 
   createEffect(() => {
     if (props.zoom() >= 13) {
+      setMarkerOnMap(true);
+    } else {
+      setMarkerOnMap(false);
+    }
+  });
+
+  createEffect(() => {
+    if (markerOnMap()) {
       putMarkersOnMap(zipcode_markers(), props.map());
     } else {
       clearMarkers(zipcode_markers());

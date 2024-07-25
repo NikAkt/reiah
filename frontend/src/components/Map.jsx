@@ -222,7 +222,7 @@ export const MapComponent = (props) => {
       const zipcodeObj = zipcodes.filter(
         (el) => el["zip_code"] === event.feature.getProperty("ZIPCODE")
       );
-
+      map.setZoom(13);
       map.setCenter({
         lng: zipcodeObj[0]["longitude"] * 1,
         lat: zipcodeObj[0]["latitude"] * 1,
