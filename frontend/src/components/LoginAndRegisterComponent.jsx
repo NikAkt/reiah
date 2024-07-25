@@ -39,7 +39,7 @@ function LoginForm(props) {
   };
 
   return (
-    <div class="w-2/3">
+    <div class="p-4 lg:w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Login</h1>
         <p>Login and get back to work</p>
@@ -50,9 +50,8 @@ function LoginForm(props) {
             Email
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             placeholder="example1234"
             onchange={(e) => setEmail(e.target.value)}
           />
@@ -63,9 +62,8 @@ function LoginForm(props) {
           </span>
           <input
             type="password"
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             placeholder="example1234"
             onchange={(e) => setPassword(e.target.value)}
             ref={(el) => (passwordRef = el)}
@@ -131,7 +129,7 @@ function RegisterForm(props) {
     }
   };
   return (
-    <div class="w-2/3">
+    <div class="p-4 lg:w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Create An Account</h1>
         <p>Sign up and get started</p>
@@ -142,9 +140,8 @@ function RegisterForm(props) {
             Username
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             onchange={(e) => setUsername(e.target.value)}
           />
         </label>
@@ -154,9 +151,8 @@ function RegisterForm(props) {
               Name
             </span>
             <input
-              class={`shadow appearance-none border ${
-                props.Error ? "border-red-500" : ""
-              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+              class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+                } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
               onchange={(e) => setName(e.target.value)}
             />
           </label>
@@ -165,9 +161,8 @@ function RegisterForm(props) {
               Surname
             </span>
             <input
-              class={`shadow appearance-none border ${
-                props.Error ? "border-red-500" : ""
-              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+              class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+                } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
               onchange={(e) => setSurname(e.target.value)}
             />
           </label>
@@ -177,9 +172,8 @@ function RegisterForm(props) {
             Email
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             onchange={(e) => setEmail(e.target.value)}
           />
         </label>
@@ -188,9 +182,8 @@ function RegisterForm(props) {
             Password
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             onchange={(e) => setPassword(e.target.value)}
           />
         </label>

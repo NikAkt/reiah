@@ -1,4 +1,5 @@
 import { createSignal, createEffect, onMount } from "solid-js";
+import close_icon from "../assets/close-svgrepo-com.svg";
 
 // Debounce function to limit API calls
 function debounce(func, timeout = 300) {
@@ -313,27 +314,13 @@ const Filter = ({
           style="position: sticky; top: 0;"
         >
           <button
-            class="absolute left-4 rounded-full w-8 h-8 flex items-center justify-center text-black hover:bg-gray-200"
+            class="absolute left-4 rounded-full w-8 h-8 flex items-center justify-center text-black hover:bg-teal-500"
             onClick={() => {
               setShowFilterBoard(false);
               setSideBarOpen(false);
             }}
           >
-            <svg
-              class="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <img src={close_icon} class="w-8 h-8" />
           </button>
           <p class="text-xl">Filters</p>
         </div>

@@ -6,12 +6,12 @@ import {
   onCleanup,
   onMount,
 } from "solid-js";
-import { DoughnutChart } from "./Charts"; // Assuming you have a DoughnutChart component
+import { DoughnutChart } from "./Charts";
 import loading_svg from "../assets/spinning-circles.svg";
 
 const LoadingSvg = () => {
   return (
-    <div>
+    <div class="flex justify-center items-center h-full">
       <img src={loading_svg} />
     </div>
   );
@@ -45,7 +45,6 @@ const RealEstateInfo = ({
   ];
   const [typeAvg, setTypeAvg] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
-
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [hoverType, setHoverType] = createSignal(null);
 
@@ -285,32 +284,41 @@ const RealEstateInfo = ({
                 setHoverType={setHoverType}
               />
             </div>
-            <div>
+            <div class="transition-all duration-300 ease-in-out transform hover:-translate-y-1">
               <Show when={typeAvg().length}>
-                <For each={typeAvg()} fallback={<LoadingSvg />}>
-                  {(item, index) => (
-                    <div>
-                      <p
-                        class="text-white rounded-lg"
-                        style={{
-                          "background-color": colorsChartjs[index()],
-                        }}
-                      >
-                        {Object.keys(item)}
-                      </p>
-                      <div>
-                        Average Price: ${Object.values(item)[0].avgPrice}
-                      </div>
-                      <div>
-                        Average Size: {Object.values(item)[0].avgSqft} sqft
-                      </div>
-                      <div>
-                        Average Price Per Square Foot: $
-                        {Object.values(item)[0].avgPricePerSqft}/sqft
-                      </div>
-                    </div>
-                  )}
-                </For>
+                <div class="p-4 border rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                  <p class="mb-2 text-gray-500">
+                    Click on the chart to select a property type.
+                  </p>
+                  <For each={typeAvg()} fallback={<LoadingSvg />}>
+                    {(item, index) => (
+                      <Show when={Object.keys(item)[0] === hoverType()}>
+                        <div>
+                          <p
+                            class="text-white rounded-lg p-2 mb-4"
+                            style={{
+                              "background-color": colorsChartjs[index()],
+                            }}
+                          >
+                            {Object.keys(item)}
+                          </p>
+                          <div>
+                            <strong>Avg. Price:</strong> $
+                            {Object.values(item)[0].avgPrice}
+                          </div>
+                          <div>
+                            <strong>Avg. Size:</strong>{" "}
+                            {Object.values(item)[0].avgSqft} sqft
+                          </div>
+                          <div>
+                            <strong>Avg. Price/Sqft:</strong> $
+                            {Object.values(item)[0].avgPricePerSqft}/sqft
+                          </div>
+                        </div>
+                      </Show>
+                    )}
+                  </For>
+                </div>
               </Show>
             </div>
           </Show>

@@ -3,12 +3,11 @@ import { createEffect, createSignal, onCleanup, Show, lazy } from "solid-js";
 import { LineChart } from "./Charts";
 import arrow_down from "../assets/down-arrow-backup-2-svgrepo-com.svg";
 import arrow_up from "../assets/down-arrow-backup-3-svgrepo-com.svg";
+import close_icon from "../assets/close-svgrepo-com.svg";
 
 const AmenitiesInfo = lazy(() => import("./AmenitiesInfo"));
-// import RealEstateInfo from "./RealEstateInfo";
 const DemographicInfo = lazy(() => import("./DemographicInfo"));
 import MarkerLegend from "./MarkerLegend";
-
 const RealEstateInfo = lazy(() => import("./RealEstateInfo"));
 
 function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
@@ -18,7 +17,6 @@ function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
         marker.setIcon(newIcon);
         marker.setZIndex(100);
       } else {
-        //recover to original icon
         marker.setIcon(originalIcon);
         marker.setZIndex(10);
       }
@@ -37,12 +35,11 @@ function revertMarkerIcon(markerArr, originalIcon) {
 const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
   const [Yr1_Price, setYr1Price] = createSignal(null);
   const [Yr1_ROI, setYr1ROI] = createSignal(null);
-
   const [Yr3_Price, setYr3Price] = createSignal(null);
   const [Yr3_ROI, setYr3ROI] = createSignal(null);
-
   const [Yr5_Price, setYr5Price] = createSignal(null);
   const [Yr5_ROI, setYr5ROI] = createSignal(null);
+
   createEffect(() => {
     let zip = loadCompared ? getSelectedZip : getSelectedZip();
     fetch(`http://localhost:8000/api/zipcode-scores?zipcode=${zip}`)
@@ -52,65 +49,47 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
           const info = data[0];
           setYr1Price(info["1Yr_forecast_price"]);
           setYr1ROI(info["1Yr_ROI"]);
-
           setYr3Price(info["3Yr_forecast_price"]);
           setYr3ROI(info["3Yr_ROI"]);
-
           setYr5Price(info["5Yr_forecast_price"]);
           setYr5ROI(info["5Yr_ROI"]);
         }
       });
   });
-  return (
-    <div>
-      {loadCompared ? (
-        <div>
-          <div>
-            <div>
-              <p class="bg-teal-500 text-white w-full">In the next year:</p>
-              <div>1 year forecast price: {Yr1_Price()}</div>
-              <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
-            </div>
-            <div>
-              <p class="bg-teal-500 text-white w-full">In the next 3 years:</p>
-              <div>3 year forecast price: {Yr3_Price()}</div>
-              <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-            </div>
-            <div>
-              <p class="bg-teal-500 text-white w-full">In the next 5 years:</p>
-              <div>5 year forecast price: {Yr5_Price()}</div>
-              <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div class="bg-indigo-200 h-[1px] w-full"></div>
-          <div>
-            {/* <p>Average Home Value Prediction</p> */}
 
-            <div>
-              <p class="bg-teal-500 text-white w-full">In the next year:</p>
-              <div>1 year forecast price: ${(Yr1_Price() * 1).toFixed(0)}</div>
-              <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
-            </div>
-            <div>
-              <p class="bg-teal-500 text-white w-full">In the next 3 years:</p>
-              <div>3 year forecast price: ${(Yr3_Price() * 1).toFixed(0)}</div>
-              <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-            </div>
-            <div>
-              <p class="bg-teal-500 text-white w-full">In the next 5 years:</p>
-              <div>5 year forecast price: ${(Yr5_Price() * 1).toFixed(0)}</div>
-              <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
-            </div>
-          </div>
+  return (
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div class="p-4 shadow-lg rounded-lg border border-gray-300">
+        <div class="text-xl mb-4">Next year:</div>
+        <div class="text-lg">
+          Price: <span class="font-semibold">${Yr1_Price()?.toFixed(0)}</span>
         </div>
-        // </Show>
-      )}
+        <div class="text-lg">
+          ROI: <span class="font-semibold">{(Yr1_ROI() * 100).toFixed(1)}%</span>
+        </div>
+      </div>
+      <div class="p-4 shadow-lg rounded-lg border border-gray-300">
+        <div class="text-xl mb-4">Next 3 years:</div>
+        <div class="text-lg">
+          Price: <span class="font-semibold">${Yr3_Price()?.toFixed(0)}</span>
+        </div>
+        <div class="text-lg">
+          ROI: <span class="font-semibold">{(Yr3_ROI() * 100).toFixed(1)}%</span>
+        </div>
+      </div>
+      <div class="p-4 shadow-lg rounded-lg border border-gray-300">
+        <div class="text-xl mb-4">Next 5 years:</div>
+        <div class="text-lg">
+          Price: <span class="font-semibold">${Yr5_Price()?.toFixed(0)}</span>
+        </div>
+        <div class="text-lg">
+          ROI: <span class="font-semibold">{(Yr5_ROI() * 100).toFixed(1)}%</span>
+        </div>
+      </div>
     </div>
   );
 };
+
 export const DashboardInfo = ({
   map,
   historicalRealEstateData,
@@ -122,6 +101,8 @@ export const DashboardInfo = ({
   setComparedZip,
   getSelectedZip,
   setCreateMoreDashboardInfo,
+  setShowRecommendBoard,
+  setSidebarOpen,
 }) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -131,41 +112,29 @@ export const DashboardInfo = ({
   const [neighbourhood, setNeighbourhood] = createSignal("");
   const [show, setShow] = createSignal(true);
   const [clean, setClean] = createSignal(false);
-
   const [showDropDown, setShowDropDown] = createSignal(false);
-
-  //control linecharts
   const [updateLineChart, setUpdateLineChart] = createSignal(false);
   const [cleanLineChart, setCleanLineChart] = createSignal(false);
-
-  //control realestateinfo, amenitiesinfo ...
   const [updateInfo, setUpdateInfo] = createSignal(false);
-  //control sliding the multiple information
   const [showWhichRealEstate, setShowWhichRealEstate] = createSignal(
     getSelectedZip()
   );
-
   const [draggableMarker, setDraggableMarker] = createSignal(null);
   const [lat, setLat] = createSignal(0);
   const [lon, setLon] = createSignal(0);
   const [predictedCost, setPredictedCost] = createSignal(null);
-  //unique zipcodes that has historical information
   const uniqueZipcode = Object.keys(historicalRealEstateData);
-
-  //unique house type of the zipcode
   const [uniqueHouseType, setUniqueHouseType] = createSignal([]);
-
-  //show the type of information on the board
   const [mainInfo, setMainInfo] = createSignal("realEstate");
-
-  //indicate whether having property data
   const [noProperty, setNoProperty] = createSignal(false);
-
-  //hide the markers on map
   const [hideProperty, setHideProperty] = createSignal(false);
   const [hideAmenities, setHideAmenities] = createSignal(false);
-
   const [noHistoricData, setNoHistoricData] = createSignal(false);
+  const [toggleState, setToggleState] = createSignal({
+    "property-value": true,
+    "sales-2023": false,
+    "sales-2024": false,
+  });
 
   const fetchDashboardInfoData = async (level, area) => {
     fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
@@ -238,10 +207,8 @@ export const DashboardInfo = ({
       let query = "";
       for (let i = 0; i < zipArray.length; i++) {
         if (i > 6) {
-          //limit is 7
           break;
         }
-        // console.log(zipArray[i]);
         if (i == 0) {
           query += `?zipcode=${zipArray[i]}`;
         } else {
@@ -273,43 +240,48 @@ export const DashboardInfo = ({
     );
   };
 
+  const toggleSection = (sectionId) => {
+    setToggleState((prevState) => ({
+      ...prevState,
+      [sectionId]: !prevState[sectionId],
+    }));
+  };
+
   return (
     <div
       id={`dashboardDiv-${[getSelectedZip()]}`}
       class="grid grid-row-1 divide-y"
     >
-      <div
-        class=" flex top-[4vh]
-      dark:text-white w-[100%] py-[2px] place-content-between
-    
-      "
-      >
-        <div id="header-dashboard">
-          <h1
-            class="font-medium w-[100%] place-content-between"
-            id="dashboard_top"
-          >
-            {`Information on ZIPCODE ${getSelectedZip()}`},
-            <span>{neighbourhood()}</span>,<span>{borough()}</span>
-          </h1>
+<div class="absolute top-4 left-4">
+  <button
+    onClick={() => {
+      document.getElementById('information-button').click(); 
+    }}
+    class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
+  >
+    <img src={close_icon} class="w-8 h-8" />
+  </button>
+</div>
 
-          {/* input & dropdown */}
+
+
+      <div
+        class="flex top-[4vh]
+      dark:text-white w-[100%] py-[2px] place-content-between"
+      >
+        <div
+          id="header-dashboard"
+          class="relative w-full shadow-lg border border-gray-200 p-6 rounded-lg mb-8 flex justify-between items-center"
+        >
           <div>
+            <h1 class="font-medium text-2xl mb-4" id="dashboard_top">
+              {`${getSelectedZip()}`},
+              <span>{neighbourhood()}</span>,<span>{borough()}</span>
+            </h1>
             <Show when={getSelectedZip()}>
-              <div
-                class="flex
-            w-[50%] gap-2 my-2 min-h-[3vh]
-            "
-              >
-                <div id="search-box-dropdown" class="z-40 flex flex-col">
-                  {/* search box */}
-                  <div
-                    class="rounded-lg text-center
-                  relative bg-[#ffffff] flex gap-2
-                  min-h-[3vh] px-2 border border-solid border-teal-500
-                  items-center justify-center"
-                  >
-                    {/* button svg */}
+              <div class="flex gap-4 items-center mb-4">
+                <div id="search-box-dropdown" class="relative flex-1">
+                  <div class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white">
                     <Show
                       when={showDropDown() === false}
                       fallback={
@@ -328,8 +300,6 @@ export const DashboardInfo = ({
                         <img src={arrow_down} class="w-[15px] h-[15px]" />
                       </button>
                     </Show>
-
-                    {/* input box */}
                     <input
                       type="text"
                       placeholder={
@@ -338,14 +308,16 @@ export const DashboardInfo = ({
                           : getComparedZip()
                       }
                       id="compareSearchBar"
-                      class="relative min-w-[20px] h-full border-none"
+                      class="w-full h-full border-none px-2 rounded-lg p-2"
                       onKeyUp={(event) => {
                         if (event.key === "Enter") {
                           if (uniqueZipcode.includes(event.target.value)) {
                             setComparedZip((prev) => [
-                              ...new Set([...prev, event.target.value * 1]),
+                              ...new Set([
+                                ...prev,
+                                event.target.value * 1,
+                              ]),
                             ]);
-
                             if (
                               !document.getElementById(
                                 `compareCheckbox-${event.target.value}`
@@ -363,17 +335,14 @@ export const DashboardInfo = ({
                       }}
                     />
                   </div>
-
-                  {/* dropdown */}
-
                   <div
-                    class={`overflow-y-auto bg-[#ffffff] max-h-[20vh] w-full
-                     shadow-md
-                   z-40 ${showDropDown() ? "block" : "hidden"}`}
+                    class={`absolute z-40 w-full bg-white shadow-lg border border-gray-200 rounded-lg mt-2 ${
+                      showDropDown() ? "block" : "hidden"
+                    }`}
                   >
-                    <div>
+                    <div class="p-2">
                       {uniqueZipcode.map((zip) => (
-                        <div key={zip} class="p-2">
+                        <div key={zip} class="p-2 flex items-center">
                           <input
                             type="checkbox"
                             id={`compareCheckbox-${zip}`}
@@ -394,7 +363,6 @@ export const DashboardInfo = ({
                               }
                             }}
                           />
-
                           <label
                             htmlFor={`compareCheckbox-${zip}`}
                             class="ml-2"
@@ -406,69 +374,62 @@ export const DashboardInfo = ({
                     </div>
                   </div>
                 </div>
-
-                {/* submit button and clean button */}
-                <div class="flex max-h-[3vh] gap-[2px]">
-                  <input
-                    type="Submit"
-                    class={`relative ml-[2%] rounded-lg bg-teal-500 text-white px-2 ${
-                      getComparedZip().length > 0
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed opacity-50 disabled"
-                    }`}
-                    onClick={handleSubmit}
-                  />
-                  <button
-                    class={
-                      getComparedZip().length > 0
-                        ? "relative ml-[2%] bg-teal-500 px-2 rounded-lg text-center text-white"
-                        : "relative ml-[2%] bg-teal-500 px-2 rounded-lg text-center text-white cursor-not-allowed opacity-50 disabled"
+                <input
+                  type="Submit"
+                  class={`relative rounded-lg bg-teal-500 text-white px-4 py-2 ${
+                    getComparedZip().length > 0
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed opacity-50 disabled"
+                  }`}
+                  onClick={handleSubmit}
+                />
+                <button
+                  class={`relative bg-teal-500 px-4 py-2 rounded-lg text-white ${
+                    getComparedZip().length > 0
+                      ? ""
+                      : "cursor-not-allowed opacity-50 disabled"
+                  }`}
+                  onClick={() => {
+                    setCreateMoreDashboardInfo(false);
+                    for (let zip of getComparedZip()) {
+                      const checkbox = document.getElementById(
+                        `compareCheckbox-${zip}`
+                      );
+                      checkbox.checked = false;
                     }
-                    onClick={() => {
-                      setCreateMoreDashboardInfo(false);
-                      for (let zip of getComparedZip()) {
-                        const checkbox = document.getElementById(
-                          `compareCheckbox-${zip}`
-                        );
-                        checkbox.checked = false;
-                      }
-                      setComparedZip([]);
-                      setUpdateLineChart(false);
-                      setCleanLineChart(true);
-                      setUpdateInfo(false);
-                    }}
-                  >
-                    Clear
-                  </button>
-                </div>
+                    setComparedZip([]);
+                    setUpdateLineChart(false);
+                    setCleanLineChart(true);
+                    setUpdateInfo(false);
+                  }}
+                >
+                  Clear
+                </button>
               </div>
             </Show>
           </div>
-        </div>
-        <div class="right-[4vw]">
-          <MarkerLegend
-            hideProperty={hideProperty}
-            setHideProperty={setHideProperty}
-            hideAmenities={hideAmenities}
-            setHideAmenities={setHideAmenities}
-          />
+          <div class="right-[4vw]">
+            <MarkerLegend
+              hideProperty={hideProperty}
+              setHideProperty={setHideProperty}
+              hideAmenities={hideAmenities}
+              setHideAmenities={setHideAmenities}
+            />
+          </div>
         </div>
       </div>
 
       <div class="w-[95%] h-[1px] mt-[4vh] py-[2vh]" id="main">
         <div
-          class="rounded-lg shadow-lg w-[60%]
-        mx-auto grid grid-cols-3 divide-x h-[6vh] mb-[3vh]"
+          class="rounded-lg shadow-lg w-[60%] mx-auto grid grid-cols-3 divide-x h-[6vh] mb-[3vh] items-center"
           id="control-button"
         >
           <div
-            class={`relative flex items-center justify-center
-          ${
-            mainInfo() === "realEstate"
-              ? "bg-teal-500 text-white"
-              : "bg-white text-black"
-          } rounded-l-lg cursor-pointer hover:border hover:border-solid 
-          shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center justify-center whitespace-nowrap ${
+              mainInfo() === "realEstate"
+                ? "bg-teal-500 text-white"
+                : "bg-white text-black"
+            } rounded-l-lg cursor-pointer hover:border hover:border-solid shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("realEstate");
             }}
@@ -484,17 +445,14 @@ export const DashboardInfo = ({
             >
               <path d="M14.237 39.5h30.483v-26.081h-30.483v26.081zm15.489-23.485l10.99 9.598h-2.769v11.516h-6.436v-8.129h-4.065v8.129h-6.096v-11.516h-2.84l11.216-9.598zm-18.876-9.031v-5.966h-6.774v48.982h6.774v-39.967h35.226v-3.049z" />
             </svg>
-            Real Estate
+            <span class="ml-2">Real Estate</span>
           </div>
           <div
-            class={`relative flex items-center justify-center
-              ${
-                mainInfo() === "amenities"
-                  ? "bg-teal-500 text-white"
-                  : "bg-white text-black"
-              } cursor-pointer 
-              hover:border-solid hover:border
-          shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center justify-center whitespace-nowrap ${
+              mainInfo() === "amenities"
+                ? "bg-teal-500 text-white"
+                : "bg-white text-black"
+            } cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("amenities");
             }}
@@ -513,7 +471,7 @@ export const DashboardInfo = ({
                 <path
                   class="st0"
                   d="M484.058,430.039v-58.42h-71.14h-71.122v58.42l-27.95,12.711v20.317h99.072H512V442.75L484.058,430.039z
-		 M458.646,430.039h-45.728h-45.719v-22.864h45.719h45.728V430.039z"
+            M458.646,430.039h-45.728h-45.719v-22.864h45.719h45.728V430.039z"
                 />
                 <rect
                   x="322.966"
@@ -546,25 +504,23 @@ export const DashboardInfo = ({
                 <path
                   class="st0"
                   d="M354.459,327.146c37.371-14.16,63.989-50.178,63.989-92.51c0-26.84-10.722-51.143-28.066-68.969
-		c0.628-4.69,1.072-9.42,1.072-14.274c0-54-40.527-98.474-92.808-104.864C272.364,18.377,235.032,0.666,193.473,0.666
-		c-79.518,0-143.981,64.461-143.981,143.98c0,0.425,0.058,0.83,0.058,1.245C19.66,166.111,0,200.325,0,239.134
-		c0,53.209,36.984,97.682,86.621,109.38c10.067,24.62,34.215,41.993,62.465,41.993c10.529,0,20.451-2.481,29.33-6.776v127.602
-		h77.327v-83.775l30.161-51.52C316.77,373.791,342.848,354.333,354.459,327.146z M213.828,341.999
-		c0.647,0.926,1.342,1.824,2.037,2.722l-3.426,1.39C212.93,344.749,213.412,343.389,213.828,341.999z M238.024,405.014v-40.47
-		c7.162,4.344,15.037,7.625,23.434,9.585L238.024,405.014z"
+            c0.628-4.69,1.072-9.42,1.072-14.274c0-54-40.527-98.474-92.808-104.864C272.364,18.377,235.032,0.666,193.473,0.666
+            c-79.518,0-143.981,64.461-143.981,143.98c0,0.425,0.058,0.83,0.058,1.245C19.66,166.111,0,200.325,0,239.134
+            c0,53.209,36.984,97.682,86.621,109.38c10.067,24.62,34.215,41.993,62.465,41.993c10.529,0,20.451-2.481,29.33-6.776v127.602
+            h77.327v-83.775l30.161-51.52C316.77,373.791,342.848,354.333,354.459,327.146z M213.828,341.999
+    c0.647,0.926,1.342,1.824,2.037,2.722l-3.426,1.39C212.93,344.749,213.412,343.389,213.828,341.999z M238.024,405.014v-40.47
+    c7.162,4.344,15.037,7.625,23.434,9.585L238.024,405.014z"
                 />
               </g>
             </svg>
-            Amenities
+            <span class="ml-2">Amenities</span>
           </div>
           <div
-            class={`relative flex items-center justify-center
-              ${
-                mainInfo() === "other"
-                  ? "bg-teal-500 text-white"
-                  : "bg-white text-black"
-              } rounded-r-lg cursor-pointer hover:border-solid hover:border hover:border
-              shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center justify-center whitespace-nowrap ${
+              mainInfo() === "other"
+                ? "bg-teal-500 text-white"
+                : "bg-white text-black"
+            } rounded-r-lg cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("other");
             }}
@@ -583,9 +539,10 @@ export const DashboardInfo = ({
                 overflow="inherit"
               />
             </svg>
-            Other
+            <span class="ml-2">Other</span>
           </div>
         </div>
+
         <div
           class={`grid grid-row-1 divide-y relative 
       w-[100%] place-content-stretch
@@ -597,38 +554,49 @@ export const DashboardInfo = ({
               mainInfo() === "realEstate" ? "" : "hidden"
             }`}
           >
-            {/* <p class="text-lg">Real Estate Information</p> */}
             <div
               class="relative grid grid-cols-3 mx-auto divide-x mb-[2vh]
             w-5/6 items-center justify-center"
             >
               <a
-                class="text-gray-500 m-auto hover:text-teal-500"
-                href="#historic-home-values"
+                class="text-gray-500 m-auto hover:text-teal-500 cursor-pointer flex items-center justify-center"
+                onClick={() => toggleSection("property-value")}
               >
-                <p class="text-center">Average Property Value</p>
+                <p class="text-center">Property Value</p>
+                <span class="ml-2">
+                  {toggleState()["property-value"] ? "-" : "+"}
+                </span>
               </a>
               <a
-                class="text-gray-500 m-auto hover:text-teal-500 
-                flex"
-                href="#sales-2023"
+                class="text-gray-500 m-auto hover:text-teal-500 cursor-pointer flex items-center justify-center"
+                onClick={() => toggleSection("sales-2023")}
               >
                 <p class="text-center">2023 Sales</p>
+                <span class="ml-2">
+                  {toggleState()["sales-2023"] ? "-" : "+"}
+                </span>
               </a>
               <a
-                class="text-gray-500 m-auto hover:text-teal-500"
-                href="#sales-2024"
+                class="text-gray-500 m-auto hover:text-teal-500 cursor-pointer flex items-center justify-center"
+                onClick={() => toggleSection("sales-2024")}
               >
                 <p class="text-center">Predict 2024 Sales Price</p>
+                <span class="ml-2">
+                  {toggleState()["sales-2024"] ? "-" : "+"}
+                </span>
               </a>
             </div>
             <div
               id="real-estate-content"
               class="grid grid-row-1 divide-y w-[90%] items-center m-auto"
             >
-              <div id="historic-home-values" class="min-h-[40vh]">
-                <p class="text-2xl">Average Property Value</p>
-                <p class="text-xl">Historical Property Value</p>
+              <div
+                id="property-value"
+                class={`min-h-[40vh] ${
+                  toggleState()["property-value"] ? "" : "hidden"
+                }`}
+              >
+                <p class="text-xl py-4">Historical Property Value</p>
                 <LineChart
                   getComparedZip={getComparedZip}
                   getSelectedZip={getSelectedZip}
@@ -639,9 +607,7 @@ export const DashboardInfo = ({
                   setNoHistoricData={setNoHistoricData}
                   noHistoricData={noHistoricData}
                 ></LineChart>
-                <p class="text-xl">
-                  Predicted Average Property Value in the Future
-                </p>
+                <p class="text-xl py-4">Predicted Property Value</p>
                 <Show when={!noHistoricData()}>
                   <PredictedHomeValue
                     loadCompared={false}
@@ -650,212 +616,226 @@ export const DashboardInfo = ({
                 </Show>
               </div>
 
-              <div id="sales-2023" class="relative w-full">
-                <a class="text-2xl">2023 Residential Property Sales</a>
-                <p class="text-sm">Data Source: Zillow</p>
-                <Show when={updateInfo()}>
-                  <div class="flex gap-2">
-                    <button
-                      class={`bg-black text-white px-2 ${
-                        showWhichRealEstate() === getSelectedZip()
-                          ? ""
-                          : "opacity-30"
-                      }`}
-                      onClick={() => {
-                        setShowWhichRealEstate(getSelectedZip());
-                      }}
-                    >
-                      {getSelectedZip()}
-                    </button>
-                    <For each={getComparedZip()}>
-                      {(item, index) => {
-                        return (
-                          <button
-                            class={`bg-black text-white px-2 ${
-                              showWhichRealEstate() === item ? "" : "opacity-30"
-                            }`}
-                            onClick={() => {
-                              setShowWhichRealEstate(item);
-                            }}
-                          >
-                            {item}
-                          </button>
-                        );
-                      }}
-                    </For>
-                  </div>
-                </Show>
+              <div
+  id="sales-2023"
+  class={`relative w-full ${toggleState()["sales-2023"] ? "" : "hidden"} py-4`}
+>
+  <a class="text-2xl py-4">2023 Residential Property Sales</a>
+  <p class="text-sm">Data Source: Zillow</p>
+  <Show when={updateInfo()}>
+    <div class="flex gap-2 mb-4">
+      <button
+        class={`bg-black text-white px-4 py-2 rounded-lg ${
+          showWhichRealEstate() === getSelectedZip() ? "" : "opacity-30"
+        }`}
+        onClick={() => {
+          setShowWhichRealEstate(getSelectedZip());
+        }}
+      >
+        {getSelectedZip()}
+      </button>
+      <For each={getComparedZip()}>
+        {(item, index) => {
+          return (
+            <button
+              class={`bg-black text-white px-4 py-2 rounded-lg ${
+                showWhichRealEstate() === item ? "" : "opacity-30"
+              }`}
+              onClick={() => {
+                setShowWhichRealEstate(item);
+              }}
+            >
+              {item}
+            </button>
+          );
+        }}
+      </For>
+    </div>
+  </Show>
 
-                <div class="relative w-full">
-                  <div
-                    class={
-                      showWhichRealEstate() === getSelectedZip() ||
-                      !updateInfo()
-                        ? ""
-                        : "hidden"
-                    }
-                  >
-                    <RealEstateInfo
-                      map={map}
-                      setDialogInfo={setDialogInfo}
-                      setDisplayDialog={setDisplayDialog}
-                      highlightMarker={highlightMarker}
-                      getSelectedZip={getSelectedZip}
-                      predictedPrice={predictedPrice}
-                      query={query}
-                      loader={loader}
-                      loadCompared={false}
-                      setUniqueHouseType={setUniqueHouseType}
-                      setDraggableMarker={setDraggableMarker}
-                      draggableMarker={draggableMarker}
-                      setLat={setLat}
-                      setLon={setLon}
-                      noProperty={noProperty}
-                      setNoProperty={setNoProperty}
-                      hideProperty={hideProperty}
-                      setHideProperty={setHideProperty}
-                    />
-                  </div>{" "}
-                  <Show when={updateInfo()}>
-                    <For each={getComparedZip()}>
-                      {(item, index) => (
-                        <div
-                          class={showWhichRealEstate() === item ? "" : "hidden"}
-                        >
-                          <RealEstateInfo
-                            map={map}
-                            setDialogInfo={setDialogInfo}
-                            setDisplayDialog={setDisplayDialog}
-                            highlightMarker={highlightMarker}
-                            getSelectedZip={item}
-                            predictedPrice={predictedPrice}
-                            query={query}
-                            loader={loader}
-                            loadCompared={true}
-                            setUniqueHouseType={null}
-                            setDraggableMarker={null}
-                            noProperty={noProperty}
-                            setNoProperty={setNoProperty}
-                            hideProperty={hideProperty}
-                            setHideProperty={setHideProperty}
-                          />
-                        </div>
-                      )}
-                    </For>
-                  </Show>
+  <div class="relative w-full">
+    <div
+      class={
+        showWhichRealEstate() === getSelectedZip() || !updateInfo() ? "" : "hidden"
+      }
+    >
+      <RealEstateInfo
+        map={map}
+        setDialogInfo={setDialogInfo}
+        setDisplayDialog={setDisplayDialog}
+        highlightMarker={highlightMarker}
+        getSelectedZip={getSelectedZip}
+        predictedPrice={predictedPrice}
+        query={query}
+        loader={loader}
+        loadCompared={false}
+        setUniqueHouseType={setUniqueHouseType}
+        setDraggableMarker={setDraggableMarker}
+        draggableMarker={draggableMarker}
+        setLat={setLat}
+        setLon={setLon}
+        noProperty={noProperty}
+        setNoProperty={setNoProperty}
+        hideProperty={hideProperty}
+        setHideProperty={setHideProperty}
+      />
+    </div>
+    <Show when={updateInfo()}>
+      <For each={getComparedZip()}>
+        {(item, index) => (
+          <div
+            class={showWhichRealEstate() === item ? "" : "hidden"}
+          >
+            <RealEstateInfo
+              map={map}
+              setDialogInfo={setDialogInfo}
+              setDisplayDialog={setDisplayDialog}
+              highlightMarker={highlightMarker}
+              getSelectedZip={item}
+              predictedPrice={predictedPrice}
+              query={query}
+              loader={loader}
+              loadCompared={true}
+              setUniqueHouseType={null}
+              setDraggableMarker={null}
+              noProperty={noProperty}
+              setNoProperty={setNoProperty}
+              hideProperty={hideProperty}
+              setHideProperty={setHideProperty}
+            />
+          </div>
+        )}
+      </For>
+    </Show>
+  </div>
+</div>
+
+
+
+              <div
+                id="sales-2024"
+                class={`relative w-full shadow-lg border border-gray-200 p-6 rounded-lg mb-8 ${
+                  toggleState()["sales-2024"] ? "" : "hidden"
+                }`}
+              >
+                <div>
+                  <p class="text-2xl mb-4">2024 Sales Price Prediction</p>
                 </div>
-              </div>
-
-              <div id="sales-2024">
-                <Show when={!noProperty()}>
-                  <div>
-                    <p class="text-2xl">2024 Sales Price Prediction</p>
-                  </div>
-                  <div class="text-md">
-                    Want to know how much you gonna need to get a residential
-                    property at Zipcode {getSelectedZip()} in 2024?{" "}
-                    <span
-                      class="bg-teal-500 text-white rounded-md px-2 cursor-pointer
-                     hover:text-xl  hover:duration-300 ease-in-out
-                    hover:scale-100"
-                      onClick={() => {
-                        draggableMarker().setMap(map());
-                      }}
-                    >
-                      Click here to choose your location!
-                    </span>
-                  </div>
-                  <div class="flex items-center justify-center">
-                    <Show when={uniqueHouseType() && draggableMarker()}>
-                      <div
-                        class="grid grid-cols-2 divide-x
-                    place-content-between w-[90%] my-2"
-                      >
-                        <div class="flex flex-col gap-2">
-                          <div class="grid grid-row-1 divide-y">
-                            <div>
-                              <p class="text-xl">Location{"   "}</p>
-                              <p class="text-sm">
-                                To change the location, please move the house
-                                icon on the map
-                              </p>
-                            </div>
-
-                            <div class="flex gap-2">
-                              <p>
-                                Latitude:{" "}
-                                <span class="bg-teal-500 text-white rounded-lg px-2">
+                <div class="text-md mb-4">
+                  Select accurate location for zipcode {getSelectedZip()}{" "}
+                  <button
+                    class="bg-teal-500 text-white py-2 px-4 rounded-lg mt-4 mx-auto"
+                    onClick={() => draggableMarker().setMap(map())}
+                  >
+                    Click Here
+                  </button>
+                  <p class="text-sm mb-2">Move the house icon on the map</p>
+                </div>
+                <div class="flex flex-col items-center mt-4">
+                  <Show when={uniqueHouseType() && draggableMarker()}>
+                    <div class="w-full">
+                      <div class="grid grid-cols-1 gap-4 w-full mb-8">
+                        <div class="flex flex-col gap-4">
+                          <div>
+                            <p class="text-xl mb-2">Location</p>
+                            <div class="grid grid-cols-2 gap-4">
+                              <div class="text-center">
+                                <p class="text-md">Latitude:</p>
+                                <p class="bg-teal-500 text-white rounded-lg py-2">
                                   {lat().toFixed(3)}
-                                </span>
-                              </p>
-                              <p>
-                                Longtitude:{" "}
-                                <span class="bg-teal-500 text-white rounded-lg px-2">
+                                </p>
+                              </div>
+                              <div class="text-center">
+                                <p class="text-md">Longitude:</p>
+                                <p class="bg-teal-500 text-white rounded-lg py-2">
                                   {lon().toFixed(3)}
-                                </span>
-                              </p>
+                                </p>
+                              </div>
                             </div>
                           </div>
-                          <div class="grid grid-row-1 divide-y">
-                            <p class="text-xl">House Details</p>
-                            <label for="house_type">House Type:</label>
+                          <div>
+                            <p class="text-xl mb-2">House Details</p>
+                            <label
+                              for="house_type"
+                              class="block text-md mb-2"
+                            >
+                              House Type:
+                            </label>
                             <select
                               id="house_type-p"
                               name="house_type"
                               required
-                              class="rounded-md w-full"
+                              class="w-full border border-gray-300 p-2 rounded-lg"
                             >
                               <For each={uniqueHouseType()}>
-                                {(item) => <option value={item}>{item}</option>}
+                                {(item) => (
+                                  <option value={item}>{item}</option>
+                                )}
                               </For>
                             </select>
-                            <label for="sqft">Size(sqft):</label>
+                            <label for="size" class="block text-md mb-2">
+                              Size(sqft):
+                            </label>
                             <input
                               type="number"
                               id="size-p"
                               name="size"
                               placeholder="1000"
                               required
-                              class="rounded-md w-full"
+                              class="w-full border border-gray-300 p-2 rounded-lg"
                             />
-                            <label for="bedrooms">Beds:</label>
-                            <input
-                              type="number"
-                              id="bedrooms-p"
-                              name="bedrooms"
-                              placeholder="1"
-                              class="rounded-md w-full"
-                              required
-                            />
-                            <label for="bathrooms">Bath:</label>
-                            <input
-                              type="number"
-                              id="bathrooms-p"
-                              name="bathrooms"
-                              placeholder="1"
-                              required
-                              class="rounded-md w-full"
-                            />
+                            <div class="grid grid-cols-2 gap-4">
+                              <div>
+                                <label
+                                  for="bedrooms"
+                                  class="block text-md mb-2"
+                                >
+                                  Beds:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="bedrooms-p"
+                                  name="bedrooms"
+                                  placeholder="1"
+                                  class="w-full border border-gray-300 p-2 rounded-lg"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="bathrooms"
+                                  class="block text-md mb-2"
+                                >
+                                  Bath:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="bathrooms-p"
+                                  name="bathrooms"
+                                  placeholder="1"
+                                  required
+                                  class="w-full border border-gray-300 p-2 rounded-lg"
+                                />
+                              </div>
+                            </div>
+                            <button
+                              class="bg-teal-500 text-white w-full py-2 rounded-lg mt-4"
+                              onClick={handleSubmitPredictedPrice}
+                            >
+                              Submit
+                            </button>
                           </div>
-
-                          <button
-                            class="bg-teal-500 text-white w-[30%]"
-                            onClick={handleSubmitPredictedPrice}
-                          >
-                            Submit
-                          </button>
-                        </div>
-
-                        <div class="text-xl">
-                          The predicted price will be:{" "}
-                          <Show when={predictedCost()}>
-                            <span>${predictedCost()}</span>
-                          </Show>
                         </div>
                       </div>
-                    </Show>
-                  </div>{" "}
-                </Show>
+                      <div class="text-center mt-8">
+                        <div class="text-xl">The predicted price will be:</div>
+                        <div class="text-3xl font-semibold">
+                          ${predictedCost()}
+                        </div>
+                      </div>
+                    </div>
+                  </Show>
+                </div>
               </div>
             </div>
           </div>
