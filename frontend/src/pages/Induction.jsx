@@ -1,7 +1,6 @@
 import { InductionView } from "../layouts/Layout";
 import mappage from "../assets/induction/default.png";
 import hoverleft from "../assets/induction/hoverleft.png";
-import nav_hoverMouseLeft from "../assets/induction/nav_hoverMouseLeft.png";
 import zipcode_layer from "../assets/induction/zipcode_layer.png";
 import search_bar from "../assets/induction/searchbar.png";
 import search_bar_effect from "../assets/induction/searchbar_effect.png";
@@ -18,6 +17,15 @@ import compare_effect1 from "../assets/induction/dropdown_effect.png";
 import compare_effect2 from "../assets/induction/dropdown_effect2.png";
 import property_marker from "../assets/induction/property_marker.png";
 import account from "../assets/induction/account.png";
+
+import historical from "../assets/induction/historicalpropertyvalue.png";
+import sales2023 from "../assets/induction/2023sales.png";
+import sales2024 from "../assets/induction/2024sales.png";
+
+import amenities from "../assets/induction/amenities.png";
+import amenities2 from "../assets/induction/amenities2.png";
+
+import demographic from "../assets/induction/other.png";
 
 const MapPageSection = ({ title, description, id, children }) => {
   return (
@@ -39,7 +47,7 @@ const MiniSection = ({ img_src, description }) => {
     rounded-md shadow-md border-solid border-grey-300 w-[60%] hover:scale-150 duration-300 hover:z-10"
     >
       <img src={img_src} className="w-[60%] h-auto" />
-      <p class="mt-6 text-justify px-2">{description}</p>
+      <p class="mt-6 text-left px-2">{description}</p>
     </div>
   );
 };
@@ -56,15 +64,7 @@ const InductionPage = () => {
           Welcome to Reiah! Thanks for coming here. We hope you can learn how to
           use our application here.
         </div>
-        {/* a tags */}
-        {/* <div
-          class="relative grid grid-cols-2 gap-10 mt-[2%]
-        mx-auto mb-[2vh] text-xl text-center
-             items-center justify-center"
-        >
-          <a href="#induction_step1">step 1</a>
-          <a href="#induction_step2">step 2</a>
-        </div> */}
+
         <div
           id="induction_step1"
           className="flex flex-col items-center w-full py-3"
@@ -210,6 +210,7 @@ const InductionPage = () => {
                 }
               ></MiniSection>
 
+              <h3>Markers on Map</h3>
               <MiniSection
                 img_src={marker_legend}
                 description={
@@ -229,6 +230,8 @@ const InductionPage = () => {
                 }
               ></MiniSection>
 
+              {/* three types of information */}
+              <h3>Three Types of Information</h3>
               <MiniSection
                 img_src={info_types}
                 description={
@@ -236,6 +239,50 @@ const InductionPage = () => {
                 }
               ></MiniSection>
 
+              <h4>Real Estate Information</h4>
+              <MiniSection
+                img_src={historical}
+                description={
+                  "The line chart shows the historical average property value of the current zip code. Below the line chart is the application's prediction to the future property value."
+                }
+              ></MiniSection>
+
+              <MiniSection
+                img_src={sales2023}
+                description={
+                  "The application also shows the property sales records of 2023. When clicking on one of the type in the chart, corresponding property markers will scale up. "
+                }
+              ></MiniSection>
+              <MiniSection
+                img_src={sales2024}
+                description={
+                  "To get the predicted price of a specific property in 2024, you first need to click the button, let the house marker shows up on the map. Move the marker to the location you want, fill out the information, and then submit to get the predicted price. "
+                }
+              ></MiniSection>
+
+              <h4>Amenities Information</h4>
+              <MiniSection
+                img_src={amenities}
+                description={
+                  "Amenities Information shows the number and the location of the facilities in the current zip code. Click on the doughnut chart, you can get more detailed types of the facilities, and the corresponding amenity markers will scale up."
+                }
+              ></MiniSection>
+              <MiniSection
+                img_src={amenities2}
+                description={
+                  "To better locate a specific amenity, click on one of the buttons, see what amenities belong to that type, and hover the amentiy you want to check. The purple marker on the map shows you the location of the amenity you are hovering."
+                }
+              ></MiniSection>
+
+              <h4>Other Information</h4>
+              <MiniSection
+                img_src={demographic}
+                description={
+                  "For now, our application only shows the demographic information in this section."
+                }
+              ></MiniSection>
+
+              <h3>Compare with other Zip codes</h3>
               <MiniSection
                 img_src={compare}
                 description={
