@@ -142,7 +142,6 @@ export const Map = (props) => {
                   />
                   ;
                 </Show> */}
-                ;
               </MapComponent>
             </Show>
 

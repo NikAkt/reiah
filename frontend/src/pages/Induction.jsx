@@ -1,8 +1,8 @@
 import { InductionView } from "../layouts/Layout";
-import mappage from "../assets/induction/mappage.png";
+import mappage from "../assets/induction/default.png";
+import hoverleft from "../assets/induction/hoverleft.png";
 import nav_hoverMouseLeft from "../assets/induction/nav_hoverMouseLeft.png";
 import zipcode_layer from "../assets/induction/zipcode_layer.png";
-import zipcode_layer_zoom from "../assets/induction/zipcode_layer_zoom.png";
 import search_bar from "../assets/induction/searchbar.png";
 import search_bar_effect from "../assets/induction/searchbar_effect.png";
 import search_bar_alert from "../assets/induction/searchbar_alert.png";
@@ -13,6 +13,11 @@ import dashboard from "../assets/induction/dashboard.png";
 import marker_legend from "../assets/induction/marker_legend.png";
 import marker_legend_effect from "../assets/induction/hide_markers.png";
 import info_types from "../assets/induction/three_types_info.png";
+import compare from "../assets/induction/dropdown.png";
+import compare_effect1 from "../assets/induction/dropdown_effect.png";
+import compare_effect2 from "../assets/induction/dropdown_effect2.png";
+import property_marker from "../assets/induction/property_marker.png";
+import account from "../assets/induction/account.png";
 
 const MapPageSection = ({ title, description, id, children }) => {
   return (
@@ -48,8 +53,8 @@ const InductionPage = () => {
       >
         <h1 class="text-2xl">User Induction</h1>
         <div class="text-xl">
-          Welcome to Reiah! Thanks for coming here. We hope you can be clear how
-          to use our application here.
+          Welcome to Reiah! Thanks for coming here. We hope you can learn how to
+          use our application here.
         </div>
         {/* a tags */}
         {/* <div
@@ -64,10 +69,6 @@ const InductionPage = () => {
           id="induction_step1"
           className="flex flex-col items-center w-full py-3"
         >
-          <div className="w-full flex flex-col justify-center mb-4 text-2xl">
-            Map Page
-          </div>
-
           {/* a tags */}
           <div
             class="relative grid grid-cols-7 mx-auto divide-x mb-[2vh]
@@ -79,39 +80,33 @@ const InductionPage = () => {
             <a href="#search_bar">Search Bar</a>
             <a href="#filter">Filter</a>
             <a href="#recommend">Recommend</a>
-            <a href="#side_bar">Dashboard</a>
-            <a href="#side_bar">Account Button</a>
-          </div>
-          <div className="w-full flex justify-center mb-4">
-            <img
-              src={mappage}
-              className="w-[60%] h-auto"
-              class="hover:scale-150 duration-300 hover:z-10"
-            />
+            <a href="#dashboard">Dashboard</a>
+            <a href="#account">Account Button</a>
           </div>
 
           <div className="flex flex-col gap-4 items-center w-full">
-            <div className="w-full flex flex-col items-center" id="nav_bar">
-              <h2 className="text-xl">Navigation Bar</h2>
-              <div>
-                <p>
-                  When you want to go to other pages like Settings Page, use the
-                  navigation bar.
-                </p>
-                <p>
-                  By default, the Navigation Bar is hidden on the Map Page. When{" "}
-                  <span class="font-bold">
-                    the mouse goes to the left of the webpage
-                  </span>
-                  , the Navigation Bar will show up.
-                </p>
-              </div>
-              <img
-                src={nav_hoverMouseLeft}
-                className="w-[60%] h-auto"
-                class="hover:scale-150 duration-300 hover:z-10"
-              />
-            </div>
+            {/* nav bar */}
+            <MapPageSection
+              title={"Navigation Bar"}
+              id="nav_bar"
+              description={
+                "When you want to go to other pages like Settings Page, use the navigation bar."
+              }
+            >
+              <MiniSection
+                img_src={mappage}
+                description={
+                  "By default, the Navigation Bar is hidden on the Map Page."
+                }
+              ></MiniSection>
+              <MiniSection
+                img_src={hoverleft}
+                description={
+                  "When your mouse hovers on a zip code layer, the layer will turn purple. At the same time, the zip code number will show up on the search bar."
+                }
+              ></MiniSection>
+            </MapPageSection>
+
             {/* zipcode layer */}
             <MapPageSection
               title={"Zip Code Layer"}
@@ -228,9 +223,53 @@ const InductionPage = () => {
                 }
               ></MiniSection>
               <MiniSection
+                img_src={property_marker}
+                description={
+                  "For the property markers, you can click one of them to check the details of that property."
+                }
+              ></MiniSection>
+
+              <MiniSection
                 img_src={info_types}
                 description={
                   "You can check three types of information in total: Real Estate Information, Amenities Information and Other Information."
+                }
+              ></MiniSection>
+
+              <MiniSection
+                img_src={compare}
+                description={
+                  "You can also compare to other zip codes' information in the dashboard. Use the dropdown, select the zip codes you want to compare with the current one, click on the submit."
+                }
+              ></MiniSection>
+
+              <MiniSection
+                img_src={compare_effect1}
+                description={
+                  "After you click the Submit button, the line chart will update to show multiple zip codes' historical property value."
+                }
+              ></MiniSection>
+
+              <MiniSection
+                img_src={compare_effect2}
+                description={
+                  "At the same time, you can also check other zipcodes' 2023 sales records. By selecting one of the buttons on top of the doughnut chart, the doughnut chart will update to reflect the selected zip code's sales records."
+                }
+              ></MiniSection>
+            </MapPageSection>
+
+            {/* account */}
+            <MapPageSection
+              title={"Account Button"}
+              id="account"
+              description={
+                "The account button on the top right will help you log out from the application."
+              }
+            >
+              <MiniSection
+                img_src={account}
+                description={
+                  "Click on the account button, log out, you will be redirected to the login page."
                 }
               ></MiniSection>
             </MapPageSection>

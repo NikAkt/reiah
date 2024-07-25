@@ -602,7 +602,7 @@ export const DashboardInfo = ({
                     />
                   </Show>
                 </div>
-                <p></p>
+
                 <Show when={!noHistoricData() && getComparedZip()}>
                   <For each={getComparedZip()}>
                     {(item, index) => {
