@@ -617,105 +617,100 @@ export const DashboardInfo = ({
               </div>
 
               <div
-                id="sales-2023"
-                class={`relative w-full ${
-                  toggleState()["sales-2023"] ? "" : "hidden"
-                }`}
-              >
-                <a class="text-2xl py-4">2023 Residential Property Sales</a>
-                <p class="text-sm">Data Source: Zillow</p>
-                <Show when={updateInfo()}>
-                  <div class="flex gap-2">
-                    <button
-                      class={`bg-black text-white px-2 ${
-                        showWhichRealEstate() === getSelectedZip()
-                          ? ""
-                          : "opacity-30"
-                      }`}
-                      onClick={() => {
-                        setShowWhichRealEstate(getSelectedZip());
-                      }}
-                    >
-                      {getSelectedZip()}
-                    </button>
-                    <For each={getComparedZip()}>
-                      {(item, index) => {
-                        return (
-                          <button
-                            class={`bg-black text-white px-2 ${
-                              showWhichRealEstate() === item ? "" : "opacity-30"
-                            }`}
-                            onClick={() => {
-                              setShowWhichRealEstate(item);
-                            }}
-                          >
-                            {item}
-                          </button>
-                        );
-                      }}
-                    </For>
-                  </div>
-                </Show>
+  id="sales-2023"
+  class={`relative w-full ${toggleState()["sales-2023"] ? "" : "hidden"} py-4`}
+>
+  <a class="text-2xl py-4">2023 Residential Property Sales</a>
+  <p class="text-sm">Data Source: Zillow</p>
+  <Show when={updateInfo()}>
+    <div class="flex gap-2 mb-4">
+      <button
+        class={`bg-black text-white px-4 py-2 rounded-lg ${
+          showWhichRealEstate() === getSelectedZip() ? "" : "opacity-30"
+        }`}
+        onClick={() => {
+          setShowWhichRealEstate(getSelectedZip());
+        }}
+      >
+        {getSelectedZip()}
+      </button>
+      <For each={getComparedZip()}>
+        {(item, index) => {
+          return (
+            <button
+              class={`bg-black text-white px-4 py-2 rounded-lg ${
+                showWhichRealEstate() === item ? "" : "opacity-30"
+              }`}
+              onClick={() => {
+                setShowWhichRealEstate(item);
+              }}
+            >
+              {item}
+            </button>
+          );
+        }}
+      </For>
+    </div>
+  </Show>
 
-                <div class="relative w-full">
-                  <div
-                    class={
-                      showWhichRealEstate() === getSelectedZip() ||
-                      !updateInfo()
-                        ? ""
-                        : "hidden"
-                    }
-                  >
-                    <RealEstateInfo
-                      map={map}
-                      setDialogInfo={setDialogInfo}
-                      setDisplayDialog={setDisplayDialog}
-                      highlightMarker={highlightMarker}
-                      getSelectedZip={getSelectedZip}
-                      predictedPrice={predictedPrice}
-                      query={query}
-                      loader={loader}
-                      loadCompared={false}
-                      setUniqueHouseType={setUniqueHouseType}
-                      setDraggableMarker={setDraggableMarker}
-                      draggableMarker={draggableMarker}
-                      setLat={setLat}
-                      setLon={setLon}
-                      noProperty={noProperty}
-                      setNoProperty={setNoProperty}
-                      hideProperty={hideProperty}
-                      setHideProperty={setHideProperty}
-                    />
-                  </div>
-                  <Show when={updateInfo()}>
-                    <For each={getComparedZip()}>
-                      {(item, index) => (
-                        <div
-                          class={showWhichRealEstate() === item ? "" : "hidden"}
-                        >
-                          <RealEstateInfo
-                            map={map}
-                            setDialogInfo={setDialogInfo}
-                            setDisplayDialog={setDisplayDialog}
-                            highlightMarker={highlightMarker}
-                            getSelectedZip={item}
-                            predictedPrice={predictedPrice}
-                            query={query}
-                            loader={loader}
-                            loadCompared={true}
-                            setUniqueHouseType={null}
-                            setDraggableMarker={null}
-                            noProperty={noProperty}
-                            setNoProperty={setNoProperty}
-                            hideProperty={hideProperty}
-                            setHideProperty={setHideProperty}
-                          />
-                        </div>
-                      )}
-                    </For>
-                  </Show>
-                </div>
-              </div>
+  <div class="relative w-full">
+    <div
+      class={
+        showWhichRealEstate() === getSelectedZip() || !updateInfo() ? "" : "hidden"
+      }
+    >
+      <RealEstateInfo
+        map={map}
+        setDialogInfo={setDialogInfo}
+        setDisplayDialog={setDisplayDialog}
+        highlightMarker={highlightMarker}
+        getSelectedZip={getSelectedZip}
+        predictedPrice={predictedPrice}
+        query={query}
+        loader={loader}
+        loadCompared={false}
+        setUniqueHouseType={setUniqueHouseType}
+        setDraggableMarker={setDraggableMarker}
+        draggableMarker={draggableMarker}
+        setLat={setLat}
+        setLon={setLon}
+        noProperty={noProperty}
+        setNoProperty={setNoProperty}
+        hideProperty={hideProperty}
+        setHideProperty={setHideProperty}
+      />
+    </div>
+    <Show when={updateInfo()}>
+      <For each={getComparedZip()}>
+        {(item, index) => (
+          <div
+            class={showWhichRealEstate() === item ? "" : "hidden"}
+          >
+            <RealEstateInfo
+              map={map}
+              setDialogInfo={setDialogInfo}
+              setDisplayDialog={setDisplayDialog}
+              highlightMarker={highlightMarker}
+              getSelectedZip={item}
+              predictedPrice={predictedPrice}
+              query={query}
+              loader={loader}
+              loadCompared={true}
+              setUniqueHouseType={null}
+              setDraggableMarker={null}
+              noProperty={noProperty}
+              setNoProperty={setNoProperty}
+              hideProperty={hideProperty}
+              setHideProperty={setHideProperty}
+            />
+          </div>
+        )}
+      </For>
+    </Show>
+  </div>
+</div>
+
+
 
               <div
                 id="sales-2024"

@@ -392,9 +392,17 @@ const createDoughnutChart = (
       data: dataset,
       options: {
         responsive: true,
-        onClick: function (event) {
-          props.setHoverType(event.chart.tooltip.title[0]);
-          // Actions to be performed
+        onClick: function (event, elements) {
+          if (elements.length > 0) {
+            const chartInstance = event.chart;
+            const activePoint = chartInstance.getElementsAtEventForMode(event.native, 'nearest', { intersect: true }, false);
+            if (activePoint.length > 0) {
+              const datasetIndex = activePoint[0].datasetIndex;
+              const index = activePoint[0].index;
+              const label = chartInstance.data.labels[index];
+              props.setHoverType(label);
+            }
+          }
         },
         plugins: {
           legend: {
@@ -410,9 +418,17 @@ const createDoughnutChart = (
       data: dataset,
       options: {
         responsive: true,
-        onClick: function (event) {
-          props.setHoverAmenity(event.chart.tooltip.title[0]);
-          // Actions to be performed
+        onClick: function (event, elements) {
+          if (elements.length > 0) {
+            const chartInstance = event.chart;
+            const activePoint = chartInstance.getElementsAtEventForMode(event.native, 'nearest', { intersect: true }, false);
+            if (activePoint.length > 0) {
+              const datasetIndex = activePoint[0].datasetIndex;
+              const index = activePoint[0].index;
+              const label = chartInstance.data.labels[index];
+              props.setHoverAmenity(label);
+            }
+          }
         },
         plugins: {
           legend: {
