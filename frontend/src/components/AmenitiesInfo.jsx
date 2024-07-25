@@ -15,7 +15,7 @@ const AmenitiesDetailDropdown = ({
     <div class="relative w-full overflow-x-auto">
       <div
         id="detail-title"
-        class={`bg-teal-500 text-white rounded-lg cursor-pointer text-center 
+        class={`bg-teal-500 text-white rounded-lg cursor-pointer text-center py-2
             ${displayDropdown() === true ? "" : "opacity-60"}`}
         onClick={() => {
           setDisplayDropdown((prev) => !prev);
@@ -23,10 +23,10 @@ const AmenitiesDetailDropdown = ({
       >
         {`${item[0]} (${item[1].length})`}
       </div>
-      <ul class={displayDropdown() === true ? "" : "hidden"}>
+      <ul class={`mt-2 ${displayDropdown() === true ? "" : "hidden"} bg-gray-100 rounded-lg p-2 shadow-lg`}>
         {item[1].map((el) => (
           <li
-            class="hover:bg-indigo-600 hover:text-white"
+            class="hover:bg-indigo-600 hover:text-white p-1 rounded-lg mb-1 text-sm cursor-pointer"
             onMouseOver={() => {
               highlightMarker(
                 el,
@@ -210,22 +210,26 @@ const AmenitiesInfo = ({
       <Suspense>
         <Show when={amenities()}>
           <div class="flex flex-row place-content-between">
-            <DoughnutChart
-              datasets={amenities()}
-              ref={(el) => (ref = el)}
-              type="amenities"
-              setHoverAmenity={setHoverAmenity}
-            />
-            <div class="relative w-[40%] overflow-x-auto flex flex-col gap-2 py-2">
+            <div class="w-2/5">
+              <DoughnutChart
+                datasets={amenities()}
+                ref={(el) => (ref = el)}
+                type="amenities"
+                setHoverAmenity={setHoverAmenity}
+              />
+            </div>
+            <div class="relative w-[55%] overflow-x-auto flex flex-col gap-2 py-2">
               <Show
                 when={hoverAmenity()}
                 fallback={
-                  <div>Click the doughnutchart for more information</div>
+                  <div class="p-4 border rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                    Click the doughnut chart to select an amenity type.
+                  </div>
                 }
               >
                 <div class="flex flex-col gap-2">
                   <p
-                    class="text-white rounded-lg"
+                    class="text-white rounded-lg p-2 mb-4"
                     style={{
                       "background-color":
                         colorsChartjs[

@@ -31,9 +31,7 @@ const colors = [
 const ChartLoadingIndicator = () => {
   return (
     <div class="w-full h-full flex justify-center items-center">
-      {/* <h1 class="text-black"> */}
       <LoadingSvg />
-      {/* </h1> */}
     </div>
   );
 };
@@ -117,6 +115,7 @@ const createLineChart = (ctx, datasets) => {
     },
   });
 };
+
 async function fetchMultipleHistoricPrices(zipArray) {
   if (zipArray.length > 1) {
     let query = "";
@@ -313,7 +312,6 @@ const DoughnutChart = (props) => {
         props.type,
         doughnutChartInstance,
         props
-        // footer
       );
     }
   });
@@ -326,8 +324,8 @@ const DoughnutChart = (props) => {
 
   return (
     <div
-      class="relative min-h-[300px] max-w-[350px]
-    aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full"
+      class="relative min-h-[300px] max-w-[300px] aspect-square
+    rounded bg-white dark:bg-slate-800 p-4 col-span-full"
     >
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
@@ -340,7 +338,6 @@ const createDoughnutChart = (
   type,
   doughnutChartInstance,
   props
-  // footer = null
 ) => {
   if (ctx === undefined) {
     return;
@@ -350,110 +347,86 @@ const createDoughnutChart = (
     doughnutChartInstance.destroy();
   }
 
-  const doughnutLabel = {
-    id: "doughnutLabel",
-    beforeDatasetsDraw(chart, args, pluginOptions) {
-      const { ctx, data } = chart;
-      ctx.save();
-      const xCoor = chart.getDatasetMeta(0).data[0].x;
-      const yCoor = chart.getDatasetMeta(0).data[0].y;
-
-      //responsive text size
-      let newVal;
-      let val = 15;
-      const innerWidth = window.innerWidth;
-      if (innerWidth > 800) {
-        newVal = 15;
-      } else if (innerWidth <= 800 && innerWidth > 600) {
-        newVal = 7.5;
-      } else {
-        newVal = 5;
-      }
-
-      if (val !== newVal) {
-        val = newVal;
-        chart.update();
-      }
-
-      ctx.font = `bold ${val}px sans-serif`;
-      ctx.fillStyle = "black";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      let sum = 0;
-      data.datasets[0].data.forEach((num) => (sum += num));
-
-      ctx.fillText(`Total:${sum}`, xCoor, yCoor);
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          boxWidth: 10,
+          padding: 10,
+          usePointStyle: true,
+          pointStyle: "circle",
+          // Display labels two per row
+          generateLabels: function (chart) {
+            const data = chart.data;
+            if (data.labels.length > 0) {
+              return data.labels.map((label, i) => {
+                const meta = chart.getDatasetMeta(0);
+                const ds = data.datasets[0];
+                const arc = meta.data[i];
+                const color =
+                  (arc &&
+                    arc.options &&
+                    arc.options.backgroundColor) ||
+                  "transparent";
+                return {
+                  text: label,
+                  fillStyle: color,
+                  hidden: isNaN(ds.data[i]) || ds.data[i] === null,
+                  index: i,
+                };
+              });
+            }
+            return [];
+          },
+        },
+      },
     },
   };
-  if (type === "property") {
-    return new Chart(ctx, {
-      type: "doughnut",
-      data: dataset,
-      options: {
-        responsive: true,
-        onClick: function (event, elements) {
-          if (elements.length > 0) {
-            const chartInstance = event.chart;
-            const activePoint = chartInstance.getElementsAtEventForMode(event.native, 'nearest', { intersect: true }, false);
-            if (activePoint.length > 0) {
-              const datasetIndex = activePoint[0].datasetIndex;
-              const index = activePoint[0].index;
-              const label = chartInstance.data.labels[index];
-              props.setHoverType(label);
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            position: "top",
-          },
-        },
-      },
-      // plugins: [doughnutLabel],
-    });
-  } else if (type === "amenities") {
-    return new Chart(ctx, {
-      type: "doughnut",
-      data: dataset,
-      options: {
-        responsive: true,
-        onClick: function (event, elements) {
-          if (elements.length > 0) {
-            const chartInstance = event.chart;
-            const activePoint = chartInstance.getElementsAtEventForMode(event.native, 'nearest', { intersect: true }, false);
-            if (activePoint.length > 0) {
-              const datasetIndex = activePoint[0].datasetIndex;
-              const index = activePoint[0].index;
-              const label = chartInstance.data.labels[index];
-              props.setHoverAmenity(label);
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            position: "top",
-          },
-        },
-      },
-      // plugins: [doughnutLabel],
-    });
-  } else {
-    return new Chart(ctx, {
-      type: "doughnut",
-      data: dataset,
-      options: {
-        responsive: true,
 
-        plugins: {
-          legend: {
-            display: true,
-            position: "top",
-          },
-        },
-      },
-    });
+  if (type === "property") {
+    options.onClick = function (event, elements) {
+      if (elements.length > 0) {
+        const chartInstance = event.chart;
+        const activePoint = chartInstance.getElementsAtEventForMode(
+          event.native,
+          "nearest",
+          { intersect: true },
+          false
+        );
+        if (activePoint.length > 0) {
+          const index = activePoint[0].index;
+          const label = chartInstance.data.labels[index];
+          props.setHoverType(label);
+        }
+      }
+    };
+  } else if (type === "amenities") {
+    options.onClick = function (event, elements) {
+      if (elements.length > 0) {
+        const chartInstance = event.chart;
+        const activePoint = chartInstance.getElementsAtEventForMode(
+          event.native,
+          "nearest",
+          { intersect: true },
+          false
+        );
+        if (activePoint.length > 0) {
+          const index = activePoint[0].index;
+          const label = chartInstance.data.labels[index];
+          props.setHoverAmenity(label);
+        }
+      }
+    };
   }
+
+  return new Chart(ctx, {
+    type: "doughnut",
+    data: dataset,
+    options,
+  });
 };
 
 export { BarChart, LineChart, DoughnutChart };
