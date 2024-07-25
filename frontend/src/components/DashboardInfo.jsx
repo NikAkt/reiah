@@ -65,7 +65,8 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
           Price: <span class="font-semibold">${Yr1_Price()?.toFixed(0)}</span>
         </div>
         <div class="text-lg">
-          ROI: <span class="font-semibold">{(Yr1_ROI() * 100).toFixed(1)}%</span>
+          ROI:{" "}
+          <span class="font-semibold">{(Yr1_ROI() * 100).toFixed(1)}%</span>
         </div>
       </div>
       <div class="p-4 shadow-lg rounded-lg border border-gray-300">
@@ -74,7 +75,8 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
           Price: <span class="font-semibold">${Yr3_Price()?.toFixed(0)}</span>
         </div>
         <div class="text-lg">
-          ROI: <span class="font-semibold">{(Yr3_ROI() * 100).toFixed(1)}%</span>
+          ROI:{" "}
+          <span class="font-semibold">{(Yr3_ROI() * 100).toFixed(1)}%</span>
         </div>
       </div>
       <div class="p-4 shadow-lg rounded-lg border border-gray-300">
@@ -83,7 +85,8 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
           Price: <span class="font-semibold">${Yr5_Price()?.toFixed(0)}</span>
         </div>
         <div class="text-lg">
-          ROI: <span class="font-semibold">{(Yr5_ROI() * 100).toFixed(1)}%</span>
+          ROI:{" "}
+          <span class="font-semibold">{(Yr5_ROI() * 100).toFixed(1)}%</span>
         </div>
       </div>
     </div>
@@ -190,10 +193,6 @@ export const DashboardInfo = ({
     }
   });
 
-  createEffect(() => {
-    console.log(predictedCost());
-  });
-
   onCleanup(() => {
     setComparedZip([]);
   });
@@ -252,18 +251,16 @@ export const DashboardInfo = ({
       id={`dashboardDiv-${[getSelectedZip()]}`}
       class="grid grid-row-1 divide-y"
     >
-<div class="absolute top-4 left-4">
-  <button
-    onClick={() => {
-      document.getElementById('information-button').click(); 
-    }}
-    class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
-  >
-    <img src={close_icon} class="w-8 h-8" />
-  </button>
-</div>
-
-
+      <div class="absolute top-4 left-4">
+        <button
+          onClick={() => {
+            document.getElementById("information-button").click();
+          }}
+          class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
+        >
+          <img src={close_icon} class="w-8 h-8" />
+        </button>
+      </div>
 
       <div
         class="flex top-[4vh]
@@ -275,8 +272,8 @@ export const DashboardInfo = ({
         >
           <div>
             <h1 class="font-medium text-2xl mb-4" id="dashboard_top">
-              {`${getSelectedZip()}`},
-              <span>{neighbourhood()}</span>,<span>{borough()}</span>
+              {`${getSelectedZip()}`},<span>{neighbourhood()}</span>,
+              <span>{borough()}</span>
             </h1>
             <Show when={getSelectedZip()}>
               <div class="flex gap-4 items-center mb-4">
@@ -313,10 +310,7 @@ export const DashboardInfo = ({
                         if (event.key === "Enter") {
                           if (uniqueZipcode.includes(event.target.value)) {
                             setComparedZip((prev) => [
-                              ...new Set([
-                                ...prev,
-                                event.target.value * 1,
-                              ]),
+                              ...new Set([...prev, event.target.value * 1]),
                             ]);
                             if (
                               !document.getElementById(
@@ -617,100 +611,105 @@ export const DashboardInfo = ({
               </div>
 
               <div
-  id="sales-2023"
-  class={`relative w-full ${toggleState()["sales-2023"] ? "" : "hidden"} py-4`}
->
-  <a class="text-2xl py-4">2023 Residential Property Sales</a>
-  <p class="text-sm">Data Source: Zillow</p>
-  <Show when={updateInfo()}>
-    <div class="flex gap-2 mb-4">
-      <button
-        class={`bg-black text-white px-4 py-2 rounded-lg ${
-          showWhichRealEstate() === getSelectedZip() ? "" : "opacity-30"
-        }`}
-        onClick={() => {
-          setShowWhichRealEstate(getSelectedZip());
-        }}
-      >
-        {getSelectedZip()}
-      </button>
-      <For each={getComparedZip()}>
-        {(item, index) => {
-          return (
-            <button
-              class={`bg-black text-white px-4 py-2 rounded-lg ${
-                showWhichRealEstate() === item ? "" : "opacity-30"
-              }`}
-              onClick={() => {
-                setShowWhichRealEstate(item);
-              }}
-            >
-              {item}
-            </button>
-          );
-        }}
-      </For>
-    </div>
-  </Show>
+                id="sales-2023"
+                class={`relative w-full ${
+                  toggleState()["sales-2023"] ? "" : "hidden"
+                } py-4`}
+              >
+                <a class="text-2xl py-4">2023 Residential Property Sales</a>
+                <p class="text-sm">Data Source: Zillow</p>
+                <Show when={updateInfo()}>
+                  <div class="flex gap-2 mb-4">
+                    <button
+                      class={`bg-black text-white px-4 py-2 rounded-lg ${
+                        showWhichRealEstate() === getSelectedZip()
+                          ? ""
+                          : "opacity-30"
+                      }`}
+                      onClick={() => {
+                        setShowWhichRealEstate(getSelectedZip());
+                      }}
+                    >
+                      {getSelectedZip()}
+                    </button>
+                    <For each={getComparedZip()}>
+                      {(item, index) => {
+                        return (
+                          <button
+                            class={`bg-black text-white px-4 py-2 rounded-lg ${
+                              showWhichRealEstate() === item ? "" : "opacity-30"
+                            }`}
+                            onClick={() => {
+                              setShowWhichRealEstate(item);
+                            }}
+                          >
+                            {item}
+                          </button>
+                        );
+                      }}
+                    </For>
+                  </div>
+                </Show>
 
-  <div class="relative w-full">
-    <div
-      class={
-        showWhichRealEstate() === getSelectedZip() || !updateInfo() ? "" : "hidden"
-      }
-    >
-      <RealEstateInfo
-        map={map}
-        setDialogInfo={setDialogInfo}
-        setDisplayDialog={setDisplayDialog}
-        highlightMarker={highlightMarker}
-        getSelectedZip={getSelectedZip}
-        predictedPrice={predictedPrice}
-        query={query}
-        loader={loader}
-        loadCompared={false}
-        setUniqueHouseType={setUniqueHouseType}
-        setDraggableMarker={setDraggableMarker}
-        draggableMarker={draggableMarker}
-        setLat={setLat}
-        setLon={setLon}
-        noProperty={noProperty}
-        setNoProperty={setNoProperty}
-        hideProperty={hideProperty}
-        setHideProperty={setHideProperty}
-      />
-    </div>
-    <Show when={updateInfo()}>
-      <For each={getComparedZip()}>
-        {(item, index) => (
-          <div
-            class={showWhichRealEstate() === item ? "" : "hidden"}
-          >
-            <RealEstateInfo
-              map={map}
-              setDialogInfo={setDialogInfo}
-              setDisplayDialog={setDisplayDialog}
-              highlightMarker={highlightMarker}
-              getSelectedZip={item}
-              predictedPrice={predictedPrice}
-              query={query}
-              loader={loader}
-              loadCompared={true}
-              setUniqueHouseType={null}
-              setDraggableMarker={null}
-              noProperty={noProperty}
-              setNoProperty={setNoProperty}
-              hideProperty={hideProperty}
-              setHideProperty={setHideProperty}
-            />
-          </div>
-        )}
-      </For>
-    </Show>
-  </div>
-</div>
-
-
+                <div class="relative w-full">
+                  <div
+                    class={
+                      showWhichRealEstate() === getSelectedZip() ||
+                      !updateInfo()
+                        ? ""
+                        : "hidden"
+                    }
+                  >
+                    <RealEstateInfo
+                      map={map}
+                      setDialogInfo={setDialogInfo}
+                      setDisplayDialog={setDisplayDialog}
+                      highlightMarker={highlightMarker}
+                      getSelectedZip={getSelectedZip}
+                      predictedPrice={predictedPrice}
+                      query={query}
+                      loader={loader}
+                      loadCompared={false}
+                      setUniqueHouseType={setUniqueHouseType}
+                      setDraggableMarker={setDraggableMarker}
+                      draggableMarker={draggableMarker}
+                      setLat={setLat}
+                      setLon={setLon}
+                      noProperty={noProperty}
+                      setNoProperty={setNoProperty}
+                      hideProperty={hideProperty}
+                      setHideProperty={setHideProperty}
+                    />
+                  </div>
+                  <Show when={updateInfo()}>
+                    <For each={getComparedZip()}>
+                      {(item, index) => (
+                        <div
+                          class={showWhichRealEstate() === item ? "" : "hidden"}
+                        >
+                          <RealEstateInfo
+                            map={map}
+                            setDialogInfo={setDialogInfo}
+                            setDisplayDialog={setDisplayDialog}
+                            highlightMarker={highlightMarker}
+                            getSelectedZip={item}
+                            predictedPrice={predictedPrice}
+                            query={query}
+                            loader={loader}
+                            loadCompared={true}
+                            setUniqueHouseType={null}
+                            setDraggableMarker={null}
+                            noProperty={noProperty}
+                            setNoProperty={setNoProperty}
+                            hideProperty={hideProperty}
+                            setHideProperty={setHideProperty}
+                          />
+                        </div>
+                      )}
+                    </For>
+                  </Show>
+                </div>
+              </div>
 
               <div
                 id="sales-2024"
@@ -755,10 +754,7 @@ export const DashboardInfo = ({
                           </div>
                           <div>
                             <p class="text-xl mb-2">House Details</p>
-                            <label
-                              for="house_type"
-                              class="block text-md mb-2"
-                            >
+                            <label for="house_type" class="block text-md mb-2">
                               House Type:
                             </label>
                             <select
@@ -768,9 +764,7 @@ export const DashboardInfo = ({
                               class="w-full border border-gray-300 p-2 rounded-lg"
                             >
                               <For each={uniqueHouseType()}>
-                                {(item) => (
-                                  <option value={item}>{item}</option>
-                                )}
+                                {(item) => <option value={item}>{item}</option>}
                               </For>
                             </select>
                             <label for="size" class="block text-md mb-2">
