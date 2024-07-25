@@ -74,6 +74,7 @@ export const MapComponent = (props) => {
   };
 
   const zipcodes = props.dataResources.zipcodes();
+
   const zipcode_geojson = props.dataResources.zipcode_geojson();
   const geojsonZipcode = [
     ...zipcode_geojson.features.map((el) => el["properties"]["ZIPCODE"] * 1),
@@ -218,6 +219,14 @@ export const MapComponent = (props) => {
     map.data.addListener("click", (event) => {
       props.zipcodeSetter(event.feature.getProperty("ZIPCODE"));
       map.data.setStyle(applyStyle); // Reapply styles immediately after click
+      const zipcodeObj = zipcodes.filter(
+        (el) => el["zip_code"] === event.feature.getProperty("ZIPCODE")
+      );
+
+      map.setCenter({
+        lng: zipcodeObj[0]["longitude"] * 1,
+        lat: zipcodeObj[0]["latitude"] * 1,
+      });
     });
 
     map.data.addListener("mouseover", (event) => {
