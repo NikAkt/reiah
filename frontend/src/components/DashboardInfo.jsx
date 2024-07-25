@@ -820,7 +820,6 @@ export const DashboardInfo = ({
           </div>
 
           <div class={mainInfo() === "amenities" ? "" : "hidden"}>
-            <p class="text-xl py-4">Amenities Information</p>
             <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
               <AmenitiesInfo
                 getSelectedZip={getSelectedZip}
@@ -834,7 +833,6 @@ export const DashboardInfo = ({
           </div>
 
           <div class={mainInfo() === "other" ? "" : "hidden"}>
-            <p>Demographic Information</p>
             <div class="grid grid-row-1 divide-y w-[90%] items-center m-auto">
               <DemographicInfo zip={getSelectedZip} />
             </div>

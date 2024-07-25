@@ -207,6 +207,7 @@ const AmenitiesInfo = ({
 
   return (
     <div id="amenity-info" class="dark:text-white">
+      <p class="text-xl py-4">Amenities Information</p>
       <Suspense>
         <Show when={amenities()}>
           <div class="flex flex-row place-content-between">
@@ -223,7 +224,9 @@ const AmenitiesInfo = ({
                 when={hoverAmenity()}
                 fallback={
                   <div class="p-4 border rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                    <p class="mb-2 text-gray-500">
                     Click the doughnut chart to select an amenity type.
+                  </p>
                   </div>
                 }
               >
