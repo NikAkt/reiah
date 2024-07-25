@@ -9,6 +9,10 @@ import search_bar_alert from "../assets/induction/searchbar_alert.png";
 import filter from "../assets/induction/filter.png";
 import recommend from "../assets/induction/recommend.png";
 import recommend_effect from "../assets/induction/recommend_effect.png";
+import dashboard from "../assets/induction/dashboard.png";
+import marker_legend from "../assets/induction/marker_legend.png";
+import marker_legend_effect from "../assets/induction/hide_markers.png";
+import info_types from "../assets/induction/three_types_info.png";
 
 const MapPageSection = ({ title, description, id, children }) => {
   return (
@@ -122,12 +126,12 @@ const InductionPage = () => {
                   "When your mouse hovers on a zip code layer, the layer will turn purple. At the same time, the zip code number will show up on the search bar."
                 }
               ></MiniSection>
-              <MiniSection
+              {/* <MiniSection
                 img_src={zipcode_layer_zoom}
                 description={
                   "You can also zoom out the map to check the zip code number. When you zoom out to a certain point, the zip code number will show up on each layer."
                 }
-              ></MiniSection>
+              ></MiniSection> */}
             </MapPageSection>
 
             {/* search bar */}
@@ -201,25 +205,32 @@ const InductionPage = () => {
               title={"Dashboard"}
               id="dashboard"
               description={
-                "The dashboard contains the information of one or multiple zip codes. Either by using search bar or by clicking on a zip code layer, the dashboard will pop out from the right."
+                "The dashboard contains the information of one or multiple zip codes."
               }
             >
               <MiniSection
-                img_src={search_bar}
+                img_src={dashboard}
                 description={
-                  "If you want to use the search bar, just type in the zip code number."
+                  "Either by using search bar or by clicking on a zip code layer, the dashboard will pop out from the right."
+                }
+              ></MiniSection>
+
+              <MiniSection
+                img_src={marker_legend}
+                description={
+                  "By default there are 2 types of markers on the map. The white ones represent each of the property sold in 2023. The blue ones are amenities. "
                 }
               ></MiniSection>
               <MiniSection
-                img_src={search_bar_effect}
+                img_src={marker_legend_effect}
                 description={
-                  "By hitting the 'Enter' Key on your keyboard, you can check the information in the dashboard."
+                  "To display or hide the markers, you can click on the buttons inside the marker legend on the top right of the dashboard. If the button goes grey, it means the type of markers are hidden on the map now."
                 }
               ></MiniSection>
               <MiniSection
-                img_src={search_bar_alert}
+                img_src={info_types}
                 description={
-                  "If you happen to type in an invalid zip code, like a zip code out of New York or something that is not zip code, an alert window will pop up. You can type in the zip code you want again after closing the alert window."
+                  "You can check three types of information in total: Real Estate Information, Amenities Information and Other Information."
                 }
               ></MiniSection>
             </MapPageSection>

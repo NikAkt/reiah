@@ -24,14 +24,6 @@ function highlightMarker(type, markerArr, originalIcon, newIcon, key) {
   }
 }
 
-function revertMarkerIcon(markerArr, originalIcon) {
-  if (markerArr) {
-    markerArr.forEach((marker) => {
-      marker.setIcon(originalIcon);
-    });
-  }
-}
-
 const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
   const [Yr1_Price, setYr1Price] = createSignal(null);
   const [Yr1_ROI, setYr1ROI] = createSignal(null);
@@ -104,8 +96,6 @@ export const DashboardInfo = ({
   setComparedZip,
   getSelectedZip,
   setCreateMoreDashboardInfo,
-  setShowRecommendBoard,
-  setSidebarOpen,
 }) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -601,18 +591,42 @@ export const DashboardInfo = ({
                   setNoHistoricData={setNoHistoricData}
                   noHistoricData={noHistoricData}
                 ></LineChart>
-                <p class="text-xl py-4">Predicted Property Value</p>
-                <Show when={!noHistoricData()}>
-                  <PredictedHomeValue
-                    loadCompared={false}
-                    getSelectedZip={getSelectedZip}
-                  />
+                <div>
+                  <p class="text-xl py-4">
+                    Predicted Property Value for Zip code {getSelectedZip()}
+                  </p>
+                  <Show when={!noHistoricData()}>
+                    <PredictedHomeValue
+                      loadCompared={false}
+                      getSelectedZip={getSelectedZip}
+                    />
+                  </Show>
+                </div>
+                <p></p>
+                <Show when={!noHistoricData() && getComparedZip()}>
+                  <For each={getComparedZip()}>
+                    {(item, index) => {
+                      return (
+                        <div>
+                          <p class="text-xl py-4">
+                            Predicted Property Value for Zip code {item}
+                          </p>
+                          <PredictedHomeValue
+                            loadCompared={true}
+                            getSelectedZip={item}
+                          />
+                        </div>
+                      );
+                    }}
+                  </For>
                 </Show>
               </div>
 
               <div
                 id="sales-2023"
-                class={`relative w-full ${toggleState()["sales-2023"] ? "" : "hidden"} py-4`}
+                class={`relative w-full ${
+                  toggleState()["sales-2023"] ? "" : "hidden"
+                } py-4`}
               >
                 <p class="text-xl py-4">2023 Residential Property Sales</p>
                 <p class="text-sm">Data Source: Zillow</p>
@@ -620,7 +634,9 @@ export const DashboardInfo = ({
                   <div class="flex gap-2 mb-4">
                     <button
                       class={`bg-black text-white px-4 py-2 rounded-lg ${
-                        showWhichRealEstate() === getSelectedZip() ? "" : "opacity-30"
+                        showWhichRealEstate() === getSelectedZip()
+                          ? ""
+                          : "opacity-30"
                       }`}
                       onClick={() => {
                         setShowWhichRealEstate(getSelectedZip());
@@ -650,7 +666,10 @@ export const DashboardInfo = ({
                 <div class="relative w-full">
                   <div
                     class={
-                      showWhichRealEstate() === getSelectedZip() || !updateInfo() ? "" : "hidden"
+                      showWhichRealEstate() === getSelectedZip() ||
+                      !updateInfo()
+                        ? ""
+                        : "hidden"
                     }
                   >
                     <RealEstateInfo
@@ -704,118 +723,124 @@ export const DashboardInfo = ({
                 </div>
               </div>
 
-
               <div
-              id="sales-2024"
-              class={`relative w-full py-4 ${
-                toggleState()["sales-2024"] ? "" : "hidden"
-              }`}
-            >
-              <p class="text-xl py-4">2024 Sales Price Prediction</p>
-              <div class="text-md mb-4">
-                Select accurate location for zipcode {getSelectedZip()}{" "}
-                <button
-                  class="bg-teal-500 text-white py-2 px-4 rounded-lg mt-4 mx-auto"
-                  onClick={() => draggableMarker().setMap(map())}
-                >
-                  Click Here
-                </button>
-                <p class="text-sm mb-2">Move the house icon on the map</p>
-              </div>
-              <div class="flex flex-col items-center mt-4">
-                <Show when={uniqueHouseType() && draggableMarker()}>
-                  <div class="w-full">
-                    <div class="grid grid-cols-1 gap-4 w-full mb-8">
-                      <div class="flex flex-col gap-4">
-                        <div>
-                          <p class="text-xl mb-2">Location</p>
-                          <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center">
-                              <p class="text-md">Latitude:</p>
-                              <p class="bg-teal-500 text-white rounded-lg py-2">
-                                {lat().toFixed(3)}
-                              </p>
+                id="sales-2024"
+                class={`relative w-full py-4 ${
+                  toggleState()["sales-2024"] ? "" : "hidden"
+                }`}
+              >
+                <p class="text-xl py-4">2024 Sales Price Prediction</p>
+                <div class="text-md mb-4">
+                  Select accurate location for zipcode {getSelectedZip()}{" "}
+                  <button
+                    class="bg-teal-500 text-white py-2 px-4 rounded-lg mt-4 mx-auto"
+                    onClick={() => draggableMarker().setMap(map())}
+                  >
+                    Click Here
+                  </button>
+                  <p class="text-sm mb-2">Move the house icon on the map</p>
+                </div>
+                <div class="flex flex-col items-center mt-4">
+                  <Show when={uniqueHouseType() && draggableMarker()}>
+                    <div class="w-full">
+                      <div class="grid grid-cols-1 gap-4 w-full mb-8">
+                        <div class="flex flex-col gap-4">
+                          <div>
+                            <p class="text-xl mb-2">Location</p>
+                            <div class="grid grid-cols-2 gap-4">
+                              <div class="text-center">
+                                <p class="text-md">Latitude:</p>
+                                <p class="bg-teal-500 text-white rounded-lg py-2">
+                                  {lat().toFixed(3)}
+                                </p>
+                              </div>
+                              <div class="text-center">
+                                <p class="text-md">Longitude:</p>
+                                <p class="bg-teal-500 text-white rounded-lg py-2">
+                                  {lon().toFixed(3)}
+                                </p>
+                              </div>
                             </div>
-                            <div class="text-center">
-                              <p class="text-md">Longitude:</p>
-                              <p class="bg-teal-500 text-white rounded-lg py-2">
-                                {lon().toFixed(3)}
-                              </p>
+                          </div>
+                          <div>
+                            <p class="text-xl mb-2">House Details</p>
+                            <label for="house_type" class="block text-md mb-2">
+                              House Type:
+                            </label>
+                            <select
+                              id="house_type-p"
+                              name="house_type"
+                              required
+                              class="w-full border border-gray-300 p-2 rounded-lg"
+                            >
+                              <For each={uniqueHouseType()}>
+                                {(item) => <option value={item}>{item}</option>}
+                              </For>
+                            </select>
+                            <label for="size" class="block text-md mb-2">
+                              Size(sqft):
+                            </label>
+                            <input
+                              type="number"
+                              id="size-p"
+                              name="size"
+                              placeholder="1000"
+                              required
+                              class="w-full border border-gray-300 p-2 rounded-lg"
+                            />
+                            <div class="grid grid-cols-2 gap-4">
+                              <div>
+                                <label
+                                  for="bedrooms"
+                                  class="block text-md mb-2"
+                                >
+                                  Beds:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="bedrooms-p"
+                                  name="bedrooms"
+                                  placeholder="1"
+                                  class="w-full border border-gray-300 p-2 rounded-lg"
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="bathrooms"
+                                  class="block text-md mb-2"
+                                >
+                                  Bath:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="bathrooms-p"
+                                  name="bathrooms"
+                                  placeholder="1"
+                                  required
+                                  class="w-full border border-gray-300 p-2 rounded-lg"
+                                />
+                              </div>
                             </div>
+                            <button
+                              class="bg-teal-500 text-white w-full py-2 rounded-lg mt-4"
+                              onClick={handleSubmitPredictedPrice}
+                            >
+                              Submit
+                            </button>
                           </div>
                         </div>
-                        <div>
-                          <p class="text-xl mb-2">House Details</p>
-                          <label for="house_type" class="block text-md mb-2">
-                            House Type:
-                          </label>
-                          <select
-                            id="house_type-p"
-                            name="house_type"
-                            required
-                            class="w-full border border-gray-300 p-2 rounded-lg"
-                          >
-                            <For each={uniqueHouseType()}>
-                              {(item) => <option value={item}>{item}</option>}
-                            </For>
-                          </select>
-                          <label for="size" class="block text-md mb-2">
-                            Size(sqft):
-                          </label>
-                          <input
-                            type="number"
-                            id="size-p"
-                            name="size"
-                            placeholder="1000"
-                            required
-                            class="w-full border border-gray-300 p-2 rounded-lg"
-                          />
-                          <div class="grid grid-cols-2 gap-4">
-                            <div>
-                              <label for="bedrooms" class="block text-md mb-2">
-                                Beds:
-                              </label>
-                              <input
-                                type="number"
-                                id="bedrooms-p"
-                                name="bedrooms"
-                                placeholder="1"
-                                class="w-full border border-gray-300 p-2 rounded-lg"
-                                required
-                              />
-                            </div>
-                            <div>
-                              <label for="bathrooms" class="block text-md mb-2">
-                                Bath:
-                              </label>
-                              <input
-                                type="number"
-                                id="bathrooms-p"
-                                name="bathrooms"
-                                placeholder="1"
-                                required
-                                class="w-full border border-gray-300 p-2 rounded-lg"
-                              />
-                            </div>
-                          </div>
-                          <button
-                            class="bg-teal-500 text-white w-full py-2 rounded-lg mt-4"
-                            onClick={handleSubmitPredictedPrice}
-                          >
-                            Submit
-                          </button>
+                      </div>
+                      <div class="text-center mt-8">
+                        <div class="text-xl">The predicted price will be:</div>
+                        <div class="text-3xl font-semibold">
+                          ${predictedCost()}
                         </div>
                       </div>
                     </div>
-                    <div class="text-center mt-8">
-                      <div class="text-xl">The predicted price will be:</div>
-                      <div class="text-3xl font-semibold">${predictedCost()}</div>
-                    </div>
-                  </div>
-                </Show>
+                  </Show>
+                </div>
               </div>
-            </div>
-
             </div>
           </div>
 

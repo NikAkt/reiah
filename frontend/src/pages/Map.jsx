@@ -101,7 +101,7 @@ export const Map = (props) => {
                 setPredictedPrice={setPredictedPrice}
                 setQuery={setQuery}
                 recommendedZipcode={recommendedZipcode()}
-                setRecommendedZipcode={setRecommendedZipcode} 
+                setRecommendedZipcode={setRecommendedZipcode}
               >
                 <div class="flex flex-col gap-2">
                   <Show
@@ -126,26 +126,23 @@ export const Map = (props) => {
                       setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                     />
                   </Show>
-                </div>
-
-                {createEffect(() => {
-                  if (props.mapObject()) {
-                    <Show
-                      when={
-                        !dataResources.zipcodes.loading &&
-                        !dataResources.borough_neighbourhood.loading
-                      }
-                    >
-                      <Markers
-                        zipcodes={dataResources.zipcodes()}
-                        map={props.mapObject}
-                        borough_neighbourhood={dataResources.borough_neighbourhood()}
-                        zoom={zoom}
-                      />
-                      ;
-                    </Show>;
+                </div>{" "}
+                {/* <Show
+                  when={
+                    !dataResources.zipcodes.loading &&
+                    !dataResources.borough_neighbourhood.loading
                   }
-                })}
+                 
+                >
+                  <Markers
+                    zipcodes={dataResources.zipcodes()}
+                    map={props.mapObject}
+                    borough_neighbourhood={dataResources.borough_neighbourhood()}
+                    zoom={zoom}
+                  />
+                  ;
+                </Show> */}
+                ;
               </MapComponent>
             </Show>
 
