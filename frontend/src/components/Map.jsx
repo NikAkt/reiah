@@ -157,8 +157,8 @@ export const MapComponent = (props) => {
     centerControlDiv.append(
       hoverLocationDiv,
       filterBtn,
-      controlButton,
-      recommendZipBtn
+      recommendZipBtn,
+      controlButton
     );
 
     return centerControlDiv;

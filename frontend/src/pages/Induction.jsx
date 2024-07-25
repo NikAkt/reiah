@@ -24,28 +24,37 @@ const InductionPage = () => {
       w-4/5 min-h-screen text-center py-3"
       >
         <h1 class="text-2xl">User Induction</h1>
-        <div
+        <div class="text-xl">
+          Welcome to Reiah! Thanks for coming here. We hope you can be clearer
+          how to use our application here.
+        </div>
+        {/* a tags */}
+        {/* <div
           class="relative grid grid-cols-2 gap-10 mt-[2%]
         mx-auto mb-[2vh] text-xl text-center
              items-center justify-center"
         >
           <a href="#induction_step1">step 1</a>
           <a href="#induction_step2">step 2</a>
-        </div>
+        </div> */}
         <div
           id="induction_step1"
           className="flex flex-col items-center w-full py-3"
         >
-          <div className="text-2xl text-center mb-4">
-            Step 1 Find the zip code you are interested in
-          </div>
+          <div className="text-2xl text-center mb-4">Map Page</div>
+
+          {/* a tags */}
           <div
-            class="relative grid grid-cols-3 mx-auto divide-x mb-[2vh]
+            class="relative grid grid-cols-7 mx-auto divide-x mb-[2vh]
              items-center justify-center"
           >
+            <a href="#side_bar">Side Bar</a>
+            <a href="#side_bar">Account Button</a>
+            <a href="#side_bar">Zip code Layer</a>
             <a href="#search_bar">Search Bar</a>
             <a href="#filter">Filter</a>
             <a href="#recommend">Recommend</a>
+            <a href="#side_bar">Dashboard</a>
           </div>
           <div className="w-full flex justify-center mb-4">
             <img
