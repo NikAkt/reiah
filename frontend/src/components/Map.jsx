@@ -138,7 +138,7 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         };
-      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+      } else if (recommendedZipcode().includes(parseInt(zipCode))) {
         return {
           fillColor: colors.recommended,
           strokeColor: colors.recommended,
@@ -198,7 +198,7 @@ export const MapComponent = (props) => {
           fillOpacity: 0.7,
           strokeWeight: 2,
         });
-      } else if (props.recommendedZipcode().includes(parseInt(zipCode))) {
+      } else if (recommendedZipcode().includes(parseInt(zipCode))) {
         map.data.overrideStyle(event.feature, {
           fillColor: colors.recommended,
           strokeColor: colors.recommended,
