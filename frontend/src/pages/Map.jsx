@@ -127,21 +127,6 @@ export const Map = (props) => {
                     />
                   </Show>
                 </div>{" "}
-                {/* <Show
-                  when={
-                    !dataResources.zipcodes.loading &&
-                    !dataResources.borough_neighbourhood.loading
-                  }
-                 
-                >
-                  <Markers
-                    zipcodes={dataResources.zipcodes()}
-                    map={props.mapObject}
-                    borough_neighbourhood={dataResources.borough_neighbourhood()}
-                    zoom={zoom}
-                  />
-                  ;
-                </Show> */}
               </MapComponent>
             </Show>
 

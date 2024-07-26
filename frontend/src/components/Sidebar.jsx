@@ -44,6 +44,7 @@ const SidebarLink = (props) => {
   );
 };
 
+// TODO: THIS IS THE SIDEBAR I NEED TO UPDATE TO USE A BUTTON TO OPEN BECAUSE IF YOU ARE ON MOBILE YOU CANT NAVIGATE
 // This is the exported sidebar component which will actually be used in the page layouts
 const Sidebar = (props) => {
   return (

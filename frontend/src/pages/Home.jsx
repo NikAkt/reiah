@@ -13,7 +13,7 @@ export const Home = () => {
           <a href="/">
             <img src={appLogo} alt="App Logo" class="w-28 lg:w-48 h-auto" />
           </a>
-          <ul class="flex gap-10">
+          <ul class="flex gap-4 md:gap-10">
             <a
               class="font-poppins-regular text-xl hover:text-gray-500 transition-colors duration-300"
               href="/map"
