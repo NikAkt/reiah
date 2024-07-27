@@ -68,7 +68,7 @@ export const Map = (props) => {
 
   return (
     <MapView>
-      <div class="h-screen flex relative">
+      <div class="h-screen flex relative flex-col sm:flex-row ">
         <ErrorBoundary fallback={<ErrorPage />}>
           <Suspense
             fallback={
@@ -107,7 +107,7 @@ export const Map = (props) => {
                   <Show
                     when={getSelectedZip()}
                     fallback={
-                      <div>
+                      <div class="dark:text-white">
                         Please search or click a zipcode layer to check the
                         details
                       </div>
@@ -157,7 +157,10 @@ export const Map = (props) => {
             </Show>
           </Suspense>
         </ErrorBoundary>
-        <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>
+        <div
+          class="
+        bg-white dark:bg-gray-900 w-full sm:w-1/2 hidden"
+        ></div>
       </div>
       <UserMenu />
     </MapView>

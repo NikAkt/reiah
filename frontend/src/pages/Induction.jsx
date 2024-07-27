@@ -47,7 +47,7 @@ const MiniSection = ({ img_src, description }) => {
     rounded-md shadow-md border-solid border-grey-300 w-[60%] hover:scale-150 duration-300 hover:z-10"
     >
       <img src={img_src} className="w-[60%] h-auto" />
-      <p class="mt-6 text-left px-2">{description}</p>
+      <p class="mt-6 text-left px-2 dark:text-black">{description}</p>
     </div>
   );
 };
