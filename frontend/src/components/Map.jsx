@@ -368,8 +368,8 @@ export const MapComponent = (props) => {
 
       <div
         class={`bg-white dark:bg-gray-900 w-[60vw] gap-2 
-      right-0 h-screen flex flex-col sm:w-1/2 w-full
-          drop-shadow overflow-scroll p-6 
+      right-0 h-2/5 sm:h-full flex flex-col sm:w-1/2 w-full 
+          drop-shadow overflow-scroll p-6
           ${sideBarOpen() ? "" : "hidden"}
           
           `}

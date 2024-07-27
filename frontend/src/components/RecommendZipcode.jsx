@@ -54,12 +54,20 @@ const RecommendZipcode = ({
   setSidebarOpen,
 }) => {
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(neighbourhood_type[0]);
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
+    neighbourhood_type[0]
+  );
   const [getSelectedIncome, setSelectedIncome] = createSignal(income[0]);
-  const [getSelectedBusiness, setSelectedBusiness] = createSignal(business_environment[0]);
-  const [getSelectedProperty, setSelectedProperty] = createSignal(property_type[0]);
+  const [getSelectedBusiness, setSelectedBusiness] = createSignal(
+    business_environment[0]
+  );
+  const [getSelectedProperty, setSelectedProperty] = createSignal(
+    property_type[0]
+  );
   const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
-  const [getSelectedHousehold, setSelectedHousehold] = createSignal(household_type[0]);
+  const [getSelectedHousehold, setSelectedHousehold] = createSignal(
+    household_type[0]
+  );
   const [getSelectedBeds, setSelectedBeds] = createSignal(1);
   const [getSelectedBaths, setSelectedBaths] = createSignal(1);
   const [getSelectedMaxPrice, setSelectedMaxPrice] = createSignal(1000000);
@@ -81,7 +89,9 @@ const RecommendZipcode = ({
     setRecommendedZipcode([]); // Reset the highlight on the map
     setNoZipcodesMessage("");
 
-    document.querySelectorAll('input[type="checkbox"]').forEach((el) => (el.checked = false)); // Clear all checkboxes
+    document
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((el) => (el.checked = false)); // Clear all checkboxes
   };
 
   const handleSubmitForm = () => {
@@ -150,12 +160,12 @@ const RecommendZipcode = ({
 
   return (
     <div
-      class={`absolute z-40 h-full bg-white 
-        text-center flex w-[55vw] left-[45vw]
+      class={`absolute z-40 h-full bg-white w-full bottom-0 h-2/5
+        text-center flex sm:w-[55vw] sm:left-[45vw]
       items-center overflow-y-auto
    gap-0.5 justify-center text-black 
    transform  transition-transform duration-500 scale-100 ${
-     showRecommendBoard() ? "translate-y-0" : "-translate-y-full"
+     showRecommendBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
    }`}
     >
       <div class="absolute top-4 left-4">

@@ -159,7 +159,7 @@ export const Map = (props) => {
         </ErrorBoundary>
         <div
           class="
-        bg-white dark:bg-gray-900 w-full sm:w-1/2 hidden"
+        bg-white dark:bg-gray-900 w-full hidden"
         ></div>
       </div>
       <UserMenu />

@@ -17,10 +17,12 @@ const Filter = ({
   showFilterBoard,
   setShowFilterBoard,
   map,
-  setSideBarOpen,
+  setSidebarOpen,
 }) => {
   const [selectedBoroughs, setSelectedBoroughs] = createSignal(new Set());
-  const [selectedNeighborhoods, setSelectedNeighborhoods] = createSignal(new Set());
+  const [selectedNeighborhoods, setSelectedNeighborhoods] = createSignal(
+    new Set()
+  );
   const [boroughData, setBoroughData] = createSignal([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = createSignal(false);
   const [selectedAmenities, setSelectedAmenities] = createSignal(new Set());
@@ -34,11 +36,25 @@ const Filter = ({
   const [filteredZipCodesLocal, setFilteredZipCodesLocal] = createSignal([]);
   const [realEstateData, setRealEstateData] = createSignal([]);
 
-  const unique_borough = ["Bronx", "Manhattan", "Queens", "Brooklyn", "Staten Island"];
-  const houseTypeOptions = ["Condo", "Townhouse", "Co-op", "Multi-family home", "House"];
+  const unique_borough = [
+    "Bronx",
+    "Manhattan",
+    "Queens",
+    "Brooklyn",
+    "Staten Island",
+  ];
+  const houseTypeOptions = [
+    "Condo",
+    "Townhouse",
+    "Co-op",
+    "Multi-family home",
+    "House",
+  ];
 
   const fetchBoroughData = async () => {
-    const response = await fetch("http://localhost:8000/api/borough-neighbourhood");
+    const response = await fetch(
+      "http://localhost:8000/api/borough-neighbourhood"
+    );
     const data = await response.json();
     setBoroughData(data);
   };
@@ -46,7 +62,9 @@ const Filter = ({
   const fetchRealEstateData = async (filters) => {
     const query = new URLSearchParams(filters).toString();
     try {
-      const response = await fetch(`http://localhost:8000/api/property-data?${query}`);
+      const response = await fetch(
+        `http://localhost:8000/api/property-data?${query}`
+      );
       const data = await response.json();
       setRealEstateData(data || []);
       applyFilters();
@@ -60,7 +78,9 @@ const Filter = ({
   const fetchAmenities = debounce(async (neighborhoods) => {
     if (neighborhoods.length > 0) {
       const neighborhoodParams = neighborhoods.join(",");
-      const response = await fetch(`http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`);
+      const response = await fetch(
+        `http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`
+      );
       const data = await response.json();
       setFilteredAmenities(
         data.reduce((acc, amenity) => {
@@ -163,7 +183,10 @@ const Filter = ({
   };
 
   const applyFilters = () => {
-    let zipCodes = getZipcodes([...selectedBoroughs()], [...selectedNeighborhoods()]);
+    let zipCodes = getZipcodes(
+      [...selectedBoroughs()],
+      [...selectedNeighborhoods()]
+    );
 
     if (zipCodes.length === 0) {
       setFilteredZipCodesLocal([]);
@@ -192,15 +215,30 @@ const Filter = ({
           const validPrice = property.PRICE != null && !isNaN(property.PRICE);
           const validBeds = property.BEDS != null && !isNaN(property.BEDS);
           const validBaths = property.BATH != null && !isNaN(property.BATH);
-          const validSqft = property.PROPERTYSQFT != null && !isNaN(property.PROPERTYSQFT);
+          const validSqft =
+            property.PROPERTYSQFT != null && !isNaN(property.PROPERTYSQFT);
 
           const typeMatch = houseType() === "" || houseType() === property.TYPE;
-          const bedsMatch = beds() > 0 ? validBeds && property.BEDS >= beds() : true;
-          const bathsMatch = baths() > 0 ? validBaths && property.BATH >= baths() : true;
-          const sqftMinMatch = propertySqft()[0] > 0 ? validSqft && property.PROPERTYSQFT >= propertySqft()[0] : true;
-          const sqftMaxMatch = propertySqft()[1] > 0 ? validSqft && property.PROPERTYSQFT <= propertySqft()[1] : true;
-          const priceMinMatch = propertyPrice()[0] > 0 ? validPrice && property.PRICE >= propertyPrice()[0] : true;
-          const priceMaxMatch = propertyPrice()[1] > 0 ? validPrice && property.PRICE <= propertyPrice()[1] : true;
+          const bedsMatch =
+            beds() > 0 ? validBeds && property.BEDS >= beds() : true;
+          const bathsMatch =
+            baths() > 0 ? validBaths && property.BATH >= baths() : true;
+          const sqftMinMatch =
+            propertySqft()[0] > 0
+              ? validSqft && property.PROPERTYSQFT >= propertySqft()[0]
+              : true;
+          const sqftMaxMatch =
+            propertySqft()[1] > 0
+              ? validSqft && property.PROPERTYSQFT <= propertySqft()[1]
+              : true;
+          const priceMinMatch =
+            propertyPrice()[0] > 0
+              ? validPrice && property.PRICE >= propertyPrice()[0]
+              : true;
+          const priceMaxMatch =
+            propertyPrice()[1] > 0
+              ? validPrice && property.PRICE <= propertyPrice()[1]
+              : true;
 
           return (
             typeMatch &&
@@ -221,7 +259,9 @@ const Filter = ({
 
     if (hasAmenityFilters) {
       zipCodes = zipCodes.filter((zip) => {
-        const amenities = Array.isArray(filteredAmenities()[zip]) ? filteredAmenities()[zip] : [];
+        const amenities = Array.isArray(filteredAmenities()[zip])
+          ? filteredAmenities()[zip]
+          : [];
         const matches = [...selectedAmenities()].every((amenity) =>
           amenities.some((a) => a.FACILITY_DOMAIN_NAME === amenity)
         );
@@ -244,7 +284,9 @@ const Filter = ({
       maxsqft: propertySqft()[1] > 0 ? propertySqft()[1] : null,
     };
 
-    Object.keys(filters).forEach((key) => filters[key] === null && delete filters[key]);
+    Object.keys(filters).forEach(
+      (key) => filters[key] === null && delete filters[key]
+    );
 
     fetchRealEstateData(filters);
   }, 300);
@@ -261,7 +303,9 @@ const Filter = ({
   const categorizedAmenities = () => {
     const categories = {};
     filteredZipCodesLocal().forEach((zipCode) => {
-      const amenities = Array.isArray(filteredAmenities()[zipCode]) ? filteredAmenities()[zipCode] : [];
+      const amenities = Array.isArray(filteredAmenities()[zipCode])
+        ? filteredAmenities()[zipCode]
+        : [];
       amenities.forEach((amenity) => {
         if (!categories[amenity.FACILITY_T]) {
           categories[amenity.FACILITY_T] = new Set();
@@ -294,19 +338,18 @@ const Filter = ({
   const highlightZipCodesOnMap = (zipCodes) => {
     setFilteredZipCodes(zipCodes);
     setShowFilterBoard(false);
-    setSideBarOpen(false);
+    setSidebarOpen(false);
   };
 
   return (
     <div
-      class={`absolute z-40 h-full bg-white 
-         flex flex-col left-[45vw] w-[55vw] border-black overflow-y-auto
+      class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white w-full bottom-0
+         flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
       gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
-        showFilterBoard() ? "translate-y-0" : "-translate-y-full"
+        showFilterBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
       }`}
     >
       <div class="relative flex-1 w-full bg-white rounded-lg overflow-y-auto">
-
         {/* FILTER TITLE */}
         <div
           id="filter-dropdown-title"
@@ -317,7 +360,7 @@ const Filter = ({
             class="absolute left-4 rounded-full w-8 h-8 flex items-center justify-center text-black hover:bg-teal-500"
             onClick={() => {
               setShowFilterBoard(false);
-              setSideBarOpen(false);
+              setSidebarOpen(false);
             }}
           >
             <img src={close_icon} class="w-8 h-8" />
@@ -327,10 +370,12 @@ const Filter = ({
 
         {/* FILTER CONTENT */}
         <div class="w-full p-6 bg-white">
-
           {/* Borough Selection */}
           <div class="w-full p-4 rounded-lg bg-white">
-            <label htmlFor="borough-selection" class="block mb-2 text-lg font-semibold">
+            <label
+              htmlFor="borough-selection"
+              class="block mb-2 text-lg font-semibold"
+            >
               Borough:
             </label>
             <div class="flex flex-wrap gap-2">
@@ -351,7 +396,10 @@ const Filter = ({
           {/* Neighborhood Selection */}
           {[...selectedBoroughs()].length > 0 && (
             <div class="w-full p-4 rounded-lg bg-white">
-              <label htmlFor="neighborhood-selection" class="block mb-2 text-lg font-semibold">
+              <label
+                htmlFor="neighborhood-selection"
+                class="block mb-2 text-lg font-semibold"
+              >
                 Neighborhood:
               </label>
               <div class="w-full h-64 overflow-y-auto border border-gray-300 rounded-md">
@@ -359,7 +407,9 @@ const Filter = ({
                   <div
                     key={el}
                     class={`p-2 cursor-pointer ${
-                      selectedNeighborhoods().has(el) ? "bg-teal-500 text-white" : "bg-white text-gray-700"
+                      selectedNeighborhoods().has(el)
+                        ? "bg-teal-500 text-white"
+                        : "bg-white text-gray-700"
                     }`}
                     onClick={() => handleNeighborhoodChange(el)}
                   >
@@ -376,17 +426,20 @@ const Filter = ({
               class="mt-4 p-3 bg-teal-500 text-white rounded text-lg"
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters())}
             >
-              {showAdvancedFilters() ? "Hide Advanced Filters" : "Show Advanced Filters"}
+              {showAdvancedFilters()
+                ? "Hide Advanced Filters"
+                : "Show Advanced Filters"}
             </button>
           )}
 
           {/* Advanced Filters */}
           {showAdvancedFilters() && (
             <div class="w-full p-4 rounded-lg mt-4 flex flex-col gap-4 bg-white">
-              
               {/* House Type */}
               <div class="flex flex-col gap-2 bg-white">
-                <label htmlFor="houseType" class="text-lg font-semibold">House Type</label>
+                <label htmlFor="houseType" class="text-lg font-semibold">
+                  House Type
+                </label>
                 <div class="flex flex-wrap gap-2 bg-white">
                   {houseTypeOptions.map((type) => (
                     <button
@@ -405,7 +458,9 @@ const Filter = ({
               {/* Beds and Baths */}
               <div class="flex gap-4 w-full bg-white">
                 <div class="flex flex-col gap-2 bg-white">
-                  <label htmlFor="beds" class="text-lg font-semibold">Beds</label>
+                  <label htmlFor="beds" class="text-lg font-semibold">
+                    Beds
+                  </label>
                   <input
                     type="number"
                     id="beds"
@@ -417,7 +472,9 @@ const Filter = ({
                   />
                 </div>
                 <div class="flex flex-col gap-2 bg-white">
-                  <label htmlFor="baths" class="text-lg font-semibold">Baths</label>
+                  <label htmlFor="baths" class="text-lg font-semibold">
+                    Baths
+                  </label>
                   <input
                     type="number"
                     id="baths"
@@ -432,27 +489,43 @@ const Filter = ({
 
               {/* Property Sqft */}
               <div class="flex flex-col gap-2 bg-white">
-                <label htmlFor="propertySqft" class="text-lg font-semibold">Property Sqft</label>
+                <label htmlFor="propertySqft" class="text-lg font-semibold">
+                  Property Sqft
+                </label>
                 <div class="flex gap-2 bg-white">
                   <div class="flex flex-col w-full bg-white">
-                    <label htmlFor="minSqft" class="text-gray-700">Minimum</label>
+                    <label htmlFor="minSqft" class="text-gray-700">
+                      Minimum
+                    </label>
                     <input
                       type="number"
                       id="minSqft"
                       class="border border-gray-300 rounded p-2 text-lg"
                       value={propertySqft()[0]}
-                      onInput={(e) => setPropertySqft([Number(e.target.value), propertySqft()[1]])}
+                      onInput={(e) =>
+                        setPropertySqft([
+                          Number(e.target.value),
+                          propertySqft()[1],
+                        ])
+                      }
                       onChange={handleFilterChange}
                     />
                   </div>
                   <div class="flex flex-col w-full bg-white">
-                    <label htmlFor="maxSqft" class="text-gray-700">Maximum</label>
+                    <label htmlFor="maxSqft" class="text-gray-700">
+                      Maximum
+                    </label>
                     <input
                       type="number"
                       id="maxSqft"
                       class="border border-gray-300 rounded p-2 text-lg"
                       value={propertySqft()[1]}
-                      onInput={(e) => setPropertySqft([propertySqft()[0], Number(e.target.value)])}
+                      onInput={(e) =>
+                        setPropertySqft([
+                          propertySqft()[0],
+                          Number(e.target.value),
+                        ])
+                      }
                       onChange={handleFilterChange}
                     />
                   </div>
@@ -461,27 +534,43 @@ const Filter = ({
 
               {/* Property Price */}
               <div class="flex flex-col gap-2 bg-white">
-                <label htmlFor="propertyPrice" class="text-lg font-semibold">Property Price</label>
+                <label htmlFor="propertyPrice" class="text-lg font-semibold">
+                  Property Price
+                </label>
                 <div class="flex gap-2 bg-white">
                   <div class="flex flex-col w-full bg-white">
-                    <label htmlFor="minPrice" class="text-gray-700">Minimum</label>
+                    <label htmlFor="minPrice" class="text-gray-700">
+                      Minimum
+                    </label>
                     <input
                       type="number"
                       id="minPrice"
                       class="border border-gray-300 rounded p-2 text-lg"
                       value={propertyPrice()[0]}
-                      onInput={(e) => setPropertyPrice([Number(e.target.value), propertyPrice()[1]])}
+                      onInput={(e) =>
+                        setPropertyPrice([
+                          Number(e.target.value),
+                          propertyPrice()[1],
+                        ])
+                      }
                       onChange={handleFilterChange}
                     />
                   </div>
                   <div class="flex flex-col w-full bg-white">
-                    <label htmlFor="maxPrice" class="text-gray-700">Maximum</label>
+                    <label htmlFor="maxPrice" class="text-gray-700">
+                      Maximum
+                    </label>
                     <input
                       type="number"
                       id="maxPrice"
                       class="border border-gray-300 rounded p-2 text-lg"
                       value={propertyPrice()[1]}
-                      onInput={(e) => setPropertyPrice([propertyPrice()[0], Number(e.target.value)])}
+                      onInput={(e) =>
+                        setPropertyPrice([
+                          propertyPrice()[0],
+                          Number(e.target.value),
+                        ])
+                      }
                       onChange={handleFilterChange}
                     />
                   </div>
@@ -490,35 +579,43 @@ const Filter = ({
 
               {/* Amenities */}
               <div class="flex flex-col gap-2">
-                <label htmlFor="amenities" class="text-lg font-semibold">Amenities</label>
-                {Object.entries(categorizedAmenities()).map(([category, amenities]) => (
-                  <div key={category} class="flex flex-col gap-2">
-                    <button
-                      class="font-semibold text-gray-700 text-left"
-                      onClick={() => handleCategoryToggle(category)}
-                    >
-                      {category} {expandedCategories().has(category) ? "-" : "+"}
-                    </button>
-                    {expandedCategories().has(category) && (
-                      <div class="grid grid-cols-2 gap-2 p-2 bg-gray-50 rounded-md">
-                        {amenities.map((amenity) => (
-                          <div key={amenity} class="flex items-center">
-                            <input
-                              type="checkbox"
-                              id={amenity}
-                              class="border border-gray-300 rounded p-2"
-                              onChange={() => handleAmenityChange(amenity)}
-                              checked={selectedAmenities().has(amenity)}
-                            />
-                            <label htmlFor={amenity} class="ml-2 text-gray-700">
-                              {amenity}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                <label htmlFor="amenities" class="text-lg font-semibold">
+                  Amenities
+                </label>
+                {Object.entries(categorizedAmenities()).map(
+                  ([category, amenities]) => (
+                    <div key={category} class="flex flex-col gap-2">
+                      <button
+                        class="font-semibold text-gray-700 text-left"
+                        onClick={() => handleCategoryToggle(category)}
+                      >
+                        {category}{" "}
+                        {expandedCategories().has(category) ? "-" : "+"}
+                      </button>
+                      {expandedCategories().has(category) && (
+                        <div class="grid grid-cols-2 gap-2 p-2 bg-gray-50 rounded-md">
+                          {amenities.map((amenity) => (
+                            <div key={amenity} class="flex items-center">
+                              <input
+                                type="checkbox"
+                                id={amenity}
+                                class="border border-gray-300 rounded p-2"
+                                onChange={() => handleAmenityChange(amenity)}
+                                checked={selectedAmenities().has(amenity)}
+                              />
+                              <label
+                                htmlFor={amenity}
+                                class="ml-2 text-gray-700"
+                              >
+                                {amenity}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
               </div>
             </div>
           )}
@@ -538,7 +635,9 @@ const Filter = ({
           <span class="text-red-500">Change filters</span>
         ) : (
           <div class="flex items-center gap-2">
-            <span>Filters result in {filteredZipCodesLocal().length} zipcodes</span>
+            <span>
+              Filters result in {filteredZipCodesLocal().length} zipcodes
+            </span>
             <button
               class="rounded-2xl cursor-pointer px-4 py-2 bg-teal-500 text-white hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
               onClick={() => {
