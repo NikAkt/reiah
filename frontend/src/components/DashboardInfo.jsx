@@ -326,7 +326,10 @@ export const DashboardInfo = ({
                   >
                     <div class="p-2">
                       {uniqueZipcode.map((zip) => (
-                        <div key={zip} class="p-2 flex items-center">
+                        <div
+                          key={zip}
+                          class="p-2 flex items-center dark:text-black"
+                        >
                           <input
                             type="checkbox"
                             id={`compareCheckbox-${zip}`}
@@ -529,7 +532,7 @@ export const DashboardInfo = ({
 
         <div
           class={`grid grid-row-1 divide-y relative 
-      w-[100%] place-content-stretch
+      w-[100%] place-content-stretch dark:text-white
        ${show() ? "" : "hidden"}`}
           id="main-info-section"
         >
