@@ -408,11 +408,12 @@ export const DashboardInfo = ({
 
       <div class="w-[95%] h-[1px] mt-[4vh] py-[2vh]" id="main">
         <div
-          class="rounded-lg shadow-lg w-[60%] mx-auto grid grid-cols-3 divide-x h-[6vh] mb-[3vh] items-center"
+          class="rounded-lg shadow-lg w-[60%] mx-auto grid grid-cols-3
+          divide-x h-[6.5vh] mb-[3vh] items-center"
           id="control-button"
         >
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${
+            class={`relative h-full flex items-center justify-center whitespace-nowrap ${
               mainInfo() === "realEstate"
                 ? "bg-teal-500 text-white"
                 : "bg-white text-black"
@@ -435,7 +436,7 @@ export const DashboardInfo = ({
             <span class="ml-2">Real Estate</span>
           </div>
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${
+            class={`relative flex h-full items-center justify-center whitespace-nowrap ${
               mainInfo() === "amenities"
                 ? "bg-teal-500 text-white"
                 : "bg-white text-black"
@@ -503,7 +504,7 @@ export const DashboardInfo = ({
             <span class="ml-2">Amenities</span>
           </div>
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${
+            class={`relative flex items-center h-full justify-center whitespace-nowrap ${
               mainInfo() === "other"
                 ? "bg-teal-500 text-white"
                 : "bg-white text-black"
