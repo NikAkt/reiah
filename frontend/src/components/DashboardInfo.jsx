@@ -34,7 +34,7 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
 
   createEffect(() => {
     let zip = loadCompared ? getSelectedZip : getSelectedZip();
-    fetch(`http://localhost:8000/api/zipcode-scores?zipcode=${zip}`)
+    fetch(`/api/zipcode-scores?zipcode=${zip}`)
       .then((response) => response.json())
       .then((data) => {
         if (data && data.length) {
@@ -130,7 +130,7 @@ export const DashboardInfo = ({
   });
 
   const fetchDashboardInfoData = async (level, area) => {
-    fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
+    fetch(`/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
         if (data && data.length > 0) {
@@ -158,7 +158,7 @@ export const DashboardInfo = ({
     zip
   ) => {
     fetch(
-      `http://localhost:5001/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
+      `/AI/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -320,9 +320,8 @@ export const DashboardInfo = ({
                     />
                   </div>
                   <div
-                    class={`absolute z-40 w-full bg-white shadow-lg border border-gray-200 rounded-lg mt-2 ${
-                      showDropDown() ? "block" : "hidden"
-                    }`}
+                    class={`absolute z-40 w-full bg-white shadow-lg border border-gray-200 rounded-lg mt-2 ${showDropDown() ? "block" : "hidden"
+                      }`}
                   >
                     <div class="p-2">
                       {uniqueZipcode.map((zip) => (
@@ -360,19 +359,17 @@ export const DashboardInfo = ({
                 </div>
                 <input
                   type="Submit"
-                  class={`relative rounded-lg bg-teal-500 text-white px-4 py-2 ${
-                    getComparedZip().length > 0
-                      ? "cursor-pointer"
-                      : "cursor-not-allowed opacity-50 disabled"
-                  }`}
+                  class={`relative rounded-lg bg-teal-500 text-white px-4 py-2 ${getComparedZip().length > 0
+                    ? "cursor-pointer"
+                    : "cursor-not-allowed opacity-50 disabled"
+                    }`}
                   onClick={handleSubmit}
                 />
                 <button
-                  class={`relative bg-teal-500 px-4 py-2 rounded-lg text-white ${
-                    getComparedZip().length > 0
-                      ? ""
-                      : "cursor-not-allowed opacity-50 disabled"
-                  }`}
+                  class={`relative bg-teal-500 px-4 py-2 rounded-lg text-white ${getComparedZip().length > 0
+                    ? ""
+                    : "cursor-not-allowed opacity-50 disabled"
+                    }`}
                   onClick={() => {
                     setCreateMoreDashboardInfo(false);
                     for (let zip of getComparedZip()) {
@@ -409,11 +406,10 @@ export const DashboardInfo = ({
           id="control-button"
         >
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${
-              mainInfo() === "realEstate"
-                ? "bg-teal-500 text-white"
-                : "bg-white text-black"
-            } rounded-l-lg cursor-pointer hover:border hover:border-solid shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center justify-center whitespace-nowrap ${mainInfo() === "realEstate"
+              ? "bg-teal-500 text-white"
+              : "bg-white text-black"
+              } rounded-l-lg cursor-pointer hover:border hover:border-solid shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("realEstate");
             }}
@@ -432,11 +428,10 @@ export const DashboardInfo = ({
             <span class="ml-2">Real Estate</span>
           </div>
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${
-              mainInfo() === "amenities"
-                ? "bg-teal-500 text-white"
-                : "bg-white text-black"
-            } cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center justify-center whitespace-nowrap ${mainInfo() === "amenities"
+              ? "bg-teal-500 text-white"
+              : "bg-white text-black"
+              } cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("amenities");
             }}
@@ -500,11 +495,10 @@ export const DashboardInfo = ({
             <span class="ml-2">Amenities</span>
           </div>
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${
-              mainInfo() === "other"
-                ? "bg-teal-500 text-white"
-                : "bg-white text-black"
-            } rounded-r-lg cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center justify-center whitespace-nowrap ${mainInfo() === "other"
+              ? "bg-teal-500 text-white"
+              : "bg-white text-black"
+              } rounded-r-lg cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("other");
             }}
@@ -534,9 +528,8 @@ export const DashboardInfo = ({
           id="main-info-section"
         >
           <div
-            class={`grid grid-row-1 divide-y ${
-              mainInfo() === "realEstate" ? "" : "hidden"
-            }`}
+            class={`grid grid-row-1 divide-y ${mainInfo() === "realEstate" ? "" : "hidden"
+              }`}
           >
             <div
               class="relative grid grid-cols-3 mx-auto divide-x mb-[2vh]
@@ -576,9 +569,8 @@ export const DashboardInfo = ({
             >
               <div
                 id="property-value"
-                class={`min-h-[40vh] ${
-                  toggleState()["property-value"] ? "" : "hidden"
-                }`}
+                class={`min-h-[40vh] ${toggleState()["property-value"] ? "" : "hidden"
+                  }`}
               >
                 <p class="text-xl py-4">Historical Property Value</p>
                 <LineChart
@@ -624,20 +616,18 @@ export const DashboardInfo = ({
 
               <div
                 id="sales-2023"
-                class={`relative w-full ${
-                  toggleState()["sales-2023"] ? "" : "hidden"
-                } py-4`}
+                class={`relative w-full ${toggleState()["sales-2023"] ? "" : "hidden"
+                  } py-4`}
               >
                 <p class="text-xl py-4">2023 Residential Property Sales</p>
                 <p class="text-sm">Data Source: Zillow</p>
                 <Show when={updateInfo()}>
                   <div class="flex gap-2 mb-4">
                     <button
-                      class={`bg-black text-white px-4 py-2 rounded-lg ${
-                        showWhichRealEstate() === getSelectedZip()
-                          ? ""
-                          : "opacity-30"
-                      }`}
+                      class={`bg-black text-white px-4 py-2 rounded-lg ${showWhichRealEstate() === getSelectedZip()
+                        ? ""
+                        : "opacity-30"
+                        }`}
                       onClick={() => {
                         setShowWhichRealEstate(getSelectedZip());
                       }}
@@ -648,9 +638,8 @@ export const DashboardInfo = ({
                       {(item, index) => {
                         return (
                           <button
-                            class={`bg-black text-white px-4 py-2 rounded-lg ${
-                              showWhichRealEstate() === item ? "" : "opacity-30"
-                            }`}
+                            class={`bg-black text-white px-4 py-2 rounded-lg ${showWhichRealEstate() === item ? "" : "opacity-30"
+                              }`}
                             onClick={() => {
                               setShowWhichRealEstate(item);
                             }}
@@ -667,7 +656,7 @@ export const DashboardInfo = ({
                   <div
                     class={
                       showWhichRealEstate() === getSelectedZip() ||
-                      !updateInfo()
+                        !updateInfo()
                         ? ""
                         : "hidden"
                     }
@@ -725,9 +714,8 @@ export const DashboardInfo = ({
 
               <div
                 id="sales-2024"
-                class={`relative w-full py-4 ${
-                  toggleState()["sales-2024"] ? "" : "hidden"
-                }`}
+                class={`relative w-full py-4 ${toggleState()["sales-2024"] ? "" : "hidden"
+                  }`}
               >
                 <p class="text-xl py-4">2024 Sales Price Prediction</p>
                 <div class="text-md mb-4">
