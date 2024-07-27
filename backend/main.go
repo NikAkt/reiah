@@ -27,20 +27,20 @@ func main() {
 	}))
 
 	// API DATA ROUTES
-	e.GET("/api/amenities", handlers.GetAmenitiesData)
-	e.GET("/api/businesses", handlers.GetBusinessData)
-	e.GET("/api/prices", handlers.GetRealEstatePriceData)
-	e.GET("/api/historic-prices", handlers.GetHistoricRealEstatePriceData)
-	e.GET("/api/neighbourhoods", handlers.GetNeighbourhoods)
-	e.GET("/api/borough", handlers.GetBoroughs)
-	e.GET("/api/zipcodes", handlers.GetZipCodes)
-	e.GET("/api/borough-neighbourhood", handlers.GetBoroughNeighbourhood)
-	e.GET("/api/zipcode-areas", handlers.GetZipCodeAreas)
-	e.GET("/api/demographic", handlers.GetDemographicData)
-	e.GET("/api/property-data", handlers.GetPropertyData)
-	e.GET("/api/zipcode-scores", handlers.GetZipcodeScores)
+	e.GET("/amenities", handlers.GetAmenitiesData)
+	e.GET("/businesses", handlers.GetBusinessData)
+	e.GET("/prices", handlers.GetRealEstatePriceData)
+	e.GET("/historic-prices", handlers.GetHistoricRealEstatePriceData)
+	e.GET("/neighbourhoods", handlers.GetNeighbourhoods)
+	e.GET("/borough", handlers.GetBoroughs)
+	e.GET("/zipcodes", handlers.GetZipCodes)
+	e.GET("/borough-neighbourhood", handlers.GetBoroughNeighbourhood)
+	e.GET("/zipcode-areas", handlers.GetZipCodeAreas)
+	e.GET("/demographic", handlers.GetDemographicData)
+	e.GET("/property-data", handlers.GetPropertyData)
+	e.GET("/zipcode-scores", handlers.GetZipcodeScores)
 
 	// Mount the public folder at the public address for accessing css and static files
-	e.Static("/api", "public")
+	e.Static("/", "public")
 	e.Logger.Fatal(e.Start("0.0.0.0:8000"))
 }

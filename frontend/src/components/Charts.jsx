@@ -127,7 +127,7 @@ async function fetchMultipleHistoricPrices(zipArray) {
       }
     }
     const response = await fetch(
-      `http://localhost:8000/api/historic-prices${query}`
+      `/api/historic-prices${query}`
     );
     if (!response.ok) {
       return [];
@@ -147,7 +147,7 @@ async function fetchMultipleHistoricPrices(zipArray) {
 
 async function fetchHistoricPrices(zip) {
   const response = await fetch(
-    `http://localhost:8000/api/historic-prices?zipcode=${zip}`
+    `/api/historic-prices?zipcode=${zip}`
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");
