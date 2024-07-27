@@ -10,12 +10,9 @@ import {
   createEffect,
   ErrorBoundary,
 } from "solid-js";
-import { LineChart } from "../components/Charts";
 import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
-import Filter from "../components/Filter";
 import UserMenu from "../components/UserMenu";
-import RecommendZipcode from "../components/RecommendZipcode";
 
 async function fetchData([url]) {
   const response = await fetch(url);
@@ -28,12 +25,7 @@ export const Map = (props) => {
   const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
     createSignal(false);
 
-  const [filteredZipCodes, setFilteredZipCodes] = createSignal([]);
-  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
-
   const [getComparedZip, setComparedZip] = createSignal([]);
-  const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
-  const [showFilterBoard, setShowFilterBoard] = createSignal(false);
 
   const [showHousesMarker, setShowHousesMarker] = createSignal(true);
   const [showAmenityMarker, setShowAmenityMarker] = createSignal(false);
@@ -44,6 +36,8 @@ export const Map = (props) => {
 
   const [predictedPrice, setPredictedPrice] = createSignal([]);
   const [query, setQuery] = createSignal({});
+
+  const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
 
   const [historicalRealEstateData] = createResource(
     ["http://localhost:8000/api/historic-prices"],
@@ -72,10 +66,6 @@ export const Map = (props) => {
     zipcode_geojson,
   };
 
-  createEffect(() => {
-    console.log(recommendedZipcode());
-  });
-
   return (
     <MapView>
       <div class="h-screen flex relative">
@@ -87,26 +77,6 @@ export const Map = (props) => {
               </div>
             }
           >
-            <Show when={showFilterBoard()}>
-              <Filter
-                setFilteredZipCodes={setFilteredZipCodes}
-                setShowFilterBoard={setShowFilterBoard}
-              />
-            </Show>
-            <Show
-              when={showRecommendBoard()}
-              fallback={() => {
-                console.log("fail to load recommendzipcode");
-              }}
-            >
-              <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
-              <RecommendZipcode
-                setRecommendedZipcode={setRecommendedZipcode}
-                setShowRecommendBoard={setShowRecommendBoard}
-                setPredictedPrice={setPredictedPrice}
-                setQuery={setQuery}
-              />
-            </Show>
             <Show
               when={
                 dataResources.zipcodes() &&
@@ -121,17 +91,17 @@ export const Map = (props) => {
                 zipcodeOnCharts={getSelectedZip}
                 zipcodeSetter={setSelectedZip}
                 getComparedZip={getComparedZip}
-                filteredZipCodes={filteredZipCodes}
                 setFavorite={props.setFavorite}
                 favorite={props.favorite}
-                setShowRecommendBoard={setShowRecommendBoard}
-                setShowFilterBoard={setShowFilterBoard}
                 showAmenityMarker={showAmenityMarker}
                 setShowAmenityMarker={setShowAmenityMarker}
                 showHousesMarker={showHousesMarker}
                 setShowHousesMarker={setShowHousesMarker}
-                recommendedZipcode={recommendedZipcode}
                 setZoom={setZoom}
+                setPredictedPrice={setPredictedPrice}
+                setQuery={setQuery}
+                recommendedZipcode={recommendedZipcode()}
+                setRecommendedZipcode={setRecommendedZipcode}
               >
                 <div class="flex flex-col gap-2">
                   <Show
@@ -146,7 +116,6 @@ export const Map = (props) => {
                     <DashboardInfo
                       map={props.mapObject}
                       historicalRealEstateData={dataResources.historicalRealEstateData()}
-                      recommendedZipcode={recommendedZipcode}
                       setDisplayDialog={setDisplayDialog}
                       setDialogInfo={setDialogInfo}
                       query={query}
@@ -157,26 +126,7 @@ export const Map = (props) => {
                       setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                     />
                   </Show>
-                </div>
-
-                {createEffect(() => {
-                  if (props.mapObject()) {
-                    <Show
-                      when={
-                        !dataResources.zipcodes.loading &&
-                        !dataResources.borough_neighbourhood.loading
-                      }
-                    >
-                      <Markers
-                        zipcodes={dataResources.zipcodes()}
-                        map={props.mapObject}
-                        borough_neighbourhood={dataResources.borough_neighbourhood()}
-                        zoom={zoom}
-                      />
-                      ;
-                    </Show>;
-                  }
-                })}
+                </div>{" "}
               </MapComponent>
             </Show>
 

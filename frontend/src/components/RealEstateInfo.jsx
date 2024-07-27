@@ -1,12 +1,25 @@
-import { createSignal, createEffect, Show, For, onCleanup } from "solid-js";
-import { DoughnutChart } from "./Charts"; // Assuming you have a DoughnutChart component
+import {
+  createSignal,
+  createEffect,
+  Show,
+  For,
+  onCleanup,
+  onMount,
+} from "solid-js";
+import { DoughnutChart } from "./Charts";
+import loading_svg from "../assets/spinning-circles.svg";
+
+const LoadingSvg = () => {
+  return (
+    <div class="flex justify-center items-center h-full">
+      <img src={loading_svg} />
+    </div>
+  );
+};
 
 const RealEstateInfo = ({
-  recommendedZipcode,
   getSelectedZip,
   loader,
-  query,
-  predictedPrice,
   map,
   setDialogInfo,
   setDisplayDialog,
@@ -17,6 +30,9 @@ const RealEstateInfo = ({
   draggableMarker,
   setLat,
   setLon,
+  noProperty,
+  setNoProperty,
+  hideProperty,
 }) => {
   const colorsChartjs = [
     "#36A2EB",
@@ -29,14 +45,6 @@ const RealEstateInfo = ({
   ];
   const [typeAvg, setTypeAvg] = createSignal([]);
   const [getPropertyType, setPropertyType] = createSignal([]);
-  const [Yr1_Price, setYr1Price] = createSignal(null);
-  const [Yr1_ROI, setYr1ROI] = createSignal(null);
-
-  const [Yr3_Price, setYr3Price] = createSignal(null);
-  const [Yr3_ROI, setYr3ROI] = createSignal(null);
-
-  const [Yr5_Price, setYr5Price] = createSignal(null);
-  const [Yr5_ROI, setYr5ROI] = createSignal(null);
   const [propertyOnMap, setPropertyOnMap] = createSignal([]);
   const [hoverType, setHoverType] = createSignal(null);
 
@@ -75,11 +83,31 @@ const RealEstateInfo = ({
     scaledSize: new google.maps.Size(80, 80),
   };
 
+  const cleanPropertyOnMap = () => {
+    if (propertyOnMap().length > 0) {
+      propertyOnMap().forEach((marker) => marker.setMap(null));
+      setPropertyOnMap([]);
+    }
+  };
+
+  const hidePropertyOnMap = () => {
+    if (propertyOnMap().length > 0) {
+      propertyOnMap().forEach((marker) => marker.setMap(null));
+    }
+  };
+
+  const putPropertyOnMap = () => {
+    if (propertyOnMap().length > 0) {
+      propertyOnMap().forEach((marker) => marker.setMap(map()));
+    }
+  };
+
   async function fetchPropertyData(zip) {
     const response = await fetch(
       `http://localhost:8000/api/property-data?zipcode=${zip}`
     );
     if (!response.ok) {
+      setNoProperty(true);
       return [];
     }
     try {
@@ -115,10 +143,20 @@ const RealEstateInfo = ({
         setPropertyType(datasets);
 
         loader.importLibrary("marker").then(({ Marker, Animation }) => {
-          propertyOnMap().forEach((marker) => marker.setMap(null));
-          setPropertyOnMap([]);
+          cleanPropertyOnMap();
 
           let markers = [];
+
+          const svgMarker = {
+            path: "M19 9.77806V16.2C19 17.8801 19 18.7202 18.673 19.3619C18.3854 19.9264 17.9265 20.3854 17.362 20.673C16.7202 21 15.8802 21 14.2 21H9.8C8.11984 21 7.27976 21 6.63803 20.673C6.07354 20.3854 5.6146 19.9264 5.32698 19.3619C5 18.7202 5 17.8801 5 16.2V9.7774M21 12L15.5668 5.96393C14.3311 4.59116 13.7133 3.90478 12.9856 3.65138C12.3466 3.42882 11.651 3.42887 11.0119 3.65153C10.2843 3.90503 9.66661 4.59151 8.43114 5.96446L3 12M14 12C14 13.1045 13.1046 14 12 14C10.8954 14 10 13.1045 10 12C10 10.8954 10.8954 9.99996 12 9.99996C13.1046 9.99996 14 10.8954 14 12Z",
+            fillColor: "white",
+            fillOpacity: 1,
+            strokeColor: "black",
+            strokeWeight: 1,
+            rotation: 0,
+            scale: 2,
+            anchor: new google.maps.Point(0, 20),
+          };
           if (setDraggableMarker) {
             if (draggableMarker()) {
               draggableMarker().setMap(null);
@@ -127,16 +165,17 @@ const RealEstateInfo = ({
             const marker = new Marker({
               position: { lat: firstEle.LATITUDE, lng: firstEle.LONGITUDE },
               animation: Animation.DROP,
-              map: map(),
+              icon: svgMarker,
               draggable: true,
               title: "Drag me!",
             });
+            setLat(firstEle.LATITUDE);
+            setLon(firstEle.LONGITUDE);
             marker.addListener("dragend", (event) => {
               const lat = event.latLng.lat();
               const lng = event.latLng.lng();
               setLat(lat);
               setLon(lng);
-              alert("New position: " + lat + ", " + lng);
             });
             marker.setZIndex(1000);
             setDraggableMarker(marker);
@@ -152,7 +191,7 @@ const RealEstateInfo = ({
               price: el.PRICE,
               propertysqf: el.PROPERTYSQFT,
               animation: Animation.DROP,
-              map: map(),
+              // map: map(),
               label: {
                 text: `\$${(el.PRICE / 1000).toFixed(0)}k`,
                 color: "black",
@@ -174,7 +213,11 @@ const RealEstateInfo = ({
           });
           setPropertyOnMap(markers);
         });
+        setNoProperty(false);
         return true;
+      } else {
+        cleanPropertyOnMap();
+        setNoProperty(true);
       }
     } catch (e) {
       throw new Error(e);
@@ -190,23 +233,10 @@ const RealEstateInfo = ({
   });
 
   createEffect(() => {
-    let zip = loadCompared ? getSelectedZip : getSelectedZip();
-    if (recommendedZipcode().includes(parseInt(zip))) {
-      fetch(`http://localhost:8000/zipcode-scores?zipcode=${zip}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data && data.length) {
-            const info = data[0];
-            setYr1Price(info["1Yr_forecast_price"]);
-            setYr1ROI(info["1Yr_ROI"]);
-
-            setYr3Price(info["3Yr_forecast_price"]);
-            setYr3ROI(info["3Yr_ROI"]);
-
-            setYr5Price(info["5Yr_forecast_price"]);
-            setYr5ROI(info["5Yr_ROI"]);
-          }
-        });
+    if (hideProperty()) {
+      hidePropertyOnMap();
+    } else {
+      putPropertyOnMap();
     }
   });
 
@@ -238,7 +268,15 @@ const RealEstateInfo = ({
     <div id="realEstate-info" class="dark:text-white">
       <div class="flex flex-col">
         <div class="flex flex-row place-content-between px-4 py-2">
-          <Show when={getPropertyType()}>
+          <Show
+            when={getPropertyType() && !noProperty()}
+            fallback={
+              <div class="text-center">
+                Sorry. We don't have records for the 2023 sales of this zip
+                code.
+              </div>
+            }
+          >
             <div>
               <DoughnutChart
                 datasets={getPropertyType()}
@@ -246,105 +284,44 @@ const RealEstateInfo = ({
                 setHoverType={setHoverType}
               />
             </div>
-            <div>
-              <Show
-                when={typeAvg().length}
-                fallback={<div>Cannot get detailed information...</div>}
-              >
-                <For each={typeAvg()} fallback={<div>Loading...</div>}>
-                  {(item, index) => (
-                    <div>
-                      <p
-                        class="text-white rounded-lg"
-                        style={{
-                          "background-color": colorsChartjs[index()],
-                        }}
-                      >
-                        {Object.keys(item)}
-                      </p>
-                      <div>
-                        Average Price: ${Object.values(item)[0].avgPrice}
-                      </div>
-                      <div>
-                        Average Size: {Object.values(item)[0].avgSqft} sqft
-                      </div>
-                      <div>
-                        Average Price Per Square Foot: $
-                        {Object.values(item)[0].avgPricePerSqft}/sqft
-                      </div>
-                    </div>
-                  )}
-                </For>
+            <div class="transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+              <Show when={typeAvg().length}>
+                <div class="p-4 border rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                  <p class="mb-2 text-gray-500">
+                    Click on the chart to select a property type.
+                  </p>
+                  <For each={typeAvg()} fallback={<LoadingSvg />}>
+                    {(item, index) => (
+                      <Show when={Object.keys(item)[0] === hoverType()}>
+                        <div>
+                          <p
+                            class="text-white rounded-lg p-2 mb-4"
+                            style={{
+                              "background-color": colorsChartjs[index()],
+                            }}
+                          >
+                            {Object.keys(item)}
+                          </p>
+                          <div>
+                            <strong>Avg. Price:</strong> $
+                            {Object.values(item)[0].avgPrice}
+                          </div>
+                          <div>
+                            <strong>Avg. Size:</strong>{" "}
+                            {Object.values(item)[0].avgSqft} sqft
+                          </div>
+                          <div>
+                            <strong>Avg. Price/Sqft:</strong> $
+                            {Object.values(item)[0].avgPricePerSqft}/sqft
+                          </div>
+                        </div>
+                      </Show>
+                    )}
+                  </For>
+                </div>
               </Show>
             </div>
           </Show>
-        </div>
-
-        <div>
-          {loadCompared ? (
-            <Show
-              when={recommendedZipcode().includes(parseInt(getSelectedZip))}
-            >
-              <div>
-                <div>
-                  <div>
-                    <p class="bg-teal-500 text-white w-full">
-                      In the next year:
-                    </p>
-                    <div>1 year forecast price: {Yr1_Price()}</div>
-                    <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
-                  </div>
-                  <div>
-                    <p class="bg-teal-500 text-white w-full">
-                      In the next 3 years:
-                    </p>
-                    <div>3 year forecast price: {Yr3_Price()}</div>
-                    <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-                  </div>
-                  <div>
-                    <p class="bg-teal-500 text-white w-full">
-                      In the next 5 years:
-                    </p>
-                    <div>5 year forecast price: {Yr5_Price()}</div>
-                    <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
-                  </div>
-                </div>
-              </div>
-            </Show>
-          ) : (
-            <Show
-              when={recommendedZipcode().includes(parseInt(getSelectedZip()))}
-            >
-              <div>
-                <div class="bg-indigo-200 h-[1px] w-full"></div>
-                <div>
-                  <p>Average Home Value Prediction</p>
-
-                  <div>
-                    <p class="bg-teal-500 text-white w-full">
-                      In the next year:
-                    </p>
-                    <div>1 year forecast price: {Yr1_Price()}</div>
-                    <div>1 year ROI: {(Yr1_ROI() * 100).toFixed(2)}%</div>
-                  </div>
-                  <div>
-                    <p class="bg-teal-500 text-white w-full">
-                      In the next 3 years:
-                    </p>
-                    <div>3 year forecast price: {Yr3_Price()}</div>
-                    <div>3 year ROI: {(Yr3_ROI() * 100).toFixed(2)}%</div>
-                  </div>
-                  <div>
-                    <p class="bg-teal-500 text-white w-full">
-                      In the next 5 years:
-                    </p>
-                    <div>5 year forecast price: {Yr5_Price()}</div>
-                    <div>5 year ROI: {(Yr5_ROI() * 100).toFixed(2)}%</div>
-                  </div>
-                </div>
-              </div>
-            </Show>
-          )}
         </div>
       </div>
     </div>

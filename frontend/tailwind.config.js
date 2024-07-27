@@ -39,10 +39,7 @@ module.exports = {
           "0%": { opacity: "1", transform: "translateX(0)" },
           "100%": { opacity: "0", transform: "translateX(2vw)" },
         },
-        slide: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(500%)" },
-        },
+
         expand: {
           "0%": {
             height: "0px",

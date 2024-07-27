@@ -40,7 +40,7 @@ func TestGetBusinessData(t *testing.T) {
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		var responseData []Businesses
+		var responseData []Business
 		if assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &responseData)) {
 			// Asserts that it is not empty
 			if assert.Greater(t, len(responseData), 0) {

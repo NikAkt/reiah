@@ -20,9 +20,8 @@ function FormInput(props) {
       </span>
       <input
         disabled={props.Disabled}
-        class={`shadow appearance-none border ${
-          props.Error ? "border-red-500" : ""
-        } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+        class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+          } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
         type={props.Type}
         placeholder={props.Placeholder}
         name={props.Name}

@@ -13,10 +13,16 @@ import { ErrorPage } from "./components/ErrorPage";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseProvider } from "solid-supabase";
 import { RouteGuard } from "./routeguard";
+import { InductionPage } from "./pages/Induction";
+
+// const supabase = createClient(
+//   import.meta.env.VITE_SUPABASE_URL,
+//   import.meta.env.VITE_SUPABASE_KEY
+// );
 
 const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_KEY
+  "https://ythbzdzanxaevlriiewc.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0aGJ6ZHphbnhhZXZscmlpZXdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA1NDI5OTIsImV4cCI6MjAzNjExODk5Mn0.z5IILiOoTJBU26Yg2MRgnWmMFl1VLMV5dkPsFOtM1Bg"
 );
 
 const root = document.getElementById("root");
@@ -42,6 +48,7 @@ render(
       <Router root={App}>
         <Route path="/register" component={RegisterPage} />
         <Route path="/login" component={LoginPage} setFavorite={favorite} />
+        <Route path="/induction" component={InductionPage} />
         <Route path="/error" component={ErrorPage} />
         <Route path="/" component={() => <Home />} />
         <Route component={RouteGuard}>

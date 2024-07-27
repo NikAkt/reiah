@@ -1,5 +1,6 @@
-import { createSignal, Suspense, Show, createEffect, onMount } from "solid-js";
+import { createSignal, Suspense, Show, createEffect } from "solid-js";
 import { DoughnutChart } from "./Charts";
+
 const DemographicInfo = ({ zip }) => {
   const [familyHousehold, setFamilyHousehold] = createSignal(null);
   const [singleHousehold, setSingleHousehold] = createSignal(null);
@@ -71,32 +72,39 @@ const DemographicInfo = ({ zip }) => {
 
   return (
     <div id="demographic-info" class="dark:text-white">
-      <div class="grid grid-cols-1 divide-y gap-2">
-        <div class="grid grid-cols-1 divide-y">
-          <div>Family Household: {familyHousehold()}</div>
-          <div>Single Household: {singleHousehold()}</div>
-          <div>Population: {population()}</div>
-          <div>Population Density: {density()}</div>
-          <div>Median Household Income: {income()}</div>
-          <div class="grid grid-cols-2">
-            <div>
-              <Suspense>
-                <Show when={gender()}>
-                  <p class="bg-teal-500 text-white text-center">Gender:</p>
+      <p class="text-xl py-4">Demographic Information</p>
+      <div class="grid grid-cols-1 gap-4 py-4">
+        <div class="p-4 shadow-lg rounded-lg border border-gray-300 space-y-2">
+          <div class="text-lg">Family Household: {familyHousehold()}</div>
+          <div class="text-lg">Single Household: {singleHousehold()}</div>
+          <div class="text-lg">Population: {population()}</div>
+          <div class="text-lg">Population Density: {density()}</div>
+          <div class="text-lg">Median Household Income: ${income()}</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 shadow-lg rounded-lg border border-gray-300">
+            <Suspense>
+              <Show when={gender()}>
+                <div class="bg-teal-500 text-white text-center rounded-t-lg py-2 mb-4">
+                  Gender:
+                </div>
+                <div class="flex justify-center">
                   <DoughnutChart datasets={gender()} type="gender" />
-                </Show>
-              </Suspense>
-            </div>
-            <div>
-              <Suspense>
-                <Show when={race()}>
-                  <p class="bg-teal-500 text-white text-center">
-                    Race Diversity:
-                  </p>
+                </div>
+              </Show>
+            </Suspense>
+          </div>
+          <div class="p-4 shadow-lg rounded-lg border border-gray-300">
+            <Suspense>
+              <Show when={race()}>
+                <div class="bg-teal-500 text-white text-center rounded-t-lg py-2 mb-4">
+                  Race Diversity:
+                </div>
+                <div class="flex justify-center">
                   <DoughnutChart datasets={race()} type="race" />
-                </Show>
-              </Suspense>
-            </div>
+                </div>
+              </Show>
+            </Suspense>
           </div>
         </div>
       </div>

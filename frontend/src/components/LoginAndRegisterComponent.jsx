@@ -1,6 +1,6 @@
 import { useSupabase } from "solid-supabase";
 import { useNavigate } from "@solidjs/router";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
 function InputGroup(props) {
   return <div class={`grid gap-2 grid-cols-${props.gs}`}>{props.children}</div>;
@@ -10,27 +10,42 @@ function LoginForm(props) {
   const supabase = useSupabase();
   const [email, setEmail] = createSignal();
   const [password, setPassword] = createSignal();
+  const [errorMsg, setErrorMsg] = createSignal("");
   const navigate = useNavigate();
 
+  const [passwordErr, setPasswordErr] = createSignal(false);
+  let passwordRef;
   const loginUser = async (e) => {
     e.preventDefault();
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email(),
-      password: password(),
+      password: passwordRef.value,
     });
 
     if (error) {
       console.error(error.message);
+      setPasswordErr(true);
+      setErrorMsg(error.message);
       return;
     }
 
     if (data) {
+      setPasswordErr(false);
       navigate("/map");
     }
   };
 
+  const toggleShowPassword = () => {
+    if (passwordRef.type === "password") {
+      passwordRef.type = "text";
+    } else {
+      passwordRef.type = "password";
+    }
+  };
+
   return (
-    <div class="w-2/3">
+    <div class="p-4 lg:w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Login</h1>
         <p>Login and get back to work</p>
@@ -41,9 +56,8 @@ function LoginForm(props) {
             Email
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             placeholder="example1234"
             onchange={(e) => setEmail(e.target.value)}
           />
@@ -52,14 +66,21 @@ function LoginForm(props) {
           <span class="text-accent text-sm mb-2 dark:text-slate-200">
             Password
           </span>
+          <Show when={passwordErr()}>
+            <span class="text-sm text-red-700 ml-4">{errorMsg()}</span>
+          </Show>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            type="password"
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             placeholder="example1234"
             onchange={(e) => setPassword(e.target.value)}
+            ref={(el) => (passwordRef = el)}
           />
+          <input class="mt-4" type="checkbox" onclick={toggleShowPassword} />
+          {"  "}Show Password
         </label>
+
         <div class="mt-6">
           <button
             class="w-full bg-teal-500 dark:bg-teal-300 hover:bg-green-200 dark:hover:bg-green-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -90,12 +111,15 @@ function RegisterForm(props) {
   const [password, setPassword] = createSignal();
   const [name, setName] = createSignal();
   const [surname, setSurname] = createSignal();
+  const [passwordErr, setPasswordErr] = createSignal(false);
+  const [errorMsg, setErrorMsg] = createSignal("");
   const navigate = useNavigate("/login");
 
   const registerUser = async (e) => {
     e.preventDefault();
     const { data, error } = await supabase.auth.signUp({
       password: password(),
+      // password: passwordRef.value,
       email: email(),
       options: {
         data: {
@@ -107,16 +131,19 @@ function RegisterForm(props) {
     });
 
     if (error) {
+      setPasswordErr(true);
+      setErrorMsg(error.message);
       console.error(error.message);
       return;
     }
 
     if (data) {
+      setPasswordErr(false);
       navigate("/login");
     }
   };
   return (
-    <div class="w-2/3">
+    <div class="p-4 lg:w-2/3">
       <div class="mb-8 dark:text-white">
         <h1 class="text-3xl">Create An Account</h1>
         <p>Sign up and get started</p>
@@ -127,9 +154,8 @@ function RegisterForm(props) {
             Username
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             onchange={(e) => setUsername(e.target.value)}
           />
         </label>
@@ -139,9 +165,8 @@ function RegisterForm(props) {
               Name
             </span>
             <input
-              class={`shadow appearance-none border ${
-                props.Error ? "border-red-500" : ""
-              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+              class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+                } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
               onchange={(e) => setName(e.target.value)}
             />
           </label>
@@ -150,9 +175,8 @@ function RegisterForm(props) {
               Surname
             </span>
             <input
-              class={`shadow appearance-none border ${
-                props.Error ? "border-red-500" : ""
-              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+              class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+                } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
               onchange={(e) => setSurname(e.target.value)}
             />
           </label>
@@ -162,9 +186,8 @@ function RegisterForm(props) {
             Email
           </span>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             onchange={(e) => setEmail(e.target.value)}
           />
         </label>
@@ -172,10 +195,12 @@ function RegisterForm(props) {
           <span class="text-accent text-sm mb-2 dark:text-slate-200">
             Password
           </span>
+          <Show when={passwordErr()}>
+            <span class="text-sm text-red-700 ml-4">{errorMsg()}</span>
+          </Show>
           <input
-            class={`shadow appearance-none border ${
-              props.Error ? "border-red-500" : ""
-            } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
+            class={`shadow appearance-none border ${props.Error ? "border-red-500" : ""
+              } rounded w-full p-3 text-accent leading-tight focus:outline-none focus:shadow-outline dark:bg-slate-800 dark:text-slate-200 disabled:bg-gray-100 dark:disabled:bg-slate-900`}
             onchange={(e) => setPassword(e.target.value)}
           />
         </label>

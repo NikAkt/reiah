@@ -7,6 +7,16 @@ import {
   createResource,
   createSignal,
 } from "solid-js";
+import loading_svg from "../assets/spinning-circles.svg";
+import labradorDontCare from "../assets/labrador_dont_care.gif";
+
+const LoadingSvg = () => {
+  return (
+    <div>
+      <img src={loading_svg} />
+    </div>
+  );
+};
 
 const colors = [
   "rgb(75,192,192)",
@@ -21,7 +31,7 @@ const colors = [
 const ChartLoadingIndicator = () => {
   return (
     <div class="w-full h-full flex justify-center items-center">
-      <h1 class="text-black">Loading ...</h1>
+      <LoadingSvg />
     </div>
   );
 };
@@ -105,6 +115,7 @@ const createLineChart = (ctx, datasets) => {
     },
   });
 };
+
 async function fetchMultipleHistoricPrices(zipArray) {
   if (zipArray.length > 1) {
     let query = "";
@@ -152,6 +163,8 @@ const LineChart = ({
   cleanLineChart,
   setCleanLineChart,
   getComparedZip,
+  noHistoricData,
+  setNoHistoricData,
 }) => {
   //whether the line chart is multiline or not
   let ref;
@@ -162,7 +175,7 @@ const LineChart = ({
   );
 
   createEffect(() => {
-    if (cleanLineChart() === true) {
+    if (cleanLineChart() === true && !noHistoricData()) {
       chartInstance.data.datasets = [
         chartInstance.data.datasets.filter(
           (obj) => obj.label * 1 == getSelectedZip()
@@ -174,7 +187,7 @@ const LineChart = ({
   });
 
   createEffect(() => {
-    if (updateLineChart()) {
+    if (updateLineChart() && !noHistoricData()) {
       fetchMultipleHistoricPrices(getComparedZip()).then(
         (comparedAsyncData) => {
           generateMultiLineChart(comparedAsyncData);
@@ -226,23 +239,29 @@ const LineChart = ({
   createEffect(() => {
     if (!historicPrices.loading) {
       try {
-        let newData = historicPrices();
-        let transformedData = Object.values(newData)[0];
+        if (Object.keys(historicPrices()).length > 0) {
+          console.log("triggered", historicPrices());
+          let newData = historicPrices();
+          let transformedData = Object.values(newData)[0];
 
-        if (transformedData) {
-          Object.keys(transformedData).forEach((key) => {
-            transformedData[key] === 0 ? (transformedData[key] = null) : "";
-          });
+          if (transformedData) {
+            Object.keys(transformedData).forEach((key) => {
+              transformedData[key] === 0 ? (transformedData[key] = null) : "";
+            });
+          }
+          createLineChart(ref, [
+            {
+              label: Object.keys(newData)[0],
+              data: transformedData,
+              fill: false,
+              borderColor: "rgb(75, 192, 192)",
+              tension: 0.1,
+            },
+          ]);
+          setNoHistoricData(false);
+        } else {
+          setNoHistoricData(true);
         }
-        createLineChart(ref, [
-          {
-            label: Object.keys(newData)[0],
-            data: transformedData,
-            fill: false,
-            borderColor: "rgb(75, 192, 192)",
-            tension: 0.1,
-          },
-        ]);
       } catch (error) {
         console.log(error);
       }
@@ -256,6 +275,16 @@ const LineChart = ({
 
   return (
     <div class="aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full">
+      <Show when={noHistoricData()}>
+        <div class="text-center w-[80%] relative flex flex-col gap-2 max-h-[10%]">
+          Sorry, we don't have the historical data for this zip code.
+          <img
+            src={labradorDontCare}
+            alt="Dog fumbled the ball"
+            className="w-1/2 mx-auto"
+          />
+        </div>
+      </Show>
       <Show when={!historicPrices.loading} fallback={<ChartLoadingIndicator />}>
         <div>
           <canvas
@@ -283,7 +312,6 @@ const DoughnutChart = (props) => {
         props.type,
         doughnutChartInstance,
         props
-        // footer
       );
     }
   });
@@ -296,8 +324,8 @@ const DoughnutChart = (props) => {
 
   return (
     <div
-      class="relative min-h-[280px] max-w-[350px]
-    aspect-video rounded bg-white dark:bg-slate-800 p-4 col-span-full"
+      class="relative min-h-[300px] max-w-[300px] aspect-square
+    rounded bg-white dark:bg-slate-800 p-4 col-span-full"
     >
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
@@ -310,7 +338,6 @@ const createDoughnutChart = (
   type,
   doughnutChartInstance,
   props
-  // footer = null
 ) => {
   if (ctx === undefined) {
     return;
@@ -320,94 +347,86 @@ const createDoughnutChart = (
     doughnutChartInstance.destroy();
   }
 
-  const doughnutLabel = {
-    id: "doughnutLabel",
-    beforeDatasetsDraw(chart, args, pluginOptions) {
-      const { ctx, data } = chart;
-      ctx.save();
-      const xCoor = chart.getDatasetMeta(0).data[0].x;
-      const yCoor = chart.getDatasetMeta(0).data[0].y;
-
-      //responsive text size
-      let newVal;
-      let val = 15;
-      const innerWidth = window.innerWidth;
-      if (innerWidth > 800) {
-        newVal = 15;
-      } else if (innerWidth <= 800 && innerWidth > 600) {
-        newVal = 7.5;
-      } else {
-        newVal = 5;
-      }
-
-      if (val !== newVal) {
-        val = newVal;
-        chart.update();
-      }
-
-      ctx.font = `bold ${val}px sans-serif`;
-      ctx.fillStyle = "black";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      let sum = 0;
-      data.datasets[0].data.forEach((num) => (sum += num));
-
-      ctx.fillText(`Total:${sum}`, xCoor, yCoor);
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          boxWidth: 10,
+          padding: 10,
+          usePointStyle: true,
+          pointStyle: "circle",
+          // Display labels two per row
+          generateLabels: function (chart) {
+            const data = chart.data;
+            if (data.labels.length > 0) {
+              return data.labels.map((label, i) => {
+                const meta = chart.getDatasetMeta(0);
+                const ds = data.datasets[0];
+                const arc = meta.data[i];
+                const color =
+                  (arc &&
+                    arc.options &&
+                    arc.options.backgroundColor) ||
+                  "transparent";
+                return {
+                  text: label,
+                  fillStyle: color,
+                  hidden: isNaN(ds.data[i]) || ds.data[i] === null,
+                  index: i,
+                };
+              });
+            }
+            return [];
+          },
+        },
+      },
     },
   };
-  if (type === "property") {
-    return new Chart(ctx, {
-      type: "doughnut",
-      data: dataset,
-      options: {
-        responsive: true,
-        onClick: function (event) {
-          props.setHoverType(event.chart.tooltip.title[0]);
-          // Actions to be performed
-        },
-        plugins: {
-          legend: {
-            position: "top",
-          },
-        },
-      },
-      // plugins: [doughnutLabel],
-    });
-  } else if (type === "amenities") {
-    return new Chart(ctx, {
-      type: "doughnut",
-      data: dataset,
-      options: {
-        responsive: true,
-        onClick: function (event) {
-          props.setHoverAmenity(event.chart.tooltip.title[0]);
-          // Actions to be performed
-        },
-        plugins: {
-          legend: {
-            position: "left",
-          },
-        },
-      },
-      // plugins: [doughnutLabel],
-    });
-  } else {
-    return new Chart(ctx, {
-      type: "doughnut",
-      data: dataset,
-      options: {
-        responsive: true,
 
-        plugins: {
-          legend: {
-            display: true,
-            position: "top",
-          },
-        },
-      },
-    });
+  if (type === "property") {
+    options.onClick = function (event, elements) {
+      if (elements.length > 0) {
+        const chartInstance = event.chart;
+        const activePoint = chartInstance.getElementsAtEventForMode(
+          event.native,
+          "nearest",
+          { intersect: true },
+          false
+        );
+        if (activePoint.length > 0) {
+          const index = activePoint[0].index;
+          const label = chartInstance.data.labels[index];
+          props.setHoverType(label);
+        }
+      }
+    };
+  } else if (type === "amenities") {
+    options.onClick = function (event, elements) {
+      if (elements.length > 0) {
+        const chartInstance = event.chart;
+        const activePoint = chartInstance.getElementsAtEventForMode(
+          event.native,
+          "nearest",
+          { intersect: true },
+          false
+        );
+        if (activePoint.length > 0) {
+          const index = activePoint[0].index;
+          const label = chartInstance.data.labels[index];
+          props.setHoverAmenity(label);
+        }
+      }
+    };
   }
+
+  return new Chart(ctx, {
+    type: "doughnut",
+    data: dataset,
+    options,
+  });
 };
 
 export { BarChart, LineChart, DoughnutChart };

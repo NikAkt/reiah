@@ -32,7 +32,7 @@ function SettingsForm({ userId, values, errors }) {
 
   return (
     <form autocomplete="on" onsubmit={handleSettingsPatch}>
-      <InputGroup gs={3}>
+      <div class="grid gap-2 grid-cols-1 lg:grid-cols-3">
         <FormInput
           Type="text"
           Label="Name"
@@ -60,8 +60,6 @@ function SettingsForm({ userId, values, errors }) {
           Disabled={!editOn()}
           Value={values.Username}
         />
-      </InputGroup>
-      <InputGroup gs={3}>
         <FormInput
           Type="email"
           Label="Email"
@@ -71,10 +69,9 @@ function SettingsForm({ userId, values, errors }) {
           Disabled={!editOn()}
           Value={values.Email}
         />
-      </InputGroup>
-
+      </div>
       <div class="mt-6 grid grid-cols-3 gap-2">
-        <div class="col-start-3 grid gap-2">
+        <div class="col-start-2 col-span-2 lg:col-start-3 lg:col-span-1 grid gap-2">
           {editOn() ? (
             <div class="w-full grid grid-cols-2 gap-2">
               <button
