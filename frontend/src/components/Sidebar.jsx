@@ -1,5 +1,6 @@
 import { store, setStore } from "../data/stores";
 import { For } from "solid-js";
+import close_icon from "../assets/close-svgrepo-com.svg";
 
 const DarkLightModeToggle = () => {
   return (
@@ -23,6 +24,32 @@ const DarkLightModeToggle = () => {
               <path d="M0 0h24v24H0z"></path>
             </clipPath>
           </defs>
+        </svg>
+      </div>
+    </>
+  );
+};
+
+const CloseSidebar = () => {
+  return (
+    <>
+      <div
+        class="h-7 aspect-square hover:cursor-pointer sm:hidden"
+        onClick={() => {
+          setStore({ ...store, sidebarOpen: false });
+        }}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-full w-full fill-black dark:fill-white"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10.9393 12L6.9696 15.9697L8.03026 17.0304L12 13.0607L15.9697 17.0304L17.0304 15.9697L13.0607 12L17.0303 8.03039L15.9696 6.96973L12 10.9393L8.03038 6.96973L6.96972 8.03039L10.9393 12Z"
+          />
         </svg>
       </div>
     </>
@@ -68,7 +95,9 @@ const Sidebar = (props) => {
               </span>
             </h2>
           </a>
+
           <DarkLightModeToggle />
+          <CloseSidebar />
         </div>
         <ul class="mt-4" hx-boost="true">
           <For each={props.links}>{(link) => <SidebarLink link={link} />}</For>

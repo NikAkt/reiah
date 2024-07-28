@@ -167,10 +167,12 @@ const RecommendZipcode = ({
       //  transform  transition-transform duration-500 scale-100 ${
       //    showRecommendBoard() ? "sm:translate-y-0 " : "sm:-translate-y-full hidden"
       //  }`}
-      class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white w-full bottom-0
+      class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white dark:bg-black w-full bottom-0
     flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
  gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
-   showRecommendBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
+   showRecommendBoard()
+     ? "sm:translate-y-0"
+     : "sm:-translate-y-full hidden dark:text-black"
  }`}
     >
       <div class="absolute top-4 left-4">

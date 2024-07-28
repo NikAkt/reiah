@@ -343,17 +343,17 @@ const Filter = ({
 
   return (
     <div
-      class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white w-full bottom-0
+      class={`absolute z-40 sm:h-full bg-white dark:bg-black dark:text-white h-2/5 dark:text-white w-full bottom-0
          flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
       gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
         showFilterBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
       }`}
     >
-      <div class="relative flex-1 w-full bg-white rounded-lg overflow-y-auto">
+      <div class="relative flex-1 w-full bg-white dark:bg-black dark:text-white rounded-lg overflow-y-auto">
         {/* FILTER TITLE */}
         <div
           id="filter-dropdown-title"
-          class="flex items-center justify-center bg-white text-black py-4"
+          class="flex items-center justify-center bg-white dark:bg-black dark:text-white text-black py-4"
           style="position: sticky; top: 0;"
         >
           <button
@@ -369,16 +369,16 @@ const Filter = ({
         </div>
 
         {/* FILTER CONTENT */}
-        <div class="w-full p-6 bg-white">
+        <div class="w-full p-6 bg-white dark:bg-black dark:text-white">
           {/* Borough Selection */}
-          <div class="w-full p-4 rounded-lg bg-white">
+          <div class="w-full p-4 rounded-lg bg-white dark:bg-black dark:text-white">
             <label
               htmlFor="borough-selection"
               class="block mb-2 text-lg font-semibold"
             >
               Borough:
             </label>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 dark:bg-black dark:text-white">
               {unique_borough.map((el) => (
                 <button
                   key={el}
@@ -395,7 +395,7 @@ const Filter = ({
 
           {/* Neighborhood Selection */}
           {[...selectedBoroughs()].length > 0 && (
-            <div class="w-full p-4 rounded-lg bg-white">
+            <div class="w-full p-4 rounded-lg bg-white dark:bg-black dark:text-white">
               <label
                 htmlFor="neighborhood-selection"
                 class="block mb-2 text-lg font-semibold"
@@ -408,8 +408,8 @@ const Filter = ({
                     key={el}
                     class={`p-2 cursor-pointer ${
                       selectedNeighborhoods().has(el)
-                        ? "bg-teal-500 text-white"
-                        : "bg-white text-gray-700"
+                        ? "bg-teal-500 text-white "
+                        : "bg-white dark:bg-black dark:text-white text-gray-700"
                     }`}
                     onClick={() => handleNeighborhoodChange(el)}
                   >
@@ -434,13 +434,13 @@ const Filter = ({
 
           {/* Advanced Filters */}
           {showAdvancedFilters() && (
-            <div class="w-full p-4 rounded-lg mt-4 flex flex-col gap-4 bg-white">
+            <div class="w-full p-4 rounded-lg mt-4 flex flex-col gap-4 bg-white dark:bg-black dark:text-white">
               {/* House Type */}
-              <div class="flex flex-col gap-2 bg-white">
+              <div class="flex flex-col gap-2 bg-white dark:bg-black dark:text-white">
                 <label htmlFor="houseType" class="text-lg font-semibold">
                   House Type
                 </label>
-                <div class="flex flex-wrap gap-2 bg-white">
+                <div class="flex flex-wrap gap-2 bg-white dark:bg-black dark:text-white">
                   {houseTypeOptions.map((type) => (
                     <button
                       key={type}
@@ -456,29 +456,29 @@ const Filter = ({
               </div>
 
               {/* Beds and Baths */}
-              <div class="flex gap-4 w-full bg-white">
-                <div class="flex flex-col gap-2 bg-white">
+              <div class="flex gap-4 w-full bg-white dark:bg-black dark:text-white">
+                <div class="flex flex-col gap-2 bg-white dark:bg-black dark:text-white">
                   <label htmlFor="beds" class="text-lg font-semibold">
                     Beds
                   </label>
                   <input
                     type="number"
                     id="beds"
-                    class="border border-gray-300 rounded p-2 text-lg"
+                    class="border border-gray-300 rounded p-2 text-lg dark:text-black"
                     value={beds()}
                     onInput={(e) => setBeds(Number(e.target.value))}
                     onChange={handleFilterChange}
                     style="width: 100px;"
                   />
                 </div>
-                <div class="flex flex-col gap-2 bg-white">
+                <div class="flex flex-col gap-2 bg-white dark:bg-black dark:text-white">
                   <label htmlFor="baths" class="text-lg font-semibold">
                     Baths
                   </label>
                   <input
                     type="number"
                     id="baths"
-                    class="border border-gray-300 rounded p-2 text-lg"
+                    class="border border-gray-300 rounded p-2 text-lg dark:text-black"
                     value={baths()}
                     onInput={(e) => setBaths(Number(e.target.value))}
                     onChange={handleFilterChange}
@@ -488,19 +488,19 @@ const Filter = ({
               </div>
 
               {/* Property Sqft */}
-              <div class="flex flex-col gap-2 bg-white">
+              <div class="flex flex-col gap-2 bg-white dark:bg-black dark:text-white">
                 <label htmlFor="propertySqft" class="text-lg font-semibold">
                   Property Sqft
                 </label>
-                <div class="flex gap-2 bg-white">
-                  <div class="flex flex-col w-full bg-white">
+                <div class="flex gap-2 bg-white dark:bg-black dark:text-white">
+                  <div class="flex flex-col w-full bg-white dark:bg-black dark:text-white">
                     <label htmlFor="minSqft" class="text-gray-700">
                       Minimum
                     </label>
                     <input
                       type="number"
                       id="minSqft"
-                      class="border border-gray-300 rounded p-2 text-lg"
+                      class="border border-gray-300 rounded p-2 text-lg dark:text-black"
                       value={propertySqft()[0]}
                       onInput={(e) =>
                         setPropertySqft([
@@ -511,14 +511,14 @@ const Filter = ({
                       onChange={handleFilterChange}
                     />
                   </div>
-                  <div class="flex flex-col w-full bg-white">
+                  <div class="flex flex-col w-full bg-white dark:bg-black dark:text-white">
                     <label htmlFor="maxSqft" class="text-gray-700">
                       Maximum
                     </label>
                     <input
                       type="number"
                       id="maxSqft"
-                      class="border border-gray-300 rounded p-2 text-lg"
+                      class="border border-gray-300 rounded p-2 text-lg dark:text-black"
                       value={propertySqft()[1]}
                       onInput={(e) =>
                         setPropertySqft([
@@ -533,19 +533,19 @@ const Filter = ({
               </div>
 
               {/* Property Price */}
-              <div class="flex flex-col gap-2 bg-white">
+              <div class="flex flex-col gap-2 bg-white dark:bg-black dark:text-white">
                 <label htmlFor="propertyPrice" class="text-lg font-semibold">
                   Property Price
                 </label>
-                <div class="flex gap-2 bg-white">
-                  <div class="flex flex-col w-full bg-white">
+                <div class="flex gap-2 bg-white dark:bg-black dark:text-white">
+                  <div class="flex flex-col w-full bg-white dark:bg-black dark:text-white">
                     <label htmlFor="minPrice" class="text-gray-700">
                       Minimum
                     </label>
                     <input
                       type="number"
                       id="minPrice"
-                      class="border border-gray-300 rounded p-2 text-lg"
+                      class="border border-gray-300 rounded p-2 text-lg dark:text-black"
                       value={propertyPrice()[0]}
                       onInput={(e) =>
                         setPropertyPrice([
@@ -556,14 +556,14 @@ const Filter = ({
                       onChange={handleFilterChange}
                     />
                   </div>
-                  <div class="flex flex-col w-full bg-white">
+                  <div class="flex flex-col w-full bg-white dark:bg-black dark:text-white">
                     <label htmlFor="maxPrice" class="text-gray-700">
                       Maximum
                     </label>
                     <input
                       type="number"
                       id="maxPrice"
-                      class="border border-gray-300 rounded p-2 text-lg"
+                      class="border border-gray-300 rounded p-2 text-lg dark:text-black"
                       value={propertyPrice()[1]}
                       onInput={(e) =>
                         setPropertyPrice([
@@ -578,7 +578,7 @@ const Filter = ({
               </div>
 
               {/* Amenities */}
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-2 dark:bg-black dark:text-white">
                 <label htmlFor="amenities" class="text-lg font-semibold">
                   Amenities
                 </label>
@@ -599,7 +599,7 @@ const Filter = ({
                               <input
                                 type="checkbox"
                                 id={amenity}
-                                class="border border-gray-300 rounded p-2"
+                                class="border border-gray-300 rounded p-2 dark:text-black"
                                 onChange={() => handleAmenityChange(amenity)}
                                 checked={selectedAmenities().has(amenity)}
                               />
@@ -623,7 +623,7 @@ const Filter = ({
       </div>
 
       {/* Clear Button and Filter Results */}
-      <div class="flex items-center justify-between text-black p-4 w-full bg-white">
+      <div class="flex items-center justify-between text-black p-4 w-full bg-white dark:bg-black dark:text-white">
         <button
           class="rounded-2xl cursor-pointer px-4 py-2 bg-teal-500 text-white hover:scale-110 duration-300 active:bg-teal-700 focus:outline-none focus:ring focus:ring-teal-300"
           onClick={() => clearAllFilters()}
