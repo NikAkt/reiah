@@ -34,7 +34,7 @@ const PredictedHomeValue = ({ loadCompared, getSelectedZip }) => {
 
   createEffect(() => {
     let zip = loadCompared ? getSelectedZip : getSelectedZip();
-    fetch(`http://localhost:8000/api/zipcode-scores?zipcode=${zip}`)
+    fetch(`/api/zipcode-scores?zipcode=${zip}`)
       .then((response) => response.json())
       .then((data) => {
         if (data && data.length) {
@@ -130,7 +130,7 @@ export const DashboardInfo = ({
   });
 
   const fetchDashboardInfoData = async (level, area) => {
-    fetch(`http://localhost:8000/api/borough-neighbourhood?${level}=${area}`)
+    fetch(`/api/borough-neighbourhood?${level}=${area}`)
       .then((response) => response.json())
       .then((data) => {
         if (data && data.length > 0) {
@@ -158,7 +158,7 @@ export const DashboardInfo = ({
     zip
   ) => {
     fetch(
-      `http://localhost:5001/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
+      `/AI/predict_price?borough=${borough}&house_type=${house_type}&bedrooms=${beds}&bathrooms=${baths}&sqft=${sqft}&latitude=${lat}&longitude=${lng}&zipcode=${zip}`
     )
       .then((response) => response.json())
       .then((data) => {

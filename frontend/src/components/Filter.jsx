@@ -52,9 +52,7 @@ const Filter = ({
   ];
 
   const fetchBoroughData = async () => {
-    const response = await fetch(
-      "http://localhost:8000/api/borough-neighbourhood"
-    );
+    const response = await fetch("/api/borough-neighbourhood");
     const data = await response.json();
     setBoroughData(data);
   };
@@ -62,9 +60,7 @@ const Filter = ({
   const fetchRealEstateData = async (filters) => {
     const query = new URLSearchParams(filters).toString();
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/property-data?${query}`
-      );
+      const response = await fetch(`/api/property-data?${query}`);
       const data = await response.json();
       setRealEstateData(data || []);
       applyFilters();
@@ -79,7 +75,7 @@ const Filter = ({
     if (neighborhoods.length > 0) {
       const neighborhoodParams = neighborhoods.join(",");
       const response = await fetch(
-        `http://localhost:8000/api/amenities?neighborhoods=${neighborhoodParams}`
+        `/api/amenities?neighborhoods=${neighborhoodParams}`
       );
       const data = await response.json();
       setFilteredAmenities(
