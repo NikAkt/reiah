@@ -357,7 +357,7 @@ const Filter = ({
           style="position: sticky; top: 0;"
         >
           <button
-            class="absolute left-4 rounded-full w-8 h-8 flex items-center justify-center text-black hover:bg-teal-500"
+            class="absolute left-4 rounded-full w-8 h-8 flex items-center justify-center text-black hover:bg-teal-500 dark:bg-white"
             onClick={() => {
               setShowFilterBoard(false);
               setSidebarOpen(false);

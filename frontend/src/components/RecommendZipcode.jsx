@@ -352,7 +352,7 @@ const RecommendZipcode = ({
                 step="1"
                 value={getSelectedSize()}
                 required
-                class="w-32 p-2 border border-gray-300 rounded"
+                class="w-32 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedSize(event.target.value);
                 }}
@@ -369,7 +369,7 @@ const RecommendZipcode = ({
                 name="bedrooms"
                 placeholder="1"
                 value={getSelectedBeds()}
-                class="w-32 p-2 border border-gray-300 rounded"
+                class="w-32 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedBeds(event.target.value);
                 }}
@@ -386,7 +386,7 @@ const RecommendZipcode = ({
                 name="bathrooms"
                 placeholder="1"
                 value={getSelectedBaths()}
-                class="w-32 p-2 border border-gray-300 rounded"
+                class="w-32 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedBaths(event.target.value);
                 }}
@@ -403,7 +403,7 @@ const RecommendZipcode = ({
                 name="max_price"
                 placeholder="1000000"
                 value={getSelectedMaxPrice()}
-                class="w-48 p-2 border border-gray-300 rounded"
+                class="w-48 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedMaxPrice(event.target.value);
                 }}
@@ -463,7 +463,7 @@ const RecommendZipcode = ({
                         id={item}
                         name="amenity_preferences"
                         value={item}
-                        class="w-4 h-4 border border-gray-300"
+                        class="w-4 h-4 border border-gray-300 dark:text-black"
                         onChange={(event) => {
                           const isChecked = event.target.checked;
                           setSelectedAmenities((prev) =>
