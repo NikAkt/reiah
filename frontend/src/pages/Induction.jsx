@@ -27,6 +27,8 @@ import amenities2 from "../assets/induction/amenities2.png";
 
 import demographic from "../assets/induction/other.png";
 
+import infowindow from "../assets/induction/infowindow.png";
+
 const MapPageSection = ({ title, description, id, children }) => {
   return (
     <div
@@ -188,9 +190,9 @@ const InductionPage = () => {
                 }
               ></MiniSection>
               <MiniSection
-                img_src={recommend_effect}
+                img_src={infowindow}
                 description={
-                  "After clicking Submit button on the bottom of the recommendation board, you can see golden highlighted zip codes on the map. Those are the zip codes we recommend based on your personal preferences"
+                  "After clicking Submit button on the bottom of the recommendation board, you can get zipcodes match your preferecnes highlighted in gold. The information window will suggest how lively or busy and how similar the zip code is to your preferences."
                 }
               ></MiniSection>
             </MapPageSection>
