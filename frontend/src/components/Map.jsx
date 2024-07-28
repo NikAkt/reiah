@@ -62,6 +62,49 @@ export const MapComponent = (props) => {
   const [loadedZipcodeData, setLoadedZipcodeData] = createSignal({});
   let debounceTimeout;
   let worker;
+  const applyStyle = (feature) => {
+    const zipCode = feature.getProperty("ZIPCODE");
+    if (zipCode === props.zipcodeOnCharts()) {
+      return {
+        fillColor: colors.clicked,
+        strokeColor: colors.clicked,
+        fillOpacity: 0.7,
+        strokeWeight: 2,
+      };
+    } else if (
+      props.recommendedZipcode &&
+      Array.isArray(props.recommendedZipcode) &&
+      props.recommendedZipcode.includes(parseInt(zipCode))
+    ) {
+      return {
+        fillColor: colors.recommended,
+        strokeColor: colors.recommended,
+        fillOpacity: 0.7,
+        strokeWeight: 2,
+      };
+    } else if (filteredZipCodes().includes(parseInt(zipCode))) {
+      return {
+        fillColor: colors.selected,
+        strokeColor: colors.selected,
+        fillOpacity: 0.7,
+        strokeWeight: 2,
+      };
+    } else if (props.getComparedZip().includes(parseInt(zipCode))) {
+      return {
+        fillColor: colors.compared,
+        strokeColor: colors.compared,
+        fillOpacity: 0.7,
+        strokeWeight: 2,
+      };
+    } else {
+      return {
+        fillColor: colors.default,
+        strokeColor: colors.default,
+        fillOpacity: 0.3,
+        strokeWeight: 2,
+      };
+    }
+  };
 
   const closeAllBoards = () => {
     setShowFilterBoard(false);
@@ -129,6 +172,17 @@ export const MapComponent = (props) => {
       if (event.key === "Enter") {
         if (geojsonZipcode.includes(event.target.value * 1)) {
           props.zipcodeSetter(event.target.value);
+          const zipcodeObj = zipcodes.filter(
+            (el) => el["zip_code"] === event.target.value
+          );
+
+          const map = props.mapObject();
+          map.data.setStyle(applyStyle);
+          map.setZoom(13);
+          map.setCenter({
+            lng: zipcodeObj[0]["longitude"] * 1,
+            lat: zipcodeObj[0]["latitude"] * 1,
+          });
         } else {
           alert("The zipcode you provided is not included.");
         }
@@ -171,50 +225,6 @@ export const MapComponent = (props) => {
 
     clearDataLayer(map);
     map.data.addGeoJson(data);
-
-    const applyStyle = (feature) => {
-      const zipCode = feature.getProperty("ZIPCODE");
-      if (zipCode === props.zipcodeOnCharts()) {
-        return {
-          fillColor: colors.clicked,
-          strokeColor: colors.clicked,
-          fillOpacity: 0.7,
-          strokeWeight: 2,
-        };
-      } else if (
-        props.recommendedZipcode &&
-        Array.isArray(props.recommendedZipcode) &&
-        props.recommendedZipcode.includes(parseInt(zipCode))
-      ) {
-        return {
-          fillColor: colors.recommended,
-          strokeColor: colors.recommended,
-          fillOpacity: 0.7,
-          strokeWeight: 2,
-        };
-      } else if (filteredZipCodes().includes(parseInt(zipCode))) {
-        return {
-          fillColor: colors.selected,
-          strokeColor: colors.selected,
-          fillOpacity: 0.7,
-          strokeWeight: 2,
-        };
-      } else if (props.getComparedZip().includes(parseInt(zipCode))) {
-        return {
-          fillColor: colors.compared,
-          strokeColor: colors.compared,
-          fillOpacity: 0.7,
-          strokeWeight: 2,
-        };
-      } else {
-        return {
-          fillColor: colors.default,
-          strokeColor: colors.default,
-          fillOpacity: 0.3,
-          strokeWeight: 2,
-        };
-      }
-    };
 
     map.data.setStyle(applyStyle);
 
