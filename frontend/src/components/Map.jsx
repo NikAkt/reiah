@@ -130,20 +130,20 @@ export const MapComponent = (props) => {
     const controlButton = document.createElement("button");
     const hoverLocationDiv = document.createElement("div");
     const innerDiv = document.createElement("div");
-    const textNode = document.createTextNode("Location: ");
+    const textNode = document.createTextNode("Zipcode: ");
     const input = document.createElement("input");
     const recommendZipBtn = document.createElement("button");
     const filterBtn = document.createElement("button");
 
     function updateButtonStyles() {
       centerControlDiv.className = !sideBarOpen()
-        ? "sm:w-[80%] w-[40%] overflow-x-auto text-base flex sm:flex-row flex-col min-w-[150px] mt-[10vh] md:mt-[7vh] mt-[10vh] lg:mt-[0vh]"
-        : "w-[30%] flex flex-col mr-4 mt-[10vh] md:mt-[7%] mt-[10%] lg:mt-[0vh]";
+        ? "sm:w-[80%] place-items-center w-[40%] overflow-x-auto text-base flex sm:flex-row flex-col min-w-[150px] mt-[10vh] md:mt-[7vh] mt-[10vh] lg:mt-[0vh]"
+        : "w-[30%] place-items-end flex flex-col mr-4 mt-[10vh] md:mt-[7%] mt-[10%] lg:mt-[0vh]";
 
       controlButton.textContent = "Information";
       controlButton.id = "information-button";
       hoverLocationDiv.className = sideBarOpen()
-        ? "w-[100%] rounded text-base shadow-md color-zinc-900 bg-white text-black mt-4 mr-10 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
+        ? "w-[100%] min-w-[110px] rounded text-base shadow-md color-zinc-900 bg-white text-black mt-4 mb-6 mx-6 leading-9 py-0 px-2 text-center items-center justify-center"
         : "rounded shadow-md text-base color-zinc-900 bg-white text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
     }
 
@@ -154,7 +154,7 @@ export const MapComponent = (props) => {
     controlButton.title = "Click to show details";
     controlButton.type = "button";
     controlButton.className =
-      "rounded shadow-md color-zinc-900 text-base cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "rounded shadow-md color-zinc-900 text-base cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center min-w-[110px]";
     controlButton.addEventListener("click", () => {
       closeAllBoards();
       setShowInfoBoard((prev) => !prev);
@@ -194,7 +194,7 @@ export const MapComponent = (props) => {
 
     recommendZipBtn.textContent = "Recommend";
     recommendZipBtn.className =
-      "rounded shadow-md  text-base color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "rounded shadow-md  text-base color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center min-w-[110px]";
     recommendZipBtn.addEventListener("click", () => {
       closeAllBoards();
       setShowRecommendBoard((prev) => !prev);
@@ -203,7 +203,7 @@ export const MapComponent = (props) => {
 
     filterBtn.textContent = "Filter";
     filterBtn.className =
-      "rounded shadow-md text-base color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "rounded shadow-md text-base color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center min-w-[110px]";
     filterBtn.addEventListener("click", () => {
       closeAllBoards();
       setShowFilterBoard((prev) => !prev);
