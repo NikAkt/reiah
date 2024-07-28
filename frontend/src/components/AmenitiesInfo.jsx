@@ -215,7 +215,7 @@ const AmenitiesInfo = ({
       <p class="text-xl py-4">Amenities Information</p>
       <Suspense>
         <Show when={amenities()}>
-          <div class="flex flex-row place-content-between">
+          <div class="flex md:flex-row flex-col place-content-between">
             <div class="w-2/5">
               <DoughnutChart
                 datasets={amenities()}
@@ -224,7 +224,7 @@ const AmenitiesInfo = ({
                 setHoverAmenity={setHoverAmenity}
               />
             </div>
-            <div class="relative w-[45%] overflow-x-auto flex flex-col gap-2 py-2">
+            <div class="relative sm:w-2/5 w-full overflow-x-auto flex flex-col gap-2 py-2">
               <Show
                 when={hoverAmenity()}
                 fallback={

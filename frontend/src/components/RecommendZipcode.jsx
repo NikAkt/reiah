@@ -136,13 +136,13 @@ const RecommendZipcode = ({
     fetch(query)
       .then((response) => response.json())
       .then((data) => {
-        console.log("prediction recommendation", data);
+        // console.log("prediction recommendation", data);
         if (data.length === 0) {
           setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
           setRecommendedZipcode([]);
           setPredictedPrice({});
         } else {
-          console.log(data);
+          // console.log(data);
           let recommendedZipcode = [];
           let predictedPrice = {};
           data.forEach((el) => {

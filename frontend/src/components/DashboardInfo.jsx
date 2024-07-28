@@ -239,7 +239,7 @@ export const DashboardInfo = ({
   return (
     <div
       id={`dashboardDiv-${[getSelectedZip()]}`}
-      class="grid grid-row-1 divide-y relative"
+      class="grid grid-row-1 divide-y relative w-full"
     >
       <div class="absolute top-4 left-4">
         <button
@@ -258,7 +258,8 @@ export const DashboardInfo = ({
       >
         <div
           id="header-dashboard"
-          class="relative w-full shadow-lg border border-gray-200 p-6 rounded-lg mb-8 flex justify-between items-center"
+          class="relative w-full shadow-lg sm:flex-row flex-col
+          border border-gray-200 p-6 rounded-lg mb-8 flex justify-between items-center"
         >
           <div>
             <h1 class="font-medium text-2xl mb-4" id="dashboard_top">
@@ -266,9 +267,9 @@ export const DashboardInfo = ({
               <span>{borough()}</span>
             </h1>
             <Show when={getSelectedZip()}>
-              <div class="flex gap-4 items-center mb-4">
+              <div class="flex gap-4 sm:items-center mb-4 sm:flex-row flex-col">
                 <div id="search-box-dropdown" class="relative flex-1">
-                  <div class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white">
+                  <div class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white ">
                     <Show
                       when={showDropDown() === false}
                       fallback={

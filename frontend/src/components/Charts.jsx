@@ -240,7 +240,6 @@ const LineChart = ({
     if (!historicPrices.loading) {
       try {
         if (Object.keys(historicPrices()).length > 0) {
-          console.log("triggered", historicPrices());
           let newData = historicPrices();
           let transformedData = Object.values(newData)[0];
 
@@ -289,7 +288,7 @@ const LineChart = ({
         <div>
           <canvas
             ref={(el) => (ref = el)}
-            class="w-full h-full min-w-[500px] min-h-[400px]"
+            class="w-full h-full min-w-[50%] min-h-[400px]"
           ></canvas>
         </div>
       </Show>
