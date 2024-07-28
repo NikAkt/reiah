@@ -108,8 +108,7 @@ const AmenitiesInfo = ({
 
   const fetchAmenitiesData = async () => {
     try {
-      // fetch(`/api/amenities?zipcode=${getSelectedZip()}`)
-      fetch(`http://localhost:8000/api/amenities?zipcode=${getSelectedZip()}`)
+      fetch(`/api/amenities?zipcode=${getSelectedZip()}`)
         .then((response) => response.json())
         .then((data_amenities) => {
           if (data_amenities && data_amenities.length > 0) {

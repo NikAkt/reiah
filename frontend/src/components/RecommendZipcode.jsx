@@ -52,7 +52,7 @@ const RecommendZipcode = ({
   setQuery,
   showRecommendBoard,
   setSidebarOpen,
-  setRecommendations,  // Ensure this prop is received
+  setRecommendations, // Ensure this prop is received
 }) => {
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
@@ -129,41 +129,41 @@ const RecommendZipcode = ({
     setQuery(formValues);
     const amenities = Array.from(formValues["amenity_preferences"]).join(",");
     formValues.amenity_preferences = amenities;
-    let query = "http://localhost:5001/get_recommendations?";
+    let query = "/AI/get_recommendations?";
     for (let [key, value] of Object.entries(formValues)) {
       query += `${key}=${value}&`;
     }
 
     fetch(query)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.length === 0) {
-        setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
-        setRecommendedZipcode([]);
-        setPredictedPrice({});
-      } else {
-        let recommendedZipcode = [];
-        let predictedPrice = {};
-        let scores = {}; // New object to store scores
-  
-        data.forEach((el) => {
-          recommendedZipcode.push(el.zipcode);
-          predictedPrice[el.zipcode] = el["predicted_price"];
-          scores[el.zipcode] = { // Store the scores
-            liveliness: el.liveliness_score * 10, // Convert to mark out of 10
-            similarity: el.similarity_score * 10, // Convert to mark out of 10
-          };
-        });
-  
-        setRecommendedZipcode(recommendedZipcode);
-        setPredictedPrice(predictedPrice);
-        setRecommendations(scores); // Save the scores
-        setShowRecommendBoard(false);
-        setSidebarOpen(false);
-        setNoZipcodesMessage("");
-      }
-    });
-  
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length === 0) {
+          setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
+          setRecommendedZipcode([]);
+          setPredictedPrice({});
+        } else {
+          let recommendedZipcode = [];
+          let predictedPrice = {};
+          let scores = {}; // New object to store scores
+
+          data.forEach((el) => {
+            recommendedZipcode.push(el.zipcode);
+            predictedPrice[el.zipcode] = el["predicted_price"];
+            scores[el.zipcode] = {
+              // Store the scores
+              liveliness: el.liveliness_score * 10, // Convert to mark out of 10
+              similarity: el.similarity_score * 10, // Convert to mark out of 10
+            };
+          });
+
+          setRecommendedZipcode(recommendedZipcode);
+          setPredictedPrice(predictedPrice);
+          setRecommendations(scores); // Save the scores
+          setShowRecommendBoard(false);
+          setSidebarOpen(false);
+          setNoZipcodesMessage("");
+        }
+      });
   };
 
   return (

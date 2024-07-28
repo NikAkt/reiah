@@ -1,6 +1,5 @@
 import { HomeScreenLayout } from "../layouts/Layout";
 import houseSVG from "../assets/house-svgrepo-com.svg";
-import housemodernSVG from "../assets/house-modern.svg";
 import appLogo from "../assets/logo_v_small.png";
 
 // url(${sideWaveBackground})

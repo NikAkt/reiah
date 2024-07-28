@@ -23,7 +23,8 @@ async function fetchData([url]) {
 
 export const Map = (props) => {
   const [getSelectedZip, setSelectedZip] = createSignal("");
-  const [createMoreDashboardInfo, setCreateMoreDashboardInfo] = createSignal(false);
+  const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
+    createSignal(false);
 
   const [getComparedZip, setComparedZip] = createSignal([]);
 
@@ -43,28 +44,21 @@ export const Map = (props) => {
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
 
   const [historicalRealEstateData] = createResource(
-    // ["/api/historic-prices"],
-    ["http://localhost:8000/api/historic-prices"],
+    ["/api/historic-prices"],
     fetchData
   );
 
-  const [zipcodes] = createResource(
-    ["http://localhost:8000/api/zipcodes"],
-    fetchData
-  );
+  const [zipcodes] = createResource(["/api/zipcodes"], fetchData);
 
-    // Add this line to log the zipcodes data
-    console.log("Zipcodes Data:", zipcodes());
+  // Add this line to log the zipcodes data
+  // console.log("Zipcodes Data:", zipcodes());
 
   const [borough_neighbourhood] = createResource(
-    ["http://localhost:8000/api/borough-neighbourhood"],
+    ["/api/borough-neighbourhood"],
     fetchData
   );
 
-  const [zipcode_geojson] = createResource(
-    ["http://localhost:8000/api/zipcode-areas"],
-    fetchData
-  );
+  const [zipcode_geojson] = createResource(["/api/zipcode-areas"], fetchData);
 
   const dataResources = {
     historicalRealEstateData,
