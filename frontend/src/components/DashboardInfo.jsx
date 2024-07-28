@@ -96,6 +96,7 @@ export const DashboardInfo = ({
   setComparedZip,
   getSelectedZip,
   setCreateMoreDashboardInfo,
+  setSidebarOpen,
 }) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -239,12 +240,13 @@ export const DashboardInfo = ({
   return (
     <div
       id={`dashboardDiv-${[getSelectedZip()]}`}
-      class="grid grid-row-1 divide-y relative w-full"
+      class="grid grid-row-1 divide-y w-[95%] mx-auto"
     >
-      <div class="absolute top-4 left-4">
+      <div class="absolute top-2 left-4 cursor-pointer z-40">
         <button
           onClick={() => {
-            document.getElementById("information-button").click();
+            // document.getElementById("information-button").click();
+            setSidebarOpen(false);
           }}
           class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >
@@ -258,7 +260,7 @@ export const DashboardInfo = ({
       >
         <div
           id="header-dashboard"
-          class="relative w-full shadow-lg sm:flex-row flex-col
+          class="relative w-full shadow-lg lg:flex-row flex-col
           border border-gray-200 p-6 rounded-lg mb-8 flex justify-between items-center"
         >
           <div>
@@ -267,7 +269,7 @@ export const DashboardInfo = ({
               <span>{borough()}</span>
             </h1>
             <Show when={getSelectedZip()}>
-              <div class="flex gap-4 sm:items-center mb-4 sm:flex-row flex-col">
+              <div class="flex gap-4 lg:items-center mb-4 lg:flex-row flex-col">
                 <div id="search-box-dropdown" class="relative flex-1">
                   <div class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white ">
                     <Show
@@ -409,7 +411,7 @@ export const DashboardInfo = ({
 
       <div class="w-[95%] h-[1px] mt-[4vh] py-[2vh]" id="main">
         <div
-          class="rounded-lg shadow-lg w-[60%] mx-auto grid grid-cols-3
+          class="rounded-lg shadow-lg lg:w-[60%] w-[80%] mx-auto grid grid-cols-3
           divide-x h-[6.5vh] mb-[3vh] items-center"
           id="control-button"
         >

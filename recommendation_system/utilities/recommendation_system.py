@@ -35,9 +35,9 @@ def translate_preferences(preferences):
         user_vector[features.index('BusinessEnvironmentScore')] = business_env_types[preferences['business_environment']]
 
     # Amenity preferences
-    for amenity, density_key in amenity_options.items():
-        if density_key in features:
-            user_vector[features.index(density_key)] = 1 if amenity in preferences['amenity_preferences'] else 0
+    for amenity, feature_key in amenity_options.items():
+        if feature_key in features:
+            user_vector[features.index(feature_key)] = 1 if amenity in preferences['amenity_preferences'] else 0
 
     # Income preference
     if 'IncomeCategory' in features:
@@ -78,7 +78,7 @@ def get_recommendations(preferences, n_recommendations=5):
     user_vector = translate_preferences(preferences)
     user_vector_scaled = knn_model.named_steps['scaler'].transform([user_vector])
 
-    distances, indices = knn_model.named_steps['knn'].kneighbors(user_vector_scaled, n_neighbors=n_recommendations)
+    distances, indices = knn_model.named_steps['knn'].kneighbors(user_vector_scaled, n_neighbors=len(data))
 
     recommended_areas = []
     for i, index in enumerate(indices[0]):
@@ -117,9 +117,9 @@ def get_recommendations(preferences, n_recommendations=5):
             }
 
             # Add amenity scores to the recommendation
-            for amenity, density_key in amenity_options.items():
-                if density_key in zipcode_data:
-                    recommendation[f"{amenity.lower().replace(' ', '_')}_score"] = float(zipcode_data[density_key])
+            for amenity, feature_key in amenity_options.items():
+                if feature_key in zipcode_data:
+                    recommendation[f"{amenity.lower().replace(' ', '_')}_score"] = float(zipcode_data[feature_key])
 
             recommended_areas.append(recommendation)
 

@@ -53,6 +53,7 @@ const Filter = ({
 
   const fetchBoroughData = async () => {
     const response = await fetch("/api/borough-neighbourhood");
+
     const data = await response.json();
     setBoroughData(data);
   };
@@ -61,6 +62,7 @@ const Filter = ({
     const query = new URLSearchParams(filters).toString();
     try {
       const response = await fetch(`/api/property-data?${query}`);
+
       const data = await response.json();
       setRealEstateData(data || []);
       applyFilters();
@@ -340,7 +342,7 @@ const Filter = ({
   return (
     <div
       class={`absolute z-40 sm:h-full bg-white dark:bg-black dark:text-white h-2/5 dark:text-white w-full bottom-0
-         flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
+         flex flex-col sm:left-[50vw] sm:w-[50vw] border-black overflow-y-auto
       gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
         showFilterBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
       }`}

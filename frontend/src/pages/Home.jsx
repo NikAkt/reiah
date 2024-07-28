@@ -1,6 +1,5 @@
 import { HomeScreenLayout } from "../layouts/Layout";
 import houseSVG from "../assets/house-svgrepo-com.svg";
-import housemodernSVG from "../assets/house-modern.svg";
 import appLogo from "../assets/logo_v_small.png";
 
 // url(${sideWaveBackground})
@@ -57,11 +56,21 @@ export const Home = () => {
               >
                 Register
               </a>
+              <a
+                href="/induction"
+                class="font-poppins-regular inline-block bg-teal-500 text-white text-xl lg:text-2xl py-2 px-4 rounded-md hover:bg-teal-600 transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Induction
+              </a>
             </div>
           </div>
           <div class="hidden md:flex flex-col justify-center items-center">
             <div class="flex justify-center items-center">
-              <img src={houseSVG} alt="house svg yay!" class="h-72 lg:h-96 mr-4 mb-4" />
+              <img
+                src={houseSVG}
+                alt="house svg yay!"
+                class="h-72 lg:h-96 mr-4 mb-4"
+              />
             </div>
             <div class="flex justify-center items-center">
               {/* <img src={storeSVG} alt="store svg" class="h-72 mr-4" /> */}

@@ -40,6 +40,7 @@ func main() {
 	e.GET("/property-data", handlers.GetPropertyData)
 	e.GET("/zipcode-scores", handlers.GetZipcodeScores)
 
+
 	// Mount the public folder at the public address for accessing css and static files
 	e.Static("/", "public")
 	e.Logger.Fatal(e.Start("0.0.0.0:8000"))

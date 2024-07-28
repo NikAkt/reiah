@@ -39,26 +39,26 @@ export const Map = (props) => {
   const [query, setQuery] = createSignal({});
 
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
+  const [recommendations, setRecommendations] = createSignal([]); // Initialize as an empty array
+
+  const [sideBarOpen, setSidebarOpen] = createSignal(false);
 
   const [historicalRealEstateData] = createResource(
     ["/api/historic-prices"],
     fetchData
   );
 
-  const [zipcodes] = createResource(
-    ["/api/zipcodes"],
-    fetchData
-  );
+  const [zipcodes] = createResource(["/api/zipcodes"], fetchData);
+
+  // Add this line to log the zipcodes data
+  // console.log("Zipcodes Data:", zipcodes());
 
   const [borough_neighbourhood] = createResource(
     ["/api/borough-neighbourhood"],
     fetchData
   );
 
-  const [zipcode_geojson] = createResource(
-    ["/api/zipcode-areas"],
-    fetchData
-  );
+  const [zipcode_geojson] = createResource(["/api/zipcode-areas"], fetchData);
 
   const dataResources = {
     historicalRealEstateData,
@@ -111,6 +111,10 @@ export const Map = (props) => {
                 setQuery={setQuery}
                 recommendedZipcode={recommendedZipcode()}
                 setRecommendedZipcode={setRecommendedZipcode}
+                setSidebarOpen={setSidebarOpen}
+                sideBarOpen={sideBarOpen}
+                recommendations={recommendations()} // Ensure this is passed
+                setRecommendations={setRecommendations} // Ensure this is passed
               >
                 <div class="flex flex-col gap-2">
                   <Show
@@ -132,6 +136,7 @@ export const Map = (props) => {
                       getComparedZip={getComparedZip}
                       setComparedZip={setComparedZip}
                       getSelectedZip={getSelectedZip}
+                      setSidebarOpen={setSidebarOpen}
                       setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                     />
                   </Show>
@@ -157,7 +162,7 @@ export const Map = (props) => {
                   {(item) => {
                     return (
                       <div>
-                        {item}:{dialogInfo()[item]}
+                        {item.toUpperCase()}:{" " + dialogInfo()[item]}
                       </div>
                     );
                   }}

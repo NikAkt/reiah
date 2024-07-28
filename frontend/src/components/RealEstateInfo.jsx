@@ -103,9 +103,7 @@ const RealEstateInfo = ({
   };
 
   async function fetchPropertyData(zip) {
-    const response = await fetch(
-      `/api/property-data?zipcode=${zip}`
-    );
+    const response = await fetch(`/api/property-data?zipcode=${zip}`);
     if (!response.ok) {
       setNoProperty(true);
       return [];

@@ -52,6 +52,7 @@ const RecommendZipcode = ({
   setQuery,
   showRecommendBoard,
   setSidebarOpen,
+  setRecommendations, // Ensure this prop is received
 }) => {
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
@@ -136,21 +137,28 @@ const RecommendZipcode = ({
     fetch(query)
       .then((response) => response.json())
       .then((data) => {
-        // console.log("prediction recommendation", data);
         if (data.length === 0) {
           setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
           setRecommendedZipcode([]);
           setPredictedPrice({});
         } else {
-          // console.log(data);
           let recommendedZipcode = [];
           let predictedPrice = {};
+          let scores = {}; // New object to store scores
+
           data.forEach((el) => {
             recommendedZipcode.push(el.zipcode);
             predictedPrice[el.zipcode] = el["predicted_price"];
+            scores[el.zipcode] = {
+              // Store the scores
+              liveliness: el.liveliness_score * 10, // Convert to mark out of 10
+              similarity: el.similarity_score * 10, // Convert to mark out of 10
+            };
           });
+
           setRecommendedZipcode(recommendedZipcode);
           setPredictedPrice(predictedPrice);
+          setRecommendations(scores); // Save the scores
           setShowRecommendBoard(false);
           setSidebarOpen(false);
           setNoZipcodesMessage("");
@@ -160,15 +168,8 @@ const RecommendZipcode = ({
 
   return (
     <div
-      //     class={`absolute z-40 h-full bg-white w-full bottom-0 h-2/5
-      //       text-center flex sm:w-[55vw] sm:left-[45vw]
-      //     items-center overflow-y-auto
-      //  gap-0.5 justify-center text-black
-      //  transform  transition-transform duration-500 scale-100 ${
-      //    showRecommendBoard() ? "sm:translate-y-0 " : "sm:-translate-y-full hidden"
-      //  }`}
       class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white dark:bg-black w-full bottom-0
-    flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
+    flex flex-col sm:left-[50vw] sm:w-[50vw] border-black overflow-y-auto
  gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
    showRecommendBoard()
      ? "sm:translate-y-0"
