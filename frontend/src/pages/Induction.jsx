@@ -102,7 +102,7 @@ const InductionPage = () => {
               <MiniSection
                 img_src={hoverleft}
                 description={
-                  "When your mouse hovers on a zip code layer, the layer will turn purple. At the same time, the zip code number will show up on the search bar."
+                  "When your mouse hovers the left of the webpage, the navigation bar will appear. Or if you are using our application on the phone, an icon will show up on the top left for you to open the navigation bar."
                 }
               ></MiniSection>
             </MapPageSection>
