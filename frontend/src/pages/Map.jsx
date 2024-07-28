@@ -162,7 +162,7 @@ export const Map = (props) => {
                   {(item) => {
                     return (
                       <div>
-                        {item}:{dialogInfo()[item]}
+                        {item.toUpperCase()}:{" " + dialogInfo()[item]}
                       </div>
                     );
                   }}
