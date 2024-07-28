@@ -128,7 +128,7 @@ const RecommendZipcode = ({
     setQuery(formValues);
     const amenities = Array.from(formValues["amenity_preferences"]).join(",");
     formValues.amenity_preferences = amenities;
-    let query = "http://localhost:5001/get_recommendations?";
+    let query = "/AI/get_recommendations?";
     for (let [key, value] of Object.entries(formValues)) {
       query += `${key}=${value}&`;
     }
@@ -174,6 +174,7 @@ const RecommendZipcode = ({
      ? "sm:translate-y-0"
      : "sm:-translate-y-full hidden dark:text-black"
  }`}
+
     >
       <div class="absolute top-4 left-4">
         <button
@@ -209,10 +210,9 @@ const RecommendZipcode = ({
                     <button
                       id={`select-borough-${item}`}
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${
-                          getSelectedBorough() !== item
-                            ? ""
-                            : "bg-teal-500 text-white"
+                        hover:text-white ${getSelectedBorough() !== item
+                          ? ""
+                          : "bg-teal-500 text-white"
                         }`}
                       onClick={() => {
                         setSelectedBorough(item);
@@ -237,10 +237,9 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${
-                          getSelectedNeighbourhood() === item
-                            ? "bg-teal-500 text-white"
-                            : ""
+                        hover:text-white ${getSelectedNeighbourhood() === item
+                          ? "bg-teal-500 text-white"
+                          : ""
                         }`}
                       onClick={() => {
                         setSelectedNeighbourhood(item);
@@ -265,10 +264,9 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${
-                          getSelectedHousehold() === item
-                            ? "bg-teal-500 text-white"
-                            : ""
+                        hover:text-white ${getSelectedHousehold() === item
+                          ? "bg-teal-500 text-white"
+                          : ""
                         }`}
                       onClick={() => {
                         setSelectedHousehold(item);
@@ -293,10 +291,9 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${
-                          getSelectedBusiness() === item
-                            ? "bg-teal-500 text-white"
-                            : ""
+                        hover:text-white ${getSelectedBusiness() === item
+                          ? "bg-teal-500 text-white"
+                          : ""
                         }`}
                       onClick={() => {
                         setSelectedBusiness(item);
@@ -324,10 +321,9 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${
-                          getSelectedProperty() === item
-                            ? "bg-teal-500 text-white"
-                            : ""
+                        hover:text-white ${getSelectedProperty() === item
+                          ? "bg-teal-500 text-white"
+                          : ""
                         }`}
                       onClick={() => {
                         setSelectedProperty(item);
@@ -425,10 +421,9 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${
-                          getSelectedIncome() === item
-                            ? "bg-teal-500 text-white"
-                            : ""
+                        hover:text-white ${getSelectedIncome() === item
+                          ? "bg-teal-500 text-white"
+                          : ""
                         }`}
                       onClick={() => {
                         setSelectedIncome(item);
