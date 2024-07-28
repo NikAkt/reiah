@@ -34,7 +34,7 @@ const CloseSidebar = () => {
   return (
     <>
       <div
-        class="h-7 aspect-square hover:cursor-pointer sm:hidden"
+        class="h-7 aspect-square hover:cursor-pointer md:hidden"
         onClick={() => {
           setStore({ ...store, sidebarOpen: false });
         }}
@@ -72,7 +72,7 @@ const SidebarLink = (props) => {
 };
 
 // TODO: THIS IS THE SIDEBAR I NEED TO UPDATE TO USE A BUTTON TO OPEN BECAUSE IF YOU ARE ON MOBILE YOU CANT NAVIGATE
-//NIALL MAHON I FUCKIN HATE YOU --FRONTEND LEAD FROM GROUP 10: BARRY CARMODY
+
 // This is the exported sidebar component which will actually be used in the page layouts
 const Sidebar = (props) => {
   return (

@@ -117,7 +117,7 @@ const createLineChart = (ctx, datasets) => {
 };
 
 async function fetchMultipleHistoricPrices(zipArray) {
-  if (zipArray.length > 1) {
+  if (zipArray.length >= 1) {
     let query = "";
     for (let i = 0; i <= zipArray.length; i++) {
       if (i == 0) {

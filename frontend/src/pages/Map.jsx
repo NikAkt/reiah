@@ -71,7 +71,7 @@ export const Map = (props) => {
     <MapView>
       <div class="h-screen flex relative flex-col sm:flex-row ">
         <button
-          class="absolute h-[35px] w-[35px] bg-white sm:z-0 z-30 mt-[2vh] rounded-lg ml-[1vw] shadow-md"
+          class="absolute h-[35px] w-[35px] bg-white md:z-0 z-30 mt-[2vh] rounded-lg ml-[1vw] shadow-md"
           onClick={() => setStore({ ...store, sidebarOpen: true })}
         >
           <img src={sidebar_icon} alt="sidebar icon" />
