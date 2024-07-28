@@ -52,6 +52,7 @@ const RecommendZipcode = ({
   setQuery,
   showRecommendBoard,
   setSidebarOpen,
+  setRecommendations,  // Ensure this prop is received
 }) => {
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
   const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
@@ -128,46 +129,45 @@ const RecommendZipcode = ({
     setQuery(formValues);
     const amenities = Array.from(formValues["amenity_preferences"]).join(",");
     formValues.amenity_preferences = amenities;
-    // let query = "/AI/get_recommendations?";
     let query = "http://localhost:5001/get_recommendations?";
     for (let [key, value] of Object.entries(formValues)) {
       query += `${key}=${value}&`;
     }
 
     fetch(query)
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log("prediction recommendation", data);
-        if (data.length === 0) {
-          setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
-          setRecommendedZipcode([]);
-          setPredictedPrice({});
-        } else {
-          // console.log(data);
-          let recommendedZipcode = [];
-          let predictedPrice = {};
-          data.forEach((el) => {
-            recommendedZipcode.push(el.zipcode);
-            predictedPrice[el.zipcode] = el["predicted_price"];
-          });
-          setRecommendedZipcode(recommendedZipcode);
-          setPredictedPrice(predictedPrice);
-          setShowRecommendBoard(false);
-          setSidebarOpen(false);
-          setNoZipcodesMessage("");
-        }
-      });
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.length === 0) {
+        setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
+        setRecommendedZipcode([]);
+        setPredictedPrice({});
+      } else {
+        let recommendedZipcode = [];
+        let predictedPrice = {};
+        let scores = {}; // New object to store scores
+  
+        data.forEach((el) => {
+          recommendedZipcode.push(el.zipcode);
+          predictedPrice[el.zipcode] = el["predicted_price"];
+          scores[el.zipcode] = { // Store the scores
+            liveliness: el.liveliness_score * 10, // Convert to mark out of 10
+            similarity: el.similarity_score * 10, // Convert to mark out of 10
+          };
+        });
+  
+        setRecommendedZipcode(recommendedZipcode);
+        setPredictedPrice(predictedPrice);
+        setRecommendations(scores); // Save the scores
+        setShowRecommendBoard(false);
+        setSidebarOpen(false);
+        setNoZipcodesMessage("");
+      }
+    });
+  
   };
 
   return (
     <div
-      //     class={`absolute z-40 h-full bg-white w-full bottom-0 h-2/5
-      //       text-center flex sm:w-[55vw] sm:left-[45vw]
-      //     items-center overflow-y-auto
-      //  gap-0.5 justify-center text-black
-      //  transform  transition-transform duration-500 scale-100 ${
-      //    showRecommendBoard() ? "sm:translate-y-0 " : "sm:-translate-y-full hidden"
-      //  }`}
       class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white dark:bg-black w-full bottom-0
     flex flex-col sm:left-[50vw] sm:w-[50vw] border-black overflow-y-auto
  gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${

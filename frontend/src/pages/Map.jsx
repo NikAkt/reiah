@@ -23,8 +23,7 @@ async function fetchData([url]) {
 
 export const Map = (props) => {
   const [getSelectedZip, setSelectedZip] = createSignal("");
-  const [createMoreDashboardInfo, setCreateMoreDashboardInfo] =
-    createSignal(false);
+  const [createMoreDashboardInfo, setCreateMoreDashboardInfo] = createSignal(false);
 
   const [getComparedZip, setComparedZip] = createSignal([]);
 
@@ -39,6 +38,8 @@ export const Map = (props) => {
   const [query, setQuery] = createSignal({});
 
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
+  const [recommendations, setRecommendations] = createSignal([]); // Initialize as an empty array
+
   const [sideBarOpen, setSidebarOpen] = createSignal(false);
 
   const [historicalRealEstateData] = createResource(
@@ -51,6 +52,9 @@ export const Map = (props) => {
     ["http://localhost:8000/api/zipcodes"],
     fetchData
   );
+
+    // Add this line to log the zipcodes data
+    console.log("Zipcodes Data:", zipcodes());
 
   const [borough_neighbourhood] = createResource(
     ["http://localhost:8000/api/borough-neighbourhood"],
@@ -115,6 +119,8 @@ export const Map = (props) => {
                 setRecommendedZipcode={setRecommendedZipcode}
                 setSidebarOpen={setSidebarOpen}
                 sideBarOpen={sideBarOpen}
+                recommendations={recommendations()} // Ensure this is passed
+                setRecommendations={setRecommendations} // Ensure this is passed
               >
                 <div class="flex flex-col gap-2">
                   <Show

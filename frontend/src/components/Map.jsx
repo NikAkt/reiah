@@ -17,12 +17,12 @@ const loader = new Loader({
 });
 
 const colors = {
-  default: "#10b981", // Green for default
-  highlight: "#a888f1", // Purple for hover
-  clicked: "#36A2EB", // Blue for clicked
-  selected: "#FFA500", // Orange for selected
-  compared: "#FF6384", // Pink for compared
-  recommended: "#FFD700", // Gold for recommended
+  default: "#10b981",
+  highlight: "#a888f1",
+  clicked: "#36A2EB",
+  selected: "#FFA500",
+  compared: "#FF6384",
+  recommended: "#FFD700",
 };
 
 function getZipCodeBounds(zipcode_geojson) {
@@ -34,8 +34,7 @@ function getZipCodeBounds(zipcode_geojson) {
     });
   });
 
-  // Expand bounds slightly
-  const padding = 0.3; // Adjust the padding value as needed
+  const padding = 0.3;
   const northEast = new google.maps.LatLng(
     bounds.getNorthEast().lat() + padding,
     bounds.getNorthEast().lng() + padding
@@ -50,9 +49,72 @@ function getZipCodeBounds(zipcode_geojson) {
   return bounds;
 }
 
+const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
+  console.log("createLabels called with:", { recommendedZipcode, recommendations, zipcodes });
+
+  if (!map || !recommendedZipcode || !recommendations || !zipcodes) {
+    console.error("createLabels: Missing required data", { map, recommendedZipcode, recommendations, zipcodes });
+    return;
+  }
+
+  const createInfoWindowContent = (liveliness, similarity) => {
+    return `
+      <div style="
+        font-family: Arial, sans-serif; 
+        padding: 5px; 
+        width: 70px; 
+        height: 40px
+        border-radius: 8px; 
+        background-color: rgba(255, 255, 255, 0.9); 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      ">
+        <div style="font-size: 12px; font-weight: bold; color: #333;">Livelyness</div>
+        <div style="font-size: 12px; color: #333;">${liveliness ? liveliness.toFixed(1) : 'N/A'}/10</div>
+        <div style="font-size: 12px; font-weight: bold; color: #333; margin-top: 4px;">Similarity</div>
+        <div style="font-size: 12px; color: #333;">${similarity ? similarity.toFixed(1) : 'N/A'}/10</div>
+      </div>
+    `;
+  };
+
+  recommendedZipcode.forEach((zipcode) => {
+    const recommendation = recommendations[zipcode];
+    console.log(`Processing zipcode: ${zipcode}, recommendation:`, recommendation);
+
+    if (!recommendation) {
+      console.warn(`No recommendation found for zipcode: ${zipcode}`);
+      return; // Skip to the next zipcode
+    }
+
+    const { liveliness, similarity } = recommendation;
+    const zipcodeObj = zipcodes.find((el) => el["zip_code"] == zipcode);
+    console.log(`Found zipcodeObj for ${zipcode}:`, zipcodeObj);
+
+    if (!zipcodeObj) {
+      console.warn(`No zipcodeObj found for zipcode: ${zipcode}`);
+      return; // Skip to the next zipcode
+    }
+
+    const infowindow = new google.maps.InfoWindow({
+      content: createInfoWindowContent(liveliness, similarity),
+      position: {
+        lng: zipcodeObj.longitude * 1,
+        lat: zipcodeObj.latitude * 1,
+      },
+    });
+
+    infowindow.open(map);
+    console.log(`InfoWindow created for ${zipcode}`);
+  });
+};
+
+
+
+
+
+
 export const MapComponent = (props) => {
   let ref;
-  // const [sideBarOpen, setSidebarOpen] = createSignal(false);
   const sideBarOpen = props.sideBarOpen;
   const setSidebarOpen = props.setSidebarOpen;
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
@@ -62,6 +124,7 @@ export const MapComponent = (props) => {
   const [loadedZipcodeData, setLoadedZipcodeData] = createSignal({});
   let debounceTimeout;
   let worker;
+
   const applyStyle = (feature) => {
     const zipCode = feature.getProperty("ZIPCODE");
     if (zipCode === props.zipcodeOnCharts()) {
@@ -114,11 +177,11 @@ export const MapComponent = (props) => {
 
   const mapOptions = {
     ...JSON.parse(JSON.stringify(store.mapOptions)),
-    styles: [], // No specific styles needed since the rest of the map won't be shown
-    disableDefaultUI: true, // Disable default UI to hide unwanted map controls
+    styles: [],
+    disableDefaultUI: true,
   };
 
-  const zipcodes = props.dataResources.zipcodes();
+  const zipcodes = props.dataResources.zipcodes(); // Ensure this is called as a function
 
   const zipcode_geojson = props.dataResources.zipcode_geojson();
   const geojsonZipcode = [
@@ -221,16 +284,15 @@ export const MapComponent = (props) => {
   }
 
   const insertDataLayer = (data, map) => {
-    if (!map) return; // Ensure map is defined
+    if (!map) return;
 
     clearDataLayer(map);
     map.data.addGeoJson(data);
-
     map.data.setStyle(applyStyle);
 
     map.data.addListener("click", (event) => {
       props.zipcodeSetter(event.feature.getProperty("ZIPCODE"));
-      map.data.setStyle(applyStyle); // Reapply styles immediately after click
+      map.data.setStyle(applyStyle);
       const zipcodeObj = zipcodes.filter(
         (el) => el["zip_code"] === event.feature.getProperty("ZIPCODE")
       );
@@ -257,8 +319,11 @@ export const MapComponent = (props) => {
 
     map.data.addListener("mouseout", (event) => {
       map.data.revertStyle();
-      map.data.setStyle(applyStyle); // Ensure styles are reapplied after hover out
+      map.data.setStyle(applyStyle);
     });
+
+    // Call the createLabels function after adding data layer
+    createLabels(map, props.recommendedZipcode, props.recommendations, zipcodes);
   };
 
   const clearDataLayer = (map) => {
@@ -281,10 +346,8 @@ export const MapComponent = (props) => {
       const mapInstance = new google.maps.Map(ref, mapOptions);
       props.setMapObject(mapInstance);
 
-      // Calculate bounds for the zip codes
       const bounds = getZipCodeBounds(zipcode_geojson);
 
-      // Fit map to bounds and restrict it
       mapInstance.fitBounds(bounds);
       mapInstance.setOptions({
         restriction: {
@@ -302,11 +365,9 @@ export const MapComponent = (props) => {
         createCenterControl()
       );
 
-      // Insert all zipcodes initially
       insertDataLayer(zipcode_geojson, mapInstance);
     });
 
-    // Initialize the worker
     worker = new Worker(new URL("./dataWorker.js", import.meta.url));
 
     worker.onmessage = function (e) {
@@ -317,7 +378,6 @@ export const MapComponent = (props) => {
         amenitiesData,
         demographicData,
       }));
-      // Now update your charts with the fetched data
     };
   });
 
@@ -336,13 +396,31 @@ export const MapComponent = (props) => {
     }
   });
 
+  createEffect(() => {
+    const map = props.mapObject();
+    const zipcodesData = zipcodes;
+
+    if (!props.recommendations) {
+      console.error("Recommendations object is undefined or null");
+    }
+
+    if (map && props.recommendedZipcode && props.recommendedZipcode.length > 0 && zipcodesData) {
+      console.log("Calling createLabels with data", {
+        map,
+        recommendedZipcode: props.recommendedZipcode,
+        recommendations: props.recommendations,
+        zipcodesData,
+      });
+      createLabels(map, props.recommendedZipcode, props.recommendations, zipcodesData);
+    }
+  });
+
   onCleanup(() => {
     const mapDiv = document.getElementById("map");
     if (mapDiv) {
       mapDiv.innerHTML = "";
     }
 
-    // Terminate the worker on cleanup
     if (worker) {
       worker.terminate();
     }
@@ -400,12 +478,13 @@ export const MapComponent = (props) => {
         setSidebarOpen={setSidebarOpen}
       />
       <RecommendZipcode
-        setRecommendedZipcode={props.setRecommendedZipcode} // Ensure this line is added
+        setRecommendedZipcode={props.setRecommendedZipcode}
         setShowRecommendBoard={setShowRecommendBoard}
         setPredictedPrice={props.setPredictedPrice}
         setQuery={props.setQuery}
         showRecommendBoard={showRecommendBoard}
         setSidebarOpen={setSidebarOpen}
+        setRecommendations={props.setRecommendations}
       />
     </>
   );
