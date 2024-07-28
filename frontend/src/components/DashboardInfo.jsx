@@ -245,7 +245,7 @@ export const DashboardInfo = ({
   return (
     <div
       id={`dashboardDiv-${[getSelectedZip()]}`}
-      class="grid grid-row-1 divide-y w-[85%]"
+      class="grid grid-row-1 divide-y w-[95%] mx-auto"
     >
       <div class="absolute top-2 left-4 cursor-pointer z-40">
         <button

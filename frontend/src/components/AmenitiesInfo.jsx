@@ -212,7 +212,10 @@ const AmenitiesInfo = ({
   });
 
   return (
-    <div id="amenity-info" class="dark:text-white">
+    <div
+      id="amenity-info"
+      class="dark:text-white mx-auto items-center justify-center"
+    >
       <p class="text-xl py-4">Amenities Information</p>
       <Suspense>
         <Show when={amenities()}>
