@@ -41,22 +41,23 @@ export const Map = (props) => {
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
 
   const [historicalRealEstateData] = createResource(
-    ["/api/historic-prices"],
+    // ["/api/historic-prices"],
+    ["http://localhost:8000/api/historic-prices"],
     fetchData
   );
 
   const [zipcodes] = createResource(
-    ["/api/zipcodes"],
+    ["http://localhost:8000/api/zipcodes"],
     fetchData
   );
 
   const [borough_neighbourhood] = createResource(
-    ["/api/borough-neighbourhood"],
+    ["http://localhost:8000/api/borough-neighbourhood"],
     fetchData
   );
 
   const [zipcode_geojson] = createResource(
-    ["/api/zipcode-areas"],
+    ["http://localhost:8000/api/zipcode-areas"],
     fetchData
   );
 

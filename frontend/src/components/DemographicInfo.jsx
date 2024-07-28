@@ -11,7 +11,8 @@ const DemographicInfo = ({ zip }) => {
   const [gender, setGender] = createSignal({});
 
   const fetchDemographicData = () => {
-    fetch(`/api/demographic?zipcode=${zip()}`)
+    // fetch(`/api/demographic?zipcode=${zip()}`)
+    fetch(`http://localhost:8000/api/demographic?zipcode=${zip()}`)
       .then((response) => response.json())
       .then((data) => {
         if (data && data.length > 0) {

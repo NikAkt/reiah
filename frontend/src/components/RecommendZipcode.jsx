@@ -128,7 +128,8 @@ const RecommendZipcode = ({
     setQuery(formValues);
     const amenities = Array.from(formValues["amenity_preferences"]).join(",");
     formValues.amenity_preferences = amenities;
-    let query = "/AI/get_recommendations?";
+    // let query = "/AI/get_recommendations?";
+    let query = "http://localhost:5001/get_recommendations?";
     for (let [key, value] of Object.entries(formValues)) {
       query += `${key}=${value}&`;
     }
