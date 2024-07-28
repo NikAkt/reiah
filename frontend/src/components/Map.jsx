@@ -69,7 +69,7 @@ const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         text-align: center;
       ">
-        <div style="font-size: 12px; font-weight: bold; color: #333;">Livelyness</div>
+        <div style="font-size: 12px; font-weight: bold; color: #333;">Liveliness</div>
         <div style="font-size: 12px; color: #333;">${liveliness ? liveliness.toFixed(1) : 'N/A'}/10</div>
         <div style="font-size: 12px; font-weight: bold; color: #333; margin-top: 4px;">Similarity</div>
         <div style="font-size: 12px; color: #333;">${similarity ? similarity.toFixed(1) : 'N/A'}/10</div>
