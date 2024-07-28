@@ -45,6 +45,7 @@ const SidebarLink = (props) => {
 };
 
 // TODO: THIS IS THE SIDEBAR I NEED TO UPDATE TO USE A BUTTON TO OPEN BECAUSE IF YOU ARE ON MOBILE YOU CANT NAVIGATE
+//NIALL MAHON I FUCKIN HATE YOU --FRONTEND LEAD FROM GROUP 10: BARRY CARMODY
 // This is the exported sidebar component which will actually be used in the page layouts
 const Sidebar = (props) => {
   return (
@@ -54,7 +55,9 @@ const Sidebar = (props) => {
         onMouseEnter={() => setStore({ ...store, sidebarOpen: true })}
       ></div>
       <div
-        class={`fixed top-0 left-0 min-h-screen p-4 z-50 shadow-md bg-white dark:bg-slate-800 w-60 transition ${store.sidebarOpen ? "" : "-translate-x-60"}`}
+        class={`fixed top-0 left-0 min-h-screen p-4 z-50 shadow-md bg-white dark:bg-slate-800 w-60 transition ${
+          store.sidebarOpen ? "" : "-translate-x-60"
+        }`}
       >
         <div class="flex items-center justify-between pb-4 border-b border-b-gray-800">
           <a href="/" class="flex items-center" hx-boost="true">

@@ -2,6 +2,8 @@ import { MapView } from "../layouts/Layout";
 import { MapComponent } from "../components/Map";
 import { LoadingAnimation } from "../components/LoadingAnimation";
 import { ErrorPage } from "../components/ErrorPage";
+import sidebar_icon from "../assets/filter-list-svgrepo-com.svg";
+import { store, setStore } from "../data/stores";
 import {
   Show,
   Suspense,
@@ -10,7 +12,6 @@ import {
   createEffect,
   ErrorBoundary,
 } from "solid-js";
-import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import UserMenu from "../components/UserMenu";
 
@@ -69,6 +70,14 @@ export const Map = (props) => {
   return (
     <MapView>
       <div class="h-screen flex relative flex-col sm:flex-row ">
+        <button
+          class="absolute h-[35px] w-[35px] bg-white sm:z-0 z-30 mt-[2vh] rounded-lg ml-[1vw] shadow-md"
+          onClick={() => setStore({ ...store, sidebarOpen: true })}
+        >
+          <img src={sidebar_icon} alt="sidebar icon" />
+        </button>
+        {/* <div class="h-full w-full bg-black opacity-30 z-20"></div> */}
+
         <ErrorBoundary fallback={<ErrorPage />}>
           <Suspense
             fallback={

@@ -160,13 +160,18 @@ const RecommendZipcode = ({
 
   return (
     <div
-      class={`absolute z-40 h-full bg-white w-full bottom-0 h-2/5
-        text-center flex sm:w-[55vw] sm:left-[45vw]
-      items-center overflow-y-auto
-   gap-0.5 justify-center text-black 
-   transform  transition-transform duration-500 scale-100 ${
-     showRecommendBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
-   }`}
+      //     class={`absolute z-40 h-full bg-white w-full bottom-0 h-2/5
+      //       text-center flex sm:w-[55vw] sm:left-[45vw]
+      //     items-center overflow-y-auto
+      //  gap-0.5 justify-center text-black
+      //  transform  transition-transform duration-500 scale-100 ${
+      //    showRecommendBoard() ? "sm:translate-y-0 " : "sm:-translate-y-full hidden"
+      //  }`}
+      class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white w-full bottom-0
+    flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
+ gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
+   showRecommendBoard() ? "sm:translate-y-0" : "sm:-translate-y-full hidden"
+ }`}
     >
       <div class="absolute top-4 left-4">
         <button
