@@ -28,18 +28,18 @@ const DemographicInfo = ({ zip }) => {
           setGender(gender_datasets);
 
           const race_labels = [
-            "white",
-            "asian",
-            "black",
-            "pacific_islander",
-            "american_indian",
-            "other",
+            "White",
+            "Asian",
+            "Black",
+            "Pacific Islander",
+            "American Indian",
+            "Other",
           ];
           const race_data = [
             obj["white"],
             obj["asian"],
             obj["black"],
-            obj["pacific_islander"],
+            obj["pacific_islander"].toFixed(0),
             obj["american_indian"],
             obj["other"],
           ];
