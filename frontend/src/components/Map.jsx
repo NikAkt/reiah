@@ -49,6 +49,8 @@ function getZipCodeBounds(zipcode_geojson) {
   return bounds;
 }
 
+let infoWindows = [];
+
 const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
   console.log("createLabels called with:", {
     recommendedZipcode,
@@ -66,19 +68,22 @@ const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
     return;
   }
 
+  // Close existing InfoWindows
+  infoWindows.forEach((infoWindow) => infoWindow.close());
+  infoWindows = [];
+
   const createInfoWindowContent = (liveliness, similarity) => {
     return `
       <div style="
         font-family: Arial, sans-serif; 
-        padding: 5px; 
-        width: 70px; 
-        height: 40px
+        padding: 6px; 
+        width: 100px; 
         border-radius: 8px; 
         background-color: rgba(255, 255, 255, 0.9); 
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         text-align: center;
       ">
-        <div style="font-size: 12px; font-weight: bold; color: #333;">Liveliness</div>
+        <div style="font-size: 12px; font-weight: bold; color: #333;">Livelyness</div>
         <div style="font-size: 12px; color: #333;">${
           liveliness ? liveliness.toFixed(1) : "N/A"
         }/10</div>
@@ -120,6 +125,7 @@ const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
     });
 
     infowindow.open(map);
+    infoWindows.push(infowindow); // Track the new InfoWindow
     console.log(`InfoWindow created for ${zipcode}`);
   });
 };
