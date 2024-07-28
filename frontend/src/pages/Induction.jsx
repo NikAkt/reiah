@@ -71,7 +71,7 @@ const InductionPage = () => {
         >
           {/* a tags */}
           <div
-            class="relative grid grid-cols-7 mx-auto divide-x mb-[2vh]
+            class="relative grid md:grid-cols-7 grid-rows-3 mx-auto md:divide-x mb-[2vh]
              items-center justify-center"
           >
             <a href="#nav_bar">Navigation Bar</a>

@@ -142,8 +142,8 @@ export const Map = (props) => {
             <Show when={displayDialog() == true}>
               <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
               <div
-                class="absolute w-[30vw] h-[30vh] bg-white rounded-lg shadow-md
-               z-30 m-auto text-center top-[35vh] left-[35vw] items-center justify-center flex flex-col"
+                class="absolute sm:w-[30vw] w-[50vw] h-[30vh] bg-white rounded-lg shadow-md
+               z-30 m-auto text-center top-[35vh] sm:left-[35vw] left-[25vw] items-center justify-center flex flex-col"
                 onclick={() => setDisplayDialog(false)}
               >
                 <For

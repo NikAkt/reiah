@@ -1,6 +1,5 @@
 import { store, setStore } from "../data/stores";
 import { For } from "solid-js";
-import close_icon from "../assets/close-svgrepo-com.svg";
 
 const DarkLightModeToggle = () => {
   return (
@@ -34,7 +33,7 @@ const CloseSidebar = () => {
   return (
     <>
       <div
-        class="h-7 aspect-square hover:cursor-pointer md:hidden"
+        class="h-7 aspect-square hover:cursor-pointer lg:hidden"
         onClick={() => {
           setStore({ ...store, sidebarOpen: false });
         }}
