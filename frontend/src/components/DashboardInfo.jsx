@@ -97,6 +97,7 @@ export const DashboardInfo = ({
   setComparedZip,
   getSelectedZip,
   setCreateMoreDashboardInfo,
+  setSidebarOpen,
 }) => {
   const loader = new Loader({
     apiKey: "AIzaSyAyzZ_YJeiDD4_KcCZvLabRIzPiEXmuyBw",
@@ -246,10 +247,11 @@ export const DashboardInfo = ({
       id={`dashboardDiv-${[getSelectedZip()]}`}
       class="grid grid-row-1 divide-y relative w-full"
     >
-      <div class="absolute top-4 left-4">
+      <div class="absolute top-2 left-4 cursor-pointer z-40">
         <button
           onClick={() => {
-            document.getElementById("information-button").click();
+            // document.getElementById("information-button").click();
+            setSidebarOpen(false);
           }}
           class="hover:bg-teal-500 bg-white rounded-full items-center justify-center flex"
         >

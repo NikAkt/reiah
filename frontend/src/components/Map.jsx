@@ -52,7 +52,9 @@ function getZipCodeBounds(zipcode_geojson) {
 
 export const MapComponent = (props) => {
   let ref;
-  const [sideBarOpen, setSidebarOpen] = createSignal(false);
+  // const [sideBarOpen, setSidebarOpen] = createSignal(false);
+  const sideBarOpen = props.sideBarOpen;
+  const setSidebarOpen = props.setSidebarOpen;
   const [showFilterBoard, setShowFilterBoard] = createSignal(false);
   const [showRecommendBoard, setShowRecommendBoard] = createSignal(false);
   const [showInfoBoard, setShowInfoBoard] = createSignal(false);

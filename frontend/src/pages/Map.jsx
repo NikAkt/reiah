@@ -39,6 +39,7 @@ export const Map = (props) => {
   const [query, setQuery] = createSignal({});
 
   const [recommendedZipcode, setRecommendedZipcode] = createSignal([]);
+  const [sideBarOpen, setSidebarOpen] = createSignal(false);
 
   const [historicalRealEstateData] = createResource(
     // ["/api/historic-prices"],
@@ -112,6 +113,8 @@ export const Map = (props) => {
                 setQuery={setQuery}
                 recommendedZipcode={recommendedZipcode()}
                 setRecommendedZipcode={setRecommendedZipcode}
+                setSidebarOpen={setSidebarOpen}
+                sideBarOpen={sideBarOpen}
               >
                 <div class="flex flex-col gap-2">
                   <Show
@@ -133,6 +136,7 @@ export const Map = (props) => {
                       getComparedZip={getComparedZip}
                       setComparedZip={setComparedZip}
                       getSelectedZip={getSelectedZip}
+                      setSidebarOpen={setSidebarOpen}
                       setCreateMoreDashboardInfo={setCreateMoreDashboardInfo}
                     />
                   </Show>
