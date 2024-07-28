@@ -89,7 +89,6 @@ const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
           liveliness ? liveliness.toFixed(1) : "N/A"
         }/10</div>
         <div style="font-size: 12px; font-weight: bold; color: #333; margin-top: 4px;">Similarity</div>
-         <div style="font-size: 8px; font-weight: bold; color: #333; margin-top: 2px;">(how well the area suit your preferences)</div>
         <div style="font-size: 12px; color: #333;">${
           similarity ? similarity.toFixed(1) : "N/A"
         }/10</div>

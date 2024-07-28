@@ -192,7 +192,7 @@ const InductionPage = () => {
               <MiniSection
                 img_src={infowindow}
                 description={
-                  "After clicking Submit button on the bottom of the recommendation board, you can get zipcodes match your preferecnes highlighted in gold. The information window will suggest how lively or busy and how similar the zip code is to your preferences."
+                  "After clicking Submit button on the bottom of the recommendation board, you can get zipcodes match your preferecnes highlighted in gold. The information window will suggest how lively or busy and how similar the zip code is to your preferences. The similarity indicates how well the area suit your preferences."
                 }
               ></MiniSection>
             </MapPageSection>
