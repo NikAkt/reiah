@@ -50,10 +50,19 @@ function getZipCodeBounds(zipcode_geojson) {
 }
 
 const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
-  console.log("createLabels called with:", { recommendedZipcode, recommendations, zipcodes });
+  console.log("createLabels called with:", {
+    recommendedZipcode,
+    recommendations,
+    zipcodes,
+  });
 
   if (!map || !recommendedZipcode || !recommendations || !zipcodes) {
-    console.error("createLabels: Missing required data", { map, recommendedZipcode, recommendations, zipcodes });
+    console.error("createLabels: Missing required data", {
+      map,
+      recommendedZipcode,
+      recommendations,
+      zipcodes,
+    });
     return;
   }
 
@@ -69,17 +78,24 @@ const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         text-align: center;
       ">
-        <div style="font-size: 12px; font-weight: bold; color: #333;">Livelyness</div>
-        <div style="font-size: 12px; color: #333;">${liveliness ? liveliness.toFixed(1) : 'N/A'}/10</div>
+        <div style="font-size: 12px; font-weight: bold; color: #333;">Liveliness</div>
+        <div style="font-size: 12px; color: #333;">${
+          liveliness ? liveliness.toFixed(1) : "N/A"
+        }/10</div>
         <div style="font-size: 12px; font-weight: bold; color: #333; margin-top: 4px;">Similarity</div>
-        <div style="font-size: 12px; color: #333;">${similarity ? similarity.toFixed(1) : 'N/A'}/10</div>
+        <div style="font-size: 12px; color: #333;">${
+          similarity ? similarity.toFixed(1) : "N/A"
+        }/10</div>
       </div>
     `;
   };
 
   recommendedZipcode.forEach((zipcode) => {
     const recommendation = recommendations[zipcode];
-    console.log(`Processing zipcode: ${zipcode}, recommendation:`, recommendation);
+    console.log(
+      `Processing zipcode: ${zipcode}, recommendation:`,
+      recommendation
+    );
 
     if (!recommendation) {
       console.warn(`No recommendation found for zipcode: ${zipcode}`);
@@ -107,11 +123,6 @@ const createLabels = (map, recommendedZipcode, recommendations, zipcodes) => {
     console.log(`InfoWindow created for ${zipcode}`);
   });
 };
-
-
-
-
-
 
 export const MapComponent = (props) => {
   let ref;
@@ -323,7 +334,12 @@ export const MapComponent = (props) => {
     });
 
     // Call the createLabels function after adding data layer
-    createLabels(map, props.recommendedZipcode, props.recommendations, zipcodes);
+    createLabels(
+      map,
+      props.recommendedZipcode,
+      props.recommendations,
+      zipcodes
+    );
   };
 
   const clearDataLayer = (map) => {
@@ -404,14 +420,24 @@ export const MapComponent = (props) => {
       console.error("Recommendations object is undefined or null");
     }
 
-    if (map && props.recommendedZipcode && props.recommendedZipcode.length > 0 && zipcodesData) {
+    if (
+      map &&
+      props.recommendedZipcode &&
+      props.recommendedZipcode.length > 0 &&
+      zipcodesData
+    ) {
       console.log("Calling createLabels with data", {
         map,
         recommendedZipcode: props.recommendedZipcode,
         recommendations: props.recommendations,
         zipcodesData,
       });
-      createLabels(map, props.recommendedZipcode, props.recommendations, zipcodesData);
+      createLabels(
+        map,
+        props.recommendedZipcode,
+        props.recommendations,
+        zipcodesData
+      );
     }
   });
 
