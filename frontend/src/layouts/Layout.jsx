@@ -1,9 +1,8 @@
 import { Sidebar, DarkLightModeToggle } from "../components/Sidebar";
 import { SortableGroup } from "../components/SortableGroup";
-import { Navbar } from "../components/Navbar";
 import { setStore, store } from "../data/stores";
 import { Show } from "solid-js";
-
+import sidebar_icon from "../assets/filter-list-svgrepo-com.svg";
 const links = [
   { Href: "/map", Title: "Map" },
   { Href: "/settings", Title: "Settings" },
@@ -63,6 +62,12 @@ const InductionView = (props) => {
   return (
     <BaseLayout>
       <Sidebar links={links} />
+      <button
+        class="absolute h-[35px] w-[35px] bg-white lg:hidden z-30 mt-[2vh] rounded-lg ml-[1vw] shadow-md"
+        onClick={() => setStore({ ...store, sidebarOpen: true })}
+      >
+        <img src={sidebar_icon} alt="sidebar icon" />
+      </button>
       <main
         class="z-10 w-full bg-gray-100 dark:bg-gray-900 min-h-screen"
         onMouseOver={() => setStore({ ...store, sidebarOpen: false })}

@@ -92,14 +92,14 @@ export const MapComponent = (props) => {
 
     function updateButtonStyles() {
       centerControlDiv.className = !sideBarOpen()
-        ? "w-[80%] overflow-x-auto flex"
-        : "w-[30%] flex flex-col mr-4";
+        ? "sm:w-[80%] w-[40%] overflow-x-auto flex sm:flex-row flex-col sm:text-base text-sm mt-[10vh] md:mt-[7vh] mt-[10vh] lg:mt-[0vh]"
+        : "w-[30%] flex flex-col mr-4 mt-[10vh] md:mt-[7%] mt-[10%] lg:mt-[0vh]";
 
       controlButton.textContent = "Information";
       controlButton.id = "information-button";
       hoverLocationDiv.className = sideBarOpen()
-        ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mr-10 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
-        : "w-[20%] rounded shadow-md color-zinc-900 bg-white text-base text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
+        ? "w-[100%] rounded shadow-md color-zinc-900 bg-white text-black mt-4 mr-10 mb-6 leading-9 py-0 px-2 text-center items-center justify-center"
+        : "rounded shadow-md color-zinc-900 bg-white text-black mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center items-center justify-center";
     }
 
     createEffect(() => updateButtonStyles());
@@ -109,7 +109,7 @@ export const MapComponent = (props) => {
     controlButton.title = "Click to show details";
     controlButton.type = "button";
     controlButton.className =
-      "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "rounded shadow-md color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     controlButton.addEventListener("click", () => {
       closeAllBoards();
       setShowInfoBoard((prev) => !prev);
@@ -138,7 +138,7 @@ export const MapComponent = (props) => {
 
     recommendZipBtn.textContent = "Recommend";
     recommendZipBtn.className =
-      "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "rounded shadow-md color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     recommendZipBtn.addEventListener("click", () => {
       closeAllBoards();
       setShowRecommendBoard((prev) => !prev);
@@ -147,7 +147,7 @@ export const MapComponent = (props) => {
 
     filterBtn.textContent = "Filter";
     filterBtn.className =
-      "rounded shadow-md color-zinc-900 cursor-pointer bg-white text-base mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
+      "rounded shadow-md color-zinc-900 cursor-pointer bg-white mt-4 mx-6 mb-6 leading-9 py-0 px-2 text-center";
     filterBtn.addEventListener("click", () => {
       closeAllBoards();
       setShowFilterBoard((prev) => !prev);
@@ -359,17 +359,17 @@ export const MapComponent = (props) => {
         <div
           ref={ref}
           id="map"
-          class={`h-full basis-1/2 grow transition
+          class={`grow transition
             transform  transition-transform duration-500 scale-100 ${
-              sideBarOpen() ? "w-1/2" : "w-full"
+              sideBarOpen() ? "sm:w-1/2 w-full sm:h-full h-3/5" : "w-full"
             }`}
         ></div>
       </Suspense>
 
       <div
         class={`bg-white dark:bg-gray-900 w-[60vw] gap-2 
-      right-0 h-screen flex flex-col
-          drop-shadow overflow-scroll p-6 
+      right-0 h-2/5 sm:h-full flex flex-col sm:w-1/2 w-full 
+          drop-shadow overflow-scroll p-6
           ${sideBarOpen() ? "" : "hidden"}
           
           `}

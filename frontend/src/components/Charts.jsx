@@ -5,10 +5,10 @@ import {
   onMount,
   Show,
   createResource,
-  createSignal,
 } from "solid-js";
 import loading_svg from "../assets/spinning-circles.svg";
 import labradorDontCare from "../assets/labrador_dont_care.gif";
+import { store } from "../data/stores";
 
 const LoadingSvg = () => {
   return (
@@ -117,7 +117,7 @@ const createLineChart = (ctx, datasets) => {
 };
 
 async function fetchMultipleHistoricPrices(zipArray) {
-  if (zipArray.length > 1) {
+  if (zipArray.length >= 1) {
     let query = "";
     for (let i = 0; i <= zipArray.length; i++) {
       if (i == 0) {
@@ -240,7 +240,6 @@ const LineChart = ({
     if (!historicPrices.loading) {
       try {
         if (Object.keys(historicPrices()).length > 0) {
-          console.log("triggered", historicPrices());
           let newData = historicPrices();
           let transformedData = Object.values(newData)[0];
 
@@ -289,7 +288,7 @@ const LineChart = ({
         <div>
           <canvas
             ref={(el) => (ref = el)}
-            class="w-full h-full min-w-[500px] min-h-[400px]"
+            class="w-full h-full min-w-[50%] min-h-[400px]"
           ></canvas>
         </div>
       </Show>
@@ -325,7 +324,7 @@ const DoughnutChart = (props) => {
   return (
     <div
       class="relative min-h-[300px] max-w-[300px] aspect-square
-    rounded bg-white dark:bg-slate-800 p-4 col-span-full"
+    rounded bg-white dark:bg-slate-800 p-4 col-span-full text-white"
     >
       <canvas ref={(el) => (ref2 = el)} id="doughnutchart"></canvas>
     </div>
@@ -361,19 +360,19 @@ const createDoughnutChart = (
           // Display labels two per row
           generateLabels: function (chart) {
             const data = chart.data;
+            const fontColor = store.darkModeOn ? "white" : "black";
             if (data.labels.length > 0) {
               return data.labels.map((label, i) => {
                 const meta = chart.getDatasetMeta(0);
                 const ds = data.datasets[0];
                 const arc = meta.data[i];
                 const color =
-                  (arc &&
-                    arc.options &&
-                    arc.options.backgroundColor) ||
+                  (arc && arc.options && arc.options.backgroundColor) ||
                   "transparent";
                 return {
                   text: label,
                   fillStyle: color,
+                  fontColor: fontColor,
                   hidden: isNaN(ds.data[i]) || ds.data[i] === null,
                   index: i,
                 };

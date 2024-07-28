@@ -8,7 +8,7 @@ const MarkerLegend = ({
     <div class="flex flex-col px-2 py-2 rounded-lg justify-center items-center">
       <div class="flex justify-center items-center gap-2 w-full">
         <button
-          class={`rounded-md 
+          class={`rounded-md dark:text-black
         bg-[#ffffff] border-2 border-solid border-black px-2 ${
           hideProperty() ? "opacity-40" : ""
         }`}

@@ -239,7 +239,7 @@ export const DashboardInfo = ({
   return (
     <div
       id={`dashboardDiv-${[getSelectedZip()]}`}
-      class="grid grid-row-1 divide-y"
+      class="grid grid-row-1 divide-y relative w-full"
     >
       <div class="absolute top-4 left-4">
         <button
@@ -258,7 +258,8 @@ export const DashboardInfo = ({
       >
         <div
           id="header-dashboard"
-          class="relative w-full shadow-lg border border-gray-200 p-6 rounded-lg mb-8 flex justify-between items-center"
+          class="relative w-full shadow-lg sm:flex-row flex-col
+          border border-gray-200 p-6 rounded-lg mb-8 flex justify-between items-center"
         >
           <div>
             <h1 class="font-medium text-2xl mb-4" id="dashboard_top">
@@ -266,9 +267,9 @@ export const DashboardInfo = ({
               <span>{borough()}</span>
             </h1>
             <Show when={getSelectedZip()}>
-              <div class="flex gap-4 items-center mb-4">
+              <div class="flex gap-4 sm:items-center mb-4 sm:flex-row flex-col">
                 <div id="search-box-dropdown" class="relative flex-1">
-                  <div class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white">
+                  <div class="flex items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white ">
                     <Show
                       when={showDropDown() === false}
                       fallback={
@@ -320,12 +321,16 @@ export const DashboardInfo = ({
                     />
                   </div>
                   <div
-                    class={`absolute z-40 w-full bg-white shadow-lg border border-gray-200 rounded-lg mt-2 ${showDropDown() ? "block" : "hidden"
-                      }`}
+                    class={`absolute z-40 w-full bg-white shadow-lg border border-gray-200 rounded-lg mt-2 ${
+                      showDropDown() ? "block" : "hidden"
+                    }`}
                   >
                     <div class="p-2">
                       {uniqueZipcode.map((zip) => (
-                        <div key={zip} class="p-2 flex items-center">
+                        <div
+                          key={zip}
+                          class="p-2 flex items-center dark:text-black"
+                        >
                           <input
                             type="checkbox"
                             id={`compareCheckbox-${zip}`}
@@ -359,17 +364,19 @@ export const DashboardInfo = ({
                 </div>
                 <input
                   type="Submit"
-                  class={`relative rounded-lg bg-teal-500 text-white px-4 py-2 ${getComparedZip().length > 0
-                    ? "cursor-pointer"
-                    : "cursor-not-allowed opacity-50 disabled"
-                    }`}
+                  class={`relative rounded-lg bg-teal-500 text-white px-4 py-2 ${
+                    getComparedZip().length > 0
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed opacity-50 disabled"
+                  }`}
                   onClick={handleSubmit}
                 />
                 <button
-                  class={`relative bg-teal-500 px-4 py-2 rounded-lg text-white ${getComparedZip().length > 0
-                    ? ""
-                    : "cursor-not-allowed opacity-50 disabled"
-                    }`}
+                  class={`relative bg-teal-500 px-4 py-2 rounded-lg text-white ${
+                    getComparedZip().length > 0
+                      ? ""
+                      : "cursor-not-allowed opacity-50 disabled"
+                  }`}
                   onClick={() => {
                     setCreateMoreDashboardInfo(false);
                     for (let zip of getComparedZip()) {
@@ -402,14 +409,16 @@ export const DashboardInfo = ({
 
       <div class="w-[95%] h-[1px] mt-[4vh] py-[2vh]" id="main">
         <div
-          class="rounded-lg shadow-lg w-[60%] mx-auto grid grid-cols-3 divide-x h-[6vh] mb-[3vh] items-center"
+          class="rounded-lg shadow-lg w-[60%] mx-auto grid grid-cols-3
+          divide-x h-[6.5vh] mb-[3vh] items-center"
           id="control-button"
         >
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${mainInfo() === "realEstate"
-              ? "bg-teal-500 text-white"
-              : "bg-white text-black"
-              } rounded-l-lg cursor-pointer hover:border hover:border-solid shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative h-full flex items-center justify-center whitespace-nowrap ${
+              mainInfo() === "realEstate"
+                ? "bg-teal-500 text-white"
+                : "bg-white text-black"
+            } rounded-l-lg cursor-pointer hover:border hover:border-solid shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("realEstate");
             }}
@@ -428,10 +437,11 @@ export const DashboardInfo = ({
             <span class="ml-2">Real Estate</span>
           </div>
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${mainInfo() === "amenities"
-              ? "bg-teal-500 text-white"
-              : "bg-white text-black"
-              } cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex h-full items-center justify-center whitespace-nowrap ${
+              mainInfo() === "amenities"
+                ? "bg-teal-500 text-white"
+                : "bg-white text-black"
+            } cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("amenities");
             }}
@@ -495,10 +505,11 @@ export const DashboardInfo = ({
             <span class="ml-2">Amenities</span>
           </div>
           <div
-            class={`relative flex items-center justify-center whitespace-nowrap ${mainInfo() === "other"
-              ? "bg-teal-500 text-white"
-              : "bg-white text-black"
-              } rounded-r-lg cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
+            class={`relative flex items-center h-full justify-center whitespace-nowrap ${
+              mainInfo() === "other"
+                ? "bg-teal-500 text-white"
+                : "bg-white text-black"
+            } rounded-r-lg cursor-pointer hover:border-solid hover:border shadow-lg py-2 px-2 overflow-hidden`}
             onClick={() => {
               setMainInfo("other");
             }}
@@ -523,13 +534,14 @@ export const DashboardInfo = ({
 
         <div
           class={`grid grid-row-1 divide-y relative 
-      w-[100%] place-content-stretch
+      w-[100%] place-content-stretch dark:text-white
        ${show() ? "" : "hidden"}`}
           id="main-info-section"
         >
           <div
-            class={`grid grid-row-1 divide-y ${mainInfo() === "realEstate" ? "" : "hidden"
-              }`}
+            class={`grid grid-row-1 divide-y ${
+              mainInfo() === "realEstate" ? "" : "hidden"
+            }`}
           >
             <div
               class="relative grid grid-cols-3 mx-auto divide-x mb-[2vh]
@@ -569,8 +581,9 @@ export const DashboardInfo = ({
             >
               <div
                 id="property-value"
-                class={`min-h-[40vh] ${toggleState()["property-value"] ? "" : "hidden"
-                  }`}
+                class={`min-h-[40vh] ${
+                  toggleState()["property-value"] ? "" : "hidden"
+                }`}
               >
                 <p class="text-xl py-4">Historical Property Value</p>
                 <LineChart
@@ -616,18 +629,20 @@ export const DashboardInfo = ({
 
               <div
                 id="sales-2023"
-                class={`relative w-full ${toggleState()["sales-2023"] ? "" : "hidden"
-                  } py-4`}
+                class={`relative w-full ${
+                  toggleState()["sales-2023"] ? "" : "hidden"
+                } py-4`}
               >
                 <p class="text-xl py-4">2023 Residential Property Sales</p>
                 <p class="text-sm">Data Source: Zillow</p>
                 <Show when={updateInfo()}>
                   <div class="flex gap-2 mb-4">
                     <button
-                      class={`bg-black text-white px-4 py-2 rounded-lg ${showWhichRealEstate() === getSelectedZip()
-                        ? ""
-                        : "opacity-30"
-                        }`}
+                      class={`bg-black text-white px-4 py-2 rounded-lg ${
+                        showWhichRealEstate() === getSelectedZip()
+                          ? ""
+                          : "opacity-30"
+                      }`}
                       onClick={() => {
                         setShowWhichRealEstate(getSelectedZip());
                       }}
@@ -638,8 +653,9 @@ export const DashboardInfo = ({
                       {(item, index) => {
                         return (
                           <button
-                            class={`bg-black text-white px-4 py-2 rounded-lg ${showWhichRealEstate() === item ? "" : "opacity-30"
-                              }`}
+                            class={`bg-black text-white px-4 py-2 rounded-lg ${
+                              showWhichRealEstate() === item ? "" : "opacity-30"
+                            }`}
                             onClick={() => {
                               setShowWhichRealEstate(item);
                             }}
@@ -656,7 +672,7 @@ export const DashboardInfo = ({
                   <div
                     class={
                       showWhichRealEstate() === getSelectedZip() ||
-                        !updateInfo()
+                      !updateInfo()
                         ? ""
                         : "hidden"
                     }
@@ -714,8 +730,9 @@ export const DashboardInfo = ({
 
               <div
                 id="sales-2024"
-                class={`relative w-full py-4 ${toggleState()["sales-2024"] ? "" : "hidden"
-                  }`}
+                class={`relative w-full py-4 ${
+                  toggleState()["sales-2024"] ? "" : "hidden"
+                }`}
               >
                 <p class="text-xl py-4">2024 Sales Price Prediction</p>
                 <div class="text-md mb-4">

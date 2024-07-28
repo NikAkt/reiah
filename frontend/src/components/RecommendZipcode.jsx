@@ -54,12 +54,20 @@ const RecommendZipcode = ({
   setSidebarOpen,
 }) => {
   const [getSelectedBorough, setSelectedBorough] = createSignal(borough[0]);
-  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(neighbourhood_type[0]);
+  const [getSelectedNeighbourhood, setSelectedNeighbourhood] = createSignal(
+    neighbourhood_type[0]
+  );
   const [getSelectedIncome, setSelectedIncome] = createSignal(income[0]);
-  const [getSelectedBusiness, setSelectedBusiness] = createSignal(business_environment[0]);
-  const [getSelectedProperty, setSelectedProperty] = createSignal(property_type[0]);
+  const [getSelectedBusiness, setSelectedBusiness] = createSignal(
+    business_environment[0]
+  );
+  const [getSelectedProperty, setSelectedProperty] = createSignal(
+    property_type[0]
+  );
   const [getSelectedAmenities, setSelectedAmenities] = createSignal([]);
-  const [getSelectedHousehold, setSelectedHousehold] = createSignal(household_type[0]);
+  const [getSelectedHousehold, setSelectedHousehold] = createSignal(
+    household_type[0]
+  );
   const [getSelectedBeds, setSelectedBeds] = createSignal(1);
   const [getSelectedBaths, setSelectedBaths] = createSignal(1);
   const [getSelectedMaxPrice, setSelectedMaxPrice] = createSignal(1000000);
@@ -81,7 +89,9 @@ const RecommendZipcode = ({
     setRecommendedZipcode([]); // Reset the highlight on the map
     setNoZipcodesMessage("");
 
-    document.querySelectorAll('input[type="checkbox"]').forEach((el) => (el.checked = false)); // Clear all checkboxes
+    document
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((el) => (el.checked = false)); // Clear all checkboxes
   };
 
   const handleSubmitForm = () => {
@@ -126,13 +136,13 @@ const RecommendZipcode = ({
     fetch(query)
       .then((response) => response.json())
       .then((data) => {
-        console.log("prediction recommendation", data);
+        // console.log("prediction recommendation", data);
         if (data.length === 0) {
           setNoZipcodesMessage("Unfortunately, no zip codes fit the criteria.");
           setRecommendedZipcode([]);
           setPredictedPrice({});
         } else {
-          console.log(data);
+          // console.log(data);
           let recommendedZipcode = [];
           let predictedPrice = {};
           data.forEach((el) => {
@@ -150,12 +160,20 @@ const RecommendZipcode = ({
 
   return (
     <div
-      class={`absolute z-40 h-full bg-white 
-        text-center flex w-[55vw] left-[45vw]
-      items-center overflow-y-auto
-   gap-0.5 justify-center text-black 
-   transform  transition-transform duration-500 scale-100 ${showRecommendBoard() ? "translate-y-0" : "-translate-y-full"
-        }`}
+      //     class={`absolute z-40 h-full bg-white w-full bottom-0 h-2/5
+      //       text-center flex sm:w-[55vw] sm:left-[45vw]
+      //     items-center overflow-y-auto
+      //  gap-0.5 justify-center text-black
+      //  transform  transition-transform duration-500 scale-100 ${
+      //    showRecommendBoard() ? "sm:translate-y-0 " : "sm:-translate-y-full hidden"
+      //  }`}
+      class={`absolute z-40 sm:h-full bg-white h-2/5 dark:text-white dark:bg-black w-full bottom-0
+    flex flex-col sm:left-[45vw] sm:w-[55vw] border-black overflow-y-auto
+ gap-0.5 justify-between text-black transition-transform duration-500 scale-100 ${
+   showRecommendBoard()
+     ? "sm:translate-y-0"
+     : "sm:-translate-y-full hidden dark:text-black"
+ }`}
     >
       <div class="absolute top-4 left-4">
         <button
@@ -191,9 +209,10 @@ const RecommendZipcode = ({
                     <button
                       id={`select-borough-${item}`}
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${getSelectedBorough() !== item
-                          ? ""
-                          : "bg-teal-500 text-white"
+                        hover:text-white ${
+                          getSelectedBorough() !== item
+                            ? ""
+                            : "bg-teal-500 text-white"
                         }`}
                       onClick={() => {
                         setSelectedBorough(item);
@@ -218,9 +237,10 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${getSelectedNeighbourhood() === item
-                          ? "bg-teal-500 text-white"
-                          : ""
+                        hover:text-white ${
+                          getSelectedNeighbourhood() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
                         }`}
                       onClick={() => {
                         setSelectedNeighbourhood(item);
@@ -245,9 +265,10 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${getSelectedHousehold() === item
-                          ? "bg-teal-500 text-white"
-                          : ""
+                        hover:text-white ${
+                          getSelectedHousehold() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
                         }`}
                       onClick={() => {
                         setSelectedHousehold(item);
@@ -272,9 +293,10 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${getSelectedBusiness() === item
-                          ? "bg-teal-500 text-white"
-                          : ""
+                        hover:text-white ${
+                          getSelectedBusiness() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
                         }`}
                       onClick={() => {
                         setSelectedBusiness(item);
@@ -302,9 +324,10 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${getSelectedProperty() === item
-                          ? "bg-teal-500 text-white"
-                          : ""
+                        hover:text-white ${
+                          getSelectedProperty() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
                         }`}
                       onClick={() => {
                         setSelectedProperty(item);
@@ -329,7 +352,7 @@ const RecommendZipcode = ({
                 step="1"
                 value={getSelectedSize()}
                 required
-                class="w-32 p-2 border border-gray-300 rounded"
+                class="w-32 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedSize(event.target.value);
                 }}
@@ -346,7 +369,7 @@ const RecommendZipcode = ({
                 name="bedrooms"
                 placeholder="1"
                 value={getSelectedBeds()}
-                class="w-32 p-2 border border-gray-300 rounded"
+                class="w-32 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedBeds(event.target.value);
                 }}
@@ -363,7 +386,7 @@ const RecommendZipcode = ({
                 name="bathrooms"
                 placeholder="1"
                 value={getSelectedBaths()}
-                class="w-32 p-2 border border-gray-300 rounded"
+                class="w-32 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedBaths(event.target.value);
                 }}
@@ -380,7 +403,7 @@ const RecommendZipcode = ({
                 name="max_price"
                 placeholder="1000000"
                 value={getSelectedMaxPrice()}
-                class="w-48 p-2 border border-gray-300 rounded"
+                class="w-48 p-2 border border-gray-300 rounded dark:text-black"
                 onInput={(event) => {
                   setSelectedMaxPrice(event.target.value);
                 }}
@@ -402,9 +425,10 @@ const RecommendZipcode = ({
                   {(item) => (
                     <button
                       class={`hover:bg-teal-500 px-4 py-2 rounded-lg border border-gray-300
-                        hover:text-white ${getSelectedIncome() === item
-                          ? "bg-teal-500 text-white"
-                          : ""
+                        hover:text-white ${
+                          getSelectedIncome() === item
+                            ? "bg-teal-500 text-white"
+                            : ""
                         }`}
                       onClick={() => {
                         setSelectedIncome(item);
@@ -439,7 +463,7 @@ const RecommendZipcode = ({
                         id={item}
                         name="amenity_preferences"
                         value={item}
-                        class="w-4 h-4 border border-gray-300"
+                        class="w-4 h-4 border border-gray-300 dark:text-black"
                         onChange={(event) => {
                           const isChecked = event.target.checked;
                           setSelectedAmenities((prev) =>

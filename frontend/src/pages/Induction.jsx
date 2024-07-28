@@ -43,11 +43,11 @@ const MapPageSection = ({ title, description, id, children }) => {
 const MiniSection = ({ img_src, description }) => {
   return (
     <div
-      class="flex flex-row gap-2 bg-white 
-    rounded-md shadow-md border-solid border-grey-300 w-[60%] hover:scale-150 duration-300 hover:z-10"
+      class="flex sm:flex-row flex-col gap-2 bg-white 
+    rounded-md shadow-md border-solid border-grey-300 md:w-[60%] w-[100%] hover:scale-150 duration-300 hover:z-10"
     >
       <img src={img_src} className="w-[60%] h-auto" />
-      <p class="mt-6 text-left px-2">{description}</p>
+      <div class="mt-6 text-left px-2 dark:text-black">{description}</div>
     </div>
   );
 };
@@ -71,7 +71,7 @@ const InductionPage = () => {
         >
           {/* a tags */}
           <div
-            class="relative grid grid-cols-7 mx-auto divide-x mb-[2vh]
+            class="relative grid md:grid-cols-7 grid-rows-3 mx-auto md:divide-x mb-[2vh]
              items-center justify-center"
           >
             <a href="#nav_bar">Navigation Bar</a>

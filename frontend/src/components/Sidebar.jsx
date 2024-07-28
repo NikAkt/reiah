@@ -29,6 +29,32 @@ const DarkLightModeToggle = () => {
   );
 };
 
+const CloseSidebar = () => {
+  return (
+    <>
+      <div
+        class="h-7 aspect-square hover:cursor-pointer lg:hidden"
+        onClick={() => {
+          setStore({ ...store, sidebarOpen: false });
+        }}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-full w-full fill-black dark:fill-white"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M10.9393 12L6.9696 15.9697L8.03026 17.0304L12 13.0607L15.9697 17.0304L17.0304 15.9697L13.0607 12L17.0303 8.03039L15.9696 6.96973L12 10.9393L8.03038 6.96973L6.96972 8.03039L10.9393 12Z"
+          />
+        </svg>
+      </div>
+    </>
+  );
+};
+
 // A template for the navigation links which allows for easily adding more
 const SidebarLink = (props) => {
   return (
@@ -45,6 +71,7 @@ const SidebarLink = (props) => {
 };
 
 // TODO: THIS IS THE SIDEBAR I NEED TO UPDATE TO USE A BUTTON TO OPEN BECAUSE IF YOU ARE ON MOBILE YOU CANT NAVIGATE
+
 // This is the exported sidebar component which will actually be used in the page layouts
 const Sidebar = (props) => {
   return (
@@ -54,7 +81,9 @@ const Sidebar = (props) => {
         onMouseEnter={() => setStore({ ...store, sidebarOpen: true })}
       ></div>
       <div
-        class={`fixed top-0 left-0 min-h-screen p-4 z-50 shadow-md bg-white dark:bg-slate-800 w-60 transition ${store.sidebarOpen ? "" : "-translate-x-60"}`}
+        class={`fixed top-0 left-0 min-h-screen p-4 z-50 shadow-md bg-white dark:bg-slate-800 w-60 transition ${
+          store.sidebarOpen ? "" : "-translate-x-60"
+        }`}
       >
         <div class="flex items-center justify-between pb-4 border-b border-b-gray-800">
           <a href="/" class="flex items-center" hx-boost="true">
@@ -65,7 +94,9 @@ const Sidebar = (props) => {
               </span>
             </h2>
           </a>
+
           <DarkLightModeToggle />
+          <CloseSidebar />
         </div>
         <ul class="mt-4" hx-boost="true">
           <For each={props.links}>{(link) => <SidebarLink link={link} />}</For>

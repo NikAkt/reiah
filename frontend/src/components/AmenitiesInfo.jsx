@@ -23,10 +23,15 @@ const AmenitiesDetailDropdown = ({
       >
         {`${item[0]} (${item[1].length})`}
       </div>
-      <ul class={`mt-2 ${displayDropdown() === true ? "" : "hidden"} bg-gray-100 rounded-lg p-2 shadow-lg`}>
+      <ul
+        class={`mt-2 ${
+          displayDropdown() === true ? "" : "hidden"
+        } bg-gray-100 rounded-lg p-2 shadow-lg`}
+      >
         {item[1].map((el) => (
           <li
-            class="hover:bg-indigo-600 hover:text-white p-1 rounded-lg mb-1 text-sm cursor-pointer"
+            class="hover:bg-indigo-600 hover:text-white dark:text-black dark:hover:text-white
+            p-1 rounded-lg mb-1 text-sm cursor-pointer"
             onMouseOver={() => {
               highlightMarker(
                 el,
@@ -210,7 +215,7 @@ const AmenitiesInfo = ({
       <p class="text-xl py-4">Amenities Information</p>
       <Suspense>
         <Show when={amenities()}>
-          <div class="flex flex-row place-content-between">
+          <div class="flex md:flex-row flex-col place-content-between">
             <div class="w-2/5">
               <DoughnutChart
                 datasets={amenities()}
@@ -219,14 +224,14 @@ const AmenitiesInfo = ({
                 setHoverAmenity={setHoverAmenity}
               />
             </div>
-            <div class="relative w-[55%] overflow-x-auto flex flex-col gap-2 py-2">
+            <div class="relative sm:w-2/5 w-full overflow-x-auto flex flex-col gap-2 py-2">
               <Show
                 when={hoverAmenity()}
                 fallback={
                   <div class="p-4 border rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1">
                     <p class="mb-2 text-gray-500">
-                    Click the doughnut chart to select an amenity type.
-                  </p>
+                      Click the doughnut chart to select an amenity type.
+                    </p>
                   </div>
                 }
               >

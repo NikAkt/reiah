@@ -2,6 +2,8 @@ import { MapView } from "../layouts/Layout";
 import { MapComponent } from "../components/Map";
 import { LoadingAnimation } from "../components/LoadingAnimation";
 import { ErrorPage } from "../components/ErrorPage";
+import sidebar_icon from "../assets/filter-list-svgrepo-com.svg";
+import { store, setStore } from "../data/stores";
 import {
   Show,
   Suspense,
@@ -10,7 +12,6 @@ import {
   createEffect,
   ErrorBoundary,
 } from "solid-js";
-import Markers from "../components/Markers";
 import { DashboardInfo } from "../components/DashboardInfo";
 import UserMenu from "../components/UserMenu";
 
@@ -68,7 +69,15 @@ export const Map = (props) => {
 
   return (
     <MapView>
-      <div class="h-screen flex relative">
+      <div class="h-screen flex relative flex-col sm:flex-row ">
+        <button
+          class="absolute h-[35px] w-[35px] bg-white md:z-0 z-30 mt-[2vh] rounded-lg ml-[1vw] shadow-md"
+          onClick={() => setStore({ ...store, sidebarOpen: true })}
+        >
+          <img src={sidebar_icon} alt="sidebar icon" />
+        </button>
+        {/* <div class="h-full w-full bg-black opacity-30 z-20"></div> */}
+
         <ErrorBoundary fallback={<ErrorPage />}>
           <Suspense
             fallback={
@@ -107,7 +116,7 @@ export const Map = (props) => {
                   <Show
                     when={getSelectedZip()}
                     fallback={
-                      <div>
+                      <div class="dark:text-white">
                         Please search or click a zipcode layer to check the
                         details
                       </div>
@@ -133,8 +142,8 @@ export const Map = (props) => {
             <Show when={displayDialog() == true}>
               <div class="absolute bg-black z-20 w-full h-full opacity-30"></div>
               <div
-                class="absolute w-[30vw] h-[30vh] bg-white rounded-lg shadow-md
-               z-30 m-auto text-center top-[35vh] left-[35vw] items-center justify-center flex flex-col"
+                class="absolute sm:w-[30vw] w-[50vw] h-[30vh] bg-white rounded-lg shadow-md
+               z-30 m-auto text-center top-[35vh] sm:left-[35vw] left-[25vw] items-center justify-center flex flex-col"
                 onclick={() => setDisplayDialog(false)}
               >
                 <For
@@ -157,7 +166,10 @@ export const Map = (props) => {
             </Show>
           </Suspense>
         </ErrorBoundary>
-        <div class="bg-white dark:bg-gray-900 basis-3/5 hidden"></div>
+        <div
+          class="
+        bg-white dark:bg-gray-900 w-full hidden"
+        ></div>
       </div>
       <UserMenu />
     </MapView>
